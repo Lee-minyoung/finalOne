@@ -4,69 +4,102 @@ export default [
     name: 'MES 시스템',
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '영업',
-    to: '/',
     icon: 'cil-briefcase',
     visible: true,
-    items: [  {
+    items: [  
+      {
       component: 'CNavItem',
-      name: 'test1',
-      to: '/BookList',
+      name: ' - 주문',
+      to: '/',
       icon: 'cil-factory',
-    },  {
-      component: 'CNavItem',
-      name: 'test2',
-      to: '/BookInfo',
-      icon: 'cil-factory',
-    },  {
-      component: 'CNavItem',
-      name: 'test3',
-      to: '/BookForm',
-      icon: 'cil-factory',
-    },  {
-      component: 'CNavItem',
-      name: 'test4',
-      to: '/Home',
-      icon: 'cil-factory',
-    },
+    },  
     ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '생산',
     to: '/production',
     icon: 'cil-factory',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '재고',
     to: '/inventory',
     icon: 'cil-storage',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '품질',
     to: '/quality',
     icon: 'cil-check-circle',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '설비',
     to: '/equipment',
     icon: 'cil-settings',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '기초정보입력',
     to: '/basic-info',
     icon: 'cil-description',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
-    component: 'CNavItem',
+    component: 'CNavGroup',
     name: '실시간 모니터링',
     to: '/monitoring',
     icon: 'cil-graph',
+    items: [  
+      {
+      component: 'CNavItem',
+      name: ' - 주문',
+      to: '/',
+      icon: 'cil-factory',
+    },  
+    ]
   },
   {
     component: 'CNavGroup',

@@ -6,30 +6,16 @@ import DefaultLayout from '@/layouts/DefaultLayout'
 const routes = [
   {
     path: '/',
-    name: 'Mian',
+    name: 'Main',
     component: DefaultLayout,
     redirect: '',
     children: [
       {
-        path: 'Home',
+        path: '',
         name: 'Home',
         component: () => import('@/views/Home.vue'),
       },
-      {
-        path: 'BookList',
-        name: 'List',
-        component: () => import('@/views/book/BookList.vue'),
-      },
-      {
-        path: 'BookInfo',
-        name: 'Info',
-        component: () => import('@/views/book/BookInfo.vue'),
-      },
-      {
-        path: 'BookForm',
-        name: 'Form',
-        component: () => import('@/views/book/BookForm.vue'),
-      },
+      //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },
   {

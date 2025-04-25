@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
 
 import App from './App.vue'
 import router from './router'
@@ -12,6 +14,11 @@ import DocsExample from '@/components/Etc/DocsExample'
 import DocsIcons from '@/components/Etc/DocsIcons'
 
 const app = createApp(App)
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+createApp(App).use(pinia).use(router).mount('#app')
+
 app.use(createPinia())
 app.use(router)
 app.use(CoreuiVue)

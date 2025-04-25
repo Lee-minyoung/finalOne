@@ -2,9 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useSidebarStore = defineStore('sidebar', () => {
-  const visible = ref(undefined)
-  // const visible = ref(false)
-  const unfoldable = ref(false)
+  const visible = ref(undefined)       // ❌ 이건 저장 X
+  const unfoldable = ref(false)        // ✅ 이건 저장 O
 
   const toggleVisible = (value) => {
     visible.value = value !== undefined ? value : !visible.value
@@ -15,6 +14,10 @@ export const useSidebarStore = defineStore('sidebar', () => {
   }
 
   return { visible, unfoldable, toggleVisible, toggleUnfoldable }
+}, {
+  persist: {
+    paths: ['unfoldable']  // ✅ unfoldable만 로컬스토리지에 저장
+  }
 })
 
 
