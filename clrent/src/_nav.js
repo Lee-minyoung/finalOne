@@ -6,7 +6,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '영업',
-    icon: 'cil-briefcase',
+    icon: 'cil-calendar-check',
     visible: true,
     items: [  
       {
