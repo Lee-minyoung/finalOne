@@ -39,17 +39,23 @@ const query = (alias, values)=>{
   // alias : 각 테이블 별로 실행할 SQL문을 가지고 있는 변수
   // values : SQL문 안에 선언된 '?'들을 대체할 값의 집합
   return new Promise((resolve, reject)=>{
+
+
     // SQL문 선택
     let executeSql = queryFormat(sqlList[alias], values);
-
+    console.log("[실행 SQL]", executeSql);
     // MaraiDB 모듈을 통해 설정한 ConnectionPool을 기반으로 SQL문 실행 : 비동기 작업, callback 방식
     // 비동기 작업) 작업의 요청과 결과가 동시에 일어나지 않으므로 요청한 작업의 결과를 언제 돌려받을지 알 수 없음
     connectionPool.query(executeSql, values, (err, results)=>{
       // SQL문을 실행할 결과를 처리하는 콜백합수
      if(err) {
+      console.error("[쿼리 실패]", err);
+
         // error 발생시 
         reject({err});
       }else{
+        console.log("[결과 rows]", results);
+
         // SQL문을 정상적으로 실행한 경우
         resolve(results);
       }

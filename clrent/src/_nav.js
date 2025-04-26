@@ -20,21 +20,20 @@ export default [
   {
     component: 'CNavGroup',
     name: '생산',
-    to: '/production',
     icon: 'cil-factory',
+    visible: true,
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
-      icon: 'cil-factory',
+      name: '생산계획',
+      to: '/ProdPlan',
     },  
     ]
   },
   {
     component: 'CNavGroup',
     name: '재고',
-    to: '/inventory',
+    visible: true,
     icon: 'cil-storage',
     items: [  
       {
@@ -48,7 +47,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '품질',
-    to: '/quality',
+    visible: true,
     icon: 'cil-check-circle',
     items: [  
       {
@@ -62,7 +61,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '설비',
-    to: '/equipment',
+    visible: true,
     icon: 'cil-settings',
     items: [  
       {
@@ -76,7 +75,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '기초정보입력',
-    to: '/basic-info',
+    visible: true,
     icon: 'cil-description',
     items: [  
       {
@@ -90,7 +89,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '실시간 모니터링',
-    to: '/monitoring',
+    visible: true,
     icon: 'cil-graph',
     items: [  
       {
