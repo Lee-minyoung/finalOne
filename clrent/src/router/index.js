@@ -15,6 +15,16 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/Home.vue'),
       },
+      {
+        path: 'dept',
+        name: 'dept',
+        component: () => import('@/views/dept/dept.vue'),
+      },
+      {
+        path: 'prd',
+        name: 'prd',
+        component: () => import('@/views/prd/prd.vue'),
+      },
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },
