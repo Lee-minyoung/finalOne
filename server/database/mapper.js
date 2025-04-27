@@ -30,7 +30,7 @@ const connectionPool = mariadb.createPool({
     query : console.log,
     // error 발생 시 처리함수
     error : console.log,
-  }
+  },
 });
 
 // MariaDB에 SQL문을 보내고 결과를 받아올 함수 설정 
