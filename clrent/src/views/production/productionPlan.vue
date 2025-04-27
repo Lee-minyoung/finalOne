@@ -5,13 +5,49 @@
     <h2 class="mb-4">생산 계획 관리</h2>
   </div>
   <div class="d-flex gap-2">
-    <button class="btn btn-primary">재고/지시현황</button>
+    <button class="btn btn-primary" @click="showModal = true">재고/지시현황</button>
     <button class="btn btn-primary" @click="addPlan">등록</button>
     <button class="btn btn-primary">주문현황</button>
     <button class="btn btn-primary">계획지시</button>
   </div>
 </div>
-      <table class="table table-bordered text-center">
+    <!-- 여기 모달창 추가 -->
+    <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">재고/지시현황</h5>
+            <button type="button" class="btn-close" @click="showModal = false"></button>
+          </div>
+          <div class="modal-body">
+            <p>여기에 재고/지시현황 내용을 보여줄 수 있어요.</p>
+            <!-- 예시로 간단한 테이블 -->
+            <table class="table table-bordered text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>품목명</th>
+                  <th>재고수량</th>
+                  <th>지시수량</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in inventoryList" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.stock }}</td>
+                  <td>{{ item.order }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" @click="showModal = false">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 테이블 위치-->
+
+      <table class="table table-bordered text-center ">
         <thead class="table-light">
           <tr>
             <th>NO</th>
@@ -24,7 +60,19 @@
 
           </tr>
         </thead>
+        <!-- <div style="max-height: 600px; overflow-y:auto">  -->
         <tbody>
+                    <!-- 등록용 입력 라인 -->
+                    <tr>
+            <td></td>
+            <!--제품명을 검색해서 넣을 수 있게 할까요? ID 입력으로 되어있는데 편의상 어떤게 좋을까요?-->
+            <td><input v-model="form.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
+            <td><input v-model.number="form.qty" type="number" class="form-control" placeholder="수량" /></td>
+            <td><input v-model="form.st_dt" type="date" class="form-control" /></td>
+            <td><input v-model="form.end_dt" type="date" class="form-control" /></td>
+            <td></td>
+            <td><input v-model="form.rmk" class="form-control" placeholder="비고 입력" /></td>
+          </tr>
           <!-- 리스트 출력 -->
           <tr v-for="(item) in prodPlanList" :key="item.pdn_pln_no">
             <td>{{ item.pdn_pln_no }}</td>
@@ -37,18 +85,9 @@
 
           </tr>
   
-          <!-- 등록용 입력 라인 -->
-          <tr>
-            <td></td>
-            <!--제품명을 검색해서 넣을 수 있게 할까요? ID 입력으로 되어있는데 편의상 어떤게 좋을까요?-->
-            <td><input v-model="form.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
-            <td><input v-model.number="form.qty" type="number" class="form-control" placeholder="수량" /></td>
-            <td><input v-model="form.st_dt" type="date" class="form-control" /></td>
-            <td><input v-model="form.end_dt" type="date" class="form-control" /></td>
-            <td></td>
-            <td><input v-model="form.rmk" class="form-control" placeholder="비고 입력" /></td>
-          </tr>
+
         </tbody>
+      <!-- </div> -->
       </table>
     </div>
   </template>
@@ -71,7 +110,12 @@
           st_dt: '',
           end_dt: '',
           rmk: '',
-        }
+        },
+        showModal: false,
+            inventoryList: [
+        { name: '제품A', stock: 100, order: 20 },
+        { name: '제품B', stock: 50, order: 10 },
+      ],
       }
     },
     computed :{
@@ -85,7 +129,6 @@
     },
   
     methods: {
-
       async getProdPlanList() {
         try {
           let result = await axios.get('/api/prodpln')
@@ -122,6 +165,10 @@
           alert('등록 실패 ㅠㅠ')
         }
       },
+
+          add() {
+      alert('등록버튼 누름!');
+    },
     },
   
     mounted() {
@@ -138,6 +185,12 @@
     font-weight: bold;
     text-align: left;
   }
+  .modal {
+  backdrop-filter: blur(2px);
+}
+.modal-dialog {
+  margin-top: 10%;
+}
   </style>
   
 <!-- 
