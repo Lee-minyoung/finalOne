@@ -9,6 +9,8 @@ tests/e2e/reports/
 .env
 .env.*
 *.env
+server/database/config/dbConfig.env
+
 
 # dependencies
 /node_modules
