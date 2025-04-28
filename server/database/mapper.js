@@ -24,7 +24,7 @@ const pool  = mariadb.createPool({
   // MariaDB의 데이터 타입 중 bigInt 타입을 Javascript의 Number 타입으로 자동 변환
   // 해당 타입을 Javascript에선 자동으로 변환하지 못함
   bigIntAsNumber : true,
-  // logger 등록
+  // logger 등록  
   logger : {
     // 실제 실행되는 SQL문이 console.log로 출력되도록 설정
     query : console.log,

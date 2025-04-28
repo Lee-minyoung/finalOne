@@ -2,7 +2,7 @@ const mariadb = require("../../database/mapper.js");
 
 
 //전체조회
-const findpProdPlanAll = async () => {
+const findProdPlanAll = async () => {
     let prodPlanList = await mariadb.query("selectProPlanList")
                             .catch(err=> console.log(err));
     return prodPlanList;
@@ -48,7 +48,7 @@ const addProdPlanData = async (planData, detailData) => {
 };
 
 module.exports ={
-    findpProdPlanAll,
+    findProdPlanAll,
     addProdPlanData,
     findLastPlanCode,
     findLastDetailCode,

@@ -20,6 +20,7 @@ const routes = [
         name: 'ProdPlan',
         component: () => import('@/views/production/productionPlan.vue'),
       },
+      
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

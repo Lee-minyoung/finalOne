@@ -63,7 +63,7 @@
         <!-- <div style="max-height: 600px; overflow-y:auto">  -->
         <tbody>
                     <!-- 등록용 입력 라인 -->
-                    <tr>
+          <tr>
             <td></td>
             <!--제품명을 검색해서 넣을 수 있게 할까요? ID 입력으로 되어있는데 편의상 어떤게 좋을까요?-->
             <td><input v-model="form.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
@@ -83,14 +83,13 @@
             <td>{{ dateFormat(item.end_dt, 'yyyy년 MM월 dd일') }}</td>
             <td>{{ item.situ }}</td>
             <td>{{ item.rmk }}</td>
-
           </tr>
-  
-
         </tbody>
       <!-- </div> -->
       </table>
     </div>
+
+    
   </template>
 
 

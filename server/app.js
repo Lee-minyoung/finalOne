@@ -30,12 +30,14 @@ app.listen(3000, ()=>{
   console.log('http://localhost:3000');
 })
 // const bookRouter = require('./routers/book_router.js');
-
-
+const prodPlanRouter = require('./routers/production/productPlan_router.js');
+// const salesRouter=require('./routers/sales/sales_router.js');
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
 })
 
 // 라우터 모듈 등록
-app.use('/',bookRouter);
+// app.use('/',bookRouter);
+app.use('/',prodPlanRouter);
+// app.use('/',salesRouter);
