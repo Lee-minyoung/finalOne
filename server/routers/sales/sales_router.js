@@ -13,16 +13,14 @@ router.get('/ord',async(req,res)=>{
                     .catch(err=>console.log(err)); 
   res.send(ordList); 
 }); 
-
-
 //수주등록 
 router.post('/ord',async (req,res)=>{
   //거래처,담당/사원,오더상태   
   try{
     // 1. 마지막 코드 조회 
-     const lastOrdNo = (await salesService.findLastOrdNo())?.ord_no;
+     const lastOrdNo = await salesService.findLastOrdNo();
      const nextOrdNo=findNextCode(lastOrdNo); // 
-     console.log('다음 수주번호',nextOrdNo); 
+     console.log('다음 수주번호',nextOrdNo); //    
     // ordData
     const ord_no=nextOrdNo;    //주문번호 프라이머리키 
     const vdr_no=2001;  //거래처 번호 임시 
@@ -32,7 +30,7 @@ router.post('/ord',async (req,res)=>{
     const rgt_dt=new Date(); //날짜  
     const mdf_dt=new Date(); //날짜 우선설정    
     //detailData
-    const  lastDetail=(await salesService.findLastDetail())?.ord_dtl_no; 
+    const  lastDetail=await salesService.findLastDetail(); //  
     const  nextOrdDetail=findNextCode(lastDetail);  
     const  ord_dtl_no=nextOrdDetail; 
     const  prd_no='PRD';
@@ -43,7 +41,7 @@ router.post('/ord',async (req,res)=>{
     const detailData=[ord_dtl_no,ord_no,prd_no,prd_qty]; 
     //3. 트랜잭션 insert
     await salesService.addOrdData(ordData,detailData); 
-
+    
     res.status(200).json({message:'등록완료',code:nextOrdNo}); 
 
   }catch(err){

@@ -6,11 +6,11 @@ const insertOrdDtl=
 values(?,?,?,?)`;
 //주문번호 마지막번호 찾기   
 const selectLastOrdNo=
-` select max(ord_no) 
+` select max(ord_no) as maxOrdNo
  from ord`; 
  //주문번호 
  const selectLastOrdDtlNo=
- ` select max(ord_dtl_no) 
+ `select max(ord_dtl_no) as maxOrdDtlNo
   from ord_dtl`; 
 //  
 const selectOrdList=
