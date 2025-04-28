@@ -16,14 +16,14 @@ const selectLastPlanCode = `
   SELECT MAX(pdn_pln_no) AS lastCode 
     FROM pdn_pln 
    WHERE pdn_pln_no 
-    LIKE 'PLN%';
+    LIKE 'PLN-%';
 `;
 //마지막 상세 계획 번호 조회
 const selectLastDetailCode = `
   SELECT MAX(pdn_pln_dtl_no) AS lastCode 
     FROM pdn_pln_dtl 
    WHERE pdn_pln_dtl_no 
-    LIKE 'PLD%';
+    LIKE 'PLD-%';
 `;
 
 //계획 등록은 2가지 동시 등록 필요함
