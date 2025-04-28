@@ -15,10 +15,20 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/Home.vue'),
       },
-      {
+      { // 전체 조회
         path: 'dept',
         name: 'dept',
         component: () => import('@/views/dept/dept.vue'),
+      },
+      { // 단건 조회
+        path: 'dept/:no',
+        name: 'deptInfo',
+        component: () => import('@/views/dept/deptInfo.vue'),
+      },
+      { // 수정
+        path: 'dept/:no',
+        name: 'editDeptInfo',
+        component: () => import('@/views/dept/deptInfo.vue'),
       },
       {
         path: 'prd',
