@@ -80,8 +80,8 @@ export default [
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: ' - 로그인',
+      to: '/login',
       icon: 'cil-factory',
     },  
     ]
