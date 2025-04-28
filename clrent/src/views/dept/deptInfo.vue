@@ -1,17 +1,4 @@
 <template>
-  <!-- 우측 영역 시작 -->
-  <div class="col-md-6">
-    <!-- 우측 버튼 모음 영역 -->
-    <div class="d-flex justify-content-between mb-3">
-      <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addDept">추가</button>
-        <button class="btn btn-danger" @click="deleteDept">삭제</button>
-      </div>
-      <div> <!-- 버튼 오른쪽 정렬 -->
-        <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
-        <button class="btn btn-success" @click="saveDept">저장</button>
-      </div>
-    </div> <!-- 우측 버튼 모음 영역 끝 -->
     <!-- 우측 상세보기 영역 시작 -->
     <div class="card p-3">
       <h4>상세 보기</h4>
