@@ -8,7 +8,6 @@ tests/e2e/reports/
 .env.*.local
 .env
 .env.*
-*.env
 
 # dependencies
 /node_modules
