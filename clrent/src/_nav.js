@@ -75,15 +75,59 @@ export default [
   {
     component: 'CNavGroup',
     name: '기초정보입력',
-    visible: true,
-    icon: 'cil-description',
+    to: '/basic-info',
+    icon: 'cil-file',
     items: [  
       {
-      component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
-      icon: 'cil-factory',
-    },  
+        component: 'CNavItem',
+        name: ' - 사원관리',
+        to: '/emp',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 부서관리',
+        to: '/dept',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 거래처관리',
+        to: '/vdr',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 자재관리',
+        to: '/mat',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 제품관리',
+        to: '/prd',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 제품공정흐름도관리',
+        to: '/proc',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - BOM관리',
+        to: '/bom',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 라인관리',
+        to: '/ln',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 설비관리',
+        to: '/eqp',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 공정코드관리',
+        to: '/prc-code',
+      },  
     ]
   },
   {
