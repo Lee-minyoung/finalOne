@@ -110,6 +110,9 @@
           st_dt: '',
           end_dt: '',
           rmk: '',
+          details:[
+            {pro_no:'', qry:''}
+          ]
         },
         showModal: false,
             inventoryList: [
