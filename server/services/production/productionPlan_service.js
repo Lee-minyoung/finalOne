@@ -1,7 +1,7 @@
 const mariadbPromise = require('mariadb'); 
 const mariadb = require("../../database/mapper.js");
 const sqlList = require('../../database/sqlList.js');
-
+//test
 const connectionPool = mariadbPromise.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
