@@ -1,13 +1,32 @@
 const selectProPlanList =
-`SELECT p.pdn_pln_no
-      , d.qty
-      , d.st_dt
-      , d.end_dt
-      , d.situ
-      , d.rmk 
-   FROM pdn_pln p
-        LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+`SELECT pdn_pln_no
+      , st_dt
+      , end_dt
+      , situ
+      , rmk 
+   FROM pdn_pln
   ORDER BY p.pdn_pln_no`
+
+  const selectProPlanDetailList =
+`SELECT pdn_pln_dtl_no
+      , qty
+      , st_dt
+      , end_dt
+      , situ
+      , rmk 
+   FROM pdn_pln
+  ORDER BY p.pdn_pln_no`
+
+
+  // `SELECT p.pdn_pln_no
+  //     , d.qty
+  //     , d.st_dt
+  //     , d.end_dt
+  //     , d.situ
+  //     , d.rmk 
+  //  FROM pdn_pln p
+  //       LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+  // ORDER BY p.pdn_pln_no`
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
@@ -28,12 +47,12 @@ const selectLastDetailCode = `
 
 //계획 등록은 2가지 동시 등록 필요함
 const insertProdPlan =
-`INSERT INTO pdn_pln (pdn_pln_no,  crt_dt, crt_by) 
-  VALUES (?,CURDATE(),?)`
+`INSERT INTO pdn_pln (pdn_pln_no,  crt_dt, st_dt, end_dt, crt_by, situ, rmk) 
+  VALUES (?,CURDATE(), ?, ?, ?, ?)`
 
 const insertProdPlanDtl =
-`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, rmk, situ)
- VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, situ, rmk)
+ VALUES (?, ?, ?, ?, ?, ?)`
 
 
 module.exports = {

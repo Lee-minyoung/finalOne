@@ -73,6 +73,7 @@
             <td></td>
             <td><input v-model="form.rmk" class="form-control" placeholder="비고 입력" /></td>
           </tr>
+          <!--등록용 디테일-->
           <!-- 리스트 출력 -->
           <tr v-for="(item) in prodPlanList" :key="item.pdn_pln_no">
             <td>{{ item.pdn_pln_no }}</td>
@@ -110,6 +111,9 @@
           st_dt: '',
           end_dt: '',
           rmk: '',
+          details:[
+            {pro_no:'', qry:''}
+          ]
         },
         showModal: false,
             inventoryList: [
