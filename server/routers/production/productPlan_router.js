@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productionPlanServices = require('../../services/production/productionPlan_service.js');
 
-//생산계획 리스트 전체보기기
+//생산계획 리스트 전체보기
 router.get('/prodpln', async (req,res)=>{
     let prodplnList = await productionPlanServices.findpProdPlanAll()
                             .catch(err=> console.log(err));

@@ -1,7 +1,7 @@
 const mariadbPromise = require('mariadb'); 
 const mariadb = require("../../database/mapper.js");
 const sqlList = require('../../database/sqlList.js');
-//test
+
 const connectionPool = mariadbPromise.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -10,7 +10,7 @@ const connectionPool = mariadbPromise.createPool({
     database: process.env.DB_DB,
     connectionLimit: process.env.DB_LIMIT,
   });
-
+//test
 
 const findpProdPlanAll = async () => {
     let prodPlanList = await mariadb.query("selectProPlanList")
@@ -65,4 +65,4 @@ module.exports ={
     findLastPlanCode,
     findLastDetailCode,
 
-}
+} 
