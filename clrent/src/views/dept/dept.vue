@@ -29,8 +29,8 @@
                 <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)" class="table-hover">
                   <td>{{ dept.dept_no }}</td>
                   <td>{{ dept.dept_nm }}</td>
-                  <td>{{ dept.dept_mgr }}</td>
-                  <td>{{ dept.use_yn }}</td>
+                  <td>{{ dept.nm }}</td>
+                  <td>{{ CommonCodeFormat(dept.use_yn) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -46,6 +46,7 @@
 
 
 <script>
+import CommonCodeFormat from '@/utils/useCommonCode.js'
 // AJAX 모듈
 import axios from 'axios';
 // 자식 컴포넌트 import
@@ -85,6 +86,10 @@ export default {
     this.getDeptList();
   },
   methods: {
+    // 날짜 데이터 포멧 정의
+    CommonCodeFormat(value) { 
+      return CommonCodeFormat.CommonCodeFormat(value);
+    },
     // deptList데이터 받아오는 함수
     async getDeptList() { 
       let result = await axios.get('/api/dept')
@@ -95,6 +100,7 @@ export default {
     selectDept(deptNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
       this.InfoView = true;
       const dept = this.deptList.find(dept => dept.dept_no === deptNo);
+      console.log(dept);
       this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
     },
     // goToInfo(deptNo) { // 상세보기 컴포넌트로 전송

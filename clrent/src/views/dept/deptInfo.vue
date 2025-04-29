@@ -24,7 +24,11 @@
           <label class="form-label">부서관리자</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
           <label class="form-label">사용여부</label>
-          <input type="text" class="form-control" v-model="deptInfo.use_yn" />
+          <!-- <input type="text" class="form-control" v-model="deptInfo.use_yn" /> -->
+          <select class="form-select form-control" v-model="deptInfo.use_yn">
+            <option value="f1">여</option>
+            <option value="f2">부</option>
+          </select>
           <label class="form-label">생성일자</label>
           <input type="text" class="form-control" v-model="deptInfo.crt_dt" readonly />
           <label class="form-label">수정일자</label>
@@ -41,6 +45,7 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
+import userDateUtils from '@/utils/useDates.js';
 
 export default {
   props: {
@@ -54,15 +59,28 @@ export default {
   watch: {
     dept() {
       let searchNo = this.dept;
+      console.log(searchNo.dept_no);
       this.getDeptInfo(searchNo.dept_no);
     }
   },
   methods: {
+    // 날짜 데이터 포멧 정의
+    dateFormat(value, format) { 
+      return userDateUtils.dateFormat(value, format);
+    },
+    // 정의한 데이터 포맷 활용한 오늘 날짜 반환
+    getDate(date) {
+      // <input> 태그의 type 속성이 date인 경우 'yyyy-MM-dd'으로 값을 가져야함
+      // return this.dateFormat(null, 'yyyy-MM-dd');
+      return this.dateFormat(date, 'yyyy-MM-dd');
+    },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptInfo(selected) {
       let result = await axios.get(`/api/dept/${selected}`)
         .catch(err => console.log(err));
+        console.log(result);
       this.deptInfo = result.data;
+      console.log(this.deptInfo);
     },
      // 수정된 내용을 DB에 저장
     async deptUpdate() {

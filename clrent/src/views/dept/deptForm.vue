@@ -55,12 +55,6 @@ export default {
     dateFormat(value, format) { 
       return userDateUtils.dateFormat(value, format);
     },
-    // 정의한 데이터 포맷 활용한 오늘 날짜 반환
-    getToday() {
-      // <input> 태그의 type 속성이 date인 경우 'yyyy-MM-dd'으로 값을 가져야함
-      // return this.dateFormat(null, 'yyyy-MM-dd');
-      this.today = this.dateFormat(null, 'yyyy-MM-dd');
-    },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptNo() {
       let result = await axios.get(`/api/deptNo`)
