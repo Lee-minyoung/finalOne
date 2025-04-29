@@ -38,8 +38,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <deptInfo :dept="selectedDept" v-if="selectedDept" />
-      <deptForm />
+      <deptInfo :dept="selectedDept" v-if="InfoView" @goToForm="msg" @dept-reload="getDeptList"/>
+      <deptForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList"/>
     </div>
   </div>
 </template>
@@ -63,8 +63,15 @@ export default {
       selectedFilter: "", // 필터 option value의 초기 값(전체)
       selectedDept: null, // 선택된 부서(상세보기에 표시될 부서 데이터)
       deptList: [], // 부서리스트 데이터 담을 배열
+
+      InfoView : true,
     };
   },
+  // watch: {
+  //   List() {
+  //     this.getDeptList();
+  //   }
+  // },
   computed: {
     filteredDeptList() { // 필터된 DeptList 보여줌
       return this.deptList.filter(dept =>
@@ -86,12 +93,16 @@ export default {
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     selectDept(deptNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
+      this.InfoView = true;
       const dept = this.deptList.find(dept => dept.dept_no === deptNo);
       this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
     },
     // goToInfo(deptNo) { // 상세보기 컴포넌트로 전송
     //   this.$router.push({ name : 'deptInfo', params : { no : deptNo }});
     // },
+    msg(data) {
+      this.InfoView = data;
+    }
   }
 };
 </script>

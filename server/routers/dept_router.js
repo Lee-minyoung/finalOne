@@ -20,6 +20,14 @@ router.get('/dept/:no', async (req, res) => {
   res.send(deptInfo);
 });
 
+// 등록 부서번호 조회
+router.get('/deptNo', async (req, res) => {
+  let deptNo = await deptService.findDeptNo()
+  .catch(err => console.log(err));
+  res.send(deptNo);
+})
+
+
 // 등록
 router.post('/dept', async (req, res) => {
   let deptInfo = req.body;

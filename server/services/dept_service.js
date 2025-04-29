@@ -16,6 +16,11 @@ const findByDeptNo = async (deptNo) => {
   return info;
 };
 
+// 추가시 적용되는 부서번호
+const findDeptNo = async() => {
+  return await mariadb.query("selectDeptNo");
+}
+
 // 부서 등록
 const addNewDept = async (deptInfo) => {
   let insertColumns = ['dept_nm', 'dept_mgr'];
@@ -66,4 +71,5 @@ module.exports = {
   addNewDept,
   modifyDeptInfo,
   removeDeptInfo,
+  findDeptNo,
 };

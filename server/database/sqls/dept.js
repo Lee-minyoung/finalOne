@@ -27,6 +27,11 @@ const selectDeptOne =
 FROM dept
 WHERE dept_no = ?`;
 
+// 추가시 적용되는 부서번호
+const selectDeptNo = 
+`SELECT IFNULL(MAX(dept_no), 90) + 10 AS addDeptNo
+From dept`;
+
 // 추가
 const insertDept =
 `INSERT INTO dept (dept_no, dept_nm, dept_mgr, use_yn, crt_dt)
@@ -50,4 +55,5 @@ module.exports = {
   insertDept,
   updateDept,
   deleteDept,
+  selectDeptNo,
 };
