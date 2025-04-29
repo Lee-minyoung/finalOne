@@ -40,6 +40,11 @@ const routes = [
         name: 'prd',
         component: () => import('@/views/prd/prd.vue'),
       },
+      { // 로그인
+        path: 'login', //실제주소 
+        name: 'login', // 부르는 이름
+        component: () => import('@/views/login/login.vue'),
+      },
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

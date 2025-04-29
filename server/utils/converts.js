@@ -33,14 +33,14 @@ const convertObjToQuery = (target, selected = []) => {
   };
 }
 const queryFormat = function (query, params) {
-    if (!params) return query;
-    return query.replace(/\:(\w+)/g, function (txt, key) {
-      if (params.hasOwnProperty(key)) {
-        return `'${params[key]}'`; // 문자열 따옴표 처리
-      }
-      return txt;
-    });
-  };
+  //if (!params) return query;
+  return query.replace(/\:(\w+)/g, function (txt, key) {
+    if (params.hasOwnProperty(key)) {
+      return `'${params[key]}'`; // 문자열 따옴표 처리
+    }
+    return '';
+  });
+}
 // const queryFormat = function (query, values) {
 //   // query  : SQL문
 //   // values : 대체값

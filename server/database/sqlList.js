@@ -6,6 +6,7 @@ const inventorys=require('./sqls/inventorys.js');
 const qualitys=require('./sqls/qualitys.js'); 
 const userinforms=require('./sqls/userinforms.js'); 
 const prodeuctinPlan=require('./sqls/productionPlan.js'); 
+const login=require('./sqls/login.js'); 
 
 //기초정보입력
 const dept = require('./sqls/dept.js'); 
@@ -18,6 +19,7 @@ module.exports = {
     ...qualitys,
     ...userinforms,
     ...prodeuctinPlan,
+    ...login,
 
     // 기초정보입력
     ...dept,
