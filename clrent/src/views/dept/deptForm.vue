@@ -20,10 +20,18 @@
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
+
+          <!-- <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
+              aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+          </div> -->
+
+
           <label class="form-label">사용여부</label>
           <input type="text" class="form-control" value="여" readonly />
           <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="today"  readonly />
+          <input type="text" class="form-control" v-model="today" readonly />
         </div>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
@@ -52,8 +60,11 @@ export default {
   },
   methods: {
     // 날짜 데이터 포멧 정의
-    dateFormat(value, format) { 
+    dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
+    },
+    getToday() {
+      this.today = this.dateFormat(null, 'yyyy-MM-dd');
     },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptNo() {
@@ -86,7 +97,7 @@ export default {
       } else {
         alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
       };
-      this.$emit("goToInfo",true);
+      this.$emit("goToInfo", true);
     },
   }
 };
