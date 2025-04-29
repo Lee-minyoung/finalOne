@@ -63,8 +63,8 @@ const queryFormat = function (query, params) {
 const findNextCode = (lastCode, prefix) => {
     //lastcode가 null이면 000으로 처리하기 위해.
     const baseCode = lastCode ?? (prefix + '000');  //?? 는 병합연산자
-    const number = parseInt(baseCode.slice(prefix.length)) + 1;
-    return prefix + String(number).padStart(3, '0');
+    const number = parseInt(baseCode.slice(prefix.length)) + 1; // 001
+    return prefix + String(number).padStart(3, '0'); 
 };
 
 

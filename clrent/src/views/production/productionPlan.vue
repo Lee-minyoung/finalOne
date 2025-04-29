@@ -1,16 +1,16 @@
 <template>
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-  <div class="d-flex gap-4">
-    <h2 class="mb-4">생산 계획 관리</h2>
-  </div>
-  <div class="d-flex gap-2">
-    <button class="btn btn-primary" @click="showModal = true">재고/지시현황</button>
-    <button class="btn btn-primary" @click="addPlan">등록</button>
-    <button class="btn btn-primary">주문현황</button>
-    <button class="btn btn-primary">계획지시</button>
-  </div>
-</div>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-4">생산 계획 관리</h2>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary">재고/지시현황</button>
+        <button class="btn btn-success" @click="addPlan">등록</button>
+        <button class="btn btn-primary">주문현황</button>
+        <button class="btn btn-primary" @click="showModal= true">계획지시</button>
+      </div>
+    </div>
+
+
     <!-- 여기 모달창 추가 -->
     <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
       <div class="modal-dialog modal-lg">
@@ -45,276 +45,198 @@
         </div>
       </div>
     </div>
-    <!-- 테이블 위치-->
 
-      <table class="table table-bordered text-center ">
-        <thead class="table-light">
-          <tr>
-            <th>NO</th>
-            <th>제품명</th>
-            <th>계획수량</th>
-            <th>계획시작일자</th>
-            <th>계획종료일자</th>
-            <th>상태</th>
-            <th>비고</th>
+    <!-- 테이블 위치 -->
+    <table class="table table-bordered text-center" style="min-width: 1200px;">
+      <colgroup>
+        <col style="width: 80px" />
+        <col style="width: 150px" />
+        <col style="width: 120px" />
+        <col style="width: 160px" />
+        <col style="width: 160px" />
+        <col style="width: 120px" />
+        <col style="width: 180px" />
+        <col style="width: 100px" />
+      </colgroup>
 
-          </tr>
-        </thead>
-        <!-- <div style="max-height: 600px; overflow-y:auto">  -->
-        <tbody>
-                    <!-- 등록용 입력 라인 -->
-          <tr>
-            <td></td>
-            <!--제품명을 검색해서 넣을 수 있게 할까요? ID 입력으로 되어있는데 편의상 어떤게 좋을까요?-->
-            <td><input v-model="form.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
-            <td><input v-model.number="form.qty" type="number" class="form-control" placeholder="수량" /></td>
-            <td><input v-model="form.st_dt" type="date" class="form-control" /></td>
-            <td><input v-model="form.end_dt" type="date" class="form-control" /></td>
-            <td></td>
-            <td><input v-model="form.rmk" class="form-control" placeholder="비고 입력" /></td>
-          </tr>
-          <!--등록용 디테일-->
-          <!-- 리스트 출력 -->
-          <tr v-for="(item) in prodPlanList" :key="item.pdn_pln_no">
-            <td>{{ item.pdn_pln_no }}</td>
-            <td>{{ item.prd_no }}</td>
-            <td>{{ item.qty }}</td>
-            <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
-            <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
-            <td>{{ item.situ }}</td>
-            <td>{{ item.rmk }}</td>
-          </tr>
-        </tbody>
-      <!-- </div> -->
-      </table>
-    </div>
-  </template>
+      <thead class="table-light">
+        <tr>
+          <th>NO</th>
+          <th>제품명</th>
+          <th>계획수량</th>
+          <th>계획시작일자</th>
+          <th>계획종료일자</th>
+          <th>상태</th>
+          <th>비고</th>
+          <th>추가/삭제</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!--  입력 줄 반복 -->
+        <tr v-for="(row, index) in planRows" :key="'new-' + index">
+          <td>신규</td>
+          <td><input v-model="row.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
+          <td><input v-model.number="row.qty" type="number" class="form-control" placeholder="수량" /></td>
+          <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
+          <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
+          <td><input class="form-control" value="계획완료" readonly /></td>
+          <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
+          <td>
+            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)">삭제</button>
+            <button class="btn btn-outline-primary btn-sm" @click="addPlanRow">+</button>
+          </td>
+        </tr>
+
+        <!--  출력 줄 (DB에서 불러온 것) -->
+        <tr
+          v-for="item in prodPlanList" :key="item.pdn_pln_no"
+          @click="togglePlanSelection(item)" :class="{ 'table-primary': isSelected(item) }"  style="cursor: pointer;"
+        >
+          <td>{{ item.pdn_pln_no }}</td>
+          <td>{{ item.prd_no }}</td>
+          <td>{{ item.qty }}</td>
+          <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
+          <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
+          <td>{{ item.situ }}</td>
+          <td>{{ item.rmk }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
 
 
-  <script>
-  import useDateUtils from '@/utils/useDates.js';
-  import axios from 'axios'
-  
-  export default {
-    name: 'ProductionPlan',
-  
-    data() {
-      return {
-        prodPlanList: [],
-        form: {
-          pdn_pln_no:'',
+<script>
+import axios from 'axios'
+import useDateUtils from '@/utils/useDates.js'
+
+export default {
+  data() {
+    return {
+      prodPlanList: [], // DB에 있는 계획 목록
+      selectedPlans: [],// 사용자가 선택한(클릭한) 계획 리스트
+      planRows: [        // 사용자가 입력하는 행들
+        {
           prd_no: '',
           qty: '',
           st_dt: '',
           end_dt: '',
           rmk: '',
-          // details:[
-          //   {pro_no:'', qry:''}
-          // ]
-        },
-        showModal: false,
-            inventoryList: [
-        { name: '제품A', stock: 100, order: 20 },
-        { name: '제품B', stock: 50, order: 10 },
-      ],
+        }
+      ]
+    },
+  },
+  computed: {
+  planSummaryByProduct() {
+    const summary = {}
+
+    for (const plan of this.selectedPlans) {
+      const key = plan.prd_no
+      const qty = Number(plan.qty || 0)
+      const instruction = Number(plan.instruction_qty || 0)
+      const status = plan.status || plan.situ
+
+      if (!summary[key]) {
+        summary[key] = {
+          product: key,
+          totalQty: 0,
+          instructionQty: 0,
+          doneQty: 0
+        }
+      }
+
+      summary[key].totalQty += qty
+      summary[key].instructionQty += instruction
+      if (status === '완료' || status === '계획완료') {
+        summary[key].doneQty += qty
+      }
+    }
+
+    for (const key in summary) {
+      summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
+    }
+
+    return Object.values(summary)
+  }
+},
+
+
+  created() {
+    this.getProdPlanList()
+  },
+
+  methods: {
+    async getProdPlanList() {
+      try {
+        const result = await axios.get('/api/prodpln')
+        this.prodPlanList = result.data
+      } catch (err) {
+        console.error('계획 목록 불러오기 실패', err)
       }
     },
-    computed :{
-        count(){
-            return this.prodPlanList.length;
-        }
-
-    },
-    created(){
-        this.getProdPlanList();
-    },
-  
-    methods: {
-      async getProdPlanList() {
-        try {
-          let result = await axios.get('/api/prodpln')
-                                      .catch(err=> console.log(err))
-          this.prodPlanList = result.data
-        } catch (err) {
-          console.error('리스트 불러오기 실패', err)
-        }
-      },
-
-      dateFormat(value, format){
-            return useDateUtils.dateFormat(value,format);
-        },
-  
-      async addPlan() {
-        if (!this.form.prd_no || !this.form.qty || !this.form.st_dt || !this.form.end_dt) {
-          alert('모든 필수 항목을 입력하세요.')
-          return
-        }
-  
-        try {
-          await axios.post('/api/prodpln', {
-            ...this.form,
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          })
-          alert('등록 성공!')
-          this.form = { prd_no: '', qty: '', st_dt: '', end_dt: '', rmk: '' } // 입력값 초기화
-          this.getProdPlanList() // 리스트 새로고침
-        } catch (err) {
-          console.error('등록 실패', err)
-          alert('등록 실패 ㅠㅠ')
-        }
-      },
-
-          add() {
-      alert('등록버튼 누름!');
-    },
-    },
-  
-    mounted() {
-    //   this.getProdPlanList()
-
-    
+    togglePlanSelection(plan) {
+    const index = this.selectedPlans.findIndex(p => p.pdn_pln_no === plan.pdn_pln_no)
+    if (index >= 0) {
+      this.selectedPlans.splice(index, 1)  // 선택 해제
+    } else {
+      this.selectedPlans.push(plan)       // 선택 추가
     }
-  }
-  </script>
-
-
-  <style scoped>
-  h2 {
-    font-weight: bold;
-    text-align: left;
-  }
-  .modal {
-  backdrop-filter: blur(2px);
-}
-.modal-dialog {
-  margin-top: 10%;
-}
-  </style>
-  
-<!-- 
-  <template>
-    <CContainer class="mt-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0">생산 계획 관리</h2>
-        <div class="d-flex gap-2">
-          <CButton color="primary">재고/지시현황</CButton>
-          <CButton color="primary" @click="addPlan">등록</CButton>
-          <CButton color="primary">주문현황</CButton>
-          <CButton color="primary">계획지시</CButton>
-        </div>
-      </div>
-  
-      <CTable bordered align="middle" class="text-center">
-        <CTableHead class="table-light">
-          <CTableRow>
-            <CTableHeaderCell>NO</CTableHeaderCell>
-            <CTableHeaderCell>제품명</CTableHeaderCell>
-            <CTableHeaderCell>계획수량</CTableHeaderCell>
-            <CTableHeaderCell>계획시작일자</CTableHeaderCell>
-            <CTableHeaderCell>계획종료일자</CTableHeaderCell>
-            <CTableHeaderCell>상태</CTableHeaderCell>
-            <CTableHeaderCell>비고</CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-  
-        <CTableBody>
-
-          <CTableRow v-for="(item, index) in prodPlanList" :key="item.pdn_pln_no">
-            <CTableDataCell>{{ index + 1 }}</CTableDataCell>
-            <CTableDataCell>{{ item.prd_no }}</CTableDataCell>
-            <CTableDataCell>{{ item.qty }}</CTableDataCell>
-            <CTableDataCell>{{ dateFormat(item.st_dt, 'yyyy년 MM월 dd일') }}</CTableDataCell>
-            <CTableDataCell>{{ dateFormat(item.end_dt, 'yyyy년 MM월 dd일') }}</CTableDataCell>
-            <CTableDataCell>{{ item.situ }}</CTableDataCell>
-            <CTableDataCell>{{ item.rmk }}</CTableDataCell>
-          </CTableRow>
-  
-
-          <CTableRow>
-            <CTableDataCell>#</CTableDataCell>
-            <CTableDataCell>
-              <CFormInput v-model="form.prd_no" placeholder="제품ID 입력" />
-            </CTableDataCell>
-            <CTableDataCell>
-              <CFormInput v-model.number="form.qty" type="number" placeholder="수량" />
-            </CTableDataCell>
-            <CTableDataCell>
-              <CFormInput v-model="form.st_dt" type="date" />
-            </CTableDataCell>
-            <CTableDataCell>
-              <CFormInput v-model="form.end_dt" type="date" />
-            </CTableDataCell>
-            <CTableDataCell>-</CTableDataCell>
-            <CTableDataCell>
-              <CFormInput v-model="form.rmk" placeholder="비고 입력" />
-            </CTableDataCell>
-          </CTableRow>
-        </CTableBody>
-      </CTable>
-    </CContainer>
-  </template>
-   -->
-
-<!-- 
-   <script>
-import { CContainer, CButton, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CFormInput } from '@coreui/vue'
-import useDateUtils from '@/utils/useDates.js'
-import axios from 'axios'
-
-export default {
-  name: 'ProductionPlan',
-  components: {
-    CContainer, CButton, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CFormInput
+  },  isSelected(plan) {
+    return this.selectedPlans.some(p => p.pdn_pln_no === plan.pdn_pln_no)
   },
-  data() {
-    return {
-      prodPlanList: [],
-      form: {
-        pdn_pln_no: '',
+
+    addPlanRow() {
+      this.planRows.push({
         prd_no: '',
         qty: '',
         st_dt: '',
         end_dt: '',
         rmk: '',
-      }
-    }
-  },
-  computed: {
-    count() {
-      return this.prodPlanList.length;
-    }
-  },
-  created() {
-    this.getProdPlanList()
-  },
-  methods: {
-    async getProdPlanList() {
-      try {
-        let result = await axios.get('/api/prodpln').catch(err => console.log(err))
-        this.prodPlanList = result.data
-      } catch (err) {
-        console.error('리스트 불러오기 실패', err)
-      }
+        status: '계획완료'
+      })
     },
+
+    removePlanRow(index) {
+      this.planRows.splice(index, 1)
+    },
+
     dateFormat(value, format) {
       return useDateUtils.dateFormat(value, format)
     },
+
     async addPlan() {
-      if (!this.form.prd_no || !this.form.qty || !this.form.st_dt || !this.form.end_dt) {
-        alert('모든 필수 항목을 입력하세요.')
+      if (this.planRows.length === 0) {
+        alert('입력된 계획이 없습니다.')
         return
       }
+
       try {
-        await axios.post('/api/prodpln', { ...this.form }, {
-          headers: {
-            'Content-Type': 'application/json',
+        for (let row of this.planRows) {
+          if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
+            alert('필수 항목을 모두 입력하세요.')
+            return
           }
-        })
-        alert('등록 성공!')
-        this.form = { prd_no: '', qty: '', st_dt: '', end_dt: '', rmk: '' }
+
+          await axios.post('/api/prodpln', row, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+        }
+
+        alert('등록 완료!')
+        this.planRows = [
+          {
+            prd_no: '',
+            qty: '',
+            st_dt: '',
+            end_dt: '',
+            rmk: '',
+            status: '계획완료'
+          }
+        ]
         this.getProdPlanList()
       } catch (err) {
         console.error('등록 실패', err)
@@ -323,6 +245,18 @@ export default {
     }
   }
 }
-</script> -->
+</script>
 
-
+<style scoped>
+h2 {
+  font-weight: bold;
+  text-align: left;
+}
+.table td,
+.table th {
+  vertical-align: middle;
+}
+.table-primary {
+  background-color: #cce5ff !important;
+}
+</style>

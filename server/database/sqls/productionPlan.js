@@ -62,7 +62,7 @@ const insertProdPlanDtl =
 //  VALUES (?, ?, ?, ?, ?, ?)`
 
 const findProdPlanIsn =
-`SELECT 
+`SELECT qty
 `
 //제품명, 수량, 지시수량, 미지시수량, 생산완료수량, 지시일자, 종료일자
 
