@@ -1,21 +1,21 @@
-const selectProPlanList2 =
-`SELECT pdn_pln_no
-      , st_dt
-      , end_dt
-      , situ
-      , rmk 
-   FROM pdn_pln
-  ORDER BY p.pdn_pln_no`
+// const selectProPlanList2 =
+// `SELECT pdn_pln_no
+//       , st_dt
+//       , end_dt
+//       , situ
+//       , rmk 
+//    FROM pdn_pln
+//   ORDER BY p.pdn_pln_no`
 
-  const selectProPlanDetailList2 =
-`SELECT pdn_pln_dtl_no
-      , qty
-      , st_dt
-      , end_dt
-      , situ
-      , rmk 
-   FROM pdn_pln
-  ORDER BY p.pdn_pln_no`
+//   const selectProPlanDetailList2 =
+// `SELECT pdn_pln_dtl_no
+//       , qty
+//       , st_dt
+//       , end_dt
+//       , situ
+//       , rmk 
+//    FROM pdn_pln
+//   ORDER BY p.pdn_pln_no`
 
   const selectProPlanList =
   `SELECT p.pdn_pln_no
@@ -34,15 +34,13 @@ const selectProPlanList2 =
 const selectLastPlanCode = `
   SELECT MAX(pdn_pln_no) AS lastCode 
     FROM pdn_pln 
-   WHERE pdn_pln_no 
-    LIKE 'PLN-%';
+   WHERE pdn_pln_no LIKE 'PLN-%';
 `;
 //마지막 상세 계획 번호 조회
 const selectLastDetailCode = `
   SELECT MAX(pdn_pln_dtl_no) AS lastCode 
     FROM pdn_pln_dtl 
-   WHERE pdn_pln_dtl_no 
-    LIKE 'PLD-%';
+   WHERE pdn_pln_dtl_no LIKE 'PLD-%';
 `;
 
 //계획 등록은 2가지 동시 등록 필요함

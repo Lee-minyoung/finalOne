@@ -79,8 +79,8 @@
             <td>{{ item.pdn_pln_no }}</td>
             <td>{{ item.prd_no }}</td>
             <td>{{ item.qty }}</td>
-            <td>{{ dateFormat(item.st_dt, 'yyyy년 MM월 dd일') }}</td>
-            <td>{{ dateFormat(item.end_dt, 'yyyy년 MM월 dd일') }}</td>
+            <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
+            <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
             <td>{{ item.situ }}</td>
             <td>{{ item.rmk }}</td>
           </tr>
@@ -88,8 +88,6 @@
       <!-- </div> -->
       </table>
     </div>
-
-    
   </template>
 
 
@@ -326,3 +324,5 @@ export default {
   }
 }
 </script> -->
+
+
