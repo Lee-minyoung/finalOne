@@ -59,9 +59,10 @@ router.post('/ord',async (req,res)=>{
 }); 
 // 기간별 주문조회  
 router.get('/ord/by-date', async (req, res) => {
-  const { start, end } = req.query;  
-  const result = await salesService.findOrdDate(start, end); // 서비스 함수 호출
-  res.json(result);
+  const { startDate, endDate } = req.query;
+  console.log('start:', startDate, 'end:', endDate);
+  const result = await salesService.findOrdDate(startDate, endDate); // 서비스 함수 호출
+  res.send(result);
 });
 
 
