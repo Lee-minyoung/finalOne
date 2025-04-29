@@ -18,7 +18,7 @@ router.get('/ordAll',async (req,res) =>{
   let ordAll=await salesService.findOrdAllList()
                     .catch(err =>console.log(err)); 
     res.send(ordAll); 
-} )
+}); 
 
 //수주등록 
 router.post('/ord',async (req,res)=>{
