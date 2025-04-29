@@ -50,10 +50,32 @@ const connectionPool = mariadbPromise.createPool({
       return ordList; 
   }
 
+const findOrdAllList=async () =>{
+  let ordAll=await mariadb.query('selectOrdAll')
+                   .catch(err =>console.log(err)); 
+   return ordAll; 
+}
+// 내가 지정한 ? ~ ? 날짜로 주문조회
+const findOrdDate=async (startDate,endDate) =>{
+
+  let ordDate=await mariadb.query('selectOrdDate',[startDate,endDate])
+                    .catch(err =>console.log(err)); 
+  return ordDate; 
+}
+
+
+//제품번호 마지막번호 조회 
+const findLastPrdCode= async () =>{
+  const result=await mariadb.query('selectLastPrd'); 
+  return result[0]; 
+} ; 
 
   module.exports={
     addOrdData, 
     findLastOrdNo,
     findLastDetail, 
     findOrdAll, 
+    findLastPrdCode,
+    findOrdAllList,
+    findOrdDate, 
   }

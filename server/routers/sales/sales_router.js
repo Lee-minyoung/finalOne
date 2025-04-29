@@ -13,6 +13,13 @@ router.get('/ord',async(req,res)=>{
                     .catch(err=>console.log(err)); 
   res.send(ordList); 
 }); 
+//주문 조회 
+router.get('/ordAll',async (req,res) =>{
+  let ordAll=await salesService.findOrdAllList()
+                    .catch(err =>console.log(err)); 
+    res.send(ordAll); 
+} )
+
 //수주등록 
 router.post('/ord',async (req,res)=>{
   //거래처,담당/사원,오더상태   
@@ -23,7 +30,7 @@ router.post('/ord',async (req,res)=>{
      console.log('다음 수주번호',nextOrdNo); //    
     // ordData
     const ord_no=nextOrdNo;    //주문번호 프라이머리키 
-    const vdr_no=2001;  //거래처 번호 임시 
+    const vdr_no=2002;  //거래처 번호 임시 
     const emp_no=1; //직원 번호  로그인시 사원번호 
     const due_dt=new Date(); //날짜 
     const ord_sts='y'; //상태
@@ -33,7 +40,7 @@ router.post('/ord',async (req,res)=>{
     const  lastDetail=await salesService.findLastDetail(); //  
     const  nextOrdDetail=findNextCode(lastDetail);  
     const  ord_dtl_no=nextOrdDetail; 
-    const  prd_no='PRD';
+    const  prd_no='PRD003';//일단 임시로 만듦 
     const  prd_qty=1000;  
 
      //const ord_sts=  일단 null값 
@@ -50,6 +57,13 @@ router.post('/ord',async (req,res)=>{
   }
 
 }); 
+// 기간별 주문조회  
+router.get('/ord/by-date', async (req, res) => {
+  const { start, end } = req.query;  
+  const result = await salesService.findOrdDate(start, end); // 서비스 함수 호출
+  res.json(result);
+});
+
 
 
 

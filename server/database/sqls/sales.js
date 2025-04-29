@@ -22,6 +22,44 @@ const selectOrdList=
          rgt_dt,
          mdf_dt
   FROM ord`; 
+const selectLastPrd=
+`SELECT max(prd_no) as lastCode
+FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
+
+//주문조회  
+const selectOrdAll=
+`SELECT o.ord_no,v.cpy_nm,p.prd_nm,od.prd_qty,o.rgt_dt,o.due_dt    
+FROM ord o JOIN vdr v ON(o.vdr_no=v.vdr_no)
+		   JOIN ord_dtl od ON(o.ord_no=od.ord_no) 		
+		   JOIN  prd p ON(od.prd_no=p.prd_no)`; 
+
+//날짜 기간 별 주문 
+const selectOrdDate=
+`SELECT 
+      DATE(o.due_dt),
+       p.prd_nm,
+	   ps.cur_stk, 
+       p.prd_no,  
+       SUM(od.prd_qty)
+FROM ord o JOIN  ord_dtl od on(o.ord_no=od.ord_no)
+			     JOIN prd  p ON(od.prd_no=p.prd_no)
+           JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
+WHERE DATE(o.due_dt) BETWEEN ? and ?
+GROUP BY DATE(o.due_dt), p.prd_nm`; 
+//특정 날짜 주문 
+const selectOrdDateOne=
+`
+SELECT 
+      DATE(o.due_dt),
+      p.prd_nm,
+	    ps.cur_stk, 
+      p.prd_no,  
+      SUM(od.prd_qty)
+FROM  ord o  JOIN  ord_dtl od on(o.ord_no=od.ord_no)
+			       JOIN prd  p ON(od.prd_no=p.prd_no)
+             JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
+WHERE DATE(o.due_dt)  LIKE ?
+`; 
 
 
  module.exports={
@@ -30,4 +68,8 @@ const selectOrdList=
   selectLastOrdNo,
   selectLastOrdDtlNo, 
   selectOrdList, 
+  selectLastPrd,
+  selectOrdAll,
+  selectOrdDate,
+  selectOrdDateOne, 
  }
