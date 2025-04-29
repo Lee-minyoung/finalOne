@@ -30,7 +30,7 @@ const pool  = mariadb.createPool({
     query : console.log,
     // error 발생 시 처리함수
     error : console.log,
-  } 
+  },
 });
 
 // 프로미스 방식의 명령문
