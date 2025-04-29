@@ -40,6 +40,11 @@ const routes = [
         name: 'prd',
         component: () => import('@/views/prd/prd.vue'),
       },
+      {
+        path: '/SpmInsStd',
+        name: 'SpmInsStd',
+        component: () => import('@/views/qualitys/spmInsStd.vue'),
+      },
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

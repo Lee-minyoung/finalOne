@@ -31,7 +31,7 @@ app.listen(3000, ()=>{
 })
 
 const prodPlanRouter = require('./routers/production/productPlan_router.js');
-
+const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
@@ -45,3 +45,5 @@ app.use('/',prodPlanRouter);
 const deptRouter = require('./routers/dept_router.js');
 app.use('/', deptRouter);
 
+//품질 모듈
+app.use('/',spmInsStd);
