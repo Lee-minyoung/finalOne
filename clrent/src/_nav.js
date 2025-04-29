@@ -52,8 +52,8 @@ export default [
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: '완제품검사기준',
+      to: '/SpmInsStd',
       icon: 'cil-factory',
     },  
     ]
