@@ -3,14 +3,16 @@
 // 다양한 검색조건을 가지는 전체조회
 const selectDeptList =
 `SELECT 
-          dept_no, 
-          dept_nm,
-          dept_mgr,
-          use_yn,
-          crt_dt,
-          mdf_dt
-FROM dept
-WHERE 1=1
+          d.dept_no, 
+          d.dept_nm,
+          d.dept_mgr,
+          d.use_yn,
+          d.crt_dt,
+          d.mdf_dt,
+          e.nm
+FROM dept d LEFT OUTER JOIN emp e
+ON 1=1
+AND d.dept_mgr = e.emp_no
 :searchKeyword
 ORDER BY dept_no`;
 // 검색조건이 들어갈 위치에 :searchKeyword 문자열을 작성 => Strng.replace() 함수와 정규표현식을 이용해서 대체
@@ -18,14 +20,21 @@ ORDER BY dept_no`;
 // 단건 조회
 const selectDeptOne =
 `SELECT 
-          dept_no, 
-          dept_nm,
-          dept_mgr,
-          use_yn,
-          crt_dt,
-          mdf_dt
-FROM dept
-WHERE dept_no = ?`;
+          d.dept_no, 
+          d.dept_nm,
+          d.dept_mgr,
+          d.use_yn,
+          d.crt_dt,
+          d.mdf_dt,
+          e.nm
+FROM dept d LEFT OUTER JOIN emp e
+ON d.dept_mgr = e.emp_no
+WHERE d.dept_no = ?`;
+
+// 추가시 적용되는 부서번호
+const selectDeptNo = 
+`SELECT IFNULL(MAX(dept_no), 90) + 10 AS addDeptNo
+From dept`;
 
 // 추가
 const insertDept =
@@ -50,4 +59,5 @@ module.exports = {
   insertDept,
   updateDept,
   deleteDept,
+  selectDeptNo,
 };
