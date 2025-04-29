@@ -26,8 +26,7 @@
     </tr>
   </thead>
   <tbody>
-  
-    <tr v-for="(item) in ordList">
+    <tr v-for="item in ordList" :key="item.ord_no">
       <th scope="row">{{ item.ord_no }}</th>
       <td>{{item.cpy_nm}}</td>
       <td>{{ item.prd_nm }}</td>

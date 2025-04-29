@@ -9,19 +9,12 @@ export default [
     icon: 'cil-calendar-check',
     visible: true,
     items: [  
-      {
-      component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
-      icon: 'cil-factory',
-    },
     {
       component: 'CNavItem',
       name: ' - 수주',
       to: '/SaleList',
       icon: 'cil-factory',
     }
-    
     ]
   },
   {
@@ -45,7 +38,7 @@ export default [
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
+      name: ' - ????',
       to: '/',
       icon: 'cil-factory',
     },

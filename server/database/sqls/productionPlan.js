@@ -1,31 +1,36 @@
-const selectProPlanList2 =
-`SELECT p.pdn_pln_no
-    , (select prd_nm FROM prd WHERE prd_no = ?)
-    , d.qty
-    , d.st_dt
-    , d.end_dt
-    , d.situ
-    , d.rmk 
- FROM pdn_pln p
-      LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-ORDER BY p.pdn_pln_no`
+const selectProPlanList =
+`SELECT 
+  p.pdn_pln_no,
+  pd.prd_nm,
+  d.qty,
+  d.st_dt,
+  d.end_dt,
+  d.situ,
+  d.rmk
+FROM pdn_pln p
+LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+LEFT OUTER JOIN prd pd ON d.prd_no = pd.prd_no
+ORDER BY p.pdn_pln_no;`
 
 
-  const selectProPlanList =
-  `SELECT p.pdn_pln_no
-      , d.qty
-      , d.st_dt
-      , d.end_dt
-      , d.situ
-      , d.rmk 
-   FROM pdn_pln p
-        LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-  ORDER BY p.pdn_pln_no`
+  // const selectProPlanList =
+  // `SELECT p.pdn_pln_no
+  //     , d.qty
+  //     , d.st_dt
+  //     , d.end_dt
+  //     , d.situ
+  //     , d.rmk 
+  //  FROM pdn_pln p
+  //       LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+  // ORDER BY p.pdn_pln_no`
 
 
   const selectProd =
-  `SELECT prd_no, prd_nm
-  FROM prd`
+`SELECT p.prd_no, p.prd_nm, 
+        IFNULL(CAST(bm.cap AS CHAR), '없음') AS cap
+   FROM prd p
+   LEFT OUTER JOIN bom b ON p.prd_no = b.prd_no
+   LEFT OUTER JOIN bom_mat bm ON b.bom_no = bm.bom_no;` 
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
