@@ -38,7 +38,7 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <deptInfo :dept="selectedDept" v-if="InfoView" @goToForm="msg" @dept-reload="getDeptList"/>
+      <deptInfo v-if="InfoView" :dept="selectedDept" @goToForm="msg" @dept-reload="getDeptList"/>
       <deptForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList"/>
     </div>
   </div>
