@@ -33,12 +33,12 @@ const convertObjToQuery = (target, selected = []) => {
   };
 }
 const queryFormat = function (query, params) {
-    if (!params) return query;
+    //if (!params) return query;
     return query.replace(/\:(\w+)/g, function (txt, key) {
       if (params.hasOwnProperty(key)) {
         return `'${params[key]}'`; // 문자열 따옴표 처리
       }
-      return txt;
+      return '';
     });
   };
 // const queryFormat = function (query, values) {
@@ -66,7 +66,6 @@ const findNextCode = (lastCode, prefix) => {
     const number = parseInt(baseCode.slice(prefix.length)) + 1;
     return prefix + String(number).padStart(3, '0');
 };
-
 
 module.exports = {
     convertObjToAry,
