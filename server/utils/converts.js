@@ -32,6 +32,7 @@ const convertObjToQuery = (target, selected = []) => {
     searchKeyword: queryWhere
   };
 }
+
 const queryFormat = function (query, params) {
     if (!params) return query;
     return query.replace(/\:(\w+)/g, function (txt, key) {
@@ -41,6 +42,7 @@ const queryFormat = function (query, params) {
       return txt;
     });
   };
+
 // const queryFormat = function (query, values) {
 //   // query  : SQL문
 //   // values : 대체값

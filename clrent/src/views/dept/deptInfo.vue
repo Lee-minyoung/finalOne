@@ -27,6 +27,7 @@
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
   </div> <!-- 우측 영역 끝 -->
+</div>
 </template>
 
 <script>
@@ -76,7 +77,7 @@ export default {
     },
     saveDept() { // 저장 버튼 클릭시 실행할 함수
       alert("저장 미구현");
-      editDeptInfo
+      // editDeptInfo
       const dept = this.deptList.find(dept => dept.dept_no === deptNo);
       this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
     }

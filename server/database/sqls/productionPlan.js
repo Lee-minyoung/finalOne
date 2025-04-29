@@ -1,21 +1,15 @@
-// const selectProPlanList2 =
-// `SELECT pdn_pln_no
-//       , st_dt
-//       , end_dt
-//       , situ
-//       , rmk 
-//    FROM pdn_pln
-//   ORDER BY p.pdn_pln_no`
+const selectProPlanList2 =
+`SELECT p.pdn_pln_no
+    , (select prd_nm FROM prd WHERE prd_no = ?)
+    , d.qty
+    , d.st_dt
+    , d.end_dt
+    , d.situ
+    , d.rmk 
+ FROM pdn_pln p
+      LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+ORDER BY p.pdn_pln_no`
 
-//   const selectProPlanDetailList2 =
-// `SELECT pdn_pln_dtl_no
-//       , qty
-//       , st_dt
-//       , end_dt
-//       , situ
-//       , rmk 
-//    FROM pdn_pln
-//   ORDER BY p.pdn_pln_no`
 
   const selectProPlanList =
   `SELECT p.pdn_pln_no
@@ -27,6 +21,11 @@
    FROM pdn_pln p
         LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
   ORDER BY p.pdn_pln_no`
+
+
+  const selectProd =
+  `SELECT prd_no, prd_nm
+  FROM prd`
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
@@ -72,5 +71,7 @@ module.exports = {
     selectLastPlanCode,
     selectLastDetailCode,
     insertProdPlan,
-    insertProdPlanDtl
+    insertProdPlanDtl,
+    selectProd
 }
+

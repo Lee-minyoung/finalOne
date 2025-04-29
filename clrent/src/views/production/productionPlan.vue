@@ -38,26 +38,38 @@
       <tbody>
         <tr v-for="(row, index) in planRows" :key="'new-' + index">
           <td>신규</td>
-          <td><input v-model="row.prd_no" class="form-control" placeholder="제품ID 입력" /></td>
+          <td>
+  <div class="input-group">
+    <input
+      v-model="row.prd_no"
+      class="form-control"
+      placeholder="제품ID 선택"
+      readonly
+    />
+    <button class="btn btn-outline-secondary" @click="openProductModal(index)">
+      🔍
+    </button>
+  </div>
+</td>
           <td><input v-model.number="row.qty" type="number" class="form-control" placeholder="수량" /></td>
           <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
           <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
           <td><input class="form-control" value="계획완료" readonly /></td>
           <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
-          <td>
-            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1">-</button>
-            <button class="btn btn-outline-primary btn-sm" @click="addPlanRow">+</button>
+          <td class="justify-content">
+<button class="btn btn-outline-primary btn-sm" @click="addPlanRow">+  </button>
+<button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1">-</button>
           </td>
         </tr>
 
         <tr
-          v-for="item in prodPlanList" :key="item.pdn_pln_no"
+          v-for="item in prodPlanList" :key="item.pdn_pln_no" 
           @click="togglePlanSelection(item)"
           :class="{ 'table-primary': isSelected(item) }"
           style="cursor: pointer;"
         >
           <td>{{ item.pdn_pln_no }}</td>
-          <td>{{ item.prd_no }}</td>
+          <td>{{ (item.prd_no) }}</td>
           <td>{{ item.qty }}</td>
           <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
@@ -119,12 +131,50 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeInstructionModal">취소</button>
           <button class="btn btn-primary" @click="submitInstructions">지시 등록</button>
+          <button class="btn btn-secondary" @click="closeInstructionModal">취소</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- 재품 모달 -->
+  <div v-if="showProductModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index: 1051;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">제품 선택</h5>
+        <button type="button" class="btn-close" @click="showProductModal = false"></button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="text"
+          class="form-control mb-2"
+          placeholder="제품명 검색"
+          v-model="productSearch"
+        />
+        <table class="table table-sm table-bordered text-center">
+          <thead class="table-light">
+            <tr>
+              <th>제품ID</th>
+              <th>제품명</th>
+              <th>선택</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="product in filteredProductList" :key="product.prd_no">
+              <td>{{ product.prd_no }}</td>
+              <td>{{ product.prd_name }}</td>
+              <td>
+                <button class="btn btn-sm btn-primary" @click="selectProduct(product)">선택</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -136,11 +186,16 @@ export default {
     return {
       prodPlanList: [],
       selectedPlans: [],
+      showProductModal: false,
+      selectedPlanIndex: null, // 입력중인 행 index 저장
+      productList: [], // 모달에 표시할 제품 리스트
+      productSearch: '', // 검색어
+      showInstructionModal: false,
+      instructionRows: [],
       planRows: [
         { prd_no: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
-      showInstructionModal: false,
-      instructionRows: []
+
     }
   },
   computed: {
@@ -164,6 +219,11 @@ export default {
         summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
       }
       return Object.values(summary)
+    },
+    filteredProductList() {
+    return this.productList.filter(p =>
+      p.prd_name.includes(this.productSearch)
+    )
     }
   },
   created() {
@@ -186,6 +246,24 @@ export default {
         this.selectedPlans.push(plan)
       }
     },
+    openProductModal(index) {
+    this.selectedPlanIndex = index
+    this.showProductModal = true
+
+    // 제품 리스트 불러오기 (한 번만 로딩하고 캐시해도 됨)
+    axios.get('/api/prodpln/prdList')  // API 경로는 실제 프로젝트에 맞게
+      .then(res => {
+        this.productList = res.data
+      })
+      .catch(err => {
+        console.error('제품 목록 불러오기 실패', err)
+      })
+  },
+
+  selectProduct(product) {
+    this.planRows[this.selectedPlanIndex].prd_no = product.prd_no
+    this.showProductModal = false
+  },
     isSelected(plan) {
       return this.selectedPlans.some(p => p.pdn_pln_no === plan.pdn_pln_no)
     },

@@ -7,7 +7,12 @@ const findProdPlanAll = async () => {
                             .catch(err=> console.log(err));
     return prodPlanList;
 }
-
+//제품 검색
+const findProd = async () => {
+  let prod = await mariadb.query("selectProd")
+                          .catch(err=> console.log(err));
+  return prod;
+}
 
 // 생산계획 마지막 번호 조회
 const findLastPlanCode = async () => {
@@ -24,7 +29,7 @@ const findLastDetailCode = async () => {
 //등록은 2가지 테이블에 등록진행해야함
 // 트랜잭션과 프로시저를 사용
 const addProdPlanData = async (planData, detailData) => {
-  const conn = await mariadb.getConnection();  // ✨ conn 받아오기
+  const conn = await mariadb.getConnection();  // conn 받아오기
 
   try {
     await conn.beginTransaction();
@@ -52,4 +57,5 @@ module.exports ={
     addProdPlanData,
     findLastPlanCode,
     findLastDetailCode,
+    findProd
 }

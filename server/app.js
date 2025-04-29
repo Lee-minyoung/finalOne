@@ -31,7 +31,7 @@ app.listen(3000, ()=>{
 })
 
 const prodPlanRouter = require('./routers/production/productPlan_router.js');
-
+const deptRouter = require('./routers/dept_router.js');
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
@@ -39,9 +39,9 @@ app.get('/', (req, res)=>{
 
 
 // 라우터 모듈 등록
+//생산 라우팅
 app.use('/',prodPlanRouter);
 
 // 부서 라우팅
-const deptRouter = require('./routers/dept_router.js');
 app.use('/', deptRouter);
 
