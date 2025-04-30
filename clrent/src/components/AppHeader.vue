@@ -56,3 +56,7 @@ const currentPathLabel = computed(() => {
   return route.path.replace('/', '').replace(/-/g, ' ') || '대시보드'
 })
 </script>
+
+
+
+// 셀렉트 유저 네임 불러오기 

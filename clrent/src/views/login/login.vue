@@ -1,121 +1,120 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card p-4 shadow" style="width: 400px;">
-      <div class="card-body">
-        <h1 class="text-center mb-4">Login</h1>
-        <p class="text-muted text-center">Sign In to your account</p>
-        <form>
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-person"></i>
-              </span>
-              <input
-                type="text"
-                id="username"
-                class="form-control"
-                placeholder="Username"
-                autocomplete="username"
-              />
-            </div>
-          </div>
-          <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-lock"></i>
-              </span>
-              <input
-                type="password"
-                id="password"
-                class="form-control"
-                placeholder="Password"
-                autocomplete="current-password"
-              />
-            </div>
-          </div>
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-primary px-4">Login</button>
-            <button type="button" class="btn btn-link">Forgot password?</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <!-- 전체 화면을 수직 및 수평으로 중앙 정렬 -->
+  <div class="wrapper min-vh-100 d-flex flex-row align-items-center">
+    <CContainer>
+      <!-- 중앙 정렬된 행 -->
+      <CRow class="justify-content-center">
+        <!-- 화면 너비의 8칸을 차지하는 열 -->
+        <CCol :md="8">
+          <CCardGroup>
+            <!-- 로그인 카드 -->
+            <CCard class="p-4">
+              <CCardBody>
+                <CForm>
+                  <!-- 로그인 제목 -->
+                  <h1>Login 밥먹고하시조</h1>
+                  <!-- 부제목 -->
+                  <p class="text-body-secondary">Sign In to your account</p>
+                  <!-- 사용자명 입력 필드 -->
+                  <CInputGroup class="mb-3">
+                    <!-- 사용자 아이콘 -->
+                    <CInputGroupText>
+                      <CIcon icon="cil-user" />
+                    </CInputGroupText>
+                    <!-- 사용자명 입력 -->
+                    <CFormInput
+                      v-model="loginInfo.emp_no"
+                      placeholder="사원번호를 입력하세요"
+                      autocomplete="emp_no"
+                    />
+                  </CInputGroup>
+                  <!-- 비밀번호 입력 필드 -->
+                  <CInputGroup class="mb-4">
+                    <!-- 비밀번호 아이콘 -->
+                    <CInputGroupText>
+                      <CIcon icon="cil-lock-locked" />
+                    </CInputGroupText>
+                    <!-- 비밀번호 입력 -->
+                    <CFormInput
+                      v-model="loginInfo.pwd"
+                      type="password"
+                      placeholder="Password"
+                      autocomplete="current-password"
+                    />
+                  </CInputGroup>
+                  <!-- 버튼 그룹 -->
+                  <CRow>
+                    <!-- 로그인 버튼 -->
+                    <CCol :xs="6">
+                      <CButton
+                        color="primary"
+                        class="px-4"
+                        @click="userLogin"
+                      >
+                        Login
+                      </CButton>
+                    </CCol>
+                    <!-- 비밀번호 찾기 버튼 -->
+                    <CCol :xs="6" class="text-right">
+                      <CButton color="link" class="px-0">
+                        Forgot password?
+                      </CButton>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+      </CRow>
+    </CContainer>
   </div>
 </template>
 
 <script>
-export default {
-  name: "Login",
-};
-</script>
-
-<style>
-/* Optional: Add custom styles if needed */
-</style>
-
-
-
-<!-- 
-<template>
-  <div class="container">
-    <form>
-      <div class="form-group">
-        <label for="emp_no">사원번호:</label>
-        <input type="text" class="form-control" id="emp_no" v-model="loginInfo.emp_no" />
-      </div>
-      <div class="form-group">
-        <label for="pwd">비밀번호:</label>
-        <input type="password" class="form-control" id="pwd" v-model="loginInfo.pwd" />
-      </div>
-      <button type="button" class="btn btn-info" v-on:click="userLogin">로그인</button>
-    </form>
-  </div>
-</template>
-
-<script>
-import axios from "axios";
-import { useUserStore } from "../../stores/index";
-import { mapActions } from "pinia";
+import axios from "axios"; // 서버와 통신하기 위한 Axios 라이브러리
+import { useEmpStore } from "../../stores"; // Pinia 저장소 가져오기
+import { mapActions } from "pinia"; // Pinia의 actions를 매핑하기 위한 헬퍼 함수
 
 export default {
   data() {
     return {
+      // 로그인 정보를 저장하는 객체
       loginInfo: {
-        emp_no: "",
-        pwd: "",
+        emp_no: "", // 사용자명 (사원번호)
+        pwd: "", // 비밀번호
       },
     };
   },
   methods: {
-    ...mapActions(useUserStore, ["addLoginInfo"]),
+    // Pinia 저장소의 actions를 가져옴
+    ...mapActions(useEmpStore, ["addLoginId"]),
     async userLogin() {
       try {
-        // 입력값 검증
-        if (!this.loginInfo.emp_no || !this.loginInfo.pwd) {
-          alert("사원번호와 비밀번호를 입력하세요.");
-          return;
-        }
-
-        console.log("Sending login data:", this.loginInfo); // 디버깅용 로그
+        // 서버로 로그인 요청
         const result = await axios.post(`/api/login`, this.loginInfo);
-        const loginRes = result.data;
+        console.log(result); // 서버 응답 로그 출력
+
+        const loginRes = result.data; // 서버 응답 데이터
+        console.log(loginRes); // 응답 데이터 로그 출력
 
         if (loginRes.result) {
-          this.addLoginInfo({
-            emp_no: loginRes.emp_no,
-            nm: loginRes.nm,
-          });
+          // 로그인 성공 시 Pinia 저장소에 사용자 정보 저장
+          this.addLoginId(loginRes.id);
+          alert("사랑합니다!.");
+          // 홈 페이지로 이동
           this.$router.push({ name: "Home" });
+          
         } else {
+          // 로그인 실패 시 메시지 표시
           alert(loginRes.message);
         }
       } catch (err) {
+        // 서버 요청 중 오류 발생 시 처리
         console.error("Login error:", err);
         alert("서버 오류가 발생했습니다.");
       }
     },
   },
 };
-</script> -->
+</script>

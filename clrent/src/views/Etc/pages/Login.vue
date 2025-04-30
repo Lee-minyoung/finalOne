@@ -1,74 +1,64 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card p-4 shadow" style="width: 400px;">
-      <div class="card-body">
-        <form @submit.prevent="handleLogin">
-          <h1 class="text-center mb-4">Login</h1>
-          <div class="input-group mb-3">
-            <span class="input-group-text">
-              <i class="bi bi-person"></i>
-            </span>
-            <input
-              v-model="loginInfo.username"
-              type="text"
-              class="form-control"
-              placeholder="Username"
-              autocomplete="username"
-            />
-          </div>
-          <div class="input-group mb-4">
-            <span class="input-group-text">
-              <i class="bi bi-lock"></i>
-            </span>
-            <input
-              v-model="loginInfo.password"
-              type="password"
-              class="form-control"
-              placeholder="Password"
-              autocomplete="current-password"
-            />
-          </div>
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary">
-              Login
-            </button>
-            <button type="button" class="btn btn-link text-center">
-              Forgot password?
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <div class="wrapper min-vh-100 d-flex flex-row align-items-center">
+    <CContainer>
+      <CRow class="justify-content-center">
+        <CCol :md="8">
+          <CCardGroup>
+            <CCard class="p-4">
+              <CCardBody>
+                <CForm>
+                  <h1>Login</h1>
+                  <p class="text-body-secondary">Sign In to your account</p>
+                  <CInputGroup class="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon="cil-user" />
+                    </CInputGroupText>
+                    <CFormInput
+                      placeholder="Username"
+                      autocomplete="username"
+                    />
+                  </CInputGroup>
+                  <CInputGroup class="mb-4">
+                    <CInputGroupText>
+                      <CIcon icon="cil-lock-locked" />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="password"
+                      placeholder="Password"
+                      autocomplete="current-password"
+                    />
+                  </CInputGroup>
+                  <CRow>
+                    <CCol :xs="6">
+                      <CButton color="primary" class="px-4"> Login </CButton>
+                    </CCol>
+                    <CCol :xs="6" class="text-right">
+                      <CButton color="link" class="px-0">
+                        Forgot password?
+                      </CButton>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              </CCardBody>
+            </CCard>
+            <CCard class="text-white bg-primary py-5" style="width: 44%">
+              <CCardBody class="text-center">
+                <div>
+                  <h2>Sign up</h2>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                    sed do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <CButton color="light" variant="outline" class="mt-3">
+                    Register Now!
+                  </CButton>
+                </div>
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+      </CRow>
+    </CContainer>
   </div>
 </template>
-
-<script>
-import axios from "axios";
-
-export default {
-  data() {
-    return {
-      loginInfo: {
-        emp_no: "",
-        pwd: "",
-      },
-    };
-  },
-  methods: {
-    async handleLogin() {
-      try {
-        const response = await axios.get("http://localhost:3000/login", this.loginInfo);
-        alert(`환영합니다! ${response.data.user.name}`);
-        // 로그인 성공 시 페이지 이동
-        this.$router.push({ name: "dashboard" });
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          alert("아이디 또는 비밀번호가 올바르지 않습니다.");
-        } else {
-          alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-        }
-      }
-    },
-  },
-};
-</script>

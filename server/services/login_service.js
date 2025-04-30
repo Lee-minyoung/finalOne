@@ -4,28 +4,69 @@
 // 5회 이상 로그인 실패시 계정 장금 
 
 
+
 const mariadb = require("../database/mapper.js");
+ const { convertObjToAry } = require('../utils/converts.js');
+ const loginByEmpNo = async (loginInfo) => {  
+  console.log("Received loginInfo:", loginInfo);
+  let list = await mariadb.query("findEmpInfoByEmpNo", loginInfo.emp_no);
+  console.log("Query result:", list);
 
-// 사번과 비밀번호로 사용자 인증
-const loginEmp = async (emp_no, pwd) => {
-  try {
-    // SQL Mapper의 "login" 쿼리 실행
-    const result = await mariadb.query("login", [emp_no, pwd]);
-    
-    // 일치하는 사원번호가 없으면 null 반환 (로그인 실패)
-    if (result.length === 0) return null;
-    
-    // 일치하는 사용자가 있으면 첫 번째 결과(사번 정보)를 반환(로그인 성공)
-    return result[0];
-  } catch (err) {
-    console.error("Error during login:", err);
-    throw new Error("로그인 처리 중 문제가 발생했습니다.");
+  let empInfo = null;
+  if(list.length == 1){
+    // 해당 사원의 정보가 존재하는 경우
+    let info = list[0];
+
+    if(info.pwd == loginInfo.pwd){
+        // 테이블에 등록된 사원의 비밀번호와 입력받은 비밀번호가 같은 경우 
+        empInfo = info;
+      
+    }
   }
-};
 
-module.exports = {
-  loginEmp,
-};
+ 
+  return {
+    result : empInfo != null,
+    empInfo,
+  };
+ };
+ const findEmpInfoByEmpNo = async (emp_no) => {
+  let list = await mariadb.query("selectEmpOne", emp_no);
+  let info = list[0];
+  return info;
+ }
+
+ module.exports = {
+  loginByEmpNo,
+  findEmpInfoByEmpNo,
+
+ };
+
+
+
+
+// const mariadb = require("../database/mapper.js");
+
+// // 사번과 비밀번호로 사용자 인증
+// const loginEmp = async (emp_no, pwd) => {
+//   try {
+//     // SQL Mapper의 "login" 쿼리 실행
+//     const result = await mariadb.query("login", [emp_no, pwd]);
+    
+//     // 일치하는 사원번호가 없으면 null 반환 (로그인 실패)
+//     if (result.length === 0) return null;
+    
+//     // 일치하는 사용자가 있으면 첫 번째 결과(사번 정보)를 반환(로그인 성공)
+//     return result[0];
+//   } catch (err) {
+//     console.error("Error during login:", err);
+//     throw new Error("로그인 처리 중 문제가 발생했습니다.");
+//   }
+// };
+
+// module.exports = {
+//   loginEmp,
+// };
 
 
 
