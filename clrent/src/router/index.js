@@ -25,6 +25,11 @@ const routes = [
         name:'SaleList',
         component:()=> import('@/views/sales/saleList.vue'),
       },
+      {
+        path:'/inventoryCheck',
+        name:'InventoryCheck',
+        component:()=> import('@/views/inventory/inventoryCheck.vue'),
+      }
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

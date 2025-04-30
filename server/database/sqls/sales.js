@@ -60,7 +60,14 @@ FROM  ord o  JOIN  ord_dtl od on(o.ord_no=od.ord_no)
              JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
 WHERE DATE(o.due_dt)  LIKE ?
 `; 
-
+//업체코드로 검색 
+const searchVdrNo=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
+FROM vdr 
+WHERE vdr_no= ?`; 
+//업체명으로 검색 
+const searchVdrNm=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
+FROM vdr 
+WHERE cpy_nm LIKE'%?%'`; 
 
  module.exports={
   insertOrd,
@@ -72,4 +79,6 @@ WHERE DATE(o.due_dt)  LIKE ?
   selectOrdAll,
   selectOrdDate,
   selectOrdDateOne, 
+  searchVdrNo, 
+  searchVdrNm, 
  }
