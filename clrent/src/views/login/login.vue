@@ -1,73 +1,73 @@
 <template>
   <!-- 전체 화면을 수직 및 수평으로 중앙 정렬 -->
-  <div class="wrapper min-vh-100 d-flex flex-row align-items-center">
-    <CContainer>
+  <div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="container">
       <!-- 중앙 정렬된 행 -->
-      <CRow class="justify-content-center">
+      <div class="row justify-content-center">
         <!-- 화면 너비의 8칸을 차지하는 열 -->
-        <CCol :md="8">
-          <CCardGroup>
-            <!-- 로그인 카드 -->
-            <CCard class="p-4">
-              <CCardBody>
-                <CForm>
-                  <!-- 로그인 제목 -->
-                  <h1>Login 밥먹고하시조</h1>
-                  <!-- 부제목 -->
-                  <p class="text-body-secondary">Sign In to your account</p>
-                  <!-- 사용자명 입력 필드 -->
-                  <CInputGroup class="mb-3">
-                    <!-- 사용자 아이콘 -->
-                    <CInputGroupText>
-                      <CIcon icon="cil-user" />
-                    </CInputGroupText>
-                    <!-- 사용자명 입력 -->
-                    <CFormInput
-                      v-model="loginInfo.emp_no"
-                      placeholder="사원번호를 입력하세요"
-                      autocomplete="emp_no"
-                    />
-                  </CInputGroup>
-                  <!-- 비밀번호 입력 필드 -->
-                  <CInputGroup class="mb-4">
-                    <!-- 비밀번호 아이콘 -->
-                    <CInputGroupText>
-                      <CIcon icon="cil-lock-locked" />
-                    </CInputGroupText>
-                    <!-- 비밀번호 입력 -->
-                    <CFormInput
-                      v-model="loginInfo.pwd"
-                      type="password"
-                      placeholder="Password"
-                      autocomplete="current-password"
-                    />
-                  </CInputGroup>
-                  <!-- 버튼 그룹 -->
-                  <CRow>
-                    <!-- 로그인 버튼 -->
-                    <CCol :xs="6">
-                      <CButton
-                        color="primary"
-                        class="px-4"
-                        @click="userLogin"
-                      >
-                        Login
-                      </CButton>
-                    </CCol>
-                    <!-- 비밀번호 찾기 버튼 -->
-                    <CCol :xs="6" class="text-right">
-                      <CButton color="link" class="px-0">
-                        Forgot password?
-                      </CButton>
-                    </CCol>
-                  </CRow>
-                </CForm>
-              </CCardBody>
-            </CCard>
-          </CCardGroup>
-        </CCol>
-      </CRow>
-    </CContainer>
+        <div class="col-md-8">
+          <div class="card shadow p-4">
+            <div class="card-body">
+              <form>
+                <!-- 로그인 제목 -->
+                <h1 class="text-center">밥먹고하시조</h1>
+                <!-- 부제목 -->
+                <p class="text-muted text-center">Sign In to your account</p>
+                <!-- 사용자명 입력 필드 -->
+                <div class="input-group mb-3">
+                  <!-- 사용자 아이콘 -->
+                  <span class="input-group-text">
+                    <i class="bi bi-person"></i>
+                  </span>
+                  <!-- 사용자명 입력 -->
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="loginInfo.emp_no"
+                    placeholder="사원번호"
+                    autocomplete="emp_no"
+                  />
+                </div>
+                <!-- 비밀번호 입력 필드 -->
+                <div class="input-group mb-4">
+                  <!-- 비밀번호 아이콘 -->
+                  <span class="input-group-text">
+                    <i class="bi bi-lock"></i>
+                  </span>
+                  <!-- 비밀번호 입력 -->
+                  <input
+                    type="password"
+                    class="form-control"
+                    v-model="loginInfo.pwd"
+                    placeholder="비밀번호"
+                    autocomplete="current-password"
+                  />
+                </div>
+                <!-- 버튼 그룹 -->
+                <div class="row">
+                  <!-- 로그인 버튼 -->
+                  <div class="col-6">
+                    <button
+                      type="button"
+                      class="btn btn-primary w-100"
+                      @click="userLogin"
+                    >
+                      로그인
+                    </button>
+                  </div>
+                  <!-- 비밀번호 찾기 버튼 -->
+                  <div class="col-6 text-end">
+                    <button type="button" class="btn btn-link px-0">
+                      비밀번호 찾기
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -101,10 +101,9 @@ export default {
         if (loginRes.result) {
           // 로그인 성공 시 Pinia 저장소에 사용자 정보 저장
           this.addLoginId(loginRes.id);
-          alert("사랑합니다!.");
+          alert("사랑합니다!"); // 로그인 성공 메시지
           // 홈 페이지로 이동
           this.$router.push({ name: "Home" });
-          
         } else {
           // 로그인 실패 시 메시지 표시
           alert(loginRes.message);
