@@ -15,9 +15,14 @@
 // Table : emp
 // id를 기준으로 정보 조회 => 로그인
 const findEmpInfoByEmpNo =
-`SELECT emp_no
-        , pwd
-FROM emp 
+`SELECT e.emp_no
+        , e.pwd
+        , e.nm
+        , e.dept_no
+        , e.pst_no
+        , p.pst_nm
+FROM emp e LEFT OUTER JOIN pst p
+ON e.pst_no = p.pst_no
 WHERE emp_no = ?`;
 
 

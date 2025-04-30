@@ -20,13 +20,8 @@
                     <i class="bi bi-person"></i>
                   </span>
                   <!-- 사용자명 입력 -->
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="loginInfo.emp_no"
-                    placeholder="사원번호"
-                    autocomplete="emp_no"
-                  />
+                  <input type="text" class="form-control" v-model="loginInfo.emp_no" placeholder="사원번호"
+                    autocomplete="emp_no" />
                 </div>
                 <!-- 비밀번호 입력 필드 -->
                 <div class="input-group mb-4">
@@ -35,23 +30,14 @@
                     <i class="bi bi-lock"></i>
                   </span>
                   <!-- 비밀번호 입력 -->
-                  <input
-                    type="password"
-                    class="form-control"
-                    v-model="loginInfo.pwd"
-                    placeholder="비밀번호"
-                    autocomplete="current-password"
-                  />
+                  <input type="password" class="form-control" v-model="loginInfo.pwd" placeholder="비밀번호"
+                    autocomplete="current-password" />
                 </div>
                 <!-- 버튼 그룹 -->
                 <div class="row">
                   <!-- 로그인 버튼 -->
                   <div class="col-6">
-                    <button
-                      type="button"
-                      class="btn btn-primary w-100"
-                      @click="userLogin"
-                    >
+                    <button type="button" class="btn btn-primary w-100" @click="userLogin">
                       로그인
                     </button>
                   </div>
@@ -73,7 +59,7 @@
 
 <script>
 import axios from "axios"; // 서버와 통신하기 위한 Axios 라이브러리
-import { useEmpStore } from "../../stores"; // Pinia 저장소 가져오기
+import { useEmpStore } from "../../stores/empStore"; // Pinia 저장소 가져오기
 import { mapActions } from "pinia"; // Pinia의 actions를 매핑하기 위한 헬퍼 함수
 
 export default {
@@ -88,7 +74,7 @@ export default {
   },
   methods: {
     // Pinia 저장소의 actions를 가져옴
-    ...mapActions(useEmpStore, ["addLoginId"]),
+    ...mapActions(useEmpStore, ["setLoginInfo"]),
     async userLogin() {
       try {
         // 서버로 로그인 요청
@@ -100,8 +86,14 @@ export default {
 
         if (loginRes.result) {
           // 로그인 성공 시 Pinia 저장소에 사용자 정보 저장
-          this.addLoginId(loginRes.id);
-          alert("사랑합니다!"); // 로그인 성공 메시지
+          this.setLoginInfo({
+            emp_no: loginRes.emp_no,
+            nm: loginRes.nm, // 서버에서 반환된 사용자 이름
+            pst_nm: loginRes.pst_nm, // 서버에서 반환된 직책 이름
+            pst_no: loginRes.pst_no, // 서버에서 반환된 직책 번호
+            dept_no: loginRes.dept_no, // 서버에서 반환된 부서 번호
+          });
+          alert("사랑합니다!");
           // 홈 페이지로 이동
           this.$router.push({ name: "Home" });
         } else {

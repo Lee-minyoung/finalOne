@@ -1,3 +1,30 @@
+<script setup>
+import { computed } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useColorModes } from "@coreui/vue";
+import { useRoute } from "vue-router";
+import { useEmpStore } from "@/stores/empStore.js"; // Pinia 저장소 가져오기
+
+const sidebar = useSidebarStore();
+const { colorMode, setColorMode } = useColorModes("coreui-free-vue-admin-template-theme");
+const route = useRoute();
+
+// Pinia 저장소에서 로그인한 사용자 정보 가져오기
+const empStore = useEmpStore();
+const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
+const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
+
+// 사이드바 토글
+const toggleSidebar = () => {
+  sidebar.toggleVisible();
+};
+
+// 현재 위치 표시용
+const currentPathLabel = computed(() => {
+  return route.path.replace("/", "").replace(/-/g, " ") || "대시보드";
+});
+</script>
+
 <template>
   <header class="bg-body border-bottom shadow-sm sticky-top z-3">
     <div class="navbar px-3 py-2 d-flex justify-content-between align-items-start flex-wrap">
@@ -7,7 +34,7 @@
           <button class="btn btn-outline-secondary btn-sm" @click="toggleSidebar">
             <i class="bi bi-list"></i>
           </button>
-          <span class="fw-bold fs-4" >{{ employeeName }}님 환영합니다</span>
+          <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}환영합니다</span>
         </div>
         <div class="mt-3 ms-5 text-secondary" style="font-size: 1rem;">
           현재 위치: {{ currentPathLabel }}
@@ -35,28 +62,3 @@
     </div>
   </header>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue'
-import { useSidebarStore } from '@/stores/sidebar.js'
-import { useColorModes } from '@coreui/vue'
-import { useRoute } from 'vue-router'
-
-const sidebar = useSidebarStore()
-const employeeName = ref('홍길동')
-const { colorMode, setColorMode } = useColorModes('coreui-free-vue-admin-template-theme')
-const route = useRoute()
-
-const toggleSidebar = () => {
-  sidebar.toggleVisible()
-}
-
-// 현재 위치 표시용
-const currentPathLabel = computed(() => {
-  return route.path.replace('/', '').replace(/-/g, ' ') || '대시보드'
-})
-</script>
-
-
-
-// 셀렉트 유저 네임 불러오기 

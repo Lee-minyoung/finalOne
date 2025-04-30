@@ -17,7 +17,11 @@ router.post('/login', async (req, res) => {
       if (err) throw err;
       res.send({
         result: true,
-        id: resInfo.empInfo.emp_no
+        emp_no: resInfo.empInfo.emp_no,
+        nm: resInfo.empInfo.nm,
+        pst_no: resInfo.empInfo.pst_no,
+        pst_nm: resInfo.empInfo.pst_nm, 
+        dept_no: resInfo.empInfo.dept_no,
       });
     })
   } else { // 실패한 경우
