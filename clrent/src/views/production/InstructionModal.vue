@@ -41,21 +41,29 @@
   </template>
   
   <script>
-  export default {
-    props: {
-      instructionRows: Array,
-      summaryRows: Array
-    },
-    data() {
-      return {
-        rows: JSON.parse(JSON.stringify(this.instructionRows)) // deep copy
-      }
-    },
-    watch: {
-      instructionRows(newVal) {
-        this.rows = JSON.parse(JSON.stringify(newVal))
-      }
+export default {
+  // 부모 컴포넌트로부터 전달받는 데이터
+  props: {
+    instructionRows: Array,  // 지시 목록 (원본 데이터)
+    summaryRows: Array       // 요약 데이터 (아직 사용 안함일 가능성)
+  },
+
+  // 컴포넌트의 내부 상태 (data)
+  data() {
+    return {
+      // instructionRows를 깊은 복사하여 내부 rows로 사용
+      // 원본 데이터가 변하지 않도록 분리
+      rows: JSON.parse(JSON.stringify(this.instructionRows))
+    }
+  },
+
+  // props 변경 감지: 부모가 instructionRows를 새로 넘겨줄 때 동기화
+  watch: {
+    instructionRows(newVal) {
+      // 새로 받은 값으로 내부 rows 업데이트 (역시 deep copy)
+      this.rows = JSON.parse(JSON.stringify(newVal))
     }
   }
+}
   </script>
   

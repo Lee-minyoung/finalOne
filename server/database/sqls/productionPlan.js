@@ -65,10 +65,9 @@ const insertProdPlanDtl =
 // `INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, situ, rmk)
 //  VALUES (?, ?, ?, ?, ?, ?)`
 
-const findProdPlanIsn =
-`SELECT qty
-`
-//제품명, 수량, 지시수량, 미지시수량, 생산완료수량, 지시일자, 종료일자
+
+//생산 지시! ==> 출고요청서, 지시번호, 지시세부번호
+//출고요청서 [생산지시번호, 제품번호, 수량, 요청자] [pdn_ord_no, prd_no, 요청수량, 요청자]
 
 
 module.exports = {

@@ -39,14 +39,9 @@
         <p>부서를 선택하세요!</p>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
-<<<<<<< HEAD
-  </div> <!-- 우측 영역 끝 -->
-</div>
-=======
-  </div>
->>>>>>> fad85146d5183ae1917d222bfcc09019c814f5d3
-</template>
 
+  </div> <!-- 우측 영역 끝 -->
+</template>
 <script>
 // AJAX 모듈
 import axios from 'axios';

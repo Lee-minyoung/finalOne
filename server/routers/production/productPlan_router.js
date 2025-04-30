@@ -16,9 +16,6 @@ router.get('/prodpln/prdList', async (req,res)=>{
   res.send(prodList)
 })
 
-const prdName = 
-
-
 router.post('/prodpln', async (req, res) => {
   try {
     // 1. 마지막 코드 조회
@@ -37,7 +34,7 @@ router.post('/prodpln', async (req, res) => {
 
     res.status(200).json({ message: '등록 완료', code: nextPlanCode });
   } catch (err) {
-      console.error("🔥 등록 중 에러:", err);
+      console.error("등록 중 에러:", err);
       res.status(500).json({ message: '등록 실패', error: err.message });
   }
 });

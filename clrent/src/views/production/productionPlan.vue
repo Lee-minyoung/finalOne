@@ -69,7 +69,7 @@
         </tr>
       </tbody>
     </table>
-
+<!-- :는 바인당 // @는 온클릭-->
     <ProductSelectModal
       v-if="showProductModal"
       :prodList="prodList"
@@ -105,7 +105,7 @@ export default {
         { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
       selectedPlans: [], // 체크한 계획 항목들 (지시 등록용)
-      showProductModal: false, // 제품 선택 모달 열림 여부
+      showProductModal: true, // 제품 선택 모달 열림 여부
       showInstructionModal: false, // 지시 등록 모달 열림 여부
       prodList: [], // 제품 리스트 (모달에서 사용)
       instructionRows: [] // 지시 등록용 행들
@@ -118,37 +118,38 @@ export default {
   },
 
   computed: {
-    // 선택된 계획들에 대해 제품별로 요약된 정보 제공
-    planSummaryByProduct() {
-      const summary = {}
-      for (const plan of this.selectedPlans) {
-        const key = plan.prd_no
-        const qty = Number(plan.qty || 0)
-        const instruction = Number(plan.instruction_qty || 0)
-        const status = plan.status || plan.situ
+    // 계획 지시에 요약된 데이터를 보여줌
+    // 선택된 계획들에 대해 제품별로 요약된 정보 제공 
+    // planSummaryByProduct() {
+    //   const summary = {}
+    //   for (const plan of this.selectedPlans) {
+    //     const key = plan.prd_no
+    //     const qty = Number(plan.qty || 0)
+    //     const instruction = Number(plan.instruction_qty || 0)
+    //     const status = plan.status || plan.situ
 
-        // 제품별 데이터 초기화
-        if (!summary[key]) {
-          summary[key] = { product: key, totalQty: 0, instructionQty: 0, doneQty: 0 }
-        }
+    //     // 제품별 데이터 초기화
+    //     if (!summary[key]) {
+    //       summary[key] = { product: key, totalQty: 0, instructionQty: 0, doneQty: 0 }
+    //     }
 
-        // 수량 누적
-        summary[key].totalQty += qty
-        summary[key].instructionQty += instruction
+    //     // 수량 누적
+    //     summary[key].totalQty += qty
+    //     summary[key].instructionQty += instruction
 
-        // 완료된 수량 누적
-        if (status === '완료' || status === '계획완료') {
-          summary[key].doneQty += qty
-        }
-      }
+    //     // 완료된 수량 누적
+    //     if (status === '완료' || status === '계획완료') {
+    //       summary[key].doneQty += qty
+    //     }
+    //   }
 
-      // 남은 수량 계산
-      for (const key in summary) {
-        summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
-      }
+    //   // 남은 수량 계산
+    //   for (const key in summary) {
+    //     summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
+    //   }
 
-      return Object.values(summary)
-    }
+    //   return Object.values(summary)
+    // }
   },
 
   methods: {
