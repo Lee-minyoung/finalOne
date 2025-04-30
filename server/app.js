@@ -45,3 +45,6 @@ app.use('/',prodPlanRouter);
 const deptRouter = require('./routers/dept_router.js');
 app.use('/', deptRouter);
 
+// 사원 라우팅
+const empRouter = require('./routers/emp_router.js');
+app.use('/', empRouter);
