@@ -20,4 +20,6 @@ export const useEmpStore = defineStore("emp", {
       this.loginInfo.dept_no = info.dept_no;
     },
   },
+
+  persist: true, // Pinia Persist 설정
 });

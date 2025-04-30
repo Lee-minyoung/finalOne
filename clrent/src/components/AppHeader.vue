@@ -34,7 +34,7 @@ const currentPathLabel = computed(() => {
           <button class="btn btn-outline-secondary btn-sm" @click="toggleSidebar">
             <i class="bi bi-list"></i>
           </button>
-          <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}환영합니다</span>
+          <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
         </div>
         <div class="mt-3 ms-5 text-secondary" style="font-size: 1rem;">
           현재 위치: {{ currentPathLabel }}
