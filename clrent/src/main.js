@@ -12,6 +12,8 @@ import { iconsSet as icons } from '@/assets/icons'
 import DocsComponents from '@/components/Etc/DocsComponents'
 import DocsExample from '@/components/Etc/DocsExample'
 import DocsIcons from '@/components/Etc/DocsIcons'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 const app = createApp(App)
 const pinia = createPinia()

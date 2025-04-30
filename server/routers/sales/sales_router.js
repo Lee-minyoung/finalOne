@@ -30,18 +30,18 @@ router.post('/ord',async (req,res)=>{
      console.log('다음 수주번호',nextOrdNo); //    
     // ordData
     const ord_no=nextOrdNo;    //주문번호 프라이머리키 
-    const vdr_no=2002;  //거래처 번호 임시 
+    const vdr_no=req.body.vdr_no;  //거래처 번호 임시 
     const emp_no=1; //직원 번호  로그인시 사원번호 
-    const due_dt=new Date(); //날짜 
+    const due_dt=req.body.due_dt //마감  날짜 
     const ord_sts='y'; //상태
-    const rgt_dt=new Date(); //날짜  
-    const mdf_dt=new Date(); //날짜 우선설정    
+    const rgt_dt=new Date(); //현재 날짜  
+    const mdf_dt=new Date(); //수정날짜 현재날짜     
     //detailData
     const  lastDetail=await salesService.findLastDetail(); //  
     const  nextOrdDetail=findNextCode(lastDetail);  
     const  ord_dtl_no=nextOrdDetail; 
-    const  prd_no='PRD003';//일단 임시로 만듦 
-    const  prd_qty=1000;  
+    const  prd_no=req.body.prd_no;//일단 임시로 만듦 
+    const  prd_qty=req.body.prd_qty; //수량 
 
      //const ord_sts=  일단 null값 
     const ordData=[ord_no,vdr_no,emp_no,due_dt,ord_sts,rgt_dt,mdf_dt];  
@@ -59,10 +59,12 @@ router.post('/ord',async (req,res)=>{
 }); 
 // 기간별 주문조회  
 router.get('/ord/by-date', async (req, res) => {
-  const { start, end } = req.query;  
-  const result = await salesService.findOrdDate(start, end); // 서비스 함수 호출
+  const { startDate, endDate } = req.query;  
+  const result = await salesService.findOrdDate(startDate, endDate); // 서비스 함수 호출
   res.json(result);
 });
+// 주문등록 
+
 
 
 
