@@ -23,7 +23,6 @@
               <tr>
                 <th>제품ID</th>
                 <th>제품명</th>
-                <th>용량</th>
               </tr>
             </thead>
             <tbody>
@@ -36,7 +35,6 @@
               >
                 <td>{{ item.prd_no }}</td>
                 <td>{{ item.prd_nm }}</td>
-                <td>{{ item.cap }}</td>
               </tr>
             </tbody>
           </table>

@@ -105,7 +105,7 @@ export default {
         { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
       selectedPlans: [], // 체크한 계획 항목들 (지시 등록용)
-      showProductModal: true, // 제품 선택 모달 열림 여부
+      showProductModal: false, // 제품 선택 모달 열림 여부
       showInstructionModal: false, // 지시 등록 모달 열림 여부
       prodList: [], // 제품 리스트 (모달에서 사용)
       instructionRows: [] // 지시 등록용 행들
@@ -259,31 +259,68 @@ export default {
       return useDateUtils.dateFormat(value, format)
     },
 
-    // 계획 등록 처리
+    // 1건마다 등록 계획 등록 처리
+    // async addPlan() {
+    //   try {
+    //     for (let row of this.planRows) {
+    //       if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
+    //         alert('필수 항목을 모두 입력하세요.')
+    //         return
+    //       }
+
+    //       await axios.post('/api/prodpln', row, {
+    //         headers: { 'Content-Type': 'application/json' }
+    //       })
+    //     }
+
+    //     alert('등록 완료!')
+    //     this.planRows = [
+    //       { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+    //     ]
+    //     this.getProdPlanList()
+    //   } catch (err) {
+    //     console.error('등록 실패', err)
+    //     alert('등록 실패 ㅠㅠ')
+    //   }
+    // },
+
     async addPlan() {
-      try {
-        for (let row of this.planRows) {
-          if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
-            alert('필수 항목을 모두 입력하세요.')
-            return
-          }
-
-          await axios.post('/api/prodpln', row, {
-            headers: { 'Content-Type': 'application/json' }
-          })
-        }
-
-        alert('등록 완료!')
-        this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
-        ]
-        this.getProdPlanList()
-      } catch (err) {
-        console.error('등록 실패', err)
-        alert('등록 실패 ㅠㅠ')
+  try {
+    // 검증: 모든 행에 필수값이 있어야 함
+    for (let row of this.planRows) {
+      if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
+        alert('필수 항목을 모두 입력하세요.');
+        return;
       }
-    },
+    }
 
+    // 1. 범위는 모든 row 중 첫 행의 날짜 사용
+    const payload = {
+      st_dt: this.planRows[0].st_dt,
+      end_dt: this.planRows[0].end_dt,
+      rmk: '프론트 등록',
+      details: this.planRows.map(row => ({
+        prd_no: row.prd_no,
+        qty: row.qty,
+        rmk: row.rmk || ''
+      }))
+    }
+
+    // 2. 한번에 axios 전송
+    await axios.post('/api/prodpln', payload, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    alert('등록 완료!');
+    this.planRows = [
+      { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+    ];
+    this.getProdPlanList();
+  } catch (err) {
+    console.error('등록 실패', err);
+    alert('등록 실패 ㅠㅠ');
+  }
+},
     // 지시 등록 처리
     async submitInstructions(rows) {
       try {

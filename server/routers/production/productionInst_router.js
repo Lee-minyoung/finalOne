@@ -1,53 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const productionPlanServices = require('../../services/production/productionPlan_service.js');
+const productionInstServices = require('../../services/production/productionInst_service.js');
 const utils = require('../../utils/converts.js');
 
-//생산계획 리스트 전체보기
-router.get('/prodpln', async (req,res)=>{
-    let prodplnList = await productionPlanServices.findProdPlanAll()
-                            .catch(err=> console.log(err));
-    res.send(prodplnList)
-})
+router.post('/prodOrd', async (req, res) => {
+  try{
+    const lastOrdCodeRow = await productionInstServices.findLastOrdCode();
+    const nextOrdCode = utils.findNextCode(lastOrdCodeRow?.lastCode, 'ODR-');
 
-router.get('/prodpln/prdList', async (req,res)=>{
-  let prodList = await productionPlanServices.findProd()
-                          .catch(err=> console.log(err));
-  res.send(prodList)
-})
+    const lastOrdDetailCodeRow = await productionInstServices.findLastOrdDetailCode();
+    const nextOrdDateilCode = utils.findNextCode(lastOrdDetailCodeRow?.lastCode, 'ODT-')
 
+    const lastMatCodeRow = await productionInstServices.findLastMatCode();
+    const nextMatCode = utils.findNextCode(lastMatCodeRow?.lastCode, 'MAT-')
 
-router.post('/prodpln', async (req, res) => {
-  try {
-    // 1. 마지막 코드 조회
-    const lastPlanCodeRow = await productionPlanServices.findLastPlanCode();
-    const nextPlanCode = utils.findNextCode(lastPlanCodeRow?.lastCode, 'PLN-'); 
+//`INSERT INTO pdn_ord (pdn_ord_no, pdn_pln_no, pdn_ord_dt, crt_by)
+    const ordData =  [nextOrdCode, '생산계획번호', '지시일자', 1000] //작성자 1000
 
-    const lastDetailCodeRow = await productionPlanServices.findLastDetailCode();
-    const nextDetailCode = utils.findNextCode(lastDetailCodeRow?.lastCode, 'PLD-');
-
-    // 2. 파라미터 준비
-    const planData = [nextPlanCode, 1000]; //관리자로 임시 1000 으로 등록함.
-    const detailData = [nextDetailCode, nextPlanCode, req.body.prd_no, req.body.qty, req.body.st_dt, req.body.end_dt, '계획완료', req.body.rmk];
-
-    // 3. 트랜잭션 insert
-    await productionPlanServices.addProdPlanData(planData, detailData); 
-
-    res.status(200).json({ message: '등록 완료', code: nextPlanCode });
-  } catch (err) {
-      console.error("등록 중 에러:", err);
-      res.status(500).json({ message: '등록 실패', error: err.message });
-  }
-});
+/*
+{
+  "pdn_pln_no": "PLN-002",
+  "crt_by": "admin",
+  "prd_no": "P001",
+  "qty": 100,
+  
+  "pdn_pln_no": "PLN-002",
+  "crt_by": "admin",
+  "details": [
+    { "prd_no": "P003", "qty": 100 },
+    { "prd_no": "P002", "qty": 200 },
+    { "prd_no": "P001", "qty": 150 }
+  ]
+}
+데이터는 객체 넘어와야 함.
+*/
 
 
 
 // // 다건 생산계획 등록
 // router.post('/prodpln', async (req, res) => {
-//   console.log('🔥 req.body:', req.body)
 //   try {
 //     const { st_dt, end_dt, rmk, details } = req.body;
-//     console.log('🔥 req.body:', req.body)
 //     // 1. 생산계획번호 생성
 //     const lastPlanCodeRow = await productionPlanServices.findLastPlanCode();
 //     const nextPlanCode = utils.findNextCode(lastPlanCodeRow?.lastCode, 'PLN-');
@@ -60,10 +53,6 @@ router.post('/prodpln', async (req, res) => {
 //     const planData = [
 //       nextPlanCode,
 //       1000,              // 사원번호 placeholder
-//       st_dt,
-//       end_dt,
-//       '계획완료',
-//       rmk
 //     ];
 
 //     // 4. 세부계획 여러 건 준비
@@ -93,6 +82,24 @@ router.post('/prodpln', async (req, res) => {
 //     res.status(500).json({ message: '등록 실패', error: err.message });
 //   }
 // });
+
+
+
+//`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio)
+    const ordDetailData = [nextOrdDateilCode, nextOrdCode, '', '지시수량', '제품번호', '우선순위']
+
+
+// `INSERT INTO mat_rls_req (mat_req_no,  pdn_ord_no, mat_no, qty, sndr,  sts,  prc_rslt) 
+    const matData = [nextMatCode, nextOrdCode, '자재번호', '자재수량', 1000, '미확인', '미승인']
+
+
+
+
+    await productionInstServices.addProdInstData(ordData, ordDetailData, matData)
+  }catch (err){
+    console.log('에러발생 ㅋㅋㅋㅋ 킹받지?')
+  }
+})
 
 
 module.exports = router

@@ -26,11 +26,9 @@ ORDER BY p.pdn_pln_no;`
 
 
   const selectProd =
-`SELECT p.prd_no, p.prd_nm, 
-        IFNULL(CAST(bm.cap AS CHAR), '없음') AS cap
-   FROM prd p
-   LEFT OUTER JOIN bom b ON p.prd_no = b.prd_no
-   LEFT OUTER JOIN bom_mat bm ON b.bom_no = bm.bom_no;` 
+`SELECT prd_no, prd_nm
+   FROM prd
+   ORDER BY prd_no;` 
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
@@ -67,7 +65,7 @@ const insertProdPlanDtl =
 
 
 //생산 지시! ==> 출고요청서, 지시번호, 지시세부번호
-//출고요청서 [생산지시번호, 제품번호, 수량, 요청자] [pdn_ord_no, prd_no, 요청수량, 요청자]
+//출고요청서 [생산지시번호, 제품번호, 수량, 요청자] [pdn_ord_no, prd_no, 요청수량, ]
 
 
 module.exports = {
