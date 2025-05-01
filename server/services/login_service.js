@@ -74,12 +74,29 @@ const findEmpInfoByEmpNo = async (emp_no) => {
   // 조회된 첫 번째 결과 반환 (없으면 undefined)
   let info = list[0];
   return info;
-}
+};
+
+/**
+ * 비밀번호 업데이트 함수
+ * @param {string} emp_no - 직원 번호
+ * @param {string} newPwd - 새 비밀번호
+ */
+const updatePwd = async (emp_no, newPwd) => {
+  try {
+    // 비밀번호 업데이트 쿼리 실행
+    await mariadb.query("updatePwd", [newPwd, emp_no]);
+    return true;
+  } catch (err) {
+    console.error("비밀번호 업데이트 오류:", err);
+    throw err;
+  }
+};
 
 // 모듈 내보내기
 module.exports = {
   loginByEmpNo,
   findEmpInfoByEmpNo,
+  updatePwd,
 };
 
 

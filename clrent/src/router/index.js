@@ -58,6 +58,11 @@ const routes = [
     name: 'login', // 부르는 이름
     component: () => import('@/views/login/login.vue'),
   },
+  { // 비밀번호 찾기
+    path: '/findPwd',
+    name: 'findPwd',
+    component: () => import('@/views/login/FindPwd.vue'),
+  },
   {
     path: '/',
     name: 'Dummy data',

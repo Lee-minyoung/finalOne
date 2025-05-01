@@ -26,6 +26,11 @@ ON e.pst_no = p.pst_no
 WHERE emp_no = ?`;
 
 
+// 비밀번호 업데이트
+const updatePwd =
+`UPDATE emp
+SET pwd = ?
+WHERE emp_no = ?`;
 
 
 // // id를 기준으로 정보 조회 => 회원정보 조회(비밀번호는 제외)
@@ -56,7 +61,5 @@ WHERE emp_no = ?`;
 
 module.exports = {
     findEmpInfoByEmpNo,
-    // selectEmpOne,
-    // empInsert,
-    // empUpdate,
+    updatePwd
 };

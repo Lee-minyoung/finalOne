@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
     // 로그인 실패: 에러 메시지와 함께 실패 응답
     res.send({
       result: false,
-      message: '사원 정보가 존재하지 않습니다.'
+      message: `사원번호 혹은 비밀번호가 일치하지 않습니다. \n입력한 내용을 다시 확인해 주세요.`
     });
   }
 });
@@ -81,6 +81,41 @@ router.get('/logout', (req, res) => {
   res.send({
     result: true
   });
+});
+
+/**
+ * POST /findPwd - 비밀번호 찾기 요청 처리
+ */
+router.post('/findPwd', async (req, res) => {
+  try {
+    const { emp_no, nm } = req.body;
+    // 직원 정보 확인
+    const empInfo = await loginService.findEmpInfoByEmpNo(emp_no);
+    
+    if (empInfo && empInfo.nm === nm) {
+      // 임시 비밀번호 생성 (테스트용으로 전화번호 뒷자리)
+      const tempPwd = empInfo.ctt ? empInfo.ctt.slice(-4) : '0000'; 
+      
+      // 임시 비밀번호로 업데이트
+      await loginService.updatePwd(emp_no, tempPwd);
+      
+      res.send({
+        result: true,
+        message: `임시 비밀번호가 발급되었습니다. \n로그인 후 반드시 비밀번호를 변경해주세요.`
+      });
+    } else {
+      res.send({
+        result: false,
+        message: '사원번호 혹은 비밀번호가 일치하지 않습니다.'
+      });
+    }
+  } catch (err) {
+    console.error('비밀번호 찾기 오류:', err);
+    res.status(500).send({
+      result: false,
+      message: '서버 오류가 발생했습니다.'
+    });
+  }
 });
 
 // 라우터 모듈 내보내기

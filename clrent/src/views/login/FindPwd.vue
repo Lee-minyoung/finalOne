@@ -9,12 +9,12 @@
           <div class="card shadow-sm border-0 rounded-3">
             <div class="card-body p-5">
               <form>
-                <!-- 로그인 제목 -->
+                <!-- 비밀번호 찾기 제목 -->
                 <h1 class="text-center">밥먹고하시조</h1>
                 <!-- 부제목 -->
-                <p class="text-muted text-center">Sign In to your account</p>
+                <p class="text-muted text-center">비밀번호 찾기</p>
 
-                <!-- 사용자명 입력 필드 -->
+                <!-- 사원번호 입력 필드 -->
                 <div class="mb-3">
                   <div class="input-group">
                     <span class="input-group-text">
@@ -23,40 +23,40 @@
                     <input 
                       type="text" 
                       class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="loginInfo.emp_no" 
+                      v-model="findInfo.emp_no" 
                       placeholder="사원번호"
                       autocomplete="emp_no" 
                     />
                   </div>
                 </div>
 
-                <!-- 비밀번호 입력 필드 -->
+                <!-- 이름 입력 필드 -->
                 <div class="mb-3">
                   <div class="input-group">
                     <span class="input-group-text">
-                      <i class="bi bi-lock"></i>
+                      <i class="bi bi-person-badge"></i>
                     </span>
                     <input 
-                      type="password" 
+                      type="text" 
                       class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="loginInfo.pwd" 
-                      placeholder="비밀번호"
-                      autocomplete="current-password" 
+                      v-model="findInfo.nm" 
+                      placeholder="이름"
+                      autocomplete="name" 
                     />
                   </div>
                 </div>
 
-                <!-- 비밀번호 찾기 링크 -->
+                <!-- 로그인으로 돌아가기 링크 -->
                 <div class="mb-3 text-end">
-                  <button type="button" class="btn btn-link text-decoration-none px-0 small-text" @click="$router.push({ name: 'findPwd' })">
-                    비밀번호 찾기
+                  <button type="button" class="btn btn-link text-decoration-none px-0 small-text" @click="goToLogin">
+                    로그인으로 돌아가기
                   </button>
                 </div>
 
-                <!-- 로그인 버튼 -->
+                <!-- 비밀번호 찾기 버튼 -->
                 <div class="mb-0">
-                  <button type="button" class="btn btn-primary w-100 py-2 small-text" @click="userLogin">
-                    로그인
+                  <button type="button" class="btn btn-primary w-100 py-2 small-text" @click="findPwd">
+                    비밀번호 찾기
                   </button>
                 </div>
               </form>
@@ -70,46 +70,39 @@
 
 <script>
 import axios from "axios";
-import { useEmpStore } from "../../stores/empStore";
-import { mapActions } from "pinia";
 
 export default {
   data() {
     return {
-      loginInfo: {
+      findInfo: {
         emp_no: "",
-        pwd: "",
+        nm: "",
       },
     };
   },
   methods: {
-    ...mapActions(useEmpStore, ["setLoginInfo"]),
-    async userLogin() {
+    async findPwd() {
       try {
-        const result = await axios.post(`/api/login`, this.loginInfo);
+        const result = await axios.post(`/api/findPwd`, this.findInfo);
         console.log(result);
 
-        const loginRes = result.data;
-        console.log(loginRes);
+        const findPwdRes = result.data;
+        console.log(findPwdRes);
 
-        if (loginRes.result) {
-          this.setLoginInfo({
-            emp_no: loginRes.emp_no,
-            nm: loginRes.nm,
-            pst_nm: loginRes.pst_nm,
-            pst_no: loginRes.pst_no,
-            dept_no: loginRes.dept_no,
-          });
-          alert("환영합니다!");
-          this.$router.push({ name: "Home" });
+        if (findPwdRes.result) {
+          alert(findPwdRes.message || "임시 비밀번호가 발급되었습니다.");
+          this.$router.push({ name: "login" });
         } else {
-          alert(loginRes.message || "로그인에 실패했습니다.");
+          alert(findPwdRes.message || "사원 정보를 찾을 수 없습니다.");
         }
       } catch (err) {
-        console.error("Login error:", err);
+        console.error("비밀번호 찾기 오류:", err);
         alert("서버 오류가 발생했습니다.");
       }
     },
+    goToLogin() {
+      this.$router.push({ name: "login" });
+    }
   },
 };
 </script>
@@ -126,12 +119,12 @@ export default {
   font-size: 1.125rem;
 }
 
-/* 로그인 버튼 텍스트 */
+/* 버튼 텍스트 */
 .small-text {
   font-size: 1.125rem;
 }
 
-/* 비밀번호 찾기 링크 스타일 */
+/* 로그인으로 돌아가기 링크 스타일 */
 .btn-link {
   color: #0D6EFD;
   font-size: 0.875rem;
