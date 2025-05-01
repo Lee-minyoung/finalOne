@@ -20,22 +20,17 @@ const routes = [
         name: 'ProdPlan',
         component: () => import('@/views/production/productionPlan.vue'),
       },
-      { // 전체 조회
+      { // 부서
         path: 'dept',
         name: 'dept',
         component: () => import('@/views/dept/dept.vue'),
       },
-      { // 단건 조회
-        path: 'dept/:no',
-        name: 'deptInfo',
-        component: () => import('@/views/dept/deptInfo.vue'),
+      { // 사원
+        path: 'emp',
+        name: 'emp',
+        component: () => import('@/views/emp/emp.vue'),
       },
-      { // 수정
-        path: 'dept/:no',
-        name: 'editDeptInfo',
-        component: () => import('@/views/dept/deptInfo.vue'),
-      },
-      {
+      { // 제품
         path: 'prd',
         name: 'prd',
         component: () => import('@/views/prd/prd.vue'),
@@ -49,6 +44,11 @@ const routes = [
         path:'/SaleList',
         name:'SaleList',
         component:()=> import('@/views/sales/saleList.vue'),
+      },
+      { // bom
+        path: 'bom',
+        name: 'bom',
+        component: () => import('@/views/bom/bom.vue'),
       },
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
