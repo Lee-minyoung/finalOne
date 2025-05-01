@@ -1,5 +1,5 @@
-const mariadb = require("../database/mapper.js");
-const { convertObjToAry, convertObjToQuery } = require('../utils/converts.js');
+const mariadb = require("../../database/mapper.js");
+const { convertObjToAry, convertObjToQuery } = require('../../utils/converts.js');
 
 // 다양한 검색조건을 가지는 전체조회
 const findEmpList = async (searchList) => {

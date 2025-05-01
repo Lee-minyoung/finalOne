@@ -39,12 +39,7 @@
         <p>부서를 선택하세요!</p>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
-<<<<<<< HEAD
-  </div> <!-- 우측 영역 끝 -->
-</div>
-=======
   </div>
->>>>>>> fad85146d5183ae1917d222bfcc09019c814f5d3
 </template>
 
 <script>
@@ -136,12 +131,7 @@ export default {
     resetForm() { // 초기화 버튼 클릭시 실행할 함수
       this.getDeptInfo(this.deptInfo.dept_no);
     },
-    saveDept() { // 저장 버튼 클릭시 실행할 함수
-      alert("저장 미구현");
-      // editDeptInfo
-      const dept = this.deptList.find(dept => dept.dept_no === deptNo);
-      this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
-    }
+   
   }
 };
 </script>

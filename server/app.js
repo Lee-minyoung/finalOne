@@ -38,19 +38,22 @@ app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
 })
 
-
 // 라우터 모듈 등록
 //생산 라우팅
 app.use('/',prodPlanRouter);
 
 // 부서 라우팅
-const deptRouter = require('./routers/dept_router.js');
+const deptRouter = require('./routers/base/dept_router.js');
 app.use('/', deptRouter);
-
 // 사원 라우팅
-const empRouter = require('./routers/emp_router.js');
+const empRouter = require('./routers/base/emp_router.js');
 app.use('/', empRouter);
-
+// BOM 라우팅
+const bomRouter = require('./routers/base/bom_router.js');
+app.use('/', bomRouter);
+// 자재 라우팅
+const matRouter = require('./routers/base/mat_router.js');
+app.use('/', matRouter);
 
 //품질 모듈
 app.use('/',spmInsStd);
