@@ -32,6 +32,7 @@ app.listen(3000, ()=>{
 // const bookRouter = require('./routers/book_router.js');
 const prodPlanRouter = require('./routers/production/productPlan_router.js');
 const salesRouter=require('./routers/sales/sales_router.js');
+const inventoryRouter=require('./routers/inventory/inventory_router.js');
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
@@ -41,3 +42,4 @@ app.get('/', (req, res)=>{
 // app.use('/',bookRouter);
 app.use('/',prodPlanRouter);
 app.use('/',salesRouter);
+app.use('/',inventoryRouter);
