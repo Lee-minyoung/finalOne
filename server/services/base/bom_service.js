@@ -1,9 +1,12 @@
 const mariadb = require("../../database/mapper.js");
-const { convertObjToAry, convertObjToQuery } = require('../../utils/converts.js');
+const {
+  convertObjToAry,
+  convertObjToQuery
+} = require('../../utils/converts.js');
 
 // bom => 다양한 검색조건을 가지는 전체조회
 const findBomList = async (searchList) => {
-// 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
+  // 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
   let list = await mariadb.query("selectBomList", searchKeyword);
   return list;
@@ -11,13 +14,13 @@ const findBomList = async (searchList) => {
 
 // bom 단건 조회 == bom_no을 조건으로한 bom_mat 전체조회
 const findBomMatList = async (bomNo) => {
-// 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
+  // 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
   let list = await mariadb.query("selectBomOne", bomNo);
   return list;
 };
 
 // 추가시 적용되는 BOM번호
-const findBomNo = async() => {
+const findBomNo = async () => {
   return await mariadb.query("selectBomNo");
 }
 
@@ -55,6 +58,40 @@ const addNewBomMat = async (BomMatInfo) => {
     };
   }
   return result;
+};
+
+const addBomAndBomMat = async (bomInfo, bomMatInfoArray) => {
+  const conn = await mariadb.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 첫번째 쿼리 => bom등록
+    let insertColumns = ['prd_no'];
+    let data = convertObjToAry(bomInfo, insertColumns);
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery('insertBom', data);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    await conn.query(selectedSql, data);
+
+    // 두번쨰 쿼리 => bom_mat List등록
+    insertColumns = ['bom_no', 'mat_no', 'cap', 'unit', 'rmk'];
+    for (let i = 0; i < bomMatInfoArray.length; i++) {
+      data = convertObjToAry(bomMatInfoArray[i], insertColumns);
+      // 실제 SQL문을 가지고 오는 작업  
+      selectedSql = await mariadb.selectedQuery("insertBomMat", data);
+      // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+      let insertBomMatList = await conn.query(selectedSql, data);
+    }
+
+    conn.commit();
+
+    //  에러 뜨면 rollback
+  } catch (err) {
+    if (conn) await conn.rollback();
+    console.error('트랜잭션 롤백:', err);
+  } finally {
+    if (conn) conn.release();
+  }
 };
 
 // 기존 BOM정보 수정
@@ -118,4 +155,5 @@ module.exports = {
   modifyBomMatInfo,
   removeBomInfo,
   removeBomMatInfo,
+  addBomAndBomMat,
 };

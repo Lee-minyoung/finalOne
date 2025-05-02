@@ -80,4 +80,18 @@ router.delete('/bomMat/:no', async (req, res) => {
   res.send(resInfo);
 });
 
+router.post('/bomAndBomMat', async (req, res) => {
+  try {
+    let bomInfo = req.body[0];
+    let bomMatInfoArray = req.body[1];
+
+    await bomService.addBomAndBomMat(bomInfo, bomMatInfoArray);
+
+    res.status(200).json({ message: '등록 완료'});
+  } catch (err) {
+      console.error("등록 중 에러:", err);
+      res.status(500).json({ message: '등록 실패'});
+  }
+});
+
 module.exports = router

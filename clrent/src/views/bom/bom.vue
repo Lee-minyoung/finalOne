@@ -25,8 +25,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="bom in filteredBomList" v-bind:key="bom.bom_no" @click="selectBom(bom.bom_no)"
-                class="table-hover">
+              <tr v-for="bom in filteredBomList" 
+                  v-bind:key="bom.bom_no" 
+                  @click="selectBom(bom.bom_no)" 
+                  :class="{ 'table-primary': selectedBom && selectedBom.bom_no === bom.bom_no }"
+                  class="table-hover">
                 <td>{{ bom.bom_no }}</td>
                 <td>{{ bom.prd_nm }}</td>
                 <td>{{ CommonCodeFormat(bom.use_yn) }}</td>
@@ -97,12 +100,15 @@ export default {
     },
     msg(data) {
       this.InfoView = data;
+      if (!data) {
+        this.selectedBom = null; // bomForm이 활성화되면 선택된 BOM 초기화
+      }
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -110,5 +116,9 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-primary {
+  background-color: #cce5ff;
 }
 </style>
