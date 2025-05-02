@@ -81,7 +81,7 @@
     <InstructionModal
       v-if="showInstructionModal"
       :instructionRows="instructionRows"
-      :summaryRows="planSummaryByProduct"
+      :summaryRows="planSummaryByProductMap"
       @submit="submitInstructions"
       @close="showInstructionModal = false"
     />
@@ -118,38 +118,42 @@ export default {
   },
 
   computed: {
-    // 계획 지시에 요약된 데이터를 보여줌
-    // 선택된 계획들에 대해 제품별로 요약된 정보 제공 
-    // planSummaryByProduct() {
-    //   const summary = {}
-    //   for (const plan of this.selectedPlans) {
-    //     const key = plan.prd_no
-    //     const qty = Number(plan.qty || 0)
-    //     const instruction = Number(plan.instruction_qty || 0)
-    //     const status = plan.status || plan.situ
+//     planSummaryByProductMap() {
+//   const summary = {}
 
-    //     // 제품별 데이터 초기화
-    //     if (!summary[key]) {
-    //       summary[key] = { product: key, totalQty: 0, instructionQty: 0, doneQty: 0 }
-    //     }
+//   for (const plan of this.selectedPlans) {
+//     const key = plan.prd_no
+//     const qty = Number(plan.qty || 0)
+//     const instruction = Number(plan.instruction_qty || 0)
+//     const status = plan.status || plan.situ
 
-    //     // 수량 누적
-    //     summary[key].totalQty += qty
-    //     summary[key].instructionQty += instruction
+//     if (!summary[key]) {
+//       // ✅ 해당 제품번호가 처음 등장하면 초기화
+//       summary[key] = {
+//         product: key,
+//         prd_nm: plan.prd_nm,
+//         totalQty: 0,
+//         instructionQty: 0,
+//         doneQty: 0
+//       }
+//     }
 
-    //     // 완료된 수량 누적
-    //     if (status === '완료' || status === '계획완료') {
-    //       summary[key].doneQty += qty
-    //     }
-    //   }
+//     // ✅ 동일 제품이면 수량 누적
+//     summary[key].totalQty += qty
+//     summary[key].instructionQty += instruction
 
-    //   // 남은 수량 계산
-    //   for (const key in summary) {
-    //     summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
-    //   }
+//     if (status === '완료' || status === '계획완료') {
+//       summary[key].doneQty += qty
+//     }
+//   }
 
-    //   return Object.values(summary)
-    // }
+//   for (const key in summary) {
+//     summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
+//   }
+
+//   return summary // 객체 형태로 유지
+// }
+
   },
 
   methods: {

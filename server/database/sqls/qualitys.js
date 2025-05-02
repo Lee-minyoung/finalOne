@@ -13,4 +13,3 @@ WHERE s.prd_no = ?`
 module.exports={
   selectSpmInsStd
 }
-;
