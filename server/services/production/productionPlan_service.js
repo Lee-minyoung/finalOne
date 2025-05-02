@@ -1,6 +1,5 @@
 const mariadb = require("../../database/mapper.js");
 
-
 //전체조회
 const findProdPlanAll = async () => {
     let prodPlanList = await mariadb.query("selectProPlanList")
@@ -9,9 +8,9 @@ const findProdPlanAll = async () => {
 }
 //제품 검색
 const findProd = async () => {
-  let prod = await mariadb.query("selectProd")
+  let prodList = await mariadb.query("selectProd")
                           .catch(err=> console.log(err));
-  return prod;
+  return prodList;
 }
 
 // 생산계획 마지막 번호 조회
@@ -30,11 +29,10 @@ const findLastDetailCode = async () => {
 // 트랜잭션과 프로시저를 사용
 const addProdPlanData = async (planData, detailData) => {
   const conn = await mariadb.getConnection();  // conn 받아오기
-
   try {
     await conn.beginTransaction();
 
-    // ✨ 트랜잭션 conn과 함께 query 호출 (alias만 넘긴다)
+    // 트랜잭션 conn과 함께 query 호출 (alias만 넘긴다)
         // 첫 번째 테이블 (헤더) insert
     await mariadb.query('insertProdPlan', planData, conn);
         // 두 번째 테이블 (디테일) insert
@@ -59,3 +57,5 @@ module.exports ={
     findLastDetailCode,
     findProd
 }
+
+

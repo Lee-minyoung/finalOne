@@ -3,7 +3,6 @@ const router = express.Router();
 const productionPlanServices = require('../../services/production/productionPlan_service.js');
 const utils = require('../../utils/converts.js');
 
-
 //생산계획 리스트 전체보기
 router.get('/prodpln', async (req,res)=>{
     let prodplnList = await productionPlanServices.findProdPlanAll()

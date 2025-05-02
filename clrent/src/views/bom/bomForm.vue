@@ -34,7 +34,6 @@
           <input type="text" class="form-control" v-model="today" readonly />
         </div>
       </div>
-
     </div> <!-- 우측 상세보기 영역 끝 -->
   </div> <!-- 우측 영역 끝 -->
 </template>

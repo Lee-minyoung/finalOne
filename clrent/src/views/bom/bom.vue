@@ -38,8 +38,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <deptInfo :dept="selectedDept" v-if="InfoView" @goToForm="msg" @dept-reload="getDeptList"/>
-      <deptForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList"/>
+      <bomInfo v-if="InfoView" :dept="selectedDept" @goToForm="msg" @dept-reload="getDeptList"/>
+      <bomForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList"/>
     </div>
   </div>
 </template>
@@ -50,13 +50,13 @@ import CommonCodeFormat from '@/utils/useCommonCode.js'
 // AJAX 모듈
 import axios from 'axios';
 // 자식 컴포넌트 import
-import deptInfo from './deptInfo.vue';
-import deptForm from './deptForm.vue';
+import bomInfo from './bomInfo.vue';
+import bomForm from './bomForm.vue';
 
 export default {
   components : {
-    deptInfo,
-    deptForm,
+    bomInfo,
+    bomForm,
   },
   data() {
     return {
@@ -92,7 +92,7 @@ export default {
     },
     // deptList데이터 받아오는 함수
     async getDeptList() { 
-      let result = await axios.get('/api/dept')
+      let result = await axios.get('/api/bom')
                               .catch(err=>console.log(err));
       this.deptList = result.data; //deptList배열에 결과값 담음
     },

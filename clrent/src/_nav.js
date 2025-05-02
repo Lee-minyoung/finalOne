@@ -9,12 +9,12 @@ export default [
     icon: 'cil-calendar-check',
     visible: true,
     items: [  
-      {
+    {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: ' - 수주',
+      to: '/SaleList',
       icon: 'cil-factory',
-    },  
+    }
     ]
   },
   {
@@ -38,10 +38,11 @@ export default [
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
+      name: ' - ????',
       to: '/',
       icon: 'cil-factory',
-    },  
+    },
+    
     ]
   },
   {
@@ -52,8 +53,8 @@ export default [
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: '완제품검사기준',
+      to: '/SpmInsStd',
       icon: 'cil-factory',
     },  
     ]
@@ -77,7 +78,12 @@ export default [
     name: '기초정보입력',
     to: '/basic-info',
     icon: 'cil-file',
-    items: [  
+    items: [ 
+       {
+      component: 'CNavItem',
+      name: ' - 로그인',
+      to: '/login',
+      },  
       {
         component: 'CNavItem',
         name: ' - 사원관리',
