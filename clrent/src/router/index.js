@@ -1,6 +1,7 @@
 import { h, resolveComponent } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+
 import DefaultLayout from '@/layouts/DefaultLayout'
 
 const routes = [
@@ -45,6 +46,17 @@ const routes = [
         name: 'SpmInsStd',
         component: () => import('@/views/qualitys/spmInsStd.vue'),
       },
+      {
+        path: '/SpmInsStdEdit',
+        name: 'SpmInsStdEdit',
+        component: () => import('@/views/qualitys/spmInsStdEdit.vue'),
+      },
+      {
+        path: '/SpmInsRst',
+        name: 'SpmInsRst',
+        component: () => import('@/views/qualitys/spmInsRst.vue'),
+      },
+  
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },
