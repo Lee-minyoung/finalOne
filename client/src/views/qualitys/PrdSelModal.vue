@@ -31,10 +31,10 @@
               @click="selectProduct(item)" 
               style="cursor: pointer;">
               <td>{{ item.prd_no }}</td>
-              <td>{{ item.prd_nm }}</td>
+              <td>{{ item.prd_nm }}</td>              
             </tr>
             </tbody>
-          </table> 
+          </table>
         </div>
       </div>
     </div>

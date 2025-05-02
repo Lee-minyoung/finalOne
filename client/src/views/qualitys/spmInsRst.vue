@@ -60,10 +60,13 @@ export default {
       isModalOpen: false,
       form: {
         ins_itm: '',
+        prd_nm: '',
         ins_mthd: '',
         ins_spc: '',
         ins_eqp: '',
-      },
+        crt_by: '',
+        mdf_dt: '',
+      },        
     }
   },
   computed: {

@@ -15,6 +15,7 @@
       수정일자 <input class="form-control" placeholder="" readonly style="background-color: #eee;" />
     </div>
 
+
     <!-- 버튼 -->
     <div class="btn1">
       <button type="button" button class="btn btn-primary">기준서 수정</button>
@@ -32,13 +33,12 @@
         </tr>
       </thead>
 
-      <tbody>
-        <!-- 등록용 입력 라인 -->
-        <tr v-for="spm_ins_std in filterSpmInsStdList" v-bind:key="spm_ins_std.prd_no">
-          <td>{{ spm_ins_std.ins_itm }}</td>
-          <td>{{ spm_ins_std.ins_mthd }}</td>
-          <td>{{ spm_ins_std.ins_spc }}</td>
-          <td>{{ spm_ins_std.ins_eqp }}</td>
+      <tbody>   
+        <tr v-for="spm_ins_std in filterSpmInsStdList" v-bind:key="spm_ins_std_no">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
           <td></td>
         </tr>
       </tbody>
@@ -63,6 +63,8 @@ export default {
     return {
       searchQuery: "",             // 제품 ID
       selectedProductName: "",     // 제품명
+      selectedProductPerson: "",   // 작성자
+      selectedProductDate: "",     // 수정일자
       selectedFilter: "",
       spmInsStdList: [],
       showProductModal: false,
@@ -72,6 +74,8 @@ export default {
         ins_spc: '',
         ins_eqp: '',
         ins_prd_nm: '',
+        crt_by: '', 
+        mdf_dt: '',
       },
       showProductModal: false,
       prodList: [],
