@@ -54,10 +54,8 @@ const query = async (alias, values, conn = null) => {
   }
 };
 
-const getConnection = async () => {
-  return await pool.getConnection();
-};
-
+const getConnection = async () => {return await pool.getConnection();};
+const selectedQuery = (alias, values) => queryFormat(sqlList[alias], values) ;
 
 // 이전 콜백 방식에 필요한 명령문
 
@@ -95,4 +93,5 @@ const getConnection = async () => {
 module.exports = {
   query,
   getConnection,
+  selectedQuery,
 }

@@ -15,8 +15,8 @@
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
               <tr>
-                <th>제품번호</th>
-                <th>제품명</th>
+                <th>자재번호</th>
+                <th>자재명</th>
               </tr>
             </thead>
             <tbody>
@@ -36,8 +36,8 @@
 <script>
 export default {
   props: {
-    matList: Array,       // 전체 제품 목록
-    selected: Array        // 이미 등록된 제품 목록
+    matList: Array,       // 전체 자재 목록
+    selected: Array       // 이미 등록된(선택된) 자재 목록
   },
   data() {
     return {

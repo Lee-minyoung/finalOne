@@ -58,6 +58,9 @@ app.use('/', bomRouter);
 // 자재 라우팅
 const matRouter = require('./routers/base/mat_router.js');
 app.use('/', matRouter);
+// 제품 라우팅
+const prdRouter = require('./routers/base/prd_router.js');
+app.use('/', prdRouter);
 
 //품질 모듈
 app.use('/',spmInsStd);
