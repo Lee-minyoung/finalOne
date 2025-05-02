@@ -32,7 +32,7 @@
             </table>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="$emit('submit', rows)">지시 등록</button>
+            <button class="btn btn-primary" @click="$emit('submit', { rows, crt_by: 1000 })">지시 등록</button>
             <button class="btn btn-secondary" @click="$emit('close')">취소</button>
           </div>
         </div>
@@ -65,5 +65,4 @@ export default {
     }
   }
 }
-  </script>
-  
+</script>

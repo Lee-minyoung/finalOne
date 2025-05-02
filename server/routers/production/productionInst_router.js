@@ -15,7 +15,7 @@ router.post('/prodOrd', async (req, res) => {
     const nextMatCode = utils.findNextCode(lastMatCodeRow?.lastCode, 'MAT-')
 
 //`INSERT INTO pdn_ord (pdn_ord_no, pdn_pln_no, pdn_ord_dt, crt_by)
-    const ordData =  [nextOrdCode, '생산계획번호', '지시일자', 1000] //작성자 1000
+    const ordData =  [nextOrdCode, '생산계획번호', 1000] //작성자 1000
 
 /*
 {
@@ -26,7 +26,7 @@ router.post('/prodOrd', async (req, res) => {
   
   "pdn_pln_no": "PLN-002",
   "crt_by": "admin",
-  "details": [
+  "det ails": [
     { "prd_no": "P003", "qty": 100 },
     { "prd_no": "P002", "qty": 200 },
     { "prd_no": "P001", "qty": 150 }
