@@ -1,5 +1,12 @@
 // Table : emp
 
+// 제약조건 추가 => bom을 삭제하면 관련된 bom_mat 같이 삭제되도록
+// ALTER TABLE bom_mat
+// ADD CONSTRAINT fk_bom_mat_no
+// FOREIGN KEY (bom_no)
+// REFERENCES bom(bom_no)
+// ON DELETE CASCADE;
+
 // 다양한 검색조건을 가지는 전체조회
 const selectBomList =
 `SELECT 
@@ -13,7 +20,6 @@ ON b.prd_no = p.prd_no
 ORDER BY b.bom_no;`;
 // 검색조건이 들어갈 위치에 :searchKeyword 문자열을 작성 => Strng.replace() 함수와 정규표현식을 이용해서 대체
 
-// 단건 조회
 const selectBomOne =
 `SELECT 
         b.bom_no, 
@@ -21,6 +27,7 @@ const selectBomOne =
         p.prd_nm, 
         b.use_yn, 
         bm.mat_no, 
+        bm.bom_mat_no,
         m.mat_nm, 
         bm.cap, 
         bm.unit, 
@@ -39,6 +46,11 @@ const selectBomNo =
 `SELECT IFNULL(MAX(bom_no), 0) +1 AS addBomNo
 From bom`;
 
+// 추가시 적용되는 BOM_MAT번호
+// const selectBomMatNo = 
+// `SELECT IFNULL(MAX(bom_mat_no), 0) +1 AS addBomMatNo
+// From bom_mat`;
+
 // BOM추가
 const insertBom =
 `INSERT INTO bom (bom_no, prd_no, rgt_dt, use_yn)
@@ -51,22 +63,39 @@ const insertBomMat =
 SELECT IFNULL(MAX(bom_mat_no), 0) +1, ?, ?, ?, ?, ?
 FROM bom_mat`;
 
-// 수정
-const updateEmp =
-`UPDATE emp
+// BOM수정
+const updateBom =
+`UPDATE bom
 SET ?
-WHERE emp_no = ?`;
+WHERE bom_no = ?`;
 
-// 삭제
-const deleteEmp =
-`DELETE FROM emp
-WHERE emp_no = ?`;
+// BOM_MAT수정
+const updateBomMat =
+`UPDATE bom_mat
+SET ?
+WHERE bom_mat_no = ?
+AND bom_no = ?`;
+
+// BOM삭제
+const deleteBom =
+`DELETE FROM bom
+WHERE bom_no = ?`;
+
+// BOM_MAT삭제
+const deleteBomMat =
+`DELETE FROM bom_mat
+WHERE bom_mat_no = ?
+AND bom_no = ?`;
 
 module.exports = {
-  selectEmpList,
-  selectEmpOne,
-  selectEmpNo,
-  insertEmp,
-  updateEmp,
-  deleteEmp,
+  selectBomList,
+  selectBomOne,
+  selectBomNo,
+  // selectBomMatNo,
+  insertBom,
+  insertBomMat,
+  updateBom,
+  updateBomMat,
+  deleteBom,
+  deleteBomMat,
 };

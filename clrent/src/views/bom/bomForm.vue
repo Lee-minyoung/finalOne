@@ -3,7 +3,9 @@
   <div class="col-md-6">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
-      <div> </div> <!-- 버튼 왼쪽 정렬 -->
+      <div> <!-- 버튼 왼쪽 정렬 -->
+        <button class="btn btn-outline-secondary" @click="openMatModal">자재추가</button>
+      </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
         <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
         <button class="btn btn-success" @click="deptInsert">저장</button>
@@ -11,27 +13,75 @@
     </div> <!-- 우측 버튼 모음 영역 끝 -->
     <!-- 우측 상세보기 영역 시작 -->
     <div class="card p-3">
-      <h4>부서 등록</h4>
+      <h4>BOM 등록</h4>
       <div>
         <div>
-          <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptNo" readonly />
-          <label class="form-label">부서명</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
-          <label class="form-label">부서관리자</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
+          <div class="row mb-4">
+            <!-- BOM번호 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="bomNo" class="form-label fw-bold me-3" style="min-width: 100px;">BOM번호</label>
+                <input id="bomNo" type="text" class="form-control" v-model="bom_No" readonly />
+              </div>
+            </div>
+            <!-- 사용여부 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
+                <input id="useYn" type="text" class="form-control" value="여" readonly />
+              </div>
+            </div>
+            <!-- 제품명 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
+                <div class="input-group">
+                  <input id="prdNm" type="text" class="form-control" v-model="prd_nm" placeholder="제품을 선택해주세요." readonly />
+                  <button class="btn btn-outline-secondary" @click="openProductModal">제품검색</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table table-bordered text-center">
+            <thead class="table-light">
+              <tr>
+                <th>자재번호</th>
+                <th>자재명</th>
+                <th>용량</th>
+                <th>단위</th>
+                <th>비고</th>
+                <th>X</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, index) in bomRows" :key="'new-' + index">
+                <td><input v-model="row.mat_no" type="text" class="form-control" /></td>
+                <td><input v-model="row.mat_nm" type="text" class="form-control" /></td>
+                <td><input v-model.number="row.cap" type="number" class="form-control" /></td>
+                <td><input v-model="row.unit" type="text" class="form-control" /></td>
+                <td><input v-model="row.rmk" type="text" class="form-control" /></td>
+                <td>
+                  <button class="btn btn-outline-danger me-1" @click="removePlanRow(index)"> X </button>
+                </td>
+              </tr>
 
-          <!-- <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
-              aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
-          </div> -->
+              <!-- <tr v-for="item in prodPlanList" :key="item.pdn_pln_no" @click="togglePlanSelection(item)"
+                :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
+                <td>{{ item.pdn_pln_no }}</td>
+                <td>{{ item.prd_nm }}</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
+                <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
+                <td>{{ item.situ }}</td>
+                <td>{{ item.rmk }}</td>
+                <td></td>
+              </tr> -->
+            </tbody>
+          </table>
 
+          <matSelectModal v-if="showMatModal" :matList="matList" :selected="bomRows" @select-mat="handleSelectedMats"
+            @close="showMatModal = false" />
 
-          <label class="form-label">사용여부</label>
-          <input type="text" class="form-control" value="여" readonly />
-          <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="today" readonly />
         </div>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
@@ -41,37 +91,43 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+
+import matSelectModal from '@/views/modal/matSelectModal.vue';
 
 export default {
+  components: {
+    matSelectModal,
+  },
   data() {
     return {
-      deptNo: '',
-      today: '',
-      deptInfo: {
-        dept_nm: '',
-        dept_mgr: '',
-      },
+      bom_No: '', // bom번호
+      prd_no: '', // 제품번후
+      prd_nm: '', // 제품명
+
+      bomRows: [ // 사용자 입력용 계획 행
+        {
+          mat_no: '', // 자재번호
+          mat_nm: '', // 자재명
+          cap: '', // 용량
+          unit: '', // 단위
+          rmk: '', // 비고
+        }
+      ],
+
+      showMatModal: false, // 자재 선택 모달 초기화값 = 닫힘
+      matList: [], // 자재 리스트 (showMatModal에서 사용)
+      allMatList: [], // 자재추가 모달에서 선택한 자재들 리스트 (저장하기 전)
     };
   },
   created() {
-    this.getDeptNo();
-    this.getToday();
+    this.getBomNo();
   },
   methods: {
-    // 날짜 데이터 포멧 정의
-    dateFormat(value, format) {
-      return userDateUtils.dateFormat(value, format);
-    },
-    getToday() {
-      this.today = this.dateFormat(null, 'yyyy-MM-dd');
-    },
     // dept_no를 받아 데이터 받아오는 함수
-    async getDeptNo() {
-      let result = await axios.get(`/api/deptNo`)
+    async getBomNo() {
+      let result = await axios.get(`/api/bomNo`)
         .catch(err => console.log(err));
-      // console.log(result.data[0].addDeptNo);
-      this.deptNo = result.data[0].addDeptNo;
+      this.bom_No = result.data[0].addBomNo;
     },
     // 초기화 버튼 클릭시 실행할 함수
     resetForm() {
@@ -98,6 +154,21 @@ export default {
         alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
       };
       this.$emit("goToInfo", true);
+    },
+    // 입력 행 제거
+    removePlanRow(index) {
+      this.planRows.splice(index, 1)
+    },
+    // 자재 선택 모달 열기
+    openMatModal() {
+      axios.get('/api/mat')
+        .then(res => {
+          this.matList = res.data;
+          this.showMatModal = true;
+        })
+        .catch(err => {
+          console.error('자재 목록 불러오기 실패', err)
+        })
     },
   }
 };
