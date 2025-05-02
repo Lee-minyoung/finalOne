@@ -81,7 +81,7 @@
     <InstructionModal
       v-if="showInstructionModal"
       :instructionRows="instructionRows"
-      :summaryRows="planSummaryByProductMap"
+
       @submit="submitInstructions"
       @close="showInstructionModal = false"
     />

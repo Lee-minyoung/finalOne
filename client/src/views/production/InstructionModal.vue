@@ -75,6 +75,6 @@ export default {
     instructionRows(newVal) {
       this.rows = JSON.parse(JSON.stringify(newVal))
     }
-  }``
+  }
 }
 </script>
