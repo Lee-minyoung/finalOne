@@ -42,7 +42,6 @@ const queryFormat = function (query, params) {
       return '';
     });
   };
-
 // const queryFormat = function (query, values) {
 //   // query  : SQL문
 //   // values : 대체값

@@ -78,7 +78,12 @@ export default [
     name: '기초정보입력',
     to: '/basic-info',
     icon: 'cil-file',
-    items: [  
+    items: [ 
+       {
+      component: 'CNavItem',
+      name: ' - 로그인',
+      to: '/login',
+      },  
       {
         component: 'CNavItem',
         name: ' - 사원관리',

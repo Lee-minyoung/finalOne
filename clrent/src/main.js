@@ -18,9 +18,10 @@ const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-createApp(App).use(pinia).use(router).mount('#app')
+// createApp(App).use(pinia).use(router).mount('#app')
+// app.use(createPinia())
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(CoreuiVue)
 app.provide('icons', icons)
@@ -30,3 +31,5 @@ app.component('DocsExample', DocsExample)
 app.component('DocsIcons', DocsIcons)
 
 app.mount('#app')
+
+
