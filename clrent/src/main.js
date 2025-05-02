@@ -13,6 +13,7 @@ import DocsComponents from '@/components/Etc/DocsComponents'
 import DocsExample from '@/components/Etc/DocsExample'
 import DocsIcons from '@/components/Etc/DocsIcons'
 
+
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
