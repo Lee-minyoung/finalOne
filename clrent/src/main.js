@@ -30,5 +30,3 @@ app.component('DocsExample', DocsExample)
 app.component('DocsIcons', DocsIcons)
 
 app.mount('#app')
-
-

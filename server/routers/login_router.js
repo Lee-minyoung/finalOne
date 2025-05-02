@@ -1,115 +1,64 @@
-/**
- * login_router.js - 로그인/로그아웃 관련 라우팅을 처리하는 모듈
- * Express 라우터를 사용하여 로그인과 로그아웃 요청을 처리합니다.
- */
-
-// Express 프레임워크의 라우터 기능을 사용하기 위한 모듈 import
+// Express.js를 사용하여 로그인, 로그아웃, 비밀번호 찾기 등의 요청을 처리
 const express = require('express');
 const router = express.Router();
-// 로그인 관련 비즈니스 로직을 처리하는 서비스 모듈 import
 const loginService = require('../services/login_service.js');
 
-/**
- * POST /login - 로그인 요청 처리
- * 
- * [요청 데이터 형식]
- * req.body: {
- *   emp_no: string, // 직원 번호
- *   pwd: string     // 비밀번호
- * }
- * 
- * [응답 데이터 형식]
- * 성공시: {
- *   result: true,
- *   emp_no: string,  // 직원 번호
- *   nm: string,      // 직원 이름
- *   pst_no: string,  // 직급 번호
- *   pst_nm: string,  // 직급명
- *   dept_no: string  // 부서 번호
- * }
- * 실패시: {
- *   result: false,
- *   message: string  // 에러 메시지
- * }
- */
-router.post('/login', async (req, res) => {
-  // 클라이언트로부터 받은 로그인 정보
-  let loginInfo = req.body;
-  
-  // loginService를 통해 로그인 인증 처리
-  // 에러 발생시 콘솔에 로그 출력
-  let resInfo = await loginService.loginByEmpNo(loginInfo)
-    .catch(err => console.log(err));
 
-  if (resInfo.result) {
-    // 로그인 성공: 세션에 사용자 정보 저장
-    req.session.emp = resInfo.empInfo.emp_no;
-    
-    // 세션 저장 완료 후 클라이언트에 응답
-    req.session.save(function (err) {
-      if (err) throw err;
-      res.send({
-        result: true,
-        emp_no: resInfo.empInfo.emp_no,   // 직원 번호
-        nm: resInfo.empInfo.nm,           // 직원 이름
-        pst_no: resInfo.empInfo.pst_no,   // 직급 번호
-        pst_nm: resInfo.empInfo.pst_nm,   // 직급명
-        dept_no: resInfo.empInfo.dept_no, // 부서 번호
-      });
-    })
-  } else { 
-    // 로그인 실패: 에러 메시지와 함께 실패 응답
-    res.send({
-      result: false,
-      message: `사원번호 혹은 비밀번호가 일치하지 않습니다. \n입력한 내용을 다시 확인해 주세요.`
-    });
-  }
+// 로그인 요청을 처리하는 라우터
+router.post('/login', async (req, res) => {
+    try {
+        // 사용자가 입력한 사원번호와 비밀번호를 로그인 서비스에 전달 
+        // 로그인 서비스는 사원번호로 직원 정보를 찾고, 비밀번호가 맞으면 직원 정보를 반환하고, 틀리면 null을 반환
+        const result = await loginService.loginByEmpNo(req.body);
+        res.json(result);
+    } catch(err) {
+        // 문제가 생겼을 때 에러 메시지 보내기
+        console.error('로그인 라우터 오류:', err);
+        res.status(500).json({
+            result: false,
+            message: '로그인 처리 중 오류가 발생했습니다.'
+        });
+    }
 });
 
-/**
- * GET /logout - 로그아웃 요청 처리
- * 
- * [응답 데이터 형식]
- * {
- *   result: true  // 로그아웃 처리 결과
- * }
- */
-router.get('/logout', (req, res) => {
-  // 세션 destroy를 통해 로그인 정보 제거
-  req.session.destroy();
-  // 로그아웃 완료 응답
+
+// 로그아웃 요청을 처리하는 라우터
+router.get('/logout', (req, res) => { 
+  req.session.destroy(); // 서버에 저장된 사용자의 세션 데이터를 제거하고 로그아웃 처리
   res.send({
-    result: true
+    result: true // 로그아웃 성공 응답
   });
 });
 
-/**
- * POST /findPwd - 비밀번호 찾기 요청 처리
- */
+
+// 비밀번호 찾기 요청을 처리하는 라우터
 router.post('/findPwd', async (req, res) => {
   try {
-    const { emp_no, nm } = req.body;
-    // 직원 정보 확인
-    const empInfo = await loginService.findEmpInfoByEmpNo(emp_no);
-    
-    if (empInfo && empInfo.nm === nm) {
-      // 임시 비밀번호 생성 (테스트용으로 전화번호 뒷자리)
-      const tempPwd = empInfo.ctt ? empInfo.ctt.slice(-4) : '0000'; 
+    const { emp_no, nm } = req.body; // 사용자가 입력한 사원번호와 이름을 가져옴
+    const empInfo = await loginService.findEmpInfoByEmpNo(emp_no); // 사원번호로 직원 정보를 조회
+    if (empInfo && empInfo.nm === nm) { // 사원번호와 이름이 일치하는 경우 
+      const tempPwd = empInfo.ctt.slice(-4); // 전화번호 뒷자리 4자리로 임시 비밀번호 생성
+   
+      const updateResult = await loginService.updatePwd(emp_no, tempPwd); // 임시 비밀번호로 업데이트
       
-      // 임시 비밀번호로 업데이트
-      await loginService.updatePwd(emp_no, tempPwd);
-      
-      res.send({
-        result: true,
-        message: `임시 비밀번호가 발급되었습니다. \n로그인 후 반드시 비밀번호를 변경해주세요.`
-      });
-    } else {
+      if (updateResult) { // 비밀번호 업데이트 성공 시
+        res.send({
+          result: true,
+          message: `임시 비밀번호가 발급되었습니다.\n임시 비밀번호는 전화번호 뒷자리입니다.\n로그인 후 반드시 비밀번호를 변경해주세요.`
+        });
+      } else {
+        res.send({ // 비밀번호 업데이트 실패 시
+          result: false,
+          message: '비밀번호 재설정 중 오류가 발생했습니다.'
+        });
+      }
+    } else { // 사원번호와 이름이 일치하지 않는 경우
       res.send({
         result: false,
-        message: '사원번호 혹은 비밀번호가 일치하지 않습니다.'
+        message: '입력하신 정보와 일치하는 사원을 찾을 수 없습니다.'
       });
     }
-  } catch (err) {
+  } catch (err) { // 비밀번호 찾기 중 오류가 발생한 경우
     console.error('비밀번호 찾기 오류:', err);
     res.status(500).send({
       result: false,
@@ -118,23 +67,41 @@ router.post('/findPwd', async (req, res) => {
   }
 });
 
-// 라우터 모듈 내보내기
+
+// 비밀번호 변경 요청을 처리하는 라우터
+// router.put('/pwd', async (req, res) => {
+//     try {
+//         // 사용자가 입력한 사원번호와 새 비밀번호를 로그인 서비스에 전달
+//         // 로그인 서비스는 비밀번호를 업데이트하고 성공 여부를 반환
+//         const success = await loginService.updatePwd(
+//             req.body.emp_no,
+//             req.body.new_pwd
+//         );
+        
+//        // 비밀번호 변경 성공 여부에 따라 응답
+//         if (success) {
+//             res.json({
+//                 result: true,
+//                 message: '비밀번호가 변경되었습니다.'
+//             });
+//         } else {
+//             res.json({
+//                 result: false,
+//                 message: '비밀번호 변경에 실패했습니다.'
+//             });
+//         }
+//     } catch(err) {
+//         // 비밀번호 변경 중 오류가 발생하면 500 상태 코드와 함께 오류 메시지를 반환
+//         console.error('비밀번호 변경 라우터 오류:', err);
+//         res.status(500).json({
+//             result: false,
+//             message: '비밀번호 변경 중 오류가 발생했습니다.'
+//         });
+//     }
+// });
+
+
+// 비밀번호 찾기 요청을 처리하는 라우터
 module.exports = router;
 
 
-
-// 두 개의 엔드포인트를 처리합니다:
-
-// POST /login: 직원 로그인 처리
-// GET /logout: 로그아웃 처리
-// 로그인 프로세스의 주요 단계:
-
-// 클라이언트로부터 직원번호와 비밀번호를 받음
-// loginService를 통해 인증 처리
-// 성공 시 세션에 직원 정보 저장
-// 직원의 상세 정보(이름, 직급, 부서 등)를 응답으로 반환
-// 보안 관련 개선 가능한 부분:
-
-// 에러 처리가 단순 console.log로 되어있어 보안에 취약할 수 있음
-// 비밀번호 검증 로직이 service 계층에 위임됨
-// 세션 관리는 기본적으로 구현되어 있음

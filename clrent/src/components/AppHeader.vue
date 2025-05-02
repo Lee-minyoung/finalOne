@@ -51,10 +51,6 @@ const { colorMode, setColorMode } = useColorModes("coreui-free-vue-admin-templat
 const route = useRoute(); // 현재 라우트 정보 가져오기
 const router = useRouter(); // 페이지 이동
 
-// Pinia 저장소에서 로그인한 사용자 정보 가져오기
-const empStore = useEmpStore();
-const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
-const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
 
 // 사이드바 토글
 const toggleSidebar = () => {
@@ -67,6 +63,10 @@ const currentPathLabel = computed(() => {
 });
 
 
+// Pinia 저장소에서 로그인한 사용자 정보 가져오기
+const empStore = useEmpStore();
+const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
+const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
 
 // 로그아웃 처리 함수
 const handleLogout = async () => {
