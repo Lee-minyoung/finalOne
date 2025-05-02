@@ -13,17 +13,21 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>Otto</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-   
     
-  </tbody>
+  <tr v-for="(item, index) in inventoryStatus" :key="index">
+    <th scope="row">{{ item['자재ID'] }}</th>
+    <td>{{ item['자재명'] }}</td>
+    <td>{{ item['총필요량'] }}</td>
+    <td>{{ item['현재재고'] }}</td>
+    <td v-if="item['부족수량']>0">{{ item['부족수량'] }}</td>
+    <td v-else>0</td>
+    <td v-if="item['상태']=='g1'">미확인</td>
+    <td v-else>확인</td>
+  </tr>
+</tbody>
+
+    
+  
 </table>
 
 <h3>자재구매계획</h3>
@@ -103,23 +107,25 @@ import axios from 'axios';
   name: 'InventoryCheck',
   data() {
     return {
-      inventoryData: []
+      inventoryStatus: [],
+
     };
   },
-  methods: {
-    // fetchInventoryData() {
-    //   axios.get('/api/inventory')
-    //     .then(response => {
-    //       this.inventoryData = response.data;
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching inventory data:', error);
-    //     });
-    // }
+  created(){
+    this.fetchInventoryStatus();
   },
-  mounted() {
-  //  this.fetchInventoryData();
-  }
+  methods: {
+   async fetchInventoryStatus(){
+      try{
+          const result=await axios.get('/api/inventory/mtStatus')
+          this.inventoryStatus=result.data;
+          console.log('자재현황조회 성공', this.inventoryStatus);
+      }catch(error){
+        console.error('자재출고요청 실패', error);
+      } 
+   }
+  },
+  
 };
 
 
