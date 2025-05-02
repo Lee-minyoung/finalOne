@@ -27,6 +27,7 @@
     "@coreui/vue-chartjs": "^3.0.0",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.9.0",
+    "bootstrap": "^5.3.5",
     "chart.js": "^4.4.7",
     "express-session": "^1.18.1",
     "pinia": "^3.0.1",

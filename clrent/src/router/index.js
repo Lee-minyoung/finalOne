@@ -50,6 +50,21 @@ const routes = [
         name: 'bom',
         component: () => import('@/views/bom/bom.vue'),
       },
+      {
+        path:'/inventoryCheck',
+        name:'InventoryCheck',
+        component:()=> import('@/views/inventory/inventoryCheck.vue'),
+      },
+      {
+        path:'/orderForm',
+        name:'orderForm',
+        component:()=> import('@/views/inventory/orderForm.vue'),
+      },
+      {
+        path:'/ordview',
+        name:'OrdView',
+        component:()=> import('@/views/inventory/ordView.vue'),
+      }
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

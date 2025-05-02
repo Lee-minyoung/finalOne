@@ -2,7 +2,7 @@
 //우리파트 
 const sales=require('./sqls/sales.js');
 const equipments=require('./sqls/equipments.js');
-const inventorys=require('./sqls/inventorys.js');
+const inventorys=require('./sqls/inventory.js');
 const qualitys=require('./sqls/qualitys.js'); 
 const userinforms=require('./sqls/userinforms.js'); 
 const prodeuctinPlan=require('./sqls/productionPlan.js'); 

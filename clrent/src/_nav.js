@@ -42,6 +42,18 @@ export default [
       to: '/',
       icon: 'cil-factory',
     },
+    {
+      component: 'CNavItem',
+      name: ' - 자재구매현황',
+      to: '/inventoryCheck',
+      icon: 'cil-factory',
+    },
+    {
+      component: 'CNavItem',
+      name: ' - 발주서관리',
+      to: '/orderForm',
+      icon: 'cil-factory',
+    }
     
     ]
   },
