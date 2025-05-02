@@ -1,6 +1,7 @@
 import { h, resolveComponent } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+
 import DefaultLayout from '@/layouts/DefaultLayout'
 
 const routes = [
@@ -41,6 +42,7 @@ const routes = [
         component: () => import('@/views/qualitys/spmInsStd.vue'),
       },
       {
+
         path:'/SaleList',
         name:'SaleList',
         component:()=> import('@/views/sales/saleList.vue'),
@@ -64,7 +66,18 @@ const routes = [
         path:'/ordview',
         name:'OrdView',
         component:()=> import('@/views/inventory/ordView.vue'),
-      }
+      },
+      {
+        path: '/SpmInsStdEdit',
+        name: 'SpmInsStdEdit',
+        component: () => import('@/views/qualitys/spmInsStdEdit.vue'),
+      },
+      {
+        path: '/SpmInsRst',
+        name: 'SpmInsRst',
+        component: () => import('@/views/qualitys/spmInsRst.vue'),
+      },
+  
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },
