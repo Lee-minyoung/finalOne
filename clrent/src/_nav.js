@@ -129,6 +129,12 @@ export default [
         name: ' - 공정코드관리',
         to: '/prc-code',
       },  
+      {
+      component: 'CNavItem',
+      name: ' - 로그인',
+      to: '/login',
+      icon: 'cil-factory',
+      },  
     ]
   },
   {
