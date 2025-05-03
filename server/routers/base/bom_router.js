@@ -80,6 +80,7 @@ router.delete('/bomMat/:no', async (req, res) => {
   res.send(resInfo);
 });
 
+// BOM 및 BOM_MAT 등록
 router.post('/bomAndBomMat', async (req, res) => {
   try {
     let bomInfo = req.body[0];
@@ -91,6 +92,22 @@ router.post('/bomAndBomMat', async (req, res) => {
   } catch (err) {
       console.error("등록 중 에러:", err);
       res.status(500).json({ message: '등록 실패'});
+  }
+});
+
+// BOM 및 BOM_MAT 수정
+router.put('/bomAndBomMat/:no', async (req, res) => {
+  try {
+    const bomNo = req.params.no; // BOM 번호
+    const bomInfo = req.body[0]; // 수정할 BOM 정보 (use_yn : 'f2')
+    const bomMatInfoArray = req.body[1]; // 수정할 BOM_MAT 배열
+
+    await bomService.modifyBomAndBomMat(bomNo, bomInfo, bomMatInfoArray);
+
+    res.status(200).json({ message: '수정 완료' });
+  } catch (err) {
+    console.error("수정 중 에러:", err);
+    res.status(500).json({ message: '수정 실패' });
   }
 });
 

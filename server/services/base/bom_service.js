@@ -132,6 +132,46 @@ const modifyBomMatInfo = async (bomMatNo, bomInfo, bomNo) => {
   return result;
 };
 
+const modifyBomAndBomMat = async (bomNo, bomInfo, bomMatInfoArray) => {
+  const conn = await mariadb.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 첫번째 쿼리 => bom수정
+    let data = [bomInfo, bomNo];
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery("updateBom", data);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    await conn.query(selectedSql, data);
+
+    // 두번째 쿼리 => bom_mat List 삭제 (조건 : bom_no)
+    data = bomNo;
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery("deleteBomMatAll", data);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    await conn.query(selectedSql, data);
+
+    // 세번째 쿼리 => bom_mat List등록
+    insertColumns = ['bom_no', 'mat_no', 'cap', 'unit', 'rmk'];
+    for (let i = 0; i < bomMatInfoArray.length; i++) {
+      data = convertObjToAry(bomMatInfoArray[i], insertColumns);
+      // 실제 SQL문을 가지고 오는 작업  
+      selectedSql = await mariadb.selectedQuery("insertBomMat", data);
+      // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+      await conn.query(selectedSql, data);
+    }
+
+    conn.commit();
+
+    //  에러 뜨면 rollback
+  } catch (err) {
+    if (conn) await conn.rollback();
+    console.error('트랜잭션 롤백:', err);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
 // BOM 삭제 => BOM을 삭제하면 Bom_no 동일한 Bom_Mat 자동 삭제
 const removeBomInfo = async (bomNo) => {
   let result = await mariadb.query("deleteBom", bomNo);
@@ -156,4 +196,5 @@ module.exports = {
   removeBomInfo,
   removeBomMatInfo,
   addBomAndBomMat,
+  modifyBomAndBomMat
 };

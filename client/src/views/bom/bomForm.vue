@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-outline-secondary" @click="openMatModal">자재추가</button>
+        <!-- <button class="btn btn-outline-secondary" @click="openMatModal">자재추가</button> -->
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
         <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
@@ -41,6 +41,9 @@
                   <button class="btn btn-outline-secondary" @click="openPrdModal">제품검색</button>
                 </div>
               </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;" @click="openMatModal">자재추가</button>
             </div>
           </div>
           <table class="table table-bordered text-center">
@@ -118,7 +121,6 @@ export default {
       showPrdModal: false, // 제품 선택 모달 초기화값 = 닫힘
       matList: [], // 자재 리스트 (showMatModal에서 사용)
       prdList: [], // 제품 리스트 (showPrdModal에서 사용)
-      allMatList: [], // 자재추가 모달에서 선택한 자재들 리스트 (저장하기 전)
     };
   },
   created() {
@@ -168,7 +170,7 @@ export default {
         
       if (result.data.message == '등록 완료') {
         alert('등록되었습니다.');
-        this.$emit('dept-reload');
+        this.$emit('bom-reload');
       } else {
         alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
       };

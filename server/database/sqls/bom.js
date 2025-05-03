@@ -9,7 +9,7 @@
 
 // 다양한 검색조건을 가지는 전체조회
 const selectBomList =
-        `SELECT 
+  `SELECT 
         b.bom_no, 
         b.prd_no, 
         p.prd_nm, 
@@ -21,7 +21,7 @@ ORDER BY b.bom_no;`;
 // 검색조건이 들어갈 위치에 :searchKeyword 문자열을 작성 => Strng.replace() 함수와 정규표현식을 이용해서 대체
 
 const selectBomOne =
-        `SELECT 
+  `SELECT 
         b.bom_no, 
         b.prd_no, 
         p.prd_nm, 
@@ -43,7 +43,7 @@ ORDER BY bom_mat_no`;
 
 // 추가시 적용되는 BOM번호
 const selectBomNo =
-        `SELECT IFNULL(MAX(bom_no), 0) +1 AS addBomNo
+  `SELECT IFNULL(MAX(bom_no), 0) +1 AS addBomNo
 From bom`;
 
 // 추가시 적용되는 BOM_MAT번호
@@ -53,49 +53,55 @@ From bom`;
 
 // BOM추가
 const insertBom =
-        `INSERT INTO bom (bom_no, prd_no, rgt_dt, use_yn)
+  `INSERT INTO bom (bom_no, prd_no, rgt_dt, use_yn)
 SELECT IFNULL(MAX(bom_no), 0) +1, ?, sysdate(), 'f1'
 FROM bom`;
 
 // BOM_MAT추가
 const insertBomMat =
-        `INSERT INTO bom_mat (bom_mat_no, bom_no, mat_no, cap, unit, rmk)
+  `INSERT INTO bom_mat (bom_mat_no, bom_no, mat_no, cap, unit, rmk)
 SELECT IFNULL(MAX(bom_mat_no), 0) +1, ?, ?, ?, ?, ?
 FROM bom_mat`;
 
 // BOM수정
 const updateBom =
-        `UPDATE bom
-SET ?
+  `UPDATE bom
+SET mdf_dt = sysdate(), ?
 WHERE bom_no = ?`;
 
 // BOM_MAT수정
 const updateBomMat =
-        `UPDATE bom_mat
+  `UPDATE bom_mat
 SET ?
 WHERE bom_mat_no = ?
 AND bom_no = ?`;
 
 // BOM삭제
 const deleteBom =
-        `DELETE FROM bom
+  `DELETE FROM bom
 WHERE bom_no = ?`;
 
 // BOM_MAT삭제
 const deleteBomMat =
-        `DELETE FROM bom_mat
+  `DELETE FROM bom_mat
 WHERE bom_mat_no = ?
 AND bom_no = ?`;
 
+// BOM_MAT삭제 전체
+const deleteBomMatAll =
+  `DELETE FROM bom_mat
+WHERE bom_no = ?`;
+
 module.exports = {
-        selectBomList,
-        selectBomOne,
-        selectBomNo,
-        // selectBomMatNo,
-        insertBom,
-        insertBomMat,
-        updateBom,
-        updateBomMat,
-        deleteBom,
-        deleteBomMat,
+  selectBomList,
+  selectBomOne,
+  selectBomNo,
+  // selectBomMatNo,
+  insertBom,
+  insertBomMat,
+  updateBom,
+  updateBomMat,
+  deleteBom,
+  deleteBomMat,
+  deleteBomMatAll,
 };
