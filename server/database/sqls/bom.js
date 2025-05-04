@@ -17,7 +17,7 @@ const selectBomList =
 FROM bom b LEFT OUTER JOIN prd p
 ON b.prd_no = p.prd_no
 :searchKeyword
-ORDER BY b.bom_no;`;
+ORDER BY b.bom_no`;
 // 검색조건이 들어갈 위치에 :searchKeyword 문자열을 작성 => Strng.replace() 함수와 정규표현식을 이용해서 대체
 
 const selectBomOne =
