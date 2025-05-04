@@ -1,10 +1,10 @@
 //자재번호를 아는경우 생산계획 번호 불러오기 
 const selectPrdPlanByMaterial =
  `SELECT b.prd_no as 제품번호,
-         bm.bom_mat_no as 자재번호,ppd.pdn_pln_no as 생산계획번호
+         bm.mat_no as 자재번호,ppd.pdn_pln_no as 생산계획번호
 FROM bom_mat bm JOIN bom b ON(bm.bom_no=b.bom_no)
 				        JOIN  pdn_pln_dtl ppd ON(b.prd_no=ppd.prd_no)
-WHERE bm.bom_mat_no = ?`;
+WHERE bm.mat_no = ?`;
 
 //자재출고요청서를 바탕으로한 자재현황 파악 
 const selectMaterialStatusByRequest =
@@ -17,7 +17,7 @@ const selectMaterialStatusByRequest =
 FROM        mat_rls_req mrq
              JOIN  mat m ON(mrq.mat_no=m.mat_no)
 	     JOIN  mat_stk ms ON(m.mat_no=ms.mat_no)`; 
-//자재출고요청서에 상태가 c1,c2(확인)인것만 알아서 자재구매계획에 insert
+//자재출고요청서에 상태가 c1,c2(확인)인것만 알아서 한건 기준  자재구매계획에 insert
 const insertMaterialPlan=
 `INSERT INTO mat_pur_pln (
 	mat_pur_pln_no,
@@ -38,7 +38,9 @@ FROM mat_rls_req mrq
 	JOIN mat m ON mrq.mat_no = m.mat_no
 	JOIN mat_stk ms ON m.mat_no = ms.mat_no
 WHERE mrq.prc_rslt IN('c1','c2')
-AND (mrq.qty - ms.cur_stk) > 0`;  
+AND (mrq.qty - ms.cur_stk) > 0
+LIMIT 1
+`;  
 //자재구매계획 등록후 업데이트 하기   
 
 
@@ -79,7 +81,28 @@ FROM mat_pur_pln mpp
  const selectMinqty=
  `SELECT  min_ord_qty 
   FROM mat 
-  WHERE mat_no= ?`;         
+  WHERE mat_no= ?`;    
+  
+ //자재구매계획 버튼에 있는 버튼을 눌렀을 경우 발주테이블에 insert 단건등록    
+ const insertPurOrd=
+ `INSERT INTO pur_ord (
+  pur_ord_no, mat_pur_pln_no, vdr_no, crt_dt, pur_dt,
+  mat_no, qty, unt_prc, amt
+)
+SELECT ?, 
+       mat_pur_pln_no,
+       vdr,
+       sysdate(), sysdate(),
+       mat_no, qty, unt_prc,
+       qty * unt_prc
+FROM mat_pur_pln
+WHERE mat_pur_pln_no = ?
+ `;
+// 발주번호 최대값 찾기 
+const selectLastPurOrdNo=
+`SELECT MAX(pur_ord_no) AS maxPur FROM pur_ord`;
+
+
 
 module.exports = {
  selectPrdPlanByMaterial,
@@ -88,5 +111,7 @@ module.exports = {
  selectLastMatNo,
  updateMatRes,
  selectMatPurPlan,
- selectMinqty,   
+ selectMinqty, 
+ insertPurOrd, 
+selectLastPurOrdNo,   
 };

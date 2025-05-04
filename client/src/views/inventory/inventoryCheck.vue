@@ -89,10 +89,10 @@
     </div>
   </div>
       </td>
-
+<!--생산계획모달 end-->
 
     <td>
-      <button class="btn btn-success rounded-pill px-3" type="button">발주하기</button>
+      <button class="btn btn-success rounded-pill px-3" @click="addPurOrd(item['계획ID'])"  type="button">발주하기</button>
     </td>
     </tr> 
   </tbody>
@@ -155,7 +155,7 @@ import axios from 'axios';
         filtered.push(item); 
         // console.log('필터링배열',filtered); 
       }else{
-        console.log('최소주문수량보다 작음');
+       // console.log('최소주문수량보다 작음');
       }
     }//end of for 
 
