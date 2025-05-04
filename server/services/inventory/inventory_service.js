@@ -28,8 +28,17 @@ const findLastMatNo=async () => {
   const result = await mariadb.query('selectLastMatNo');
   return result[0]?.maxMatNo || 0;  
 }
+//자재구매계획 보기 
+const findMatPurplan=async ()=>{
+  const result=await mariadb.query('selectMatPurPlan');
+  return result;
 
-
+}
+//최소수량 구하기 
+const findMinqty=async(matId) =>{
+  const result=await mariadb.query('selectMinqty',[matId]);
+  return result; 
+}
 
 
 module.exports = {
@@ -39,4 +48,6 @@ findMaterialStatusByRequest,
 addMaterialPlan, 
 findLastMatNo,
 updateMatRes,
+findMatPurplan,
+findMinqty, 
 }; 
