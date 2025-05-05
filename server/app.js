@@ -7,7 +7,7 @@ const app = express();
 // 미들웨어 등록 영역, 미들웨어 상단에!!!!!!!!
 // body parser
 // content-type : application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended : false }));
+app.use(express.urlencoded({ extended : true }));
 
 // content-type : application/json
 app.use(express.json()); 
@@ -34,6 +34,7 @@ app.listen(3000, ()=>{
 })
 
 const prodPlanRouter = require('./routers/production/productPlan_router.js');
+const prodInstRouter = require('./routers/production/productionInst_router.js');
 const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 const salesRouter=require('./routers/sales/sales_router.js');
 const inventoryRouter=require('./routers/inventory/inventory_router.js');
@@ -45,6 +46,7 @@ app.get('/', (req, res)=>{
 // 라우터 모듈 등록
 //생산 라우팅
 app.use('/',prodPlanRouter);
+app.use('/',prodInstRouter);
 
 // 부서 라우팅
 const deptRouter = require('./routers/base/dept_router.js');

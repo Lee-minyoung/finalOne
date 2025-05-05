@@ -54,10 +54,17 @@
           </td>
         </tr>
 
-        <tr v-for="item in prodPlanList" :key="item.pdn_pln_no"
+        <!-- <tr v-for="item in prodPlanList" :key="item.pdn_pln_no"
             @click="togglePlanSelection(item)"
             :class="{ 'table-primary': isSelected(item) }"
-            style="cursor: pointer;">
+            style="cursor: pointer;"> -->
+            <tr
+              v-for="item in prodPlanList"
+              :key="item.pdn_pln_no"
+              @click="togglePlanSelection(item)"
+              :class="{ 'table-primary': isSelected(item) }">
+
+
           <td>{{ item.pdn_pln_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.qty }}</td>
@@ -80,8 +87,6 @@
 
     <InstructionModal
       v-if="showInstructionModal"
-      :instructionRows="instructionRows"
-
       @submit="submitInstructions"
       @close="showInstructionModal = false"
     />
@@ -93,8 +98,11 @@ import axios from 'axios'
 import useDateUtils from '@/utils/useDates.js'
 import ProductSelectModal from '@/views/production/ProductSelectModal.vue'
 import InstructionModal from '@/views/production/InstructionModal.vue'
+import { useInstructionStore } from '@/stores/instructionStore'
 
 export default {
+  name: 'ProductionPlan',
+
   // 사용하는 모달 컴포넌트 등록
   components: { ProductSelectModal, InstructionModal },
   
@@ -104,7 +112,7 @@ export default {
       planRows: [ // 사용자 입력용 계획 행 (최소 1줄은 유지)
         { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
-      selectedPlans: [], // 체크한 계획 항목들 (지시 등록용)
+      // selectedPlans: [], // 체크한 계획 항목들 (지시 등록용)///
       showProductModal: false, // 제품 선택 모달 열림 여부
       showInstructionModal: false, // 지시 등록 모달 열림 여부
       prodList: [], // 제품 리스트 (모달에서 사용)
@@ -115,48 +123,17 @@ export default {
   // 컴포넌트 생성 시, 초기 계획 목록 불러오기
   created() {
     this.getProdPlanList()
+    
   },
 
   computed: {
-//     planSummaryByProductMap() {
-//   const summary = {}
-
-//   for (const plan of this.selectedPlans) {
-//     const key = plan.prd_no
-//     const qty = Number(plan.qty || 0)
-//     const instruction = Number(plan.instruction_qty || 0)
-//     const status = plan.status || plan.situ
-
-//     if (!summary[key]) {
-//       // ✅ 해당 제품번호가 처음 등장하면 초기화
-//       summary[key] = {
-//         product: key,
-//         prd_nm: plan.prd_nm,
-//         totalQty: 0,
-//         instructionQty: 0,
-//         doneQty: 0
-//       }
-//     }
-
-//     // ✅ 동일 제품이면 수량 누적
-//     summary[key].totalQty += qty
-//     summary[key].instructionQty += instruction
-
-//     if (status === '완료' || status === '계획완료') {
-//       summary[key].doneQty += qty
-//     }
-//   }
-
-//   for (const key in summary) {
-//     summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
-//   }
-
-//   return summary // 객체 형태로 유지
-// }
-
+    instructionStore() {
+      return useInstructionStore()
+    }
   },
-
+  
   methods: {
+
     // 생산 계획 목록 API에서 불러오기
     async getProdPlanList() {
       try {
@@ -167,7 +144,7 @@ export default {
       }
     },
 
-    // 제품 선택 모달 열기
+    // 제품 등록 선택 모달 열기
     openProductModal() {
       axios.get('/api/prodpln/prdList')
         .then(res => {
@@ -240,17 +217,16 @@ export default {
 
     // 계획 선택/해제 토글
     togglePlanSelection(plan) {
-      const index = this.selectedPlans.findIndex(p => p.pdn_pln_no === plan.pdn_pln_no)
+      const index = this.instructionStore.selectedPlans.findIndex(p => p.pdn_pln_no === plan.pdn_pln_no)
       if (index >= 0) {
-        this.selectedPlans.splice(index, 1)
+        this.instructionStore.selectedPlans.splice(index, 1)
       } else {
-        this.selectedPlans.push(plan)
+        this.instructionStore.selectedPlans.push(plan)
       }
     },
-
     // 선택 여부 확인
     isSelected(plan) {
-      return this.selectedPlans.some(p => p.pdn_pln_no === plan.pdn_pln_no)
+      return this.instructionStore.selectedPlans.some(p => p.pdn_pln_no === plan.pdn_pln_no)
     },
 
     // 입력 행 제거
@@ -262,94 +238,91 @@ export default {
     dateFormat(value, format) {
       return useDateUtils.dateFormat(value, format)
     },
-
-    // 1건마다 등록 계획 등록 처리
-    // async addPlan() {
-    //   try {
-    //     for (let row of this.planRows) {
-    //       if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
-    //         alert('필수 항목을 모두 입력하세요.')
-    //         return
-    //       }
-
-    //       await axios.post('/api/prodpln', row, {
-    //         headers: { 'Content-Type': 'application/json' }
-    //       })
-    //     }
-
-    //     alert('등록 완료!')
-    //     this.planRows = [
-    //       { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
-    //     ]
-    //     this.getProdPlanList()
-    //   } catch (err) {
-    //     console.error('등록 실패', err)
-    //     alert('등록 실패 ㅠㅠ')
-    //   }
-    // },
-
+    // 계획 등록 처리
     async addPlan() {
-  try {
-    // 검증: 모든 행에 필수값이 있어야 함
-    for (let row of this.planRows) {
-      if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
-        alert('필수 항목을 모두 입력하세요.');
-        return;
-      }
-    }
+       try {
+         for (let row of this.planRows) {
+           if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
+             alert('필수 항목을 모두 입력하세요.')
+             return
+           }
+ 
+           await axios.post('/api/prodpln', row, {
+             headers: { 'Content-Type': 'application/json' }
+           })
+         }
+ 
+         alert('등록 완료!')
+         this.planRows = [
+           { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+         ]
+         this.getProdPlanList()
+       } catch (err) {
+         console.error('등록 실패', err)
+         alert('등록 실패 ㅠㅠ')
+       }
+     },
 
-    // 1. 범위는 모든 row 중 첫 행의 날짜 사용
-    const payload = {
-      st_dt: this.planRows[0].st_dt,
-      end_dt: this.planRows[0].end_dt,
-      rmk: '프론트 등록',
-      details: this.planRows.map(row => ({
-        prd_no: row.prd_no,
-        qty: row.qty,
-        rmk: row.rmk || ''
-      }))
-    }
-
-    // 2. 한번에 axios 전송
-    await axios.post('/api/prodpln', payload, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    alert('등록 완료!');
-    this.planRows = [
-      { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
-    ];
-    this.getProdPlanList();
-  } catch (err) {
-    console.error('등록 실패', err);
-    alert('등록 실패 ㅠㅠ');
-  }
-},
     // 지시 등록 처리
-    async submitInstructions(rows) {
+    async submitInstructions() {
+      const rows = this.instructionStore.instructionRows
       try {
         for (const row of rows) {
           if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
-            alert(`지시수량 오류 (제품: ${row.prd_no})`)
+            alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
             return
           }
         }
 
-        await axios.post('/api/prodinst', rows, {
+        const payload = {
+          pdn_pln_no: rows[0].pdn_pln_no,
+          details: rows.map(row => ({
+            pdn_pln_dtl_no: row.pdn_pln_dtl_no,
+            prd_no: row.prd_no,
+            instruction_qty: row.instruction_qty,
+            rmk: row.rmk
+          }))
+        }
+
+        console.log("📤 전송할 payload:", payload)
+
+        await axios.post('/api/prodinst', payload, {
           headers: { 'Content-Type': 'application/json' }
         })
 
+
         alert("지시 등록 완료!")
         this.showInstructionModal = false
+        this.instructionStore.reset()
         this.getProdPlanList()
       } catch (err) {
+        console.error("지시 등록 실패", err.response?.data || err.message)
         console.error("지시 등록 실패", err)
-        alert("지시 등록 실패")
+        alert("지시 등록 실패 모달이 안닫김")
       }
     },
 
-    // 전체 초기화
-    resetAll() {
+
+
+    // 지시 모달 열기
+    openInstructionModal() {
+      console.log("✅ selectedPlans:", JSON.stringify(this.instructionStore.selectedPlans, null, 2))
+      if (this.instructionStore.selectedPlans.length === 0) {
+        alert("지시할 계획을 선택해주세요.")
+        return
+      }
+      this.instructionStore.selectedPlans = this.instructionStore.selectedPlans.map(plan => ({
+    ...plan,
+    prd_no: plan.prd_no || plan.prd?.prd_no || '',             // 혹시 prd 내부에 감싸져 있으면 대응
+    pdn_pln_dtl_no: plan.pdn_pln_dtl_no || '',                 // 없을 수도 있음 → 백에서 필드 검토 필요
+  }))
+
+      this.instructionStore.generateInstructionRows()
+      this.showInstructionModal = true
+    },
+
+        // 전체 초기화
+        resetAll() {
       if (!confirm('정말 초기화 하시겠습니까? 입력값이 모두 사라집니다.')) return
 
       // 입력 행 초기화
@@ -359,23 +332,9 @@ export default {
 
       // 선택 항목 초기화
       this.selectedPlans = []
-    },
-
-    // 지시 모달 열기
-    openInstructionModal() {
-      if (this.selectedPlans.length === 0) {
-        alert("지시할 계획을 선택해주세요.")
-        return
-      }
-
-      // 기존 수량 유지 또는 초기화
-      this.instructionRows = this.selectedPlans.map(plan => ({
-        ...plan,
-        instruction_qty: plan.instruction_qty || 0
-      }))
-
+      this.instructionStore.generateInstructionRows()
       this.showInstructionModal = true
-    }
+    },
   }
 }
 

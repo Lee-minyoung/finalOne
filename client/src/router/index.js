@@ -77,7 +77,11 @@ const routes = [
         name: 'SpmInsRst',
         component: () => import('@/views/qualitys/spmInsRst.vue'),
       },
-  
+      {
+        path: '/ProdMeng',
+        name: '생산지시현황',
+        component: () => import('@/views/production/line/productionManagement'),
+      },
       //상단 {}를 복사하여 사용하시면 됩니다.
     ],
   },

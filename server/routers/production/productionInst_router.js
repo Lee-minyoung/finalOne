@@ -1,105 +1,66 @@
 const express = require('express');
 const router = express.Router();
-const productionInstServices = require('../../services/production/productionInst_service.js');
-const utils = require('../../utils/converts.js');
-
-router.post('/prodOrd', async (req, res) => {
-  try{
-    const lastOrdCodeRow = await productionInstServices.findLastOrdCode();
-    const nextOrdCode = utils.findNextCode(lastOrdCodeRow?.lastCode, 'ODR-');
-
-    const lastOrdDetailCodeRow = await productionInstServices.findLastOrdDetailCode();
-    const nextOrdDateilCode = utils.findNextCode(lastOrdDetailCodeRow?.lastCode, 'ODT-')
-
-    const lastMatCodeRow = await productionInstServices.findLastMatCode();
-    const nextMatCode = utils.findNextCode(lastMatCodeRow?.lastCode, 'MAT-')
-
-//`INSERT INTO pdn_ord (pdn_ord_no, pdn_pln_no, pdn_ord_dt, crt_by)
-    const ordData =  [nextOrdCode, '생산계획번호', 1000] //작성자 1000
-
-/*
-{
-  "pdn_pln_no": "PLN-002",
-  "crt_by": "admin",
-  "prd_no": "P001",
-  "qty": 100,
-  
-  "pdn_pln_no": "PLN-002",
-  "crt_by": "admin",
-  "det ails": [
-    { "prd_no": "P003", "qty": 100 },
-    { "prd_no": "P002", "qty": 200 },
-    { "prd_no": "P001", "qty": 150 }
-  ]
-}
-데이터는 객체 넘어와야 함.
-*/
+const productionInstServices = require('../../services/production/productionInst_service');
 
 
+router.post('/prodinst', async (req, res) => {
+  // console.log("✅ 받은 데이터:", JSON.stringify(req.body, null, 2))
 
-// // 다건 생산계획 등록
-// router.post('/prodpln', async (req, res) => {
-//   try {
-//     const { st_dt, end_dt, rmk, details } = req.body;
-//     // 1. 생산계획번호 생성
-//     const lastPlanCodeRow = await productionPlanServices.findLastPlanCode();
-//     const nextPlanCode = utils.findNextCode(lastPlanCodeRow?.lastCode, 'PLN-');
+  try {
+    const { pdn_pln_no, details } = req.body;
 
-//     // 2. 세부계획 시작코드
-//     const lastDetailCodeRow = await productionPlanServices.findLastDetailCode();
-//     let nextDetailCode = lastDetailCodeRow?.lastCode || 'PLD-000';
+    // 1. 마지막 번호 조회
+    // const lastOrdCodeRow = await productionInstServices.findLastOrdCode();
+    // const lastDetailCodeRow = await productionInstServices.findLastOrdDetailCode();
+    // const lastMatCodeRow = await productionInstServices.findLastMatCode();
 
-//     // 3. 계획 헤더 데이터
-//     const planData = [
-//       nextPlanCode,
-//       1000,              // 사원번호 placeholder
-//     ];
+    // const nextOrdCode = utils.findNextCode(lastOrdCodeRow?.lastCode, 'ODR-');
+    // let nextDetailCode = lastDetailCodeRow?.lastCode || 'ODT-000';
+    // const nextMatCode = utils.findNextCode(lastMatCodeRow?.lastCode, 'MAT-');
 
-//     // 4. 세부계획 여러 건 준비
-//     const detailDataList = details.map((item, idx) => {
-//       const pdn_pln_dtl_no = utils.findNextCode(nextDetailCode, 'PLD-');
-//       nextDetailCode = pdn_pln_dtl_no; // 갱신
+    // 2. 지시 헤더 데이터 (생산지시)
+    const ordDataList = [[pdn_pln_no, 1000]]; // 1000은 emp_no (추후 세션/토큰 처리)
+    
 
-//       return [
-//         pdn_pln_dtl_no,
-//         nextPlanCode,
-//         item.prd_no,
-//         item.qty,
-//         st_dt,
-//         end_dt,
-//         '계획완료',
-//         item.rmk || ''
-//       ];
-//     });
+    // 3. 지시 세부 (여러 건)
+    const ordDataDetailList = details.map((row, idx) => [
+      idx, row.instruction_qty, row.prd_no, 1
+    ]);
 
-//     // 5. 서비스 호출 (너가 만든 함수 이름 넣기!)
-//     await productionPlanServices.addProdPlanData(planData, detailDataList);
+    // const ordDataDetailList = details.map((row, idx) => {
+    //   return [
+    //     nextOrdCode,
+    //     0,          // line 번호
+    //     row.instruction_qty,
+    //     row.prd_no,
+    //     1                 // 우선순위
+    //   ];
+    // });
 
-//     res.status(200).json({message: '생산계획 등록 완료', pdn_pln_no: nextPlanCode });
-
-//   } catch (err) {
-//     console.error('생산계획 등록 실패:', err);
-//     res.status(500).json({ message: '등록 실패', error: err.message });
-//   }
-// });
-
-
-
-//`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio)
-    const ordDetailData = [nextOrdDateilCode, nextOrdCode, '', '지시수량', '제품번호', '우선순위']
-
-
-// `INSERT INTO mat_rls_req (mat_req_no,  pdn_ord_no, mat_no, qty, sndr,  sts,  prc_rslt) 
-    const matData = [nextMatCode, nextOrdCode, '자재번호', '자재수량', 1000, '미확인', '미승인']
+    // 4. 자재요청은 첫 제품만 샘플로 (실제로는 BOM에서 계산)
 
 
 
 
-    await productionInstServices.addProdInstData(ordData, ordDetailData, matData)
-  }catch (err){
-    console.log('에러발생 ㅋㅋㅋㅋ 킹받지?')
+// const matData = [
+//   nextMatCode,      // mat_req_no
+//   nextOrdCode,      // pdn_ord_no
+//   1000,             // emp_no
+//   '미확인',
+//   '미승인',
+//   ...detailList.flat()  // ['PLD-001', 1000, 'PLD-002', 2000, ...]
+// ];
+
+
+    // 5. DB insert 호출
+    await productionInstServices.addProdInstData(ordDataList, ordDataDetailList, details);
+
+    // res.status(200).json({ message: '지시 등록 완료', pdn_ord_no: nextOrdCode });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ 지시 등록 실패:", err);
+    res.status(500).json({ message: '지시 등록 실패', error: err.message });
   }
-})
+});
 
-
-module.exports = router
+module.exports = router;
