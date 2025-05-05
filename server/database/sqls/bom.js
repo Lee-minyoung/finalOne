@@ -1,4 +1,4 @@
-// Table : emp
+// Table : bom
 
 // 제약조건 추가 => bom을 삭제하면 관련된 bom_mat 같이 삭제되도록
 // ALTER TABLE bom_mat
