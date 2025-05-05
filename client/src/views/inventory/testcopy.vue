@@ -1,4 +1,5 @@
 <template>
+  <h3>테스트화면 </h3>
   <h3>자재현황파악</h3>
   <table class="table">
   <thead>
@@ -46,53 +47,18 @@
     </tr>
   </thead>
   <tbody>
-    <tr v-for="(item,index) in filteredPurPlan" :key="index">
+    <tr v-for="(item,index) in inventoryPurPlan" :key="index">
       <th scope="row">{{ item['계획ID'] }}</th>
       <td>{{ item['자재ID'] }}</td>
       <td>{{ item['자재명'] }}</td>
       <td>{{ item['수량'] }}</td>
-      <td>{{ item['단가'] }}</td>
+      <td>{{ item['단가'] }}<</td>
       <td>{{ item['총가격'] }}</td>
-      <td>{{ item['실시간도착예정일'].substring(0,10) }}</td>
+      <td>{{ item['실시간도착예정일'] }}</td>
       <td>{{ item['대표거래처'] }}</td>
-      <!--생산계획 버튼-->
-      <td>
-        <div>
-        <!--생산계획 보는 모달창 띄우기-->
-        <button type="button" class="btn btn-primary" @click="fetchInventoryPurPlan(item['자재ID'])" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      생산계획
-    </button>
-  </div>
-
-  <!-- 주문 등록 모달 -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">생산계획</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-       
-
-        
-
-          <!-- 제품 리스트 테이블 -->
-         
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        
-        </div>
-      </div>
-    </div>
-  </div>
-      </td>
-<!--생산계획모달 end-->
-
+      
     <td>
-      <button class="btn btn-success rounded-pill px-3" @click="addPurOrd(item['계획ID'])"  type="button">발주하기</button>
+      <button class="btn btn-success rounded-pill px-3" type="button">발주하기</button>
     </td>
     </tr> 
   </tbody>
@@ -147,20 +113,19 @@ import axios from 'axios';
     for (const item of rawData){
       const matId=item['자재ID']; 
       const minQty=await this.getMinOrdqty(matId);
-       console.log('minQty',minQty.min_ord_qty); 
+      // console.log('minQty',minQty.min_ord_qty); 
       // console.log('for문 minQty',minQty); 
-      //  console.log('item수량'); 
-      //  console.log(item['수량']); 
+      // console.log('item수량'); 
+      // console.log(item['수량']); 
       if(item['수량']>= minQty.min_ord_qty){
         filtered.push(item); 
         // console.log('필터링배열',filtered); 
       }else{
-       // console.log('최소주문수량보다 작음');
+        console.log('최소주문수량보다 작음');
       }
     }//end of for 
 
     this.filteredPurPlan=filtered;
-    //console.log('필터링된 자재구매계획',this.filteredPurPlan);
    
    },
    async getMinOrdqty(matId){
@@ -176,8 +141,7 @@ import axios from 'axios';
     }catch(error){
       console.log(error); 
     }
-   },
-   
+   }
   },
 };
 

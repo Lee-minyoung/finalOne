@@ -42,7 +42,7 @@ const selectOrdDate=
        p.prd_no,  
        SUM(od.prd_qty)
 FROM ord o JOIN  ord_dtl od on(o.ord_no=od.ord_no)
-			     JOIN prd  p ON(od.prd_no=p.prd_no)
+	     JOIN prd  p ON(od.prd_no=p.prd_no)
            JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
 WHERE DATE(o.due_dt) BETWEEN ? and ?
 GROUP BY DATE(o.due_dt), p.prd_nm`; 
@@ -79,6 +79,4 @@ WHERE cpy_nm LIKE'%?%'`;
   selectOrdAll,
   selectOrdDate,
   selectOrdDateOne, 
-  searchVdrNo, 
-  searchVdrNm, 
  }

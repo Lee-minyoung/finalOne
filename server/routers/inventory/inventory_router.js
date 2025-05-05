@@ -22,7 +22,7 @@ const findNextCode = (lastCode) => {
   return baseCode + 1;
 };
 
-//자재 구매계획에 insert
+//자재 구매계획에 insert 한건만됨;; 
 router.post('/inventory/mtPlan',async (req,res)=>{
   try{
     // 1. 마지막 코드 조회
@@ -35,7 +35,7 @@ router.post('/inventory/mtPlan',async (req,res)=>{
     //const check='';
     //다음 자재번호 자재구매계획에 insert하기 
     await inventoryService.addMaterialPlan(formattedMatNo);
-    //자재출고요청서에 가장최근 자재출고요청 자재처리결과 c3으로 업데이트
+    //자재출고요청서에 가장최근 자재출고요청 자재처리결과 c3()으로 업데이트
     await inventoryService.updateMatRes();             
                                             
    res.status(200).json({message:'등록완료'}); 
@@ -44,6 +44,29 @@ router.post('/inventory/mtPlan',async (req,res)=>{
     res.status(500).json({ message: '등록 실패', error: err.message });
   }
 });
+// 자재구매계획에서 발주table로 insert 
+router.post('/inventory/purOrd',async (req,res)=>{
+  const {purPlnNo} =req.query; //쿼리에서 어떤 자재구매계획번호를 발주테이블 insert할건지..
+  //마지막 발주번호 찾기 
+  const lastOrdNo=await inventoryService.findLastPurOrdNo();//1
+  const nextOrdNo=findNextCode(lastOrdNo); 
 
+  console.log('nextOrdNo',nextOrdNo); 
+  const result=await inventoryService.addPurOrd(nextOrdNo,purPlnNo);
+  res.send(result);    
+}); 
+
+//자재구매계획 보기 
+router.get('/inventory/matPurPlan',async(req,res)=>{
+  let matPurPlan=await inventoryService.findMatPurplan()
+                                       .catch(err=>console.log(err)); 
+  res.json(matPurPlan);                                       
+}); 
+//최소구매 갯수 구하기 
+router.get('/inventory/minqty',async(req,res)=>{
+  const mat_no=req.query.matId; 
+  const minqty=await inventoryService.findMinqty(mat_no); 
+  res.json(minqty); 
+})
 
 module.exports=router;
