@@ -18,6 +18,8 @@ const mat = require('./sqls/mat.js'); // 자재
 const prd = require('./sqls/prd.js'); // 제품
 const proc = require('./sqls/proc.js'); // 공정
 const prcCode = require('./sqls/prcCode.js'); // 공정코드
+const ln = require('./sqls/ln.js'); // 라인
+const eqp = require('./sqls/eqp.js'); // 설비
 
 module.exports = {
     // 펼침연산자(spread operator, ...)을 활용해 객체의 필드를 다른 객체로 쉽게 복사
@@ -38,4 +40,6 @@ module.exports = {
     ...prd, // 제품
     ...proc, // 공정
     ...prcCode, // 공정코드
+    ...ln, // 라인
+    ...eqp, // 설비
 }
