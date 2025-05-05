@@ -21,21 +21,23 @@
               <tr>
                 <th>제품명</th>
                 <th>계획수량</th>
-                <th>지시수량</th>
+                <th>누적적지시수량</th>
                 <th>미지시수량</th>
+                <th>지시수량</th>
                 <th>완료수량</th>
                 <th>비고</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(row, index) in instructionStore.instructionRows" :key="index">
+              <tr v-for="(row, index) in instructionStore.instructionRows" :key="row.pdn_pln_dtl_no">
                 <td>{{ row.prd_nm }}</td>
                 <td>{{ row.qty }}</td>
+                <td>{{ row.ord_qty }}</td>
+                <td>{{ row.qty - row.ord_qty - row.instruction_qty || 0 }}</td>
                 <td style="width: 100px;">
                   <!-- <input type="number" class="form-control" v-model.number="row.instruction_qty" /> -->
-                  <input type="number" class="form-control" v-model.number="row.instruction_qty" :max="row.qty" @input="handleInput(index)"/>
+                  <input type="number" class="form-control" v-model.number="row.instruction_qty" min="0" :max="row.qty - row.ord_qty" @input="handleInput(index)"/>
                 </td>
-                <td>{{ row.qty - row.instruction_qty || 0 }}</td>
                 <td></td>
                 <td>
                   <input class="form-control" v-model="row.rmk" />
