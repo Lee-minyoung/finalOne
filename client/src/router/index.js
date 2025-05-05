@@ -52,6 +52,11 @@ const routes = [
         name: 'bom',
         component: () => import('@/views/bom/bom.vue'),
       },
+      { // proc
+        path: 'proc',
+        name: 'proc',
+        component: () => import('@/views/proc/proc.vue'),
+      },
       {
         path:'/inventoryCheck',
         name:'InventoryCheck',

@@ -63,6 +63,12 @@ app.use('/', matRouter);
 // 제품 라우팅
 const prdRouter = require('./routers/base/prd_router.js');
 app.use('/', prdRouter);
+// 공정 라우팅
+const procRouter = require('./routers/base/proc_router.js');
+app.use('/', procRouter);
+// 공정코드 라우팅
+const prcCodeRouter = require('./routers/base/prcCode_router.js');
+app.use('/', prcCodeRouter);
 
 //품질 모듈
 app.use('/',spmInsStd);
