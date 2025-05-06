@@ -38,6 +38,7 @@ const prodInstRouter = require('./routers/production/productionInst_router.js');
 const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 const salesRouter=require('./routers/sales/sales_router.js');
 const inventoryRouter=require('./routers/inventory/inventory_router.js');
+const lineManagementRouter = require('./routers/production/lineManagement_rouder.js');
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
@@ -47,7 +48,7 @@ app.get('/', (req, res)=>{
 //생산 라우팅
 app.use('/',prodPlanRouter);
 app.use('/',prodInstRouter);
-
+app.use('/',lineManagementRouter);
 // 부서 라우팅
 const deptRouter = require('./routers/base/dept_router.js');
 app.use('/', deptRouter);

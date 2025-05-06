@@ -1,30 +1,5 @@
-import {
-  cibFacebook,
-  cibTwitter,
-  cibLinkedin,
-  cibFlickr,
-  cibTumblr,
-  cibXing,
-  cibGithub,
-  cibGoogle,
-  cibStackoverflow,
-  cibYoutube,
-  cibDribbble,
-  cibInstagram,
-  cibPinterest,
-  cibVk,
-  cibYahoo,
-  cibBehance,
-  cibReddit,
-  cibVimeo,
-  cibCcMastercard,
-  cibCcVisa,
-  cibCcStripe,
-  cibCcPaypal,
-  cibCcApplePay,
-  cibCcAmex,
-} from '@coreui/icons'
-import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from '@coreui/icons'
+// icons/index.js 또는 assets/icons/index.js 위치에서 관리하세요
+
 import {
   cilArrowBottom,
   cilArrowRight,
@@ -80,10 +55,40 @@ import {
   cilUserFemale,
   cilUserFollow,
   cilXCircle,
+  cilBriefcase,
+  cilCart,
+  cilFactory,
+  cilBuilding
+} from '@coreui/icons'
+
+// 국기 아이콘
+import {
+  cifUs, cifBr, cifIn, cifFr, cifEs, cifPl
+} from '@coreui/icons'
+
+// 브랜드 아이콘
+import {
+  cibFacebook,
+  cibTwitter,
+  cibLinkedin,
+  cibGithub,
+  cibGoogle,
+  cibYoutube,
+  cibInstagram,
+  cibPinterest,
+  cibDribbble,
+  cibReddit,
+  cibCcMastercard,
+  cibCcVisa,
+  cibCcStripe,
+  cibCcPaypal,
+  cibCcApplePay,
+  cibCcAmex
 } from '@coreui/icons'
 
 export const iconsSet = Object.assign(
   {},
+  
   {
     cilArrowBottom,
     cilArrowRight,
@@ -139,39 +144,31 @@ export const iconsSet = Object.assign(
     cilUserFemale,
     cilUserFollow,
     cilXCircle,
+    // ✅ 사용자 지정 추가 아이콘
+    cilBriefcase,
+    cilCart,
+    cilFactory,
+    cilBuilding
   },
   {
-    cifUs,
-    cifBr,
-    cifIn,
-    cifFr,
-    cifEs,
-    cifPl,
+    cifUs, cifBr, cifIn, cifFr, cifEs, cifPl
   },
   {
     cibFacebook,
     cibTwitter,
     cibLinkedin,
-    cibFlickr,
-    cibTumblr,
-    cibXing,
     cibGithub,
     cibGoogle,
-    cibStackoverflow,
     cibYoutube,
-    cibDribbble,
     cibInstagram,
     cibPinterest,
-    cibVk,
-    cibYahoo,
-    cibBehance,
+    cibDribbble,
     cibReddit,
-    cibVimeo,
     cibCcMastercard,
     cibCcVisa,
     cibCcStripe,
     cibCcPaypal,
     cibCcApplePay,
-    cibCcAmex,
-  },
+    cibCcAmex
+  }
 )

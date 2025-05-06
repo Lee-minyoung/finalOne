@@ -111,6 +111,7 @@ import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
 import ProductSelectModal from '@/views/production/ProductSelectModal.vue' // 제품 선택 모달
 import InstructionModal from '@/views/production/InstructionModal.vue' // 생산 지시 등록 모달
 import { useInstructionStore } from '@/stores/instructionStore' // 상태관리 스토어 (Pinia 기반)
+import { useEmpStore } from "@/stores/empStore.js"; // Pinia 저장소 가져오기
 
 export default {
   name: 'ProductionPlan',
@@ -330,7 +331,7 @@ handleSelectedProducts(selectedList) {
         return
       }
       // 선택된 계획을 복사하여 지시할 데이터로 사용
-      // (prd_no, pdn_pln_dtl_no 필드만 남김)
+      // (prd_no, pdn_pln_dtl_no 필드만 남김) 오류 방지용용
       this.instructionStore.selectedPlans = this.instructionStore.selectedPlans.map(plan => ({
         ...plan,
         prd_no: plan.prd_no || plan.prd.prd_no || '',
@@ -342,55 +343,62 @@ handleSelectedProducts(selectedList) {
 
     // 지시 등록 (여러 계획번호별로 나눠서 등록)
     async submitInstructions() {
-  // 📦 1. Pinia 상태에서 지시할 데이터(instructionRows)를 가져옴
-  const rows = this.instructionStore.instructionRows
+      // 📦 1. Pinia 상태에서 지시할 데이터(instructionRows)를 가져옴
+      const rows = this.instructionStore.instructionRows
 
-  // 📦 2. plan 번호(pdn_pln_no)를 기준으로 지시 데이터를 묶기 위한 객체
-  const grouped = {}
+      // 📦 2. plan 번호(pdn_pln_no)를 기준으로 지시 데이터를 묶기 위한 객체
+      const grouped = {}
 
-  // 🔁 3. 각 지시 행(row)을 순회하면서 유효성 검사 및 그룹화
-  for (const row of rows) {
-    // 🚨 유효성 검사: 지시 수량이 0보다 작거나, 계획 수량보다 많은 경우는 오류
-    if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
-      alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
-      return // 유효하지 않으면 함수 종료
+      // 🔁 3. 각 지시 행(row)을 순회하면서 유효성 검사 및 그룹화
+        for (const row of rows) {
+      // 🚨 유효성 검사: 지시 수량이 0보다 작거나, 계획 수량보다 많은 경우는 오류
+        if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
+          alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
+          return // 유효하지 않으면 함수 종료
+        }
+
+      // 🗃️ 그룹화 키: 계획번호(pdn_pln_no) 기준
+      const key = row.pdn_pln_no
+
+      // 📌 해당 계획번호에 대한 배열이 없으면 초기화
+      if (!grouped[key]) grouped[key] = []
+
+      // 🧩 상세 지시 정보를 해당 그룹에 추가
+      grouped[key].push({
+        pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
+        prd_no: row.prd_no,                  // 제품 코드
+        instruction_qty: row.instruction_qty, // 지시 수량
+        rmk: row.rmk                         // 비고
+      })
     }
 
-    // 🗃️ 그룹화 키: 계획번호(pdn_pln_no) 기준
-    const key = row.pdn_pln_no
-
-    // 📌 해당 계획번호에 대한 배열이 없으면 초기화
-    if (!grouped[key]) grouped[key] = []
-
-    // 🧩 상세 지시 정보를 해당 그룹에 추가
-    grouped[key].push({
-      pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
-      prd_no: row.prd_no,                  // 제품 코드
-      instruction_qty: row.instruction_qty, // 지시 수량
-      rmk: row.rmk                         // 비고
-    })
-  }
-
-  // 📤 4. 그룹화된 데이터를 하나씩 서버에 POST 요청 (계획번호별로 여러 건 전송)
-  try {
-    // Object.entries(grouped): { 'PLN001': [...], 'PLN002': [...] } → [[key1, val1], [key2, val2], ...]
-    for (const [pdn_pln_no, details] of Object.entries(grouped)) {
+      // 📤 4. 그룹화된 데이터를 하나씩 서버에 POST 요청 (계획번호별로 여러 건 전송)
+    try {
+      //구조 분해 할당 (Destructuring)
+      // Object.entries(grouped): { 'PLN001': [...], 'PLN002': [...] } → [[key1, val1], [key2, val2], ...]
+      /*
+        "pdn_pln_no": "PLN001",
+        "details": [
+          { "prd_no": "A", "instruction_qty": 10, ... },
+          { "prd_no": "B", "instruction_qty": 20, ... }
+      */
+      for (const [pdn_pln_no, details] of Object.entries(grouped)) {
       // 전송 payload 생성
       const payload = { pdn_pln_no, details }
 
       // 💬 axios POST 요청 (비동기 통신)
       await axios.post('/api/prodinst', payload, {
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
+         headers: { 'Content-Type': 'application/json' }
+       })
+     }
 
-    // ✅ 등록 성공 시 처리
+      // ✅ 등록 성공 시 처리
     alert("지시 등록 완료!")
-    this.showInstructionModal = false // 모달 닫기
-    this.instructionStore.reset()     // 스토어 내부 상태 초기화 (선택/지시 모두)
-    this.getProdPlanList()            // 다시 리스트 조회해서 반영
+      this.showInstructionModal = false // 모달 닫기
+      this.instructionStore.reset()     // 스토어 내부 상태 초기화 (선택/지시 모두)
+      this.getProdPlanList()            // 다시 리스트 조회해서 반영
 
-  } catch (err) {
+    } catch (err) {
     // ❌ 에러 발생 시 콘솔 출력 및 사용자 알림
     console.error("지시 등록 실패", err.response?.data || err.message)
     alert("지시 등록 실패")

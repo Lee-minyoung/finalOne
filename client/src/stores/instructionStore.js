@@ -30,8 +30,8 @@ export const useInstructionStore = defineStore('instruction', {
             prd_no: plan.prd_no,                   // 제품번호
             prd_nm: plan.prd_nm,                   // 제품명
             qty: plan.qty,                         // 전체 계획수량
-            instruction_qty: plan.instruction_qty || plan.qty - plan.ord_qty || 0, // 지시 수량 (기본값: 계획수량)
-            ord_qty: plan.ord_qty || 0,               // 주문 수량
+            instruction_qty: plan.instruction_qty || plan.qty - plan.ord_qty || 0, // 지시 수량 (기본값: 계획수량 - 누적지시시수량)
+            ord_qty: plan.ord_qty || 0,            // 주문 수량
             rmk: plan.rmk || ''                    // 비고
           }
           console.log("instructionRow 생성:", item)
