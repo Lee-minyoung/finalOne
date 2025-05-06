@@ -15,6 +15,29 @@ const CommonCodeFormat = function (value) {
   return result;
 };
 
+// 라인상태 공통코드 처리
+const lineStatusFormat = function (value) {
+  // value : l1, l2
+  //  출력 : l1 == 가동, l2 == 비가동
+  // value가 null인 경우엔 '' 공백을 값으로 가지도록 함
+
+  let result = '';
+  if (value == 'l1') {
+    result = '가동';
+  } else if (value == 'l2') {
+    result = '비가동' 
+  } 
+  return result;
+}
+
+// 숫자 천단위 콤마 처리
+const numberWithCommas = function (value) {
+  if (value === null || value === undefined) return ''; // null 또는 undefined 처리
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 정규식을 사용하여 천 단위로 콤마 추가
+};
+
 export default {
   CommonCodeFormat,
+  lineStatusFormat,
+  numberWithCommas,
 };

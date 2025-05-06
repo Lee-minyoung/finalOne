@@ -52,15 +52,21 @@ const routes = [
         name: 'bom',
         component: () => import('@/views/bom/bom.vue'),
       },
-      { // proc
+      { // proc 공정
         path: 'proc',
         name: 'proc',
         component: () => import('@/views/proc/proc.vue'),
       },
-      { // 거래처
+      // 거래처
+      { 
         path: '/vdr',
         name: 'vdr',
         component: () => import('@/views/vdr/vdr.vue'),
+      },
+      { // ln 라인
+        path: 'ln',
+        name: 'ln',
+        component: () => import('@/views/ln/ln.vue'),
       },
       {
         path:'/inventoryCheck',

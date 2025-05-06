@@ -74,7 +74,7 @@ const modifyLnAdnLnDtlList = async (ln_no, lnInfo, lndtlInfoArray) => {
 
     // 두번째 쿼리 => ln_dtl 수정 (설비번호만 수정됨)
     for (let i = 0; i < lndtlInfoArray.length; i++) {
-      data = [lndtlInfoArray[i], ln_no];
+      data = [lndtlInfoArray[i], lndtlInfoArray[i].ln_dtl_no];
       // 실제 SQL문을 가지고 오는 작업  
       selectedSql = await mariadb.selectedQuery("updateLnDtl", data);
       // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
@@ -98,6 +98,12 @@ const removeLn = async (lnNo) => {
   return result;
 };
 
+// prd_no을 조건으로 상세보기에 나올 자료 조회
+const findLnDtlList = async (prdNo) => {
+  let list = await mariadb.query("selectLndtlList", prdNo);
+  return list;
+}
+
 module.exports = {
   findLnList,
   findOnelnDtlList,
@@ -105,4 +111,5 @@ module.exports = {
   addLnAndLnDtlList,
   modifyLnAdnLnDtlList,
   removeLn,
+  findLnDtlList,
 };
