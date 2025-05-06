@@ -77,6 +77,10 @@ app.use('/', prcCodeRouter);
 const eqpRouter = require('./routers/base/eqp_router.js');
 app.use('/', eqpRouter);
 
+// 거래처 라우팅
+const vdrRouter = require('./routers/base/vdr_router.js');
+app.use('/', vdrRouter);
+
 //품질 모듈
 app.use('/',spmInsStd);
 app.use('/',salesRouter);
