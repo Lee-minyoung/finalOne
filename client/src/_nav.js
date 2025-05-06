@@ -5,6 +5,38 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: '기준정보',
+    visible: true,
+    icon: 'cil-settings',
+    items: [
+      {
+        component: 'CNavItem',
+        name: ' - 부서',
+        to: '/dept',
+        icon: 'cil-building',
+      },
+      {
+        component: 'CNavItem',
+        name: ' - 사원',
+        to: '/emp',
+        icon: 'cil-user',
+      },
+      {
+        component: 'CNavItem',
+        name: ' - 거래처',
+        to: '/vdr',
+        icon: 'cil-people',
+      },
+      {
+        component: 'CNavItem',
+        name: ' - 제품',
+        to: '/prd',
+        icon: 'cil-puzzle',
+      },
+    ]
+  },
+  {
+    component: 'CNavGroup',
     name: '영업',
     icon: 'cil-calendar-check',
     visible: true,

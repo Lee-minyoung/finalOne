@@ -70,6 +70,10 @@ app.use('/', procRouter);
 const prcCodeRouter = require('./routers/base/prcCode_router.js');
 app.use('/', prcCodeRouter);
 
+// 거래처 라우팅
+const vdrRouter = require('./routers/base/vdr_router.js');
+app.use('/', vdrRouter);
+
 //품질 모듈
 app.use('/',spmInsStd);
 app.use('/',salesRouter);

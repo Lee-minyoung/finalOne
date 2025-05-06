@@ -57,6 +57,11 @@ const routes = [
         name: 'proc',
         component: () => import('@/views/proc/proc.vue'),
       },
+      { // 거래처
+        path: '/vdr',
+        name: 'vdr',
+        component: () => import('@/views/vdr/vdr.vue'),
+      },
       {
         path:'/inventoryCheck',
         name:'InventoryCheck',
