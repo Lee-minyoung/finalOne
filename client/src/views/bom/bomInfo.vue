@@ -27,10 +27,13 @@
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
-              <select class="form-select form-control" v-model="use_yn">
-                <option value="f1">여</option>
-                <option value="f2">부</option>
-              </select>
+              <div class="d-flex align-items-center">
+                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
+                <select id="useYn" class="form-select form-control" v-model="use_yn">
+                  <option value="f1">여</option>
+                  <option value="f2">부</option>
+                </select>
+              </div>
             </div>
             <!-- 제품명 -->
             <div class="col-md-12 mb-3">
@@ -40,7 +43,8 @@
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;" @click="openMatModal">자재추가</button>
+              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;"
+                @click="openMatModal">자재추가</button>
             </div>
           </div>
           <table class="table table-bordered text-center">

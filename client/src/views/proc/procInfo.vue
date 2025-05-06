@@ -18,14 +18,14 @@
       <div v-if="proc">
         <div>
           <div class="row mb-4">
-            <!-- Proc번호 -->
+            <!-- 공정번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNo" class="form-label fw-bold me-3" style="min-width: 100px;">공정번호</label>
                 <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly />
               </div>
             </div>
-            <!-- 사용여부 -->
+            <!-- 공정명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNm" class="form-label fw-bold me-3" style="min-width: 100px;">공정명</label>

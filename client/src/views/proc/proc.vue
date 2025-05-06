@@ -6,7 +6,7 @@
       <div class="col-md-5">
         <!-- 좌측 검색 및 필터 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
-          <input type="text" class="form-control w-50" placeholder="제품명, 제품명 검색..." v-model="searchQuery" />
+          <input type="text" class="form-control w-50" placeholder="공정명, 제품명 검색..." v-model="searchQuery" />
         </div> <!-- 좌측 검색 및 필터 영역 끝 -->
         <!-- 좌측 리스트 영역 시작 -->
         <div class="card p-3">
