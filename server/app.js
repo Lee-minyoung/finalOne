@@ -38,6 +38,7 @@ const prodInstRouter = require('./routers/production/productionInst_router.js');
 const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 const salesRouter=require('./routers/sales/sales_router.js');
 const inventoryRouter=require('./routers/inventory/inventory_router.js');
+ 
 // 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
@@ -69,6 +70,12 @@ app.use('/', procRouter);
 // 공정코드 라우팅
 const prcCodeRouter = require('./routers/base/prcCode_router.js');
 app.use('/', prcCodeRouter);
+// 라인 라우팅
+// const lnRouter = require('./routers/base/ln_router.js');
+// app.use('/', lnRouter);
+// 설비 라우팅
+const eqpRouter = require('./routers/base/eqp_router.js');
+app.use('/', eqpRouter);
 
 //품질 모듈
 app.use('/',spmInsStd);
@@ -78,6 +85,10 @@ app.use('/',salesRouter);
 const loginRouter = require('./routers/login_router.js');
 app.use('/', loginRouter);
 
+//자재관련 
 app.use('/',salesRouter);
 app.use('/',inventoryRouter);
+const purOrdInstRouter = require('./routers/inventory/purOrdInst_router.js');
+app.use('/',purOrdInstRouter); 
+
 

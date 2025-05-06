@@ -46,7 +46,7 @@ router.post('/inventory/mtPlan',async (req,res)=>{
 });
 // 자재구매계획에서 발주table로 insert 
 router.post('/inventory/purOrd',async (req,res)=>{
-  const {purPlnNo} =req.query; //쿼리에서 어떤 자재구매계획번호를 발주테이블 insert할건지..
+  const {purPlnNo} =req.body.params; //쿼리에서 어떤 자재구매계획번호를 발주테이블 insert할건지..
   //마지막 발주번호 찾기 
   const lastOrdNo=await inventoryService.findLastPurOrdNo();//1
   const nextOrdNo=findNextCode(lastOrdNo); 
@@ -111,6 +111,18 @@ router.post('/inventory/addPlan',async(req,res)=>{
     res.status(500).json({message:'서버오류',error:err.message});  
   }
 
-}) 
+})
+//자재 전체조회 
+router.get('/inventory/mat',async(req,res)=>{
+  const matList=await inventoryService.findMatAllInfo()
+                      .catch(err=>console.log(err));  
+  res.json(matList); 
+})
+//거래처 전체조회 
+router.get('/vdrList',async(req,res)=>{
+  const vdrList=await inventoryService.findVdrAllInfo()
+                  .catch(err=>console.log(err));  
+   res.json(vdrList); 
+})
 
 module.exports=router;

@@ -22,7 +22,7 @@ export const useInstructionStore = defineStore('instruction', {
 
       // 선택된 계획 중 수량(qty)이 0보다 큰 것만 지시 대상이 됨
       this.instructionRows = this.selectedPlans
-        .filter(plan => plan.qty > 0) // 수량이 있어야 지시 가능
+      .filter(plan => Number(plan.qty) > 0) // 수량이 있어야 지시 가능
         .map(plan => {
           const item = {
             pdn_pln_no: plan.pdn_pln_no,           // 생산계획 번호
@@ -30,7 +30,8 @@ export const useInstructionStore = defineStore('instruction', {
             prd_no: plan.prd_no,                   // 제품번호
             prd_nm: plan.prd_nm,                   // 제품명
             qty: plan.qty,                         // 전체 계획수량
-            instruction_qty: plan.instruction_qty || plan.qty || 0, // 지시 수량 (기본값: 계획수량)
+            instruction_qty: plan.instruction_qty || plan.qty - plan.ord_qty || 0, // 지시 수량 (기본값: 계획수량)
+            ord_qty: plan.ord_qty || 0,               // 주문 수량
             rmk: plan.rmk || ''                    // 비고
           }
           console.log("instructionRow 생성:", item)

@@ -7,13 +7,13 @@
       <table class="table table-bordered text-center">
         <thead class="table-light">
           <tr>
-            <th>라인번호</th>
             <th>지시ID</th>
             <th>생산품목</th>
             <th>생산수량</th>
             <th>지시일자</th>
             <th>계획종료일</th>
             <th>지시자</th>
+            <th>라인번호</th>
             <th>진행상황</th>
           </tr>
         </thead>
