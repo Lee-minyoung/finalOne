@@ -1,6 +1,14 @@
 // icons/index.js 또는 assets/icons/index.js 위치에서 관리하세요
 
 import {
+  cilBriefcase,
+  cilFactory,
+  cilStorage,
+  cilCheckCircle,
+  cilCog,
+  cilFile,
+  cilSpeedometer,
+  cilGraph,
   cilArrowBottom,
   cilArrowRight,
   cilArrowTop,
@@ -14,7 +22,6 @@ import {
   cilCheck,
   cilChevronBottom,
   cilChevronTop,
-  cilCheckCircle,
   cilCode,
   cilCommentSquare,
   cilContrast,
@@ -27,7 +34,6 @@ import {
   cilExternalLink,
   cilGlobeAlt,
   cilGrid,
-  cilFile,
   cilJustifyCenter,
   cilLaptop,
   cilLayers,
@@ -47,7 +53,6 @@ import {
   cilSettings,
   cilShieldAlt,
   cilSpeech,
-  cilSpeedometer,
   cilStar,
   cilSun,
   cilTask,
@@ -55,9 +60,7 @@ import {
   cilUserFemale,
   cilUserFollow,
   cilXCircle,
-  cilBriefcase,
   cilCart,
-  cilFactory,
   cilBuilding
 } from '@coreui/icons'
 
@@ -90,6 +93,14 @@ export const iconsSet = Object.assign(
   {},
   
   {
+    cilBriefcase,
+    cilFactory,
+    cilStorage,
+    cilCheckCircle,
+    cilCog,
+    cilFile,
+    cilSpeedometer,
+    cilGraph,
     cilArrowBottom,
     cilArrowRight,
     cilArrowTop,

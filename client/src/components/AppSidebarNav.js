@@ -47,7 +47,7 @@ const AppSidebarNav = defineComponent({
     const renderItem = (item, depth = 0) => {
       const isSubItem = depth > 0
       const iconSize = isSubItem ? 'sm' : 'md'
-      const textClass = isSubItem ? 'ms-4 fs-8 fw-medium ' : 'fw-semibold'
+      const textClass = isSubItem ? 'ms-3 fs-8 fw-medium ' : 'fw-semibold'
 
       // 그룹 메뉴
       if (item.items) {
@@ -94,7 +94,7 @@ const AppSidebarNav = defineComponent({
                       name: item.icon || 'cil-circle',
                       size: iconSize,
                     }),
-                    h('span', { class: `${textClass} py-2` }, item.name),
+                    h('span', { class: `${textClass} py-1` }, item.name),
                     item.badge &&
                       h(
                         CBadge,
