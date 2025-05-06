@@ -41,9 +41,6 @@ WHERE mrq.prc_rslt IN('c1','c2')
 AND (mrq.qty - ms.cur_stk) > 0
 LIMIT 1
 `;  
-//자재구매계획 등록후 업데이트 하기   
-
-
 //자재계획번호 마지막 조회 
 const selectLastMatNo=
 `SELECT CAST(SUBSTRING(MAX(mat_pur_pln_no), 5) AS UNSIGNED) AS maxMatNo
@@ -101,8 +98,47 @@ WHERE mat_pur_pln_no = ?
 // 발주번호 최대값 찾기 
 const selectLastPurOrdNo=
 `SELECT MAX(pur_ord_no) AS maxPur FROM pur_ord`;
+//자재출고 요청서 가장오래된 출고요청번호 찾기 
+const selectOldMatReqNo=
+`SELECT mat_req_no
+FROM mat_rls_req
+WHERE sts='g1'
+GROUP BY mat_req_no
+ORDER BY MIN(mat_req_no) ASC
+LIMIT 1
+`;  
+//자재출고번호를 받아서 자재구매계획에 insert할 항목 조회 
+const selectMatByReqNo=
+`SELECT SYSDATE() AS crt_dt,
+	mrq.mat_no,
+        m.mn_vdr,
+        mrq.qty, 
+        m.prc,
+        mrq.qty * m.prc AS total
+FROM mat_rls_req mrq
+       JOIN mat m ON(mrq.mat_no=m.mat_no)
+       WHERE mat_req_no=?
+       AND sts='g1'`;
 
-
+const insertMatPurPlan=
+`INSERT INTO mat_pur_pln (mat_pur_pln_no,crt_dt,mat_no,vdr,qty,unt_prc)   
+values(?,?,?,?,?,?)`;
+//자재구매계획 등록후 자재출고요청서 자재처리결과 c3업데이트        
+const updateMatResPr=
+`UPDATE mat_rls_req 
+SET prc_rslt='c3'
+WHERE mat_req_no= ? 
+AND mat_no =? `;
+//자재구매계획에 등록안된 자재 자재출고요청서 prc_rslt(c1,c2) 카운트 
+const selectCountPrc=
+`SELECT COUNT(*) AS remain 
+FROM  mat_rls_req 
+WHERE mat_req_no=?
+AND prc_rslt IN('c1','c2')`;  
+const updateMatReqSts=
+`UPDATE mat_rls_req
+SET sts='g2'
+WHERE mat_req_no = ?`;
 
 module.exports = {
  selectPrdPlanByMaterial,
@@ -113,5 +149,12 @@ module.exports = {
  selectMatPurPlan,
  selectMinqty, 
  insertPurOrd, 
-selectLastPurOrdNo,   
+selectLastPurOrdNo,
+selectOldMatReqNo,
+selectMatByReqNo,
+insertMatPurPlan,
+updateMatRes,
+updateMatResPr,
+selectCountPrc,
+updateMatReqSts,        
 };

@@ -52,6 +52,44 @@ const findMinqty=async(matId) =>{
 }
 
 
+//가장 오래된 자재출고 요청번호 찾기
+const findOldReqNo=async()=>{
+  const result=await mariadb.query('selectOldMatReqNo');
+  return result; 
+}
+//자재 출고 번호를 받고 자재출고에서 구매계획을 세울 자재조회
+const findAddMatByReqNo=async(reqNo) =>{
+ const matReqNo=await mariadb.query('selectMatByReqNo',[reqNo]);
+ return matReqNo;   
+} 
+//자재구매계획 insert하기
+const addPurPlan=async(formattedMatNo,item)=>{
+  const result=await mariadb.query('insertMatPurPlan',[
+    formattedMatNo,
+    item.crt_dt,
+    item.mat_no,  
+    item.mn_vdr,
+    item.qty,
+    item.prc]); 
+    return result; 
+} 
+//자재출고 prc_rslt =>c3 수정  
+const updatePr=async(matReqNo,matNo)=>{
+  const result=await mariadb.query('updateMatResPr',[matReqNo,matNo]);
+  return result; 
+}  
+//자재출고 요청 번호에 c1,c2인 상태 남아있는지 조회 
+const findMatReqPrRemain=async(matReqNo)=>{
+  const result=await mariadb.query('selectCountPrc',[matReqNo]); 
+  return result; 
+}
+//자재출고요청서에서 자재출고요청번호에 따른 여러자재를 insert 후 남은 자재가 없으면 해당 자재출고번호에 따른 상태 sts를 g2로 변경 
+const changeMatReqSts=async(matReqNo)=>{
+  const result=await mariadb.query('updateMatReqSts',[matReqNo]); 
+  return result; 
+}  
+ 
+
 module.exports = {
 
 findPrdPlan, 
@@ -62,5 +100,11 @@ updateMatRes,
 findMatPurplan,
 findMinqty, 
 addPurOrd,
-findLastPurOrdNo,  
+findLastPurOrdNo,
+findOldReqNo,
+findAddMatByReqNo,
+addPurPlan,  
+updatePr,
+findMatReqPrRemain,
+changeMatReqSts,     
 }; 
