@@ -22,7 +22,10 @@
           <label class="form-label">부서명</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
+          <div class="input-group">
+            <input v-model="deptInfo.nm" type="text" class="form-control" readonly />
+            <button class="btn btn-outline-secondary" @click="openEmpModal()">사원 선택</button>
+          </div>
           <label class="form-label">사용여부</label>
           <!-- <input type="text" class="form-control" v-model="deptInfo.use_yn" /> -->
           <select class="form-select form-control" v-model="deptInfo.use_yn">
@@ -30,9 +33,9 @@
             <option value="f2">부</option>
           </select>
           <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="deptInfo.crt_dt" readonly />
+          <input type="text" class="form-control" v-model="formattedCrtDt" readonly />
           <label class="form-label">수정일자</label>
-          <input type="text" class="form-control" v-model="deptInfo.mdf_dt" readonly />
+          <input type="text" class="form-control" v-model="formattedMdfDt" readonly />
         </div>
       </div>
       <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->
@@ -40,20 +43,31 @@
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
 
+    <empSelectModal v-if="showEmpModal" :empList="empList" :selected="deptInfo.dept_mgr"
+    @select-emp="handleSelectedEmp" @close="showEmpModal = false" />
+
   </div>
 </template>
 <script>
 // AJAX 모듈
 import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
+import empSelectModal from '@/views/modal/empSelectModal.vue';
 
 export default {
+  components: {
+    empSelectModal,
+  },
   props: {
     dept: Object,
   },
   data() {
     return {
       deptInfo: {},
+
+      empList: [],
+      showEmpModal: false, // 사원 선택 모달 초기화값 = 닫힘
+      selectedEmp: null, // 선택된 사원
     };
   },
   watch: {
@@ -63,26 +77,34 @@ export default {
       this.getDeptInfo(searchNo.dept_no);
     }
   },
+  computed: {
+    formattedCrtDt() {
+      return this.deptInfo.crt_dt ? this.dateFormat(this.deptInfo.crt_dt) : '';
+    },
+    formattedMdfDt() {
+      return this.deptInfo.mdf_dt ? this.dateFormat(this.deptInfo.mdf_dt) : '';
+    }
+  },
   methods: {
     // 날짜 데이터 포멧 정의
-    dateFormat(value, format) { 
-      return userDateUtils.dateFormat(value, format);
+    dateFormat(value) {
+      return userDateUtils.dateFormat(value, 'yyyy-MM-dd');
     },
     // 정의한 데이터 포맷 활용한 오늘 날짜 반환
     getDate(date) {
       // <input> 태그의 type 속성이 date인 경우 'yyyy-MM-dd'으로 값을 가져야함
       // return this.dateFormat(null, 'yyyy-MM-dd');
-      return this.dateFormat(date, 'yyyy-MM-dd');
+      return this.dateFormat(date);
     },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptInfo(selected) {
       let result = await axios.get(`/api/dept/${selected}`)
         .catch(err => console.log(err));
-        console.log(result);
+      console.log(result);
       this.deptInfo = result.data;
       console.log(this.deptInfo);
     },
-     // 수정된 내용을 DB에 저장
+    // 수정된 내용을 DB에 저장
     async deptUpdate() {
       let obj = {
         dept_nm: this.deptInfo.dept_nm,
@@ -107,10 +129,10 @@ export default {
     },
     // 추가 버튼 클릭시 실행할 함수
     addDept() {
-      this.$emit("goToForm",false);
+      this.$emit("goToForm", false);
     },
     // 삭제 버튼 클릭시 실행할 함수
-    async deleteDept(deptNo) { 
+    async deleteDept(deptNo) {
       if (deptNo > 0) { // 선택된 dept가 있을 경우 
         let result = await axios.delete(`/api/dept/${deptNo}`)
           .catch(err => console.log(err));
@@ -131,7 +153,23 @@ export default {
     resetForm() { // 초기화 버튼 클릭시 실행할 함수
       this.getDeptInfo(this.deptInfo.dept_no);
     },
-   
+    // 사원 선택 모달 열기
+    openEmpModal() {
+      axios.get('/api/emp')
+        .then(res => {
+          this.empList = res.data;
+          this.showEmpModal = true;
+        })
+        .catch(err => {
+          console.error('사원 목록 불러오기 실패', err)
+        })
+    },
+    handleSelectedEmp(selectedEmp) {
+      this.deptInfo.dept_mgr = selectedEmp.emp_no;
+      this.deptInfo.nm = selectedEmp.nm;
+      // 모달 닫기
+      this.showEmpModal = false;
+    },
   }
 };
 </script>

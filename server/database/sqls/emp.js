@@ -51,8 +51,7 @@ From emp`;
 // 추가
 const insertEmp =
 `INSERT INTO emp (emp_no, pwd, nm, ctt, bnk_nm, acct_no, addr, hire_dt, emp_sts, lv_rsn, hr_hist, dept_no, pst_no)
-SELECT IFNULL(MAX(emp_no), 999) + 1, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?
-FROM emp`;
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?)`;
 
 // 수정
 const updateEmp =

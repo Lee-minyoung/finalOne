@@ -65,6 +65,12 @@ const removeDeptInfo = async (deptNo) => {
   return result;
 };
 
+// 모달에서 사용할 부서목록 조회
+const findDeptListModal = async () => {
+  let list = await mariadb.query("selectDeptListModal");
+  return list;
+};
+
 module.exports = {
   findDeptList,
   findByDeptNo,
@@ -72,4 +78,5 @@ module.exports = {
   modifyDeptInfo,
   removeDeptInfo,
   findDeptNo,
+  findDeptListModal,
 };
