@@ -23,7 +23,7 @@
               </tr>
             </thead>
             <tbody>
-  <!-- ✅ 사용 가능한 라인 목록 -->
+  <!-- ✅ 사용 가능한 라인 목록 머지 등록용 수정사항임.-->
   <tr
     v-for="line in item.lineList.filter(line => !usedLines.includes(line.ln_no))"
     :key="line.ln_no"
