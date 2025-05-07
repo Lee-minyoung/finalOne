@@ -51,7 +51,7 @@ async function addMat(matInfo) {
     if (!matInfo.mat_nm || !matInfo.mat_tp || !matInfo.mn_vdr) {
       throw new Error('필수 입력값이 누락되었습니다.');
     }
-
+    
     // 숫자 데이터 변환 및 기본값 설정
     const params = [
       matInfo.mat_nm,

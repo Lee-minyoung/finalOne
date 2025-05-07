@@ -20,9 +20,9 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>자재번호</th>
-                <th>자재명</th>
-                <th>자재유형</th>
+                <th style="width: 30%;">자재번호</th>
+                <th style="width: 40%;">자재명</th>
+                <th style="width: 30%;">자재유형</th>
               </tr>
             </thead>
             <tbody>
@@ -113,6 +113,12 @@ export default {
 </script>
 
 <style>
-.table-hover:hover { cursor: pointer; }
-.card { border: 1px solid #ddd; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+.table-hover:hover {
+  cursor: pointer;
+}
+
+.card {
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
 </style> 

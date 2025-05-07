@@ -106,7 +106,7 @@ export default {
     async getVdrList() {
       try {
         let result = await axios.get('/api/vdr');
-        this.vdrList = result.data;
+      this.vdrList = result.data;
       } catch (err) {
         console.error('거래처 목록 조회 실패:', err);
         alert('거래처 목록을 가져오는데 실패했습니다.');

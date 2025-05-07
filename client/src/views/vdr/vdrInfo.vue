@@ -68,7 +68,7 @@
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
               <td colspan="3" style="border:none;">
-                <select class="form-select w-auto" v-model="vdrInfo.use_yn">
+                <select class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
                   <option value="f1">여</option>
                   <option value="f2">부</option>
                 </select>
