@@ -29,9 +29,9 @@ module.exports = {
     ...inventorys,
     ...qualitys,
     ...userinforms,
-    ...prodeuctinPlan,//생산계획, 지시시
+    ...prodeuctinPlan,//생산계획, 지시
     ...productionInst,
-    ...lineManagement,//라인관리리
+    ...lineManagement,//라인관리
     ...login,
     // ...vdr, 
     ...purOrdInst,

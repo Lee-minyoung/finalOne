@@ -12,14 +12,15 @@ router.get('/prodinst', async (req,res)=>{
 
 //라인 드롭다운 버튼
 router.get('/lineDrop', async (req, res) => {
-    try {
-      const lineList = await lineManagementServices.findLineDrop()
-      res.send(lineList)
-    } catch (err) {
-      console.error('[라인 드롭다운 오류]', err)
-      res.status(500).send({ message: '서버 오류 발생' })
-    }
-  })
+  const { pdn_ord_dtl_no } = req.query
+  try {
+    const lines = await lineManagementServices.findLineDrop(pdn_ord_dtl_no) // 혹은 직접 SQL
+    res.json(lines)
+  } catch (err) {
+    console.error('🔥 라인 조회 실패:', err)
+    res.status(500).send('Internal Server Error')
+  }
+})
 
 
 module.exports = router;
