@@ -7,7 +7,12 @@ const userinforms=require('./sqls/userinforms.js');
 const prodeuctinPlan=require('./sqls/productionPlan.js'); 
 const productionInst=require('./sqls/productionInst.js')
 const login=require('./sqls/login.js'); 
+
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
+
+const vdr=require('./sqls/vdr.js'); 
+const purOrdInst=require('./sqls/purOrdInst.js'); 
+
 
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
@@ -32,7 +37,8 @@ module.exports = {
     ...productionInst,
     ...lineManagement,//라인관리리
     ...login,
-
+    ...vdr, 
+    ...purOrdInst,
     // 기초정보입력
     ...dept, // 부서
     ...emp, // 사원
