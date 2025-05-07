@@ -11,25 +11,27 @@
         <!-- 좌측 리스트 영역 시작 -->
         <div class="card p-3">
           <h4>라인 목록</h4>
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>라인번호</th>
-                <th>라인명</th>
-                <th>제품명</th>
-                <th>라인상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="ln in filteredLnList" v-bind:key="ln.ln_no" @click="selectLn(ln.ln_no)"
-                :class="{ 'table-primary': selectedLn && selectedLn.ln_no === ln.ln_no }" class="table-hover">
-                <td>{{ ln.ln_no }}</td>
-                <td>{{ ln.ln_nm }}</td>
-                <td>{{ ln.prd_nm }}</td>
-                <td>{{ lineStatusFormat(ln.ln_sts) }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 15%;">라인번호</th>
+                  <th style="width: 35%;">라인명</th>
+                  <th>제품명</th>
+                  <th style="width: 15%;">라인상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="ln in filteredLnList" v-bind:key="ln.ln_no" @click="selectLn(ln.ln_no)"
+                  :class="{ 'table-primary': selectedLn && selectedLn.ln_no === ln.ln_no }" class="table-hover">
+                  <td style="width: 15%;">{{ ln.ln_no }}</td>
+                  <td style="width: 35%;">{{ ln.ln_nm }}</td>
+                  <td>{{ ln.prd_nm }}</td>
+                  <td style="width: 15%;">{{ lineStatusFormat(ln.ln_sts) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div> <!-- 좌측 리스트 영역 끝 -->
       </div> <!-- 좌측 영역 끝 -->
 
@@ -76,7 +78,7 @@ export default {
   },
   methods: {
     // 라인상태 데이터 포멧 정의
-    lineStatusFormat(value) { 
+    lineStatusFormat(value) {
       return CommonCodeFormat.lineStatusFormat(value);
     },
     // procList데이터 받아오는 함수
@@ -114,5 +116,68 @@ export default {
 
 .table-primary {
   background-color: #cce5ff;
+}
+
+.table-container {
+  height: 550px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.table {
+  margin-bottom: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: 0px;
+}
+
+.table td,
+.table th {
+  width: 20%;
+  padding: 8px;
+  /* border-top: 1px solid #dee2e6; */
+  border-right: 1px solid #dee2e6;
+  border-left: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table thead tr,
+.table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table tbody {
+  display: block;
+  overflow-y: auto;
+  height: calc(550px - 42px);
+}
+
+.table tbody tr td:first-child,
+.table thead tr th:first-child {
+  border-left: none;
+}
+
+.table tbody tr td:last-child,
+.table thead tr th:last-child {
+  border-right: none;
 }
 </style>

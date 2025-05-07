@@ -210,7 +210,7 @@ export default {
         let sqlResult = sqlRes.affectedRows;
         if (sqlResult > 0) {
           alert('정상적으로 삭제되었습니다.');
-          this.$emit('proc-reload');
+          this.$emit('ln-reload');
         } else {
           alert('삭제되지 않았습니다.');
         }

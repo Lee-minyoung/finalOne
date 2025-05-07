@@ -47,6 +47,23 @@ const empStatusFormat = function (value) {
   return result;
 }
 
+// 설비상태 공통코드 처리
+const eqpStatusFormat = function (value) {
+  // value : h1, h2, h3
+  //  출력 : h1 == 정상, h2 == 수리중, h3 == 점검중
+  // value가 null인 경우엔 '' 공백을 값으로 가지도록 함
+
+  let result = '';
+  if (value == 'h1') {
+    result = '정상';
+  } else if (value == 'h2') {
+    result = '수리중' 
+  } else if (value == 'h3') {
+    result = '점검중' 
+  } 
+  return result;
+}
+
 // 숫자 천단위 콤마 처리
 const numberWithCommas = function (value) {
   if (value === null || value === undefined) return ''; // null 또는 undefined 처리
@@ -57,5 +74,6 @@ export default {
   CommonCodeFormat,
   lineStatusFormat,
   empStatusFormat,
+  eqpStatusFormat,
   numberWithCommas,
 };
