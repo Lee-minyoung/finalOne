@@ -16,7 +16,7 @@
 
       <!-- 우측: 다크모드 + 설정 + 로그아웃 -->
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
-        <button class="btn btn-light btn-sm" @click="setColorMode('light')" :class="{ active: colorMode === 'light' }">
+        <!-- <button class="btn btn-light btn-sm" @click="setColorMode('light')" :class="{ active: colorMode === 'light' }">
           <i class="bi bi-sun"></i>
         </button>
         <button class="btn btn-dark btn-sm" @click="setColorMode('dark')" :class="{ active: colorMode === 'dark' }">
@@ -24,7 +24,7 @@
         </button>
         <button class="btn btn-secondary btn-sm" @click="setColorMode('auto')" :class="{ active: colorMode === 'auto' }">
           <i class="bi bi-circle-half"></i>
-        </button>
+        </button> -->
         <button class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-gear me-1"></i> 설정
         </button>

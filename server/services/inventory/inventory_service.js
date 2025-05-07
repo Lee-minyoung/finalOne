@@ -20,6 +20,7 @@ const addMaterialPlan=async (formattedMatNo) => {
 }
 //자재구매계획 테이블에서 발주버튼 누르면 단건으로 발주테이블 insert 
 const addPurOrd=async (purOrdNo,purPlnNo) =>{
+                                                   //
   const result=await mariadb.query('insertPurOrd',[purOrdNo,purPlnNo]); 
   return result; 
 }; 
@@ -88,7 +89,16 @@ const changeMatReqSts=async(matReqNo)=>{
   const result=await mariadb.query('updateMatReqSts',[matReqNo]); 
   return result; 
 }  
- 
+//자재 전체조회 
+const findMatAllInfo=async()=>{
+  const matList=await mariadb.query('selectMatInfo');
+  return matList;
+} 
+//발주서입력시 거래처 정보 전체조회할때 필요  
+const findVdrAllInfo=async() =>{
+  const vdrList=await mariadb.query('selectVdr'); 
+  return vdrList;
+} 
 
 module.exports = {
 
@@ -106,5 +116,8 @@ findAddMatByReqNo,
 addPurPlan,  
 updatePr,
 findMatReqPrRemain,
-changeMatReqSts,     
+changeMatReqSts, 
+// 발주서입력-자재전체조회,거래처조회  
+findMatAllInfo,
+findVdrAllInfo,    
 }; 

@@ -39,7 +39,7 @@ const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 const salesRouter=require('./routers/sales/sales_router.js');
 const inventoryRouter=require('./routers/inventory/inventory_router.js');
 const lineManagementRouter = require('./routers/production/lineManagement_rouder.js');
-// 기본 라우팅
+
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
 })
@@ -89,6 +89,10 @@ app.use('/',salesRouter);
 const loginRouter = require('./routers/login_router.js');
 app.use('/', loginRouter);
 
+//자재관련 
 app.use('/',salesRouter);
 app.use('/',inventoryRouter);
+const purOrdInstRouter = require('./routers/inventory/purOrdInst_router.js');
+app.use('/',purOrdInstRouter); 
+
 

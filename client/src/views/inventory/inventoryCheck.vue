@@ -92,7 +92,7 @@
 <!--생산계획모달 end-->
 
     <td>
-      <button class="btn btn-success rounded-pill px-3" @click="addPurOrd(item['계획ID'])"  type="button">발주하기</button>
+      <button class="btn btn-success rounded-pill px-3" @click="addPurOrdByPlnNo(item['계획ID'])"  type="button">발주하기</button>
     </td>
     </tr> 
   </tbody>
@@ -176,6 +176,24 @@ import axios from 'axios';
     }catch(error){
       console.log(error); 
     }
+   },
+   //발주하기 버튼 누르면 발주 처리됨 
+   async addPurOrdByPlnNo(purPlnNo){
+     try{
+      const add=await axios.post('/api/inventory/purOrd',{
+        params:{
+          purPlnNo:purPlnNo
+        }
+      })
+      console.log('발주버튼클릭'); 
+      console.log(purPlnNo);
+      console.log('add',add);
+       return add;
+        
+     }catch(error){
+      console.log(error,); 
+     }
+
    },
    
   },
