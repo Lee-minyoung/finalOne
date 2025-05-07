@@ -37,7 +37,7 @@
   </div>
 </div> -->
 
-<td>{{  selectVdr}}</td>
+
 
 
               <!--자재 선택-->
@@ -90,7 +90,7 @@
   <tbody>
     <tr>
       <th scope="row">1</th>
-      <td>{{ selectMats[0] }}</td>
+  
       <td>Otto</td>
       <td>Otto</td>
       <td>@mdo</td>
@@ -115,9 +115,9 @@
     />
   </div>
   <!--자재선택버튼 End -->
-  <div v-if="selectVdr">
+  <!-- <div v-if="selectVdr">
   {{ selectVdr }}
-</div>
+</div> -->
 
 
 

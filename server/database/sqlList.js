@@ -10,7 +10,7 @@ const login=require('./sqls/login.js');
 
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 
-const vdr=require('./sqls/vdr.js'); 
+
 const purOrdInst=require('./sqls/purOrdInst.js'); 
 
 

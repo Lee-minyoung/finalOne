@@ -8,7 +8,8 @@ WHERE bm.mat_no = ?`;
 
 //자재출고요청서를 바탕으로한 자재현황 파악 
 const selectMaterialStatusByRequest =
-`SELECT mrq.mat_no as 자재ID,
+`SELECT mrq.mat_req_no as 계획ID,
+        mrq.mat_no as 자재ID,
         m.mat_nm as 자재명,
         mrq.qty as 총필요량,
         ms.cur_stk as 현재재고,
