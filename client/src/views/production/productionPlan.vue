@@ -423,5 +423,3 @@ h2 {
   background-color: #cce5ff !important;
 }
 </style>
-
-

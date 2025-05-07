@@ -19,4 +19,3 @@ import { defineStore } from 'pinia'
   },
  });
 
-

@@ -23,6 +23,14 @@ const selectLineList =
       
 `     
 
+const selectLine =
+`SELECT ln_no
+      , ln_nm
+WHERE ln_no = ?`
+
+
+
 module.exports = {
-    selectProdInstList
+    selectProdInstList,
+    selectLine
     }

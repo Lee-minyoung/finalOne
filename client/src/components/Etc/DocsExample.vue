@@ -1,4 +1,4 @@
-<!-- <script setup>
+<script setup>
 const props = defineProps({
   href: String,
   tabContentClass: String,
@@ -30,4 +30,4 @@ const addClass = props.tabContentClass
       </CTabPane>
     </CTabContent>
   </div>
-</template> -->
+</template>
