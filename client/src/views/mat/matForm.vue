@@ -60,9 +60,11 @@
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
+
 export default {
   data() {
     return {
@@ -72,12 +74,12 @@ export default {
         mat_nm: '',
         mat_tp: 'b1',
         mn_vdr: '',
-        min_ord_qty: '',
-        min_stk_qty: '',
+        min_ord_qty: 0,
+        min_stk_qty: 0,
         unit: '',
-        ld_tm: '',
+        ld_tm: 0
       },
-      vdrList: [],
+      vdrList: []
     };
   },
   created() {
@@ -93,31 +95,101 @@ export default {
       this.today = this.dateFormat(null, 'yyyy-MM-dd');
     },
     async getMatNo() {
-      // 자재번호 자동생성 API 필요시 구현
-      this.matNo = '';
+      try {
+        let result = await axios.get('/api/matNo');
+        this.matNo = result.data[0].addMatNo;
+      } catch (err) {
+        console.error('자재번호 조회 실패:', err);
+        alert('자재번호를 가져오는데 실패했습니다.');
+      }
     },
     async getVdrList() {
-      let result = await axios.get('/api/vdr').catch(err => console.log(err));
-      this.vdrList = result.data;
+      try {
+        let result = await axios.get('/api/vdr');
+        this.vdrList = result.data;
+      } catch (err) {
+        console.error('거래처 목록 조회 실패:', err);
+        alert('거래처 목록을 가져오는데 실패했습니다.');
+      }
     },
     resetForm() {
       this.matInfo = {
         mat_nm: '',
         mat_tp: 'b1',
         mn_vdr: '',
-        min_ord_qty: '',
-        min_stk_qty: '',
+        min_ord_qty: 0,
+        min_stk_qty: 0,
         unit: '',
-        ld_tm: '',
+        ld_tm: 0
       };
     },
     async saveMat() {
-      // 저장 로직 구현
-    },
-  },
+      try {
+        // 필수 입력값 검증
+        if (!this.matInfo.mat_nm) {
+          alert('자재명을 입력하세요.');
+          return;
+        }
+        if (!this.matInfo.mat_tp) {
+          alert('자재유형을 선택하세요.');
+          return;
+        }
+        if (!this.matInfo.mn_vdr) {
+          alert('대표거래처를 선택하세요.');
+          return;
+        }
+
+        // 서버에 전달할 정보를 객체로 구성
+        let obj = {
+          mat_nm: this.matInfo.mat_nm,
+          mat_tp: this.matInfo.mat_tp,
+          mn_vdr: this.matInfo.mn_vdr,
+          min_ord_qty: Number(this.matInfo.min_ord_qty) || 0,
+          min_stk_qty: Number(this.matInfo.min_stk_qty) || 0,
+          unit: this.matInfo.unit || '',
+          ld_tm: Number(this.matInfo.ld_tm) || 0
+        };
+
+        console.log('전송할 자재 데이터:', obj);
+
+        // API 호출
+        let result = await axios.post('/api/mat', obj);
+        console.log('자재 등록 응답:', result.data);
+
+        if (result.data.isAdded) {
+          alert('자재가 등록되었습니다.');
+          this.$emit('mat-reload');
+          this.$emit('goToInfo', true);
+        } else {
+          alert('자재 등록에 실패했습니다.');
+        }
+      } catch (err) {
+        console.error('자재 등록 실패:', err);
+        if (err.response) {
+          console.error('에러 응답:', err.response.data);
+          alert(err.response.data.message || '자재 등록 중 오류가 발생했습니다.');
+        } else {
+          alert('자재 등록 중 오류가 발생했습니다.');
+        }
+      }
+    }
+  }
 };
 </script>
+
 <style>
-.card { border: 1px solid #ddd; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
-table.align-middle th, table.align-middle td { padding-top: 0.25rem; padding-bottom: 0.25rem; vertical-align: middle; }
+.table-hover:hover {
+  cursor: pointer;
+}
+
+.card {
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table.align-middle th, table.align-middle td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  vertical-align: middle;
+}
 </style> 

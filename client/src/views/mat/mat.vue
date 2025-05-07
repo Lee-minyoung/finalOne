@@ -60,9 +60,15 @@ export default {
   },
   computed: {
     filteredMatList() {
+      const matTypeMap = {
+        'b1': '원재료',
+        'b2': '부재료',
+        'b3': '소모품'
+      };
+      
       return this.matList.filter(mat =>
         mat.mat_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
-        (this.selectedType === '' || mat.mat_tp === this.selectedType)
+        (this.selectedType === '' || mat.mat_tp === matTypeMap[this.selectedType])
       );
     },
   },
@@ -75,17 +81,28 @@ export default {
       return types[code] || code;
     },
     async getMatList() {
-      let result = await axios.get('/api/mat').catch(err => console.log(err));
-      this.matList = result.data;
+      try {
+        let result = await axios.get('/api/mat');
+        this.matList = result.data;
+      } catch (err) {
+        console.error('자재 목록 조회 실패:', err);
+        alert('자재 목록을 불러오는데 실패했습니다.');
+      }
     },
     async selectMat(matNo) {
       this.InfoView = true;
-      const mat = this.matList.find(m => m.mat_no === matNo);
-      if (mat) {
-        this.selectedMat = { ...mat }; // 객체 복사하여 전달
-        console.log('Selected Mat:', this.selectedMat); // 디버깅용
-      } else {
-        console.error('자재를 찾을 수 없습니다:', matNo);
+      try {
+        const result = await axios.get(`/api/mat/${matNo}`);
+        if (result.data) {
+          this.selectedMat = result.data;
+          console.log('Selected Mat:', this.selectedMat);
+        } else {
+          console.error('자재를 찾을 수 없습니다:', matNo);
+          alert('자재 정보를 찾을 수 없습니다.');
+        }
+      } catch (err) {
+        console.error('자재 상세 정보 조회 실패:', err);
+        alert('자재 상세 정보를 불러오는데 실패했습니다.');
       }
     },
     msg(data) {

@@ -3,10 +3,9 @@
   <div class="col-md-5">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
+      <div></div>
       <div>
         <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
-      </div>
-      <div>
         <button class="btn btn-success" @click="saveVdr">저장</button>
       </div>
     </div>
