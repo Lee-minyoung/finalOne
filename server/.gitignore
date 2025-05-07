@@ -6,6 +6,10 @@ tests/e2e/reports/
 # local env files
 .env.local
 .env.*.local
+.env
+.env.*
+*.env
+server/database/config/dbConfig.env
 
 # dependencies
 /node_modules
