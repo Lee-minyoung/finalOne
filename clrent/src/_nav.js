@@ -6,55 +6,55 @@ export default [
   {
     component: 'CNavGroup',
     name: '영업',
-    icon: 'cil-briefcase',
+    icon: 'cil-calendar-check',
     visible: true,
     items: [  
-      {
+    {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: ' - 수주',
+      to: '/SaleList',
       icon: 'cil-factory',
-    },  
+    }
     ]
   },
   {
     component: 'CNavGroup',
     name: '생산',
-    to: '/production',
     icon: 'cil-factory',
+    visible: true,
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
-      icon: 'cil-factory',
+      name: '생산계획',
+      to: '/ProdPlan',
     },  
     ]
   },
   {
     component: 'CNavGroup',
     name: '재고',
-    to: '/inventory',
+    visible: true,
     icon: 'cil-storage',
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
+      name: ' - ????',
       to: '/',
       icon: 'cil-factory',
-    },  
+    },
+    
     ]
   },
   {
     component: 'CNavGroup',
     name: '품질',
-    to: '/quality',
+    visible: true,
     icon: 'cil-check-circle',
     items: [  
       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
+      name: '완제품검사기준',
+      to: '/SpmInsStd',
       icon: 'cil-factory',
     },  
     ]
@@ -62,7 +62,7 @@ export default [
   {
     component: 'CNavGroup',
     name: '설비',
-    to: '/equipment',
+    visible: true,
     icon: 'cil-settings',
     items: [  
       {
@@ -77,20 +77,69 @@ export default [
     component: 'CNavGroup',
     name: '기초정보입력',
     to: '/basic-info',
-    icon: 'cil-description',
-    items: [  
-      {
+    icon: 'cil-file',
+    items: [ 
+       {
       component: 'CNavItem',
-      name: ' - 주문',
-      to: '/',
-      icon: 'cil-factory',
-    },  
+      name: ' - 로그인',
+      to: '/login',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 사원관리',
+        to: '/emp',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 부서관리',
+        to: '/dept',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 거래처관리',
+        to: '/vdr',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 자재관리',
+        to: '/mat',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 제품관리',
+        to: '/prd',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 제품공정흐름도관리',
+        to: '/proc',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - BOM관리',
+        to: '/bom',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 라인관리',
+        to: '/ln',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 설비관리',
+        to: '/eqp',
+      },  
+      {
+        component: 'CNavItem',
+        name: ' - 공정코드관리',
+        to: '/prc-code',
+      },  
     ]
   },
   {
     component: 'CNavGroup',
     name: '실시간 모니터링',
-    to: '/monitoring',
+    visible: true,
     icon: 'cil-graph',
     items: [  
       {

@@ -16,7 +16,7 @@ export const useSidebarStore = defineStore('sidebar', () => {
   return { visible, unfoldable, toggleVisible, toggleUnfoldable }
 }, {
   persist: {
-    paths: ['unfoldable']  // ✅ unfoldable만 로컬스토리지에 저장
+    paths: ['false']  // ✅ unfoldable만 로컬스토리지에 저장
   }
 })
 
