@@ -54,7 +54,7 @@
   </thead>
   <tbody>
     <!-- 필터.. -->
-    <tr v-for="(item,index) in filteredPurPlan" :key="index">
+    <tr v-for="(item,index) in inventoryPurPlan" :key="index">
       <th scope="row">{{ item['계획ID'] }}</th>
       <td>{{ item['자재ID'] }}</td>
       <td>{{ item['자재명'] }}</td>
@@ -100,7 +100,7 @@
 <!--생산계획모달 end-->
 
     <td>
-      <button class="btn btn-success rounded-pill px-3" @click="addPurOrdByPlnNo(item['계획ID'])"  type="button">발주하기</button>
+      <button class="btn btn-success rounded-pill px-3" @click="minCheckAndPurOrd(item['자재ID'],item['수량'],item['계획ID'])"  type="button">발주하기</button>
     </td>
     </tr> 
   </tbody>
@@ -193,7 +193,7 @@ import axios from 'axios';
         } 
         })
         console.log('minqty',minqty.data[0]); 
-      return  minqty.data[0]; 
+      return  minqty.data[0]; //최소량 return 
     }catch(error){
       console.log(error); 
     }
@@ -225,6 +225,19 @@ import axios from 'axios';
   // 아코디언 클릭 후 확인.
   isExpanded(reqNo) {
     return this.expandedReqNos.includes(reqNo)
+  },
+  //최소수량 체크후 발주하는 이벤트 
+  async minCheckAndPurOrd(matId,qty,plnNo){
+   const  result= await this.getMinOrdqty(matId); //해당 자재에 대한 최소수량 체크
+   const min=result.min_ord_qty;
+   console.log('최소수량',min); 
+   if(qty>=min){
+      await this.addPurOrdByPlnNo(plnNo); 
+      alert('발주가 완료 되었습니다'); 
+   } else{
+    alert('최소수량을 넘기지 못해 주문할수 없습니다'); 
+   }
+
   }
    
   },
