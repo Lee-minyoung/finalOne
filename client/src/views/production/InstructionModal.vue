@@ -21,20 +21,23 @@
               <tr>
                 <th>제품명</th>
                 <th>계획수량</th>
-                <th>지시수량</th>
+                <th>누적적지시수량</th>
                 <th>미지시수량</th>
+                <th>지시수량</th>
                 <th>완료수량</th>
                 <th>비고</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(row, index) in rows" :key="index">
+              <tr v-for="(row, index) in instructionStore.instructionRows" :key="row.pdn_pln_dtl_no">
                 <td>{{ row.prd_nm }}</td>
                 <td>{{ row.qty }}</td>
+                <td>{{ row.ord_qty }}</td>
+                <td>{{ row.qty - row.ord_qty - row.instruction_qty || 0 }}</td>
                 <td style="width: 100px;">
-                  <input type="number" class="form-control" v-model.number="row.instruction_qty" />
+                  <!-- <input type="number" class="form-control" v-model.number="row.instruction_qty" /> -->
+                  <input type="number" class="form-control" v-model.number="row.instruction_qty" min="0" :max="row.qty - row.ord_qty" @input="handleInput(index)"/>
                 </td>
-                <td>{{ row.qty - row.instruction_qty || 0 }}</td>
                 <td></td>
                 <td>
                   <input class="form-control" v-model="row.rmk" />
@@ -47,34 +50,49 @@
 
         <!-- 모달 푸터 -->
         <div class="modal-footer">
-          <button class="btn btn-primary" @click="$emit('submit', rows)">지시 등록</button>
+          <button class="btn btn-primary" @click="submit">지시 등록</button>
           <button class="btn btn-secondary" @click="$emit('close')">취소</button>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { useInstructionStore  } from '../../stores/instructionStore';
+
 export default {
-  props: {
-    instructionRows: Array, // 개별 지시 대상들
-    summaryRows: Array       // 제품별 수량 요약 정보
-  },
+  name: 'InstructionModal',
 
-  data() {
-    return {
-      // props로 받은 지시 행을 내부 rows에 깊은 복사하여 사용
-      rows: JSON.parse(JSON.stringify(this.instructionRows))
-    }
-  },
+  emits: ['submit', 'close'],
 
-  watch: {
-    // instructionRows가 부모에서 변경되면 rows 동기화
-    instructionRows(newVal) {
-      this.rows = JSON.parse(JSON.stringify(newVal))
-    }
+  computed: {
+  instructionStore() {
+    return useInstructionStore()
+  },
+  rows() {
+    return this.instructionStore.instructionRows
+  }
+},
+
+  methods: {
+    handleInput(index) {
+      const row = this.instructionStore.instructionRows[index]
+      if (row.instruction_qty > row.qty) {
+        row.instruction_qty = row.qty
+      } else if (row.instruction_qty < 0 || isNaN(row.instruction_qty)) {
+        row.instruction_qty = 0
+      }
+    },
+
+    submit() {
+    const rows = this.instructionStore.instructionRows
+
+    console.log("🔥 지시 등록 emit 실행됨!")
+    console.log("전송할 rows:", rows)
+
+    this.$emit('submit') // 부모에서 처리함
+  }
   }
 }
 </script>

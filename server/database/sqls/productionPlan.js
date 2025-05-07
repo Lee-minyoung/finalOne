@@ -1,28 +1,32 @@
 const selectProPlanList =
 `SELECT 
-  p.pdn_pln_no,
-  pd.prd_nm,
-  d.qty,
-  d.st_dt,
-  d.end_dt,
-  d.situ,
-  d.rmk
-FROM pdn_pln p
-LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-LEFT OUTER JOIN prd pd ON d.prd_no = pd.prd_no
+      p.pdn_pln_no,
+      d.pdn_pln_dtl_no,
+      d.prd_no, 
+      pd.prd_nm,
+      d.qty,
+      d.st_dt,
+      d.end_dt,
+      d.situ,
+      d.rmk,
+      IFNULL(SUM(od.ord_qty), 0) AS ord_qty
+ FROM pdn_pln p
+ LEFT JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+ LEFT JOIN prd pd ON d.prd_no = pd.prd_no
+ LEFT JOIN pdn_ord o ON p.pdn_pln_no = o.pdn_pln_no
+ LEFT JOIN pdn_ord_dtl od  ON o.pdn_ord_no = od.pdn_ord_no 
+                         AND d.prd_no = od.prd_no
+GROUP BY 
+      p.pdn_pln_no,
+      d.pdn_pln_dtl_no,
+      d.prd_no,
+      pd.prd_nm,
+      d.qty,
+      d.st_dt,
+      d.end_dt,
+      d.situ,
+      d.rmk
 ORDER BY p.pdn_pln_no;`
-
-
-  // const selectProPlanList =
-  // `SELECT p.pdn_pln_no
-  //     , d.qty
-  //     , d.st_dt
-  //     , d.end_dt
-  //     , d.situ
-  //     , d.rmk 
-  //  FROM pdn_pln p
-  //       LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-  // ORDER BY p.pdn_pln_no`
 
 
   const selectProd =

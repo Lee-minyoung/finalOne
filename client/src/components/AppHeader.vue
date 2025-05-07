@@ -59,7 +59,7 @@ const toggleSidebar = () => {
 
 // 현재 위치 표시용
 const currentPathLabel = computed(() => {
-  return route.path.replace("/", "").replace(/-/g, " ") || "대시보드";
+  return route.name || "대시보드";
 });
 
 
