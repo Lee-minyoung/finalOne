@@ -1,3 +1,4 @@
+
 // Table : vdr
 
 // 다양한 검색조건을 가지는 전체조회
@@ -102,3 +103,10 @@ module.exports = {
     selectVdrNo
 }; 
 
+
+const selectVdr=`SELECT vdr_no,cpy_nm
+FROM vdr`;
+
+module.exports={
+    selectVdr, 
+}
