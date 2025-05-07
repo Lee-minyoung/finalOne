@@ -15,6 +15,7 @@ const selectVdrList =
     cpy_nm,
     ceo_nm,
     biz_reg_no
+    
 FROM vdr
 :searchKeyword
 ORDER BY vdr_no`;
@@ -44,49 +45,35 @@ FROM vdr`;
 
 // 추가
 const insertVdr =
-`INSERT INTO vdr (
-    vdr_no,
-    use_yn,
-    rgt_dt,
-    ofc_tp,
-    ofc_sts,
-    ofc_ctt,
-    ofc_addr,
-    mgr_nm,
-    mgr_ctt,
-    cpy_nm,
-    ceo_nm,
-    biz_reg_no
-) VALUES (
-    (SELECT IFNULL(MAX(vdr_no), 0) + 1 FROM vdr),
-    'f1',
-    sysdate(),
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?
-)`;
+`INSERT INTO vdr ( vdr_no, use_yn, rgt_dt, ofc_tp, ofc_sts, ofc_ctt, ofc_addr, mgr_nm, mgr_ctt, cpy_nm, ceo_nm, biz_reg_no )
+SELECT IFNULL(MAX(vdr_no), 0) + 1, 'f1', sysdate(), ?, ?, ?, ?, ?, ?, ?, ?, ?
+FROM vdr`;
 
 // 수정
 const updateVdr =
 `UPDATE vdr
-SET 
-    use_yn = ?,
-    ofc_tp = ?,
-    ofc_sts = ?,
-    ofc_ctt = ?,
-    ofc_addr = ?,
-    mgr_nm = ?,
-    mgr_ctt = ?,
-    cpy_nm = ?,
-    ceo_nm = ?,
-    biz_reg_no = ?
+SET ?
 WHERE vdr_no = ?`;
+
+// `UPDATE vdr
+// SET mdf_dt = sysdate(), ?
+// WHERE vdr_no = ?`;
+
+
+// const updateVdr =
+// `UPDATE vdr
+// SET 
+//     use_yn = ?,
+//     ofc_tp = ?,
+//     ofc_sts = ?,
+//     ofc_ctt = ?,
+//     ofc_addr = ?,
+//     mgr_nm = ?,
+//     mgr_ctt = ?,
+//     cpy_nm = ?,
+//     ceo_nm = ?,
+//     biz_reg_no = ?
+// WHERE vdr_no = ?`;
 
 // 삭제
 const deleteVdr =

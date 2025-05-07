@@ -5,7 +5,7 @@ const vdrService = require("../../services/base/vdr_service.js");
 
 
 // 다양한 조건을 기반으로 전체조회 => 다양한 조건은 정해지지 않았으므로 QueryString(질의문자열)으로 유연하게 처리 
-router.get("/vdr", async (req, res) => { // 전체조회 ////////////////////////////// 왜안됨? 
+router.get("/vdr", async (req, res) => { // 전체조회 
   let search = req.query; // 질의문자열
   let vdrList = await vdrService.findVdrList(search) // 서비스에서 전체조회 호출
     .catch(err => console.log(err)); // 예외처리        
