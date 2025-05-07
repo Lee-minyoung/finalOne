@@ -85,16 +85,6 @@ const routes = [
         component:()=> import('@/views/inventory/ordView.vue'),
       },
       {
-        path: '/SpmInsStdEdit',
-        name: 'SpmInsStdEdit',
-        component: () => import('@/views/qualitys/spmInsStdEdit.vue'),
-      },
-      {
-        path: '/SpmInsRst',
-        name: 'SpmInsRst',
-        component: () => import('@/views/qualitys/spmInsRst.vue'),
-      },
-      {
         path: '/ProdMeng',
         name: '생산지시현황',
         component: () => import('@/views/production/line/productionManagement'),
