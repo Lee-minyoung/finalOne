@@ -1,6 +1,6 @@
 <template>
   <!-- 우측 영역 시작 -->
-  <div class="col-md-6">
+  <div class="col-md-5">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
@@ -13,53 +13,75 @@
       </div>
     </div>
     <!-- 우측 상세보기 영역 시작 -->
-    <div class="card p-3">
-      <h4>상세 보기</h4>
-      <div v-if="vdr"> <!-- 리스트에서 선택된 데이터가 있을 때 -->
-          <div>
-          <label class="form-label">상호명</label>
-          <input type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
-          
-          <label class="form-label">대표자명</label>
-          <input type="text" class="form-control" v-model="vdrInfo.ceo_nm" />
-          
-          <label class="form-label">사업자등록번호</label>
-          <input type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
-          
-          <label class="form-label">사업장 연락처</label>
-          <input type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
-          
-          <label class="form-label">사업장 소재지</label>
-          <input type="text" class="form-control" v-model="vdrInfo.ofc_addr" />
-          
-          <label class="form-label">담당자</label>
-          <input type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
-          
-          <label class="form-label">담당자 연락처</label>
-          <input type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
-          
-          <label class="form-label">사업장 유형</label>
-          <select class="form-select form-control" v-model="vdrInfo.ofc_tp">
-            <option value="b1">판매처</option>
-            <option value="b2">구매처</option>
-            <option value="b3">혼합</option>
-            <option value="b4">외주처</option>
-          </select>
-          
-          <label class="form-label">사업장 상태</label>
-          <select class="form-select form-control" v-model="vdrInfo.ofc_sts">
-            <option value="d1">정상</option>
-            <option value="d2">휴업</option>
-            <option value="d3">폐업</option>
-          </select>
-
-          <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="vdrInfo.crt_dt" readonly />
-          <label class="form-label">수정일자</label>
-          <input type="text" class="form-control" v-model="vdrInfo.mdf_dt" readonly />
-        </div>
+    <div class="card p-4">
+      <h4 class="mb-4">상세 보기</h4>
+      <div v-if="vdrInfo.vdr_no">
+        <table class="align-middle" style="border:none;width:100%;">
+          <tbody>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">거래처번호</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사업자등록번호</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.biz_reg_no" /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">상호명</th>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="vdrInfo.cpy_nm" /></td>
+              <th style="width: 20%; min-width: 120px; border:none;">대표자명</th>
+              <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ceo_nm" /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사업장소재지</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_addr" /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사업장연락처</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt" /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">담당자</th>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="vdrInfo.mgr_nm" /></td>
+              <th style="width: 20%; min-width: 120px; border:none;">담당자연락처</th>
+              <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.mgr_ctt" /></td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사업장유형</th>
+              <td style="border:none; padding-right:20px;">
+                <select class="form-select" v-model="vdrInfo.ofc_tp">
+                  <option value="b1">판매처</option>
+                  <option value="b2">구매처</option>
+                  <option value="b3">혼합</option>
+                  <option value="b4">외주처</option>
+                </select>
+              </td>
+              <th style="width: 20%; min-width: 120px; border:none;">사업장상태</th>
+              <td style="border:none;">
+                <select class="form-select" v-model="vdrInfo.ofc_sts">
+                  <option value="d1">정상</option>
+                  <option value="d2">휴업</option>
+                  <option value="d3">폐업</option>
+                </select>
+              </td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
+              <td colspan="3" style="border:none;">
+                <select class="form-select w-auto" v-model="vdrInfo.use_yn">
+                  <option value="f1">여</option>
+                  <option value="f2">부</option>
+                </select>
+              </td>
+            </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">생성일자</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control w-auto" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly /></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->      
+      <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->
         <p>거래처를 선택하세요!</p>
       </div>
     </div>
@@ -123,7 +145,7 @@ export default { // 거래처 상세 정보 컴포넌트
       // 서버에 데이터를 요청 : PUT + http://localhost:3000/vdr/2000 => proxy ) /api/vdr/2000
       let result = await axios.put(`/api/vdr/${this.vdrInfo.vdr_no}`, obj) // 데이터 전달
         .catch(err => console.log(err));
-      let updateRes = result.data; 
+      let updateRes = result.data;
       if (updateRes.isUpdated) { // 수정 성공 여부  
         alert('수정되었습니다.');
         this.$emit('vdr-reload'); // 부모 컴포넌트에 수정 완료 알림
@@ -142,9 +164,9 @@ export default { // 거래처 상세 정보 컴포넌트
       if (vdrNo > 0) { // 선택된 vdr가 있을 경우 
         let result = await axios.delete(`/api/vdr/${vdrNo}`) // 서버에 데이터 요청
           .catch(err => console.log(err));
-        this.vdrInfo = result.data; 
-        let sqlRes = result.data; 
-        let sqlResult = sqlRes.affectedRows; 
+        this.vdrInfo = result.data;
+        let sqlRes = result.data;
+        let sqlResult = sqlRes.affectedRows;
         if (sqlResult > 0) {
           alert('정상적으로 삭제되었습니다.');
           // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
@@ -161,7 +183,7 @@ export default { // 거래처 상세 정보 컴포넌트
     }
   }
 };
-</script> 
+</script>
 
 <style>
 .table-hover:hover {
@@ -171,5 +193,53 @@ export default { // 거래처 상세 정보 컴포넌트
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 입력 필드 스타일 개선 */
+.form-control, .form-select {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 테이블 행 간격 조정 */
+table tr {
+  margin-bottom: 1rem;
+}
+
+/* 입력 필드 hover 효과 */
+.form-control:hover, .form-select:hover {
+  border-color: #86b7fe;
+}
+
+/* 라벨 스타일 */
+th {
+  font-weight: 500;
+  color: #495057;
+  padding: 0.75rem 0;
+}
+
+/* 입력 필드 너비 조정 */
+.form-control, .form-select {
+  width: 100%;
+  max-width: none;
+}
+
+/* 카드 내부 여백 조정 */
+.card {
+  padding: 1.5rem;
+}
+
+/* 테이블 셀 패딩 조정 */
+td {
+  padding: 0.5rem 0;
 }
 </style>

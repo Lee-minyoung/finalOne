@@ -54,8 +54,12 @@ const routes = [
         name: 'proc',
         component: () => import('@/views/proc/proc.vue'),
       },
-      // 거래처
-      { 
+      { // 자재
+        path: '/mat',
+        name: 'mat',
+        component: () => import('@/views/mat/mat.vue'),
+      },
+      { // 거래처
         path: '/vdr',
         name: 'vdr',
         component: () => import('@/views/vdr/vdr.vue'),
