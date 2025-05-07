@@ -53,4 +53,11 @@ router.delete('/dept/:no', async (req, res) => {
   res.send(resInfo);
 })
 
+// 모달에서 사용할 부서목록 조회
+router.get('/deptModal', async (req, res) => {
+  let deptList = await deptService.findDeptListModal()
+    .catch(err => console.log(err));
+  res.send(deptList);
+})
+
 module.exports = router

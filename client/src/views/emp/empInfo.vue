@@ -4,39 +4,130 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addDept">추가</button>
-        <button class="btn btn-danger" @click="deleteDept(deptInfo.dept_no)">삭제</button>
+        <button class="btn btn-primary me-2" @click="addEmp">추가</button>
+        <button class="btn btn-danger" @click="deleteEmp(empInfo.emp_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
         <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
-        <button class="btn btn-success" @click="saveDept">저장</button>
+        <button class="btn btn-success" @click="saveEmp">저장</button>
       </div>
     </div> <!-- 우측 버튼 모음 영역 끝 -->
     <!-- 우측 상세보기 영역 시작 -->
     <div class="card p-3">
       <h4>상세 보기</h4>
-      <div v-if="dept"> <!-- 리스트에서 선택된 데이터가 있을 때 -->
+      <div v-if="emp"> <!-- 리스트에서 선택된 데이터가 있을 때 -->
         <div>
-          <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_no" readonly />
-          <label class="form-label">부서명</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
-          <label class="form-label">부서관리자</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
-          <label class="form-label">사용여부</label>
-          <!-- <input type="text" class="form-control" v-model="deptInfo.use_yn" /> -->
-          <select class="form-select form-control" v-model="deptInfo.use_yn">
-            <option value="f1">여</option>
-            <option value="f2">부</option>
-          </select>
-          <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="deptInfo.crt_dt" readonly />
-          <label class="form-label">수정일자</label>
-          <input type="text" class="form-control" v-model="deptInfo.mdf_dt" readonly />
+          <div class="row mb-2">
+            <!-- 사원번호 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
+                <input id="empNo" type="text" class="form-control" v-model="empInfo.emp_no" readonly />
+              </div>
+            </div>
+            <!-- 입사일자 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="hireDt" class="form-label fw-bold me-3" style="min-width: 100px;">입사일자</label>
+                <input id="hireDt" type="date" class="form-control" 
+                       :value="formatHireDate" 
+                       @input="updateHireDate($event.target.value)" /> 
+                       <!--@input => HTML 입력 요소의 값이 변경될 때마다 발생-->
+                       <!-- $event.target.value는 이벤트가 발생한 input요소의 현재 값 -->
+              </div>
+            </div>
+            <!-- 이름 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="nm" class="form-label fw-bold me-3" style="min-width: 100px;">이름</label>
+                <input id="nm" type="text" class="form-control" v-model="empInfo.nm" />
+              </div>
+            </div>
+            <!-- 연락처 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ctt" class="form-label fw-bold me-3" style="min-width: 100px;">연락처</label>
+                <input id="ctt" type="text" class="form-control" v-model="empInfo.ctt" />
+              </div>
+            </div>
+            <!-- 주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="addr" class="form-label fw-bold me-3" style="min-width: 100px;">주소</label>
+                <input id="addr" type="text" class="form-control" v-model="empInfo.addr" />
+              </div>
+            </div>
+            <!-- 은행명 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="bnkNm" class="form-label fw-bold me-3" style="min-width: 100px;">은행명</label>
+                <input id="bnkNm" type="text" class="form-control" v-model="empInfo.bnk_nm" />
+              </div>
+            </div>
+            <!-- 계좌번호 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="acctNo" class="form-label fw-bold me-3" style="min-width: 100px;">계좌번호</label>
+                <input id="acctNo" type="text" class="form-control" v-model="empInfo.acct_no" />
+              </div>
+            </div>
+            <!-- 부서명 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="deptNo" class="form-label fw-bold me-3" style="min-width: 100px;">부서명</label>
+                <select id="deptNo" class="form-select form-control" v-model="empInfo.dept_no">
+                  <option v-for="dept in deptInfo" :key="dept.dept_no" :value="dept.dept_no">{{ dept.dept_nm }}</option>
+                </select>
+              </div>
+            </div>
+            <!-- 직급명 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="pstNo" class="form-label fw-bold me-3" style="min-width: 100px;">직급명</label>
+                <select id="pstNo" class="form-select form-control" v-model="empInfo.pst_no">
+                  <option value="8">사원</option>
+                  <option value="7">주임</option>
+                  <option value="6">대리</option>
+                  <option value="5">과장</option>
+                  <option value="4">차장</option>
+                  <option value="3">부장</option>
+                  <option value="2">임원</option>
+                  <option value="1">대표이사</option>
+                </select>
+              </div>
+            </div>
+            <!-- 재직상태 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">재직상태</label>
+                <select id="pstNo" class="form-select form-control" v-model="empInfo.emp_sts">
+                  <option value="a1">재직</option>
+                  <option value="a2">휴직</option>
+                  <option value="a3">퇴직</option>
+                </select>
+              </div>
+            </div>
+            <!-- 휴직사유 -->
+            <div class="col-md-12 mb-3">
+              <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                  style="height: 100px" v-model="empInfo.lv_rsn"></textarea>
+                <label for="floatingTextarea2" class="form-label fw-bold">휴직사유</label>
+              </div>
+            </div>
+            <!-- 인사이력 -->
+            <div class="col-md-12">
+              <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                  style="height: 100px" v-model="empInfo.hr_hist"></textarea>
+                <label for="floatingTextarea2" class="form-label fw-bold">인사이력</label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->
-        <p>부서를 선택하세요!</p>
+        <p>사원을 선택하세요!</p>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
   </div>
@@ -49,89 +140,104 @@ import userDateUtils from '@/utils/useDates.js';
 
 export default {
   props: {
-    dept: Object,
+    emp: Object,
   },
   data() {
     return {
-      deptInfo: {},
+      empInfo: {},
     };
   },
+  created() {
+    this.getDeptInfo();
+  },
   watch: {
-    dept() {
-      let searchNo = this.dept;
-      console.log(searchNo.dept_no);
-      this.getDeptInfo(searchNo.dept_no);
+    emp() {
+      let searchNo = this.emp;
+      this.getEmpInfo(searchNo.emp_no);
+    }
+  },
+  computed: {
+    formatHireDate() {
+      if (!this.empInfo.hire_dt) return '';
+      return this.dateFormat(this.empInfo.hire_dt, 'yyyy-MM-dd');
     }
   },
   methods: {
+    async getDeptInfo() {
+      let result = await axios.get(`/api/deptModal`)
+        .catch(err => console.log(err));
+      this.deptInfo = result.data;
+    },
     // 날짜 데이터 포멧 정의
-    dateFormat(value, format) { 
+    dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
     },
-    // 정의한 데이터 포맷 활용한 오늘 날짜 반환
-    getDate(date) {
-      // <input> 태그의 type 속성이 date인 경우 'yyyy-MM-dd'으로 값을 가져야함
-      // return this.dateFormat(null, 'yyyy-MM-dd');
-      return this.dateFormat(date, 'yyyy-MM-dd');
-    },
-    // dept_no를 받아 데이터 받아오는 함수
-    async getDeptInfo(selected) {
-      let result = await axios.get(`/api/dept/${selected}`)
+    // emp_no를 받아 데이터 받아오는 함수
+    async getEmpInfo(selected) {
+      let result = await axios.get(`/api/emp/${selected}`)
         .catch(err => console.log(err));
-        console.log(result);
-      this.deptInfo = result.data;
-      console.log(this.deptInfo);
+      this.empInfo = result.data;
     },
-     // 수정된 내용을 DB에 저장
-    async deptUpdate() {
+    // 수정된 내용을 DB에 저장
+    async empUpdate() {
       let obj = {
-        dept_nm: this.deptInfo.dept_nm,
-        dept_mgr: this.deptInfo.dept_mgr,
-        use_yn: this.deptInfo.use_yn,
-      }
+        hire_dt: this.dateFormat(this.empInfo.hire_dt, 'yyyy-MM-dd'), // 입사일자
+        nm: this.empInfo.nm, // 이름
+        ctt: this.empInfo.ctt, // 연락처
+        addr: this.empInfo.addr, // 주소
+        bnk_nm: this.empInfo.bnk_nm, // 은행명
+        acct_no: this.empInfo.acct_no, // 계좌번호
+        dept_no: this.empInfo.dept_no, // 부서번호
+        pst_no: this.empInfo.pst_no, // 직급번호
+        emp_sts: this.empInfo.emp_sts, // 재직상태
+        lv_rsn: this.empInfo.lv_rsn, // 휴직사유
+        hr_hist: this.empInfo.hr_hist, // 인사이력
+      };
       // 서버에 데이터를 요청 : PUT + http://localhost:3000/dept/100 => proxy ) /api/dept/100
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
-      let result = await axios.put(`/api/dept/${this.deptInfo.dept_no}`, obj)
+      let result = await axios.put(`/api/emp/${this.empInfo.emp_no}`, obj)
         .catch(err => console.log(err));
+        console.log(result);
       let updateRes = result.data;
       if (updateRes.isUpdated) {
         alert('수정되었습니다.');
-        this.$emit('dept-reload');
-        this.getDeptInfo(this.deptInfo.dept_no); // 이거안되네 
+        this.$emit('emp-reload');
+        this.getEmpInfo(this.empInfo.emp_no); 
       } else {
         alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
       };
     },
-    saveDept() { // 저장 버튼 클릭시 실행할 함수
-      this.deptUpdate(); // 수정내용 저장
+    saveEmp() { // 저장 버튼 클릭시 실행할 함수
+      this.empUpdate(); // 수정내용 저장
     },
     // 추가 버튼 클릭시 실행할 함수
-    addDept() {
-      this.$emit("goToForm",false);
+    addEmp() {
+      this.$emit("goToForm", false);
     },
     // 삭제 버튼 클릭시 실행할 함수
-    async deleteDept(deptNo) { 
-      if (deptNo > 0) { // 선택된 dept가 있을 경우 
-        let result = await axios.delete(`/api/dept/${deptNo}`)
+    async deleteEmp(empNo) {
+      if (empNo > 0) { // 선택된 dept가 있을 경우 
+        let result = await axios.delete(`/api/emp/${empNo}`)
           .catch(err => console.log(err));
-        this.deptInfo = result.data;
         let sqlRes = result.data;
         let sqlResult = sqlRes.affectedRows;
         if (sqlResult > 0) {
           alert('정상적으로 삭제되었습니다.');
           // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-          this.$emit('dept-reload');
+          this.$emit('emp-reload');
         } else {
           alert('삭제되지 않았습니다.');
         }
       } else { // 선택된 dept가 없을 경우
-        alert("삭제할 부서를 선택하세요");
+        alert("삭제할 사원을 선택하세요");
       }
     },
     resetForm() { // 초기화 버튼 클릭시 실행할 함수
-      this.getDeptInfo(this.deptInfo.dept_no);
+      this.getEmpInfo(this.empInfo.emp_no);
     },
-   
+    updateHireDate(value) {
+      this.empInfo.hire_dt = value;
+    },
   }
 };
 </script>

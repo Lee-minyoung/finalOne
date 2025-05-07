@@ -71,8 +71,8 @@ app.use('/', procRouter);
 const prcCodeRouter = require('./routers/base/prcCode_router.js');
 app.use('/', prcCodeRouter);
 // 라인 라우팅
-// const lnRouter = require('./routers/base/ln_router.js');
-// app.use('/', lnRouter);
+const lnRouter = require('./routers/base/ln_router.js');
+app.use('/', lnRouter);
 // 설비 라우팅
 const eqpRouter = require('./routers/base/eqp_router.js');
 app.use('/', eqpRouter);

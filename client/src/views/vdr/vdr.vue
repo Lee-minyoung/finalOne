@@ -108,6 +108,7 @@ export default {
     async getVdrList() { // vdrList데이터 받아오는 함수
       let result = await axios.get('/api/vdr') // 거래처 목록 조회
                             .catch(err=>console.log(err));
+                            console.log(result);
       this.vdrList = result.data; // vdrList배열에 결과값 담음
     },
     // 상세보기에 보여질 데이터 받아오는 함수

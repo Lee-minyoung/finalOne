@@ -30,6 +30,23 @@ const lineStatusFormat = function (value) {
   return result;
 }
 
+// 재직상태 공통코드 처리
+const empStatusFormat = function (value) {
+  // value : a1, a2, a3
+  //  출력 : a1 == 재직, a2 == 휴직 a3 == 퇴직
+  // value가 null인 경우엔 '' 공백을 값으로 가지도록 함
+
+  let result = '';
+  if (value == 'a1') {
+    result = '재직';
+  } else if (value == 'a2') {
+    result = '휴직' 
+  } else if (value == 'a3') {
+    result = '퇴직' 
+  } 
+  return result;
+}
+
 // 숫자 천단위 콤마 처리
 const numberWithCommas = function (value) {
   if (value === null || value === undefined) return ''; // null 또는 undefined 처리
@@ -39,5 +56,6 @@ const numberWithCommas = function (value) {
 export default {
   CommonCodeFormat,
   lineStatusFormat,
+  empStatusFormat,
   numberWithCommas,
 };
