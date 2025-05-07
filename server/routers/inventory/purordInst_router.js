@@ -22,6 +22,9 @@ router.post('/addPurOrd', async (req, res) => {
       total
     } = req.body;
 
+
+
+    //sdfsdf
     // 3. 유효성 검사
     if (!vdr_no || !crt_dt || !pur_dt || !mat_no || !qty || !prc || !total) {
       return res.status(400).send({ error: '필수 항목 누락됨' });
