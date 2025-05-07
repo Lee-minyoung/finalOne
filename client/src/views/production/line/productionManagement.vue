@@ -22,14 +22,76 @@
           <td>{{ item.ord_qty }}</td>
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
-          <td>{{ item.status }}</td>
+          
+          <td v-if="item.mat_ins_sts === 'P1'">입고대기</td>
+          <td v-else-if="item.mat_ins_sts === 'P2'">입고완료</td>
+          <td v-else>오류</td>
+
           <td>
-            <select v-model="item.selected_line" class="form-select form-select-sm">
+            <!-- 버튼 클릭시 모달창-->
+            <button class="btn btn-sm btn-secondary" @click="fetchLines(item)" data-bs-toggle="modal" data-bs-target="#lineModal">
+              라인 선택
+            </button>
+            <!-- 라인 선택 모달 -->
+<div class="modal fade" id="lineModal" tabindex="-1" aria-labelledby="lineModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="lineModalLabel">라인 선택</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>라인번호</th>
+              <th>라인명</th>
+              <th>상태</th>
+              <th>선택</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="line in item.lineList || []" :key="line.ln_no">
+              <td>{{ line.ln_no }}</td>
+              <td>{{ line.ln_nm }}</td>
+              <td>
+                <span
+                  class="badge"
+                  :class="{
+                    'bg-success': line.ln_sts === 'f1',
+                    'bg-secondary': line.ln_sts !== 'f1'
+                  }"
+                >
+                  {{ line.ln_sts === 'f1' ? '사용 가능' : '사용 중' }}
+                </span>
+              </td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  @click="selectLine(line.ln_no)"
+                  :disabled="line.ln_sts !== 'f1'"
+                >
+                  선택
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-primary" @click="assignLine(item)" data-bs-dismiss="modal">지시</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+            <!-- <select v-model="item.selected_line" class="form-select form-select-sm" @focus="fetchLines(item)">
               <option disabled value="">라인 선택</option>
-              <option v-for="line in lineList" :key="line.line_no" :value="line.line_no">
-                {{ line.line_nm }}
+              <option v-for="line in item.lineList || []" :key="line.ln_no" :value="line.ln_no">
+                {{ line.ln_nm }}
               </option>
-            </select>
+            </select> -->
           </td>
           <td>
             <button class="btn btn-sm btn-primary" @click="assignLine(item)">지시</button>
@@ -56,13 +118,23 @@ export default {
       const res = await axios.get('/api/prodinst')
       this.instructionList = res.data.map(row => ({ ...row, selected_line: '' }))
     },
-    async fetchLines() {
-      const res = await axios.get('/api/lines')
-      this.lineList = res.data
-    },
-    async assignLine(item) {
-      if (!item.selected_line) return alert('라인을 선택하세요')
 
+    async fetchLines(item) {
+  const res = await axios.get('/api/lineDrop', {
+    params: { prd_no: item.pdn_ord_no  }
+  })
+  console.log(`📦 ${item.pdn_ord_no }의 라인 목록:`, res.data)
+
+  // 👉 개별 item에 붙이기
+  item.lineList = res.data.map(line => ({
+    ln_no: line.ln_no,
+    ln_nm: line.ln_nm 
+  }))
+},
+
+    async assignLine(item) {
+      if (item.mat_ins_sts !==   'P2') return alert('입고완료 상태에서만 지시 가능합니다.')
+      if (!item.selected_line) return alert('라인을 선택하세요')
       const payload = {
         pdn_ord_no: item.pdn_ord_no,
         line_no: item.selected_line

@@ -10,5 +10,16 @@ router.get('/prodinst', async (req,res)=>{
     res.send(prodInstList)
 })
 
+//라인 드롭다운 버튼
+router.get('/lineDrop', async (req, res) => {
+    try {
+      const lineList = await lineManagementServices.findLineDrop()
+      res.send(lineList)
+    } catch (err) {
+      console.error('[라인 드롭다운 오류]', err)
+      res.status(500).send({ message: '서버 오류 발생' })
+    }
+  })
+
 
 module.exports = router;

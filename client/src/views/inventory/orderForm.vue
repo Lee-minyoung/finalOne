@@ -12,39 +12,13 @@
             <div class="col-md-4"><label class="form-label">수령방법</label><input type="text" class="form-control" v-model="dueDt" /></div>
             <div class="col-md-4"><label class="form-label">수량</label><input type="number" class="form-control" v-model="qty" /></div>
             <!--거래처선택-->
-            <!-- <div>
-  <button class="btn btn-outline-primary" @click="showModal = true">
-    거래처 선택
-  </button>
-  <vdr-select-modal
-    v-if="showModal"
-    :vdr-list="vdr"
-    :selected="selectVdr"
-    @select-vdr="handleVdrSelect" 
-    @close="showModal = false"   
-  />
-</div> -->
-<!--거래처-->
-
-<!-- <div v-if="selectVdr ">
-<div class="col-md-12">
-  <label class="form-label">거래처번호</label>
-  <input v-model="selectVdr.vdr_no" type="text" class="form-control" readonly />
-</div>
-<div class="col-md-12">
-  <label class="form-label">거래처명</label>
-  <input v-model="selectVdr.cpy_nm" type="text" class="form-control" readonly />
-</div>
-</div> -->
-
-<td>{{  selectVdr}}</td>
-
 
             <!--자재 선택-->
             <div>
   <button class="btn btn-outline-primary" @click="showModal = true">
     자재 선택
   </button>
+  
   <mat-select-modal
     v-if="showModal"
     :mat-list="mat"

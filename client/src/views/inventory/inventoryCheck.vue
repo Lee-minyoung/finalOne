@@ -1,35 +1,42 @@
 <template>
   <h3>자재현황파악</h3>
-  <table class="table">
+  <table class="table table-bordered text-center">
   <thead>
-    <tr>
-      <th scope="col">자재ID</th>
-      <th scope="col">자재명</th>
-      <th scope="col">총필요량</th>
-      <th scope="col">현재고</th>
-      <th scope="col">부족수량</th>
-      <th scope="col">상태</th>    
+    <tr class="table-light">
+      <th>출고요청번호</th>
+      <th>자재명</th>
+      <th>총필요량</th>
+      <th>현재고</th>
+      <th>부족수량</th>
+      <th>상태</th>
     </tr>
   </thead>
   <tbody>
-    
-  <tr v-for="(item, index) in inventoryStatus" :key="index">
-    <th scope="row">{{ item['자재ID'] }}</th>
-    <td>{{ item['자재명'] }}</td>
-    <td>{{ item['총필요량'] }}</td>
-    <td>{{ item['현재재고'] }}</td>
-    <td v-if="item['부족수량']>0">{{ item['부족수량'] }}</td>
-    <td v-else>0</td>
-    <td v-if="item['상태']=='g1'">미확인</td>
-    <td v-else>확인</td>
-  </tr>
-</tbody>
+    <template v-for="(items, reqNo) in groupedInventory" :key="reqNo">
+      <!-- ** 상단 요약 (클릭해서 토글) -->
+      <tr class="table-primary" style="cursor: pointer;" @click="toggleAccordion(reqNo)">
+        <td colspan="6" class="text-start">
+          <span>
+            <b>{{ isExpanded(reqNo) ? '▼' : '▶' }}</b>
+            출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건)
+          </span>
+        </td>
+      </tr>
 
-    
-  
+      <!-- ** 아코디언 하위 내용 -->
+      <tr v-if="isExpanded(reqNo)" v-for="(item, idx) in items" :key="`${reqNo}-${idx}`">
+        <td></td>
+        <td>{{ item['자재명'] }}</td>
+        <td>{{ item['총필요량'] }}</td>
+        <td>{{ item['현재재고'] }}</td>
+        <td>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
+        <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td>
+      </tr>
+    </template>
+  </tbody>
 </table>
 
-<h3>자재구매계획</h3>
+<h3>자재구매계획 </h3>
   <table class="table">
   <thead>
     <tr>
@@ -46,6 +53,7 @@
     </tr>
   </thead>
   <tbody>
+    <!-- 필터.. -->
     <tr v-for="(item,index) in filteredPurPlan" :key="index">
       <th scope="row">{{ item['계획ID'] }}</th>
       <td>{{ item['자재ID'] }}</td>
@@ -113,6 +121,7 @@ import axios from 'axios';
       filteredPurPlan:[], //최소주문수량 이상인 자재구매계획 조회하기 
       min:'', //최소수량 
       rawData:[], 
+      expandedReqNos: [] // ** 펼쳐진 출고요청번호 목록
     };
   },
   async created(){
@@ -120,6 +129,18 @@ import axios from 'axios';
    await this.fetchInventoryPurPlan(); //자재구매계획 일단불러오기   
    await this.filteredPurPlanList(); //수량을 
   },
+  // ** 지시번호별 번호 묶기
+  computed: {
+  groupedInventory() {
+    const grouped = {}
+    this.inventoryStatus.forEach(item => {
+      const reqNo = item['출고요청번호']
+      if (!grouped[reqNo]) grouped[reqNo] = []
+      grouped[reqNo].push(item)
+    })
+    return grouped
+  }
+},
   methods: {
    async fetchInventoryStatus(){
       try{
@@ -195,6 +216,16 @@ import axios from 'axios';
      }
 
    },
+   //** */ 아코디언 토글
+   toggleAccordion(reqNo) {
+    const idx = this.expandedReqNos.indexOf(reqNo)
+    if (idx >= 0) this.expandedReqNos.splice(idx, 1)
+    else this.expandedReqNos.push(reqNo)
+  },
+  // 아코디언 클릭 후 확인.
+  isExpanded(reqNo) {
+    return this.expandedReqNos.includes(reqNo)
+  }
    
   },
 };

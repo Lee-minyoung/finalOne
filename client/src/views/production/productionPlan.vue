@@ -75,6 +75,8 @@
           <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
           <td>
+            <!-- :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" 
+             여기가 퍼센트에 따라 진행률 바 체워짐-->
             <div class="progress" style="height: 22px;">
               <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty)"
               :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">

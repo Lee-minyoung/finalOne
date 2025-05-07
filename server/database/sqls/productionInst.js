@@ -30,9 +30,9 @@ WHERE b.prd_no = ?;`
 
 
 const insertProdMat =
-`INSERT INTO mat_rls_req (mat_req_no, pdn_ord_no, mat_no, qty, sndr, sts, prc_rslt)
- VALUES (?, ?, ?, ?, ?, ?, ?);`
-
+`INSERT INTO mat_rls_req (mat_req_no, pdn_ord_no, mat_no, qty, sndr, sts, prc_rslt, mat_ins_sts)
+ VALUES (?, ?, ?, ?, ?, ?, ?, 'P1');`
+  
 /*
 하단 DB에서 코드명 자동 부여 방식식
 SUBSTRING(mat_req_no, 5)	  'MAT-001'에서 '001'만 잘라냄

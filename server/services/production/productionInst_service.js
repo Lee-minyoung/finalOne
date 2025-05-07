@@ -71,6 +71,7 @@ const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
         1000,       // emp_no (추후 로그인 값으로 대체)
         '미확인',    // 상태
         '미승인'     // 처리결과
+        
       ], conn);
     }
 

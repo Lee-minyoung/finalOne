@@ -43,13 +43,12 @@ export default {
         { step_no: 3, proc_nm: '침지', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
         { step_no: 4, proc_nm: '충전', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
         { step_no: 5, proc_nm: '취사', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 6, proc_nm: '취사', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 7, proc_nm: '포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 8, proc_nm: '냉각', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 9, proc_nm: '중량(검사)', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 10, proc_nm: '라벨부착', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 11, proc_nm: '최종포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 12, proc_nm: '종합', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 6, proc_nm: '포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 7, proc_nm: '냉각', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 8, proc_nm: '중량(검사)', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 9, proc_nm: '라벨부착', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 10, proc_nm: '최종포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
+        { step_no: 11, proc_nm: '종합', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
       ]
     }
   }
