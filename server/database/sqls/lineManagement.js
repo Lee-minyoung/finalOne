@@ -37,16 +37,6 @@ const selectLineDropdown =
        )
  ORDER BY ln_no`
 
-
-const updateLineStatus =
-`UPDATE ln
-    SET ln_sts = CASE 
-                 WHEN ln_sts = 'f1' THEN 'f2'
-                 ELSE 'f2'
-                  END
-  WHERE ln_no = ?;`
-
-
 const selectLineList =
 `SELECT l.ln_no
       , l.ln_nm
@@ -64,7 +54,14 @@ const selectLineList =
    LEFT JOIN ln_opr_dt lod ON ld.ln_dtl_no = lod.ln_dtl_no
    LEFT JOIN ln_opr lo ON lod.ln_opr_no = lo.ln_opr_no
    ORDER BY l.ln_no;`
-    
+
+
+const updateLinePreparing =
+`CALL line_preparing(?, ?)`;
+
+const updateLineStop =
+`CALL line_stop(?, ?)`;
+
 /*
 라인에 등록해야 하는 컬럼
 라인가동번호 | 자제출고요청번호 | 시작시간 | 종료시간 | 담당자 | 비고 | 생산지시 세부번호 | 지시수량 | 생산수량 | 불량수량 | 자재번호
@@ -102,9 +99,11 @@ ln_opr_dtl_no  |  st_tm  |  end_tm | ord_qty | pdn_qty | dft_qty | eqp_err_no | 
  순서니.. index?|공정시간 * 수량(분,초)| 재료    |  함수    |   함수   | 기본값      |  라인에서   |  ????????  |  지시에서
                 수량은 총지시량/병렬수량
 */
+
 module.exports = {
     selectProdInstList, 
     selectLineDropdown,
-    updateLineStatus,
-    selectLineList
+    selectLineList,
+    updateLinePreparing : 'CALL line_start(?, ?)',
+    updateLineStop,
 }

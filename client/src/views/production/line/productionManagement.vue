@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4">
-    <h2 class="mb-3">생산지시현황</h2>
+    <h2 class="mb-3">생산지시현황 (입고완료되면 색상 변경하기)</h2>
 
     <table class="table table-bordered text-center">
       <thead class="table-light">
@@ -12,53 +12,70 @@
           <th>지시자</th>
           <th>진행상황</th>
           <th>라인 지정</th>
-          <th>지시 실행</th>
+          <th>라인 지시</th>
         </tr>
       </thead>
+
+      <!-- ✅ 진행상태가 'r3' (지시가능 상태) -->
       <tbody>
-        <tr v-for="item in instructionList" :key="item.pdn_ord_dtl_no">
+        <tr v-for="item in activeList" :key="item.pdn_ord_dtl_no">
           <td>{{ item.pdn_ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.ord_qty }}</td>
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
           <td>
-            <span v-if="item.mat_ins_sts === 'q1'">입고대기</span>
-            <span v-else-if="item.mat_ins_sts === 'q2'">입고완료</span>
-            <span v-else>오류</span>
+            <span class="badge" :class="{
+              'bg-warning text-dark': item.mat_ins_sts === 'q1',
+              'bg-success': item.mat_ins_sts === 'q2'
+            }">
+              {{
+                item.mat_ins_sts === 'q1' ? '입고대기' :
+                item.mat_ins_sts === 'q2' ? '입고완료' : '오류'
+              }}
+            </span>
           </td>
           <td>
-    <div class="d-flex align-items-center justify-content-center gap-2">
-    <span v-if="item.selected_line">
-      {{ item.selected_line }}
-    </span>
-    <span v-else class="text-muted">
-      미지정
-    </span>
-    <button class="btn btn-light border" @click="openModal(item)">
-  <i class="bi bi-search fs-4"></i> <!-- 🔍 돋보기 아이콘 -->
-</button>
-  </div>
-</td>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <span v-if="item.selected_line">{{ item.selected_line }}</span>
+              <span v-else class="text-muted">미지정</span>
+              <button class="btn btn-light border" @click="openModal(item)">
+                <i class="bi bi-search fs-4"></i>
+              </button>
+            </div>
+          </td>
           <td>
             <button class="btn btn-sm btn-primary" @click="assignLine(item)">지시</button>
+          </td>
+        </tr>
+      </tbody>
+
+      <!-- ✅ 진행상태가 'r2' (지시대기 상태) -->
+      <tbody>
+        <tr v-for="item in waitingList" :key="item.pdn_ord_dtl_no" class="opacity-50">
+          <td>{{ item.pdn_ord_no }}</td>
+          <td>{{ item.prd_nm }}</td>
+          <td>{{ item.ord_qty }}</td>
+          <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
+          <td>{{ item.crt_by }}</td>
+          <td colspan="3">
+            <span class="badge bg-warning text-dark">라인 대기 중</span>
           </td>
         </tr>
       </tbody>
     </table>
 
     <LineInstructionModal
-  v-if="showLineModal"
-  :item="selectedItem"
-  :used-lines="usedLines"
-  @set-line="setLine"
-  @close="showLineModal = false"
-/>
+      v-if="showLineModal"
+      :item="selectedItem"
+      :used-lines="usedLines"
+      @set-line="setLine"
+      @close="showLineModal = false"
+    />
   </div>
 </template>
 
 <script>
-// ---------------------여기부터 리뷰 -------------------------
 import axios from 'axios'
 import useDateUtils from '@/utils/useDates'
 import LineInstructionModal from './LineInstructionModal.vue'
@@ -84,6 +101,16 @@ export default {
       return this.instructionList
         .filter(item => item.selected_line)
         .map(item => item.selected_line)
+    },
+
+    // r3 상태: 지시가능 상태
+    activeList() {
+      return this.instructionList.filter(i => i.ord_sts === 'r3');
+    },
+
+    // r2 상태: 라인 대기 상태
+    waitingList() {
+      return this.instructionList.filter(i => i.ord_sts === 'r2');
     }
   },
 
@@ -153,15 +180,15 @@ export default {
       }
 
       const payload = {
-        pdn_ord_no: item.pdn_ord_no,
-        line_no: item.selected_line
+        pdn_ord_dtl_no: item.pdn_ord_dtl_no,  // ✅ 라우터와 프로시저 파라미터에 맞춤
+        ln_no: item.selected_line
       }
 
       try {
-        await axios.post('/api/prodinst/assign', payload)
+        await axios.post('/api/preparingLine', payload)
         alert('지시 완료!')
-        this.fetchInstructions()         // 지시 목록 갱신
-        this.showLineModal = false       // 모달 닫기
+        this.fetchInstructions()
+        this.showLineModal = false
       } catch (err) {
         console.error("❌ 지시 실패:", err)
         alert('지시 중 오류가 발생했습니다.')
@@ -178,6 +205,6 @@ export default {
 }
 .selected-line {
   font-weight: 600;
-  color: #198754; /* 부트스트랩 success 색상 */
+  color: #198754;
 }
 </style>

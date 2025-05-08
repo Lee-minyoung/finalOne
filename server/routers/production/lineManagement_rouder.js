@@ -28,7 +28,34 @@ router.get('/lineList', async (req,res)=>{
                           .catch(err=> console.log(err));
   res.send(LineList)
 })
-//findLineListAll
+
+
+// 라인대기상태 업데이트
+router.post('/preparingLine', async (req, res) => {
+  const { pdn_ord_dtl_no, ln_no } = req.body;
+  console.log('instructionId:', pdn_ord_dtl_no);
+  console.log('lineNo:', ln_no);
+  try {
+    await lineManagementServices.modifyLinePreparing(pdn_ord_dtl_no, ln_no);
+    res.status(200).json({ message: '✅ 라인 시작 성공' });
+  } catch (error) {
+    console.error('❌ 라인 시작 실패:', error);
+    res.status(500).json({ message: '라인 시작 중 오류 발생', error });
+  }
+});
+
+// 라인대기상태 해제
+router.post('/stopLine', async (req, res) => {
+  const { instructionId, lineNo } = req.body;
+
+  try {
+    await lineManagementServices.modifyLineStop(instructionId, lineNo);
+    res.status(200).json({ message: '✅ 라인 중지 성공' });
+  } catch (error) {
+    console.error('❌ 라인 중지 실패:', error);
+    res.status(500).json({ message: '라인 중지 중 오류 발생', error });
+  }
+});
 
 
 module.exports = router;
