@@ -54,7 +54,7 @@ const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
       for (const bom of bomList) {
         const { mat_no, cap } = bom;
         if (!materialMap[mat_no]) materialMap[mat_no] = 0;
-        materialMap[mat_no] += cap * instruction_qty;
+        materialMap[mat_no] += (cap * instruction_qty) + (cap * instruction_qty / 10) ;
       }
     }
 
@@ -69,11 +69,12 @@ const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
         mat_no,     // mat_no (자재번호)
         qty,        // qty (요청량)
         1000,       // emp_no (추후 로그인 값으로 대체)
-        '미확인',    // 상태
-        '미승인'     // 처리결과
-        
+        'g1',    // 상태
+        'c2',     // 처리결과
+        'q1'      // 출고상태
       ], conn);
     }
+
 
     await conn.commit();
   } catch (err) {

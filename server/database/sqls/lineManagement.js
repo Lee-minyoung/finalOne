@@ -22,14 +22,6 @@ LEFT JOIN (
 ) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
 ORDER BY od.pdn_ord_dtl_no DESC;`;
 
-const selectLineList =
-`SELECT ln_no
-      , ln_nm
-      , ord_qty
-      , dft_qty
-      , pdn_qty
-`     
-
 const selectLineDropdown =
 `SELECT ln_no, ln_nm, ln_sts
   FROM ln
@@ -54,8 +46,65 @@ const updateLineStatus =
                   END
   WHERE ln_no = ?;`
 
+
+const selectLineList =
+`SELECT l.ln_no
+      , l.ln_nm
+      , p.prd_nm
+      , l.ln_sts
+      , l.use_yn
+      , lo.st_tm
+      , lo.end_tm
+      , lo.ord_qty
+      , lo.pdn_qty
+      , lo.dft_qty
+   FROM ln l
+   LEFT JOIN prd p ON l.prd_no = p.prd_no
+   LEFT JOIN ln_dtl ld ON l.ln_no = ld.ln_no
+   LEFT JOIN ln_opr_dt lod ON ld.ln_dtl_no = lod.ln_dtl_no
+   LEFT JOIN ln_opr lo ON lod.ln_opr_no = lo.ln_opr_no
+   ORDER BY l.ln_no;`
+    
+/*
+라인에 등록해야 하는 컬럼
+라인가동번호 | 자제출고요청번호 | 시작시간 | 종료시간 | 담당자 | 비고 | 생산지시 세부번호 | 지시수량 | 생산수량 | 불량수량 | 자재번호
+ln_opr_no  |   mat_req_no   |  st_tm |  end_tm |  mgr  | rmk | pdn_ord_dtl_no  |ord_qty | pdn_qty | dft_qty | mat_no
+지시테이블   |   미지정       | 시간은 디테일의 합  |생산담당|null |     지시에서     | 지시에서 | 함수로   | 함수로   | 지시에서
+
+생산지시세부에 라인번호이 지정
+라인가동 생산지시세부번호 기타...데이터가 들어오면... 시작시간 /종료시간 : 세부에서 공정별 시간 합 + 딜레이시간  // 지시수량 //  생산 // 불량 세부에서 을 가져옴
+라인가동세부 라인가동번호에 데이터가 입력되면 ... 시작시간 // 공정별 종료시간  // 투입량이 쌀이에요. 취사부터는 제품 
+
+1. 단위...계산 갯수로 그냥 진행
+
+st(초) * 지시량 개당 지시량 / 병렬 병렬 
+쌀 투입량이 10Kg  500개 생산   로스  99000g
+           충전   99000g/210g = 갯수
+    .........공정중..............
+          포장    471개 완료.  
+
+2. 재료 출고시 여유 재고도 같이 보내야 하는지...? 로스률 계산해서..?
+여유 재고로 생산된 재품은 품질테스트 후 남은 것들은... 창고로
+10% 100개면 110개...
+
+3. 재료입고/세척/침지 ==> 충전/
+재료입고/ 세척 완료되면 침지로 실시간으로 넘어가는데
+그럼 재료입고/세척 공정이 놀게됨. 
+이후 작업을 바로 진행가능한지... 아니면 모든 라인이 완료되고
+재시작 해야하는지..
+
+4. 라인상세에 시작/종료버튼
+
+
+라인가동세부에 등록해야 할 컬럼
+라인가동 세부번호 | 시작시간 | 종료시간 | 지시수량 |  생산수량 | 불량수량 | 설비오류번호 | 라인가동번호 | 라인세부번호 | 자재번호
+ln_opr_dtl_no  |  st_tm  |  end_tm | ord_qty | pdn_qty | dft_qty | eqp_err_no |  ln_opr_no | ln_dtl_no  |  mat_no
+ 순서니.. index?|공정시간 * 수량(분,초)| 재료    |  함수    |   함수   | 기본값      |  라인에서   |  ????????  |  지시에서
+                수량은 총지시량/병렬수량
+*/
 module.exports = {
-    selectProdInstList,
+    selectProdInstList, 
     selectLineDropdown,
-    updateLineStatus
+    updateLineStatus,
+    selectLineList
 }

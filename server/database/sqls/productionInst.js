@@ -17,6 +17,8 @@ const selectLastMatCode = `
    WHERE mat_req_no LIKE 'Mat-%';
 `;
 
+
+// ---------------------여기부터 리뷰 -------------------------
 const getPrdNoByPlanDtl =
 `SELECT prd_no 
    FROM pdn_pln_dtl 
@@ -31,7 +33,7 @@ WHERE b.prd_no = ?;`
 
 const insertProdMat =
 `INSERT INTO mat_rls_req (mat_req_no, pdn_ord_no, mat_no, qty, sndr, sts, prc_rslt, mat_ins_sts)
- VALUES (?, ?, ?, ?, ?, ?, ?, 'P1');`
+ VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
   
 /*
 하단 DB에서 코드명 자동 부여 방식식
@@ -53,6 +55,9 @@ const insertProdOrdDtl =
 `INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio)
 SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?
 FROM pdn_ord_dtl;`
+
+// pdn_ord_dtl_no ===> SELECT CONCAT('SPM-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED))
+// SELECT -- 조회 / 
 
 
 module.exports = {

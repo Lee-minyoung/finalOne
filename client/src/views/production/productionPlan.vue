@@ -4,9 +4,9 @@
       <h2 class="mb-4">생산 계획 관리</h2>
       <div class="d-flex gap-2">
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
-        <button class="btn btn-primary">재고/지시현황</button>
+        <button class="btn btn-light">재고/지시현황</button>
         <button class="btn btn-success text-white" @click="addPlan">등록</button>
-        <button class="btn btn-primary">주문현황</button>
+        <button class="btn btn-light">주문현황</button>
         <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
       </div>
     </div>
@@ -307,7 +307,7 @@ handleSelectedProducts(selectedList) {
   // 모달 닫기
   this.showProductModal = false
 },
-
+// ---------------------여기부터 리뷰 -------------------------
     // ✅ 테이블 선택 관련 --------------------------
 
     // 계획 row 클릭 시 선택 토글

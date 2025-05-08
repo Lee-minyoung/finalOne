@@ -91,10 +91,15 @@ const routes = [
       },
       {
         path: '/LineMang',
-        name: '라인관리상세',
+        name: '라인관리',
         component: () => import('@/views/production/line/lineManagement'),
+      },
+      {
+        path: '/LineMangDtl',
+        name: '라인관리상세',
+        component: () => import('@/views/production/line/LineManagementDtl'),
       }
-      //상단 {}를 복사하여 사용하시면 됩니다. 
+      //상단 {}를 복사하여 사용하시면 됩니다.   
     ],
   },
   { // 로그인

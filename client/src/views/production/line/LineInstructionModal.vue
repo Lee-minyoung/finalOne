@@ -87,21 +87,30 @@
 <script>
 export default {
   props: {
-    item: Object,
-    usedLines: Array
+    item: Object,       // 선택된 지시 항목 객체 (lineList, selected_line 포함 예상)
+    usedLines: Array    // 이미 다른 항목에서 사용된 라인 번호 리스트
   },
+
   data() {
     return {
+      // 선택된 라인 번호 (초기값: item.selected_line 이 있으면 사용, 없으면 '')
       selectedLine: this.item.selected_line || ''
     }
   },
+
   computed: {
-  filteredLineList() {
-    return (this.item.lineList || []).filter(
-      line => !this.usedLines.includes(line.ln_no)
-    )
+    /**
+     * 사용 가능한 라인 목록 필터링
+     * - item.lineList: 해당 지시 항목에서 선택 가능한 전체 라인
+     * - usedLines: 이미 다른 항목에서 선택한 라인들
+     * → 겹치지 않는 라인만 보여주기 위함
+     */
+    filteredLineList() {
+      return (this.item.lineList || []).filter(
+        line => !this.usedLines.includes(line.ln_no)
+      )
+    }
   }
-}
 }
 </script>
 

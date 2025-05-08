@@ -22,5 +22,13 @@ router.get('/lineDrop', async (req, res) => {
   }
 })
 
+//지시 리스트 전체보기
+router.get('/lineList', async (req,res)=>{
+  let LineList = await lineManagementServices.findLineListAll()
+                          .catch(err=> console.log(err));
+  res.send(LineList)
+})
+//findLineListAll
+
 
 module.exports = router;

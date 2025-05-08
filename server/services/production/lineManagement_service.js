@@ -18,10 +18,17 @@ const findLineDrop = async (pdn_ord_no) => {
     }
   }
 
+  const findLineListAll = async () => {
+    let prodInstList = await mariadb.query("selectLineList")
+                            .catch(err=> console.log(err));
+    return prodInstList;
+}
+
 // 지시상세조회
 
 
 module.exports = {
     findProdInstAll,
-    findLineDrop
+    findLineDrop,
+    findLineListAll
 }

@@ -63,7 +63,6 @@ import { useInstructionStore  } from '../../stores/instructionStore';
 
 export default {
   name: 'InstructionModal',
-
   emits: ['submit', 'close'],
 
   computed: {
@@ -76,6 +75,7 @@ export default {
 },
 
   methods: {
+    // ---------------------여기부터 리뷰 -------------------------
     handleInput(index) {
       const row = this.instructionStore.instructionRows[index]
       if (row.instruction_qty > row.qty) {
@@ -84,7 +84,7 @@ export default {
         row.instruction_qty = 0
       }
     },
-
+// ---------------------여기부터 까지 -------------------------
     submit() {
     const rows = this.instructionStore.instructionRows
 
