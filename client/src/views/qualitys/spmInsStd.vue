@@ -249,7 +249,7 @@ export default {
         .then(res => {
           this.prodList = Array.isArray(res.data) ? res.data : []; // 배열인지 확인 후 설정
           this.showProductModal = true; // 모달 열기
-        });
+        })
       .catch(err => {
           console.error('제품 목록 불러오기 실패', err);
           this.prodList = []; // 실패 시 빈 배열로 설정

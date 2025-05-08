@@ -124,5 +124,13 @@ router.get('/vdrList',async(req,res)=>{
                   .catch(err=>console.log(err));  
    res.json(vdrList); 
 })
+// 자재출고요청서에서 자재확인 클릭했을때
+router.get('/inventory/matStByReqNo',async(req,res)=>{
+  const {reqNo}=req.query; 
+  console.log('reqNo',reqNo); 
+  const matInfoList=await inventoryService.findMatStByReqNo(reqNo)
+                      .catch(err=>console.log(err)); 
+  res.json(matInfoList); 
+})   
 
 module.exports=router;

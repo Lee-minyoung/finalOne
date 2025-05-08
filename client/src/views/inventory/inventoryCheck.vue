@@ -8,7 +8,8 @@
       <th>총필요량</th>
       <th>현재고</th>
       <th>부족수량</th>
-      <th>상태</th>
+    <!-- <th>상태</th> -->
+      <th>자재출고</th>
     </tr>
   </thead>
   <tbody>
@@ -19,6 +20,7 @@
           <span>
             <b>{{ isExpanded(reqNo) ? '▼' : '▶' }}</b>
             출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건)
+            <button class="btn btn-success rounded-pill px-3" @click=""type="button">자재확인</button>
           </span>
         </td>
       </tr>
@@ -27,10 +29,26 @@
       <tr v-if="isExpanded(reqNo)" v-for="(item, idx) in items" :key="`${reqNo}-${idx}`">
         <td></td>
         <td>{{ item['자재명'] }}</td>
-        <td>{{ item['총필요량'] }}</td>
-        <td>{{ item['현재재고'] }}</td>
-        <td>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
-        <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td>
+
+        <td v-if="item['단위']=='g'" >{{ item['총필요량']/1000 }}kg</td>
+        <td v-else-if="item['단위']=='EA'" >{{ item['총필요량'] }}EA</td>
+        <td v-else-if="item['단위']=='ml'" >{{ item['총필요량']/1000 }}L</td>
+        <td v-else>{{ item['총필요량'] }}</td>
+
+        <td v-if="item['단위']=='g'">{{ item['현재재고']/1000 }}kg</td>
+        <td v-else-if="item['단위']=='EA'">{{ item['현재재고'] }}EA</td>
+        <td v-else-if="item['단위']=='ml'" >{{ item['현재재고']/1000 }}L</td>
+        <td v-else>{{ item['현재재고'] }}</td>
+
+        
+
+        <td v-if="item['단위']=='g'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}kg</td>
+        <td v-else-if="item['단위']=='EA'">{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}EA</td>
+        <td v-else-if="item['단위']=='ml'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}L</td>
+        <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
+        <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
+        <td v-if="item['자재출고처리']=='q1' "> <button class="btn btn-success rounded-pill px-3" @click=""type="button">자재요청</button></td>
+        
       </tr>
     </template>
   </tbody>
@@ -67,7 +85,7 @@
       <td>
         <div>
         <!--생산계획 보는 모달창 띄우기-->
-        <button type="button" class="btn btn-primary" @click="fetchInventoryPurPlan(item['자재ID'])" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button type="button" class="btn btn-primary" @click="fetchPrdPlanByMatId(item['자재ID'])" data-bs-toggle="modal" data-bs-target="#exampleModal">
       생산계획
     </button>
   </div>
@@ -78,6 +96,25 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">생산계획</h5>
+            <!-- 테이블 -->
+            <table class="table table-sm table-bordered text-center">
+            <thead class="table-light">
+              <tr>
+                <th>생산계획ID</th>
+                <th>생산계획명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+               
+              >
+                <td>{{ item.vdr_no }}</td>
+                <td>{{ item.cpy_nm }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -146,7 +183,7 @@ import axios from 'axios';
       try{
           const result=await axios.get('/api/inventory/mtStatus')
           this.inventoryStatus=result.data;
-        //  console.log('자재현황조회 성공', this.inventoryStatus);
+          console.log('자재현황조회 성공', this.inventoryStatus);
       }catch(error){
         console.error('자재출고요청 실패', error);
       } 
@@ -238,10 +275,24 @@ import axios from 'axios';
     alert('최소수량을 넘기지 못해 주문할수 없습니다'); 
    }
 
-  }
-   
   },
-};
+  //생산계획 모달창에서 자재ID로 생산계획 조회하기 일단 나중에.... 
+  async fetchPrdPlanByMatId(matId){
+    try{
+      const result=await axios.get('/api/inventory/prdPlan',{
+        params:{
+          matId:matId
+        }
+      })
+      this.rawData=result.data; 
+      console.log('생산계획조회',this.rawData);
+    }catch(error){
+      console.log('생산계획조회 실패',error); 
+    }
+   
+  }
+}
+}
 
 
 </script>

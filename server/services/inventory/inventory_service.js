@@ -98,7 +98,12 @@ const findMatAllInfo=async()=>{
 const findVdrAllInfo=async() =>{
   const vdrList=await mariadb.query('selectVdr'); 
   return vdrList;
-} 
+}
+// 출고요청번호 클릭시 자재확인 클릭했을때 
+const findMatStByReqNo=async(reqNo) =>{
+  const matInfoList=await mariadb.query('selectMatStCurStkByReqNo',reqNo); 
+  return matInfoList; 
+}  
 
 module.exports = {
 
@@ -119,5 +124,7 @@ findMatReqPrRemain,
 changeMatReqSts, 
 // 발주서입력-자재전체조회,거래처조회  
 findMatAllInfo,
-findVdrAllInfo,    
+findVdrAllInfo, 
+// 자재출고요청서에서 자재확인 클릭했을때
+findMatStByReqNo,   
 }; 

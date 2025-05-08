@@ -12,7 +12,7 @@ const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const purOrdInst=require('./sqls/purOrdInst.js'); 
 
 
-const purOrdInst=require('./sqls/purOrdInst.js'); 
+
 
 
 //기초정보입력
