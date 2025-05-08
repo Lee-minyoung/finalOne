@@ -20,7 +20,7 @@
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no" readonly /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no" readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품명</th>
@@ -37,11 +37,11 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">유통기한(개월)</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt" min="0" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">적정재고량</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">생성일자</th>
@@ -64,6 +64,7 @@
 <script>
 import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
+import CommonCodeFormat from '@/utils/useCommonCode.js'
 
 export default {
   props: {
@@ -77,20 +78,20 @@ export default {
   watch: {
     prd() {
       let searchNo = this.prd;
-      console.log(searchNo.prd_no);
       this.getPrdInfo(searchNo.prd_no);
     }
   },
   methods: {
+    CommonCodeFormat(value) {
+      return CommonCodeFormat.CommonCodeFormat(value);
+    },
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
     },
     async getPrdInfo(selected) {
       let result = await axios.get(`/api/prd/${selected}`)
         .catch(err => console.log(err));
-      console.log(result);
       this.prdInfo = result.data;
-      console.log(this.prdInfo);
     },
     async prdUpdate() {
       let obj = {
@@ -115,13 +116,16 @@ export default {
       }
     },
     savePrd() {
+      if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
       this.prdUpdate();
+      }
     },
     addPrd() {
       this.$emit("goToForm", false);
     },
     async deletePrd(prdNo) {
       if (prdNo) {
+        if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
         try {
           let result = await axios.delete(`/api/prd/${prdNo}`);
           if (result.data.affectedRows > 0) {
@@ -134,6 +138,7 @@ export default {
         } catch (err) {
           console.error('제품 삭제 실패:', err);
           alert('제품 삭제에 실패했습니다.');
+          }
         }
       } else {
         alert("삭제할 제품을 선택하세요");

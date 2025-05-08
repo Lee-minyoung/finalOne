@@ -2,21 +2,8 @@
 
 // 다양한 검색조건을 가지는 전체조회
 const selectVdrList =
-`SELECT 
-    vdr_no,
-    use_yn,
-    rgt_dt,
-    ofc_tp,
-    ofc_sts,
-    ofc_ctt,
-    ofc_addr,
-    mgr_nm,
-    mgr_ctt,
-    cpy_nm,
-    ceo_nm,
-    biz_reg_no  
+`SELECT vdr_no, cpy_nm, ceo_nm, mgr_nm, mgr_ctt, ofc_tp, ofc_sts, ofc_addr, ofc_ctt, use_yn, rgt_dt, biz_reg_no
 FROM vdr
-:searchKeyword
 ORDER BY vdr_no`;
 
 // 단건 조회

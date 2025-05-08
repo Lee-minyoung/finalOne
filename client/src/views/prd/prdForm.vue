@@ -39,7 +39,7 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">적정재고량</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
           </tbody>
         </table>
@@ -50,6 +50,8 @@
 
 <script>
 import axios from 'axios';
+import userDateUtils from '@/utils/useDates.js';
+import CommonCodeFormat from '@/utils/useCommonCode.js'
 
 export default {
   data() {
@@ -67,6 +69,9 @@ export default {
     this.getPrdNo();
   },
   methods: {
+    CommonCodeFormat(value) {
+      return CommonCodeFormat.CommonCodeFormat(value);
+    },
     async getPrdNo() {
       try {
         let result = await axios.get('/api/prd/no');

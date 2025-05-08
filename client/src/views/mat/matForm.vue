@@ -39,17 +39,17 @@
               </select>
             </td>
           </tr>
-          <tr>
+          <tr class="mb-4">
             <th style="width: 20%; min-width: 120px; border:none;">최소주문량</th>
-            <td style="border:none; padding-right:40px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:20px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">최소재고량</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0" style="max-width: 300px; width:100%;" /></td>
           </tr>
-          <tr>
+          <tr class="mb-4">
             <th style="width: 20%; min-width: 120px; border:none;">단위</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">리드타임(일)</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0" style="max-width: 300px; width:100%;" /></td>
           </tr>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
@@ -139,13 +139,13 @@ export default {
 
         // 서버에 전달할 정보를 객체로 구성
         let obj = {
-          mat_nm: this.matInfo.mat_nm, // 
-          mat_tp: this.matInfo.mat_tp,
+          mat_nm: this.matInfo.mat_nm, // 자재명
+          mat_tp: this.matInfo.mat_tp, // 자재유형
           mn_vdr: this.matInfo.mn_vdr || null, // 거래처가 선택되지 않은 경우 null로 설정
-          min_ord_qty: Number(this.matInfo.min_ord_qty) || 0,
-          min_stk_qty: Number(this.matInfo.min_stk_qty) || 0,
-          unit: this.matInfo.unit || '',
-          ld_tm: Number(this.matInfo.ld_tm) || 0
+          min_ord_qty: Number(this.matInfo.min_ord_qty) || 0, // 최소주문량
+          min_stk_qty: Number(this.matInfo.min_stk_qty) || 0, // 최소재고량
+          unit: this.matInfo.unit || '', // 단위
+          ld_tm: Number(this.matInfo.ld_tm) || 0 // 리드타임
         };
 
         console.log('전송할 자재 데이터:', obj);

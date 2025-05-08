@@ -17,7 +17,7 @@
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">자재번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_no" readonly /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_no" readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">자재명</th>
@@ -44,21 +44,21 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">최소주문량</th>
-              <td style="border:none; padding-right:20px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" /></td>
+              <td style="border:none; padding-right:20px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">최소재고량</th>
-              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" /></td>
+              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0" style="max-width: 300px; width:100%;" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">단위</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit" /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">리드타임(일)</th>
-              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" /></td>
+              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0" style="max-width: 300px; width:100%;" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" :value="dateFormat(matInfo.rgt_dt, 'yyyy-MM-dd')" readonly /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" :value="dateFormat(matInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
               <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-              <td style="border:none;"><input type="text" class="form-control" :value="dateFormat(matInfo.mdf_dt, 'yyyy-MM-dd')" readonly /></td>
+              <td style="border:none;"><input type="text" class="form-control" :value="dateFormat(matInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></td>
             </tr>
           </tbody>
         </table>
@@ -173,13 +173,16 @@ export default {
       }
     },
     saveMat() {
+      if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
       this.matUpdate();
+      }
     },
     addMat() {
       this.$emit('goToForm', false);
     },
     async deleteMat(matNo) {
       if (matNo) {
+        if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
         try {
           let result = await axios.delete(`/api/mat/${matNo}`);
           let sqlRes = result.data;
@@ -192,6 +195,7 @@ export default {
         } catch (err) {
           console.error('자재 삭제 중 오류 발생:', err);
           alert('자재 삭제 중 오류가 발생했습니다.');
+          }
         }
       } else {
         alert("삭제할 자재를 선택하세요");
