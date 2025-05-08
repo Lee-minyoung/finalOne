@@ -10,7 +10,7 @@ router.get('/prodinst', async (req,res)=>{
     res.send(prodInstList)
 })
 
-//라인 드롭다운 버튼
+//라인 모달 버튼
 router.get('/lineDrop', async (req, res) => {
   const { pdn_ord_dtl_no } = req.query
   try {

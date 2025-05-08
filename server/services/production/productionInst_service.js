@@ -54,7 +54,7 @@ const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
       for (const bom of bomList) {
         const { mat_no, cap } = bom;
         if (!materialMap[mat_no]) materialMap[mat_no] = 0;
-        materialMap[mat_no] += (cap * instruction_qty) + (cap * instruction_qty / 10) ;
+        materialMap[mat_no] += cap * instruction_qty ;
       }
     }
 

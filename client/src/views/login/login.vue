@@ -45,6 +45,7 @@
                       v-model="loginInfo.pwd" 
                       placeholder="비밀번호"
                       autocomplete="current-password" 
+                      @keyup.enter = "userLogin"
                     />
                   </div>
                 </div>
