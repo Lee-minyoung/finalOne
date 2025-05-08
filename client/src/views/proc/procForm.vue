@@ -19,7 +19,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNo" class="form-label fw-bold me-3" style="min-width: 100px;">공정번호</label>
-                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly />
+                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly disabled/>
               </div>
             </div>
             <!-- 사용여부 -->
@@ -66,8 +66,8 @@
               <template #item="{ element, index }">
                 <tr>
                   <td class="drag-handle small-text"><i class="bi bi-grip-vertical">{{ element.seq }}</i></td>
-                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" /></td>
-                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" /></td>
+                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" readonly disabled/></td>
+                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" readonly disabled/></td>
                   <td><input v-model="element.std_val" type="text" class="form-control small-text" /></td>
                   <td><input v-model="element.std_tm" type="text" class="form-control small-text" /></td>
                   <!-- <td><input v-model="element.outs_vdr" type="text" class="form-control small-text" /></td>

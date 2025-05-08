@@ -69,6 +69,16 @@ const routes = [
         name: 'ln',
         component: () => import('@/views/ln/ln.vue'),
       },
+      { // eqp 설비
+        path: 'eqp',
+        name: 'eqp',
+        component: () => import('@/views/eqp/eqp.vue'),
+      },
+      { // eqp 설비
+        path: 'prc-code',
+        name: 'prcCode',
+        component: () => import('@/views/prcCode/prcCode.vue'),
+      },
       {
         path:'/inventoryCheck',
         name:'InventoryCheck',

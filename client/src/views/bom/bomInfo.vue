@@ -1,6 +1,6 @@
 <template>
   <!-- 우측 영역 시작 -->
-  <div class="col-md-6">
+  <div class="col-md-7">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
@@ -22,7 +22,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="bomNo" class="form-label fw-bold me-3" style="min-width: 100px;">BOM번호</label>
-                <input id="bomNo" type="text" class="form-control" v-model="bom_no" readonly />
+                <input id="bomNo" type="text" class="form-control" v-model="bom_no" readonly disabled/>
               </div>
             </div>
             <!-- 사용여부 -->
@@ -39,7 +39,7 @@
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
-                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly />
+                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly disabled />
               </div>
             </div>
             <div class="d-flex align-items-center">
@@ -61,10 +61,10 @@
             <tbody>
               <template v-if="bomMatInfo.length > 0">
                 <tr v-for="(row, index) in bomMatInfo" :key="'new-' + index">
-                  <td><input v-model="row.mat_no" type="text" class="form-control" /></td>
-                  <td><input v-model="row.mat_nm" type="text" class="form-control" /></td>
+                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled/></td>
+                  <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled/></td>
                   <td><input v-model.number="row.cap" type="number" class="form-control" /></td>
-                  <td><input v-model="row.unit" type="text" class="form-control" /></td>
+                  <td><input v-model="row.unit" type="text" class="form-control" readonly disabled/></td>
                   <td><input v-model="row.rmk" type="text" class="form-control" /></td>
                   <td>
                     <button class="btn btn-outline-danger me-1" @click="removeMatRow(index)"> X </button>
@@ -234,7 +234,7 @@ export default {
             mat_no: mat.mat_no, // 자재번호
             mat_nm: mat.mat_nm, // 자재명
             cap: '', // 용량
-            unit: '', // 단위
+            unit: mat.unit, // 단위
             rmk: '', // 비고
           })
           existingMatNos.add(mat.mat_no) // add => set에 추가등록

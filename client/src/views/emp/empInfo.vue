@@ -22,7 +22,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
-                <input id="empNo" type="text" class="form-control" v-model="empInfo.emp_no" readonly />
+                <input id="empNo" type="text" class="form-control" v-model="empInfo.emp_no" readonly disabled />
               </div>
             </div>
             <!-- 입사일자 -->

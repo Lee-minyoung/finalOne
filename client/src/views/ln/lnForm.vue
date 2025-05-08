@@ -20,7 +20,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">라인번호</label>
-                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly />
+                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly disabled/>
               </div>
             </div>
             <!-- 라인명 -->
@@ -45,14 +45,14 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
-                <input id="useYn" type="text" class="form-control" value="여" readonly />
+                <input id="useYn" type="text" class="form-control" value="여" readonly disabled />
               </div>
             </div>
             <!-- 라인상태 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="lnSts" class="form-label fw-bold me-3" style="min-width: 100px;">라인상태</label>
-                <input id="lnSts" type="text" class="form-control" value="비가동" readonly />
+                <input id="lnSts" type="text" class="form-control" value="비가동" readonly disabled />
               </div>
             </div>
             <!-- 일평균생산량 -->
@@ -75,16 +75,16 @@
             </thead>
             <tbody v-if="lnDtlRows && lnDtlRows.length > 0" class="small-text">
               <tr v-for="(row, index) in lnDtlRows" :key="'new-' + index">
-                <td><input v-model="row.seq" type="text" class="form-control" readonly /></td>
-                <td><input v-model="row.proc_code_no" type="text" class="form-control" readonly /></td>
-                <td><input v-model="row.proc_code_nm" type="text" class="form-control" readonly /></td>
+                <td><input v-model="row.seq" type="text" class="form-control" readonly disabled /></td>
+                <td><input v-model="row.proc_code_no" type="text" class="form-control" readonly disabled /></td>
+                <td><input v-model="row.proc_code_nm" type="text" class="form-control" readonly disabled /></td>
                 <td>
                   <div class="input-group">
                     <input v-model="row.eqp_no" type="text" class="form-control" readonly/>
                     <button class="btn btn-outline-secondary" @click="openEqpModal(index)">🔍</button>
                   </div>
                 </td>
-                <td><input v-model="row.eqp_nm" type="text" class="form-control" readonly /></td>
+                <td><input v-model="row.eqp_nm" type="text" class="form-control" readonly disabled /></td>
               </tr>
             </tbody>
             <tbody v-else class="small-text">

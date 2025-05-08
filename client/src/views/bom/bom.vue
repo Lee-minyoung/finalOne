@@ -3,7 +3,7 @@
     <div class="row">
       <h1>BOM관리</h1>
       <!-- 좌측 영역 시작 -->
-      <div class="col-md-6">
+      <div class="col-md-5">
         <!-- 좌측 검색 및 필터 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
           <input type="text" class="form-control w-50" placeholder="제품명 검색..." v-model="searchQuery" />

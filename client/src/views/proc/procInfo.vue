@@ -22,7 +22,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNo" class="form-label fw-bold me-3" style="min-width: 100px;">공정번호</label>
-                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly />
+                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly disabled />
               </div>
             </div>
             <!-- 공정명 -->
@@ -36,7 +36,7 @@
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
-                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly />
+                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly disabled />
               </div>
             </div>
             <div class="d-flex align-items-center">
@@ -51,7 +51,7 @@
                 <th>공정코드명</th>
                 <th>공정기준</th>
                 <th>기준값</th>
-                <th>ST</th>
+                <th>ST(초)</th>
                 <th>X</th>
               </tr>
             </thead>
@@ -60,12 +60,15 @@
                 <td colspan="8">공정코드추가 버튼을 눌러 공정코드를 추가해주세요.</td>
               </tr>
             </tbody>
-            <draggable v-else tag="tbody" v-model="procRows" handle=".drag-handle" @end="onDragEnd" class="small-text" itemKey="prco_srl_no">
+            <draggable v-else tag="tbody" v-model="procRows" handle=".drag-handle" @end="onDragEnd" class="small-text"
+              itemKey="prco_srl_no">
               <template #item="{ element, index }">
                 <tr>
                   <td class="drag-handle small-text"><i class="bi bi-grip-vertical">{{ element.seq }}</i></td>
-                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" /></td>
-                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" /></td>
+                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" readonly
+                      disabled /></td>
+                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" readonly disabled />
+                  </td>
                   <td><input v-model="element.std_val" type="text" class="form-control small-text" /></td>
                   <td><input v-model="element.std_tm" type="text" class="form-control small-text" /></td>
                   <td>
@@ -113,6 +116,8 @@ export default {
 
       showPrcCodeModal: false, // 자재 선택 모달 초기화값 = 닫힘
       prcCodeList: [], // 공정코드 리스트 (showPrcCodeModal에서 사용)
+
+      useLine: [], // 해당공정을 사용하고 있는 라인의 정보
     };
   },
   watch: {
@@ -131,6 +136,12 @@ export default {
     }
   },
   methods: {
+    // 라인에서 사용하고 있는 공정인지 확인 (조건 : 제품번호)
+    async getUseLine() {
+      let result = await axios.get(`/api/useLine/${this.prd_no}`)
+        .catch(err => console.log(err));
+      this.useLine = result.data;
+    },
     // proc_no를 받아 데이터 받아오는 함수
     async getProcList(selected) {
       let result = await axios.get(`/api/proc/${selected}`)
@@ -143,12 +154,12 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async procUpdate() {
-      // proc List 일부가 삭제될 수도 있고 추가될 수도 있는데 그걸 체크하기가 번거로움
-      // 동일한 proc_no를 가진 데이터 모두 삭제후 모두 새로 추가
-      if (this.procRows.length == 0) {
-        alert('공정코드를 추가해주세요');
-        return;
-      } else {
+      try {
+        if (this.procRows.length == 0) {
+          alert('공정코드를 추가해주세요');
+          return;
+        }
+        await this.onDragEnd();
         // 서버에 전달할 정보를 객체로 따로 구성
         let procObj = [];
         for (let i = 0; i < this.procRows.length; i++) {
@@ -164,22 +175,36 @@ export default {
             std_tm: this.procRows[i].std_tm,
             std_val: this.procRows[i].std_val,
           };
-        };
-    
-        let result = await axios.put(`/api/proc/${this.proc_no}`, procObj)
-          .catch(err => console.log(err));
+        }
 
-        if (result.data.message == '수정 완료') {
+        const result = await axios.put(`/api/proc/${this.proc_no}`, procObj);
+
+        if (result.data.message === '수정 완료') {
           alert('수정되었습니다.');
           this.$emit('bom-reload');
-          this.getProcList(this.proc_no);
+          await this.getProcList(this.proc_no);
         } else {
-          alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
-        };
+          throw new Error('서버 응답이 올바르지 않습니다.');
+        }
+      } catch (err) {
+        console.error('수정 중 오류 발생:', err);
+        alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
       }
     },
-    saveProc() { // 저장 버튼 클릭시 실행할 함수
-      this.procUpdate(); // 수정내용 저장
+    async saveProc() { // 저장 버튼 클릭시 실행할 함수
+      await this.getUseLine();
+      if (this.useLine.length > 0) { // 해당 공정이 사용되고 있는 라인이 있을 경우
+        let outMsg = '아래의 라인에서 사용중입니다. 라인을 삭제 후 수정해주세요.\n';
+        for (let i = 0; i < this.useLine.length; i++) {
+          outMsg += `${i + 1}. 라인번호: ` + this.useLine[i].ln_no + ', ';
+          outMsg += '라인명: ' + this.useLine[i].ln_nm + '\n';
+        }
+        alert(outMsg);
+        this.getProcList(this.proc_no);
+        return;
+      } else {
+        this.procUpdate(); // 수정내용 저장
+      }
     },
     // 추가 버튼 클릭시 실행할 함수
     addProc() {
@@ -187,19 +212,30 @@ export default {
     },
     // 삭제 버튼 클릭시 실행할 함수
     async deleteProc(procNo) {
-      if (procNo != null) { // 선택된 proc가 있을 경우 
-        let result = await axios.delete(`/api/proc/${procNo}`)
-          .catch(err => console.log(err));
-        let sqlRes = result.data;
-        let sqlResult = sqlRes.affectedRows;
-        if (sqlResult > 0) {
-          alert('정상적으로 삭제되었습니다.');
-          this.$emit('proc-reload');
-        } else {
-          alert('삭제되지 않았습니다.');
+      await this.getUseLine();
+      if (this.useLine.length > 0) { // 해당 공정이 사용되고 있는 라인이 있을 경우
+        let outMsg = '아래의 라인에서 사용중입니다. 라인을 삭제 후 삭제해주세요.\n';
+        for (let i = 0; i < this.useLine.length; i++) {
+          outMsg += `${i + 1}. 라인번호: ` + this.useLine[i].ln_no + ', ';
+          outMsg += '라인명: ' + this.useLine[i].ln_nm + '\n';
         }
-      } else { // 선택된 proc이 없을 경우
-        alert("삭제할 제품공정을 선택하세요");
+        alert(outMsg);
+        return;
+      } else {
+        if (procNo != null) { // 선택된 proc가 있을 경우 
+          let result = await axios.delete(`/api/proc/${procNo}`)
+            .catch(err => console.log(err));
+          let sqlRes = result.data;
+          let sqlResult = sqlRes.affectedRows;
+          if (sqlResult > 0) {
+            alert('정상적으로 삭제되었습니다.');
+            this.$emit('proc-reload');
+          } else {
+            alert('삭제되지 않았습니다.');
+          }
+        } else { // 선택된 proc이 없을 경우
+          alert("삭제할 제품공정을 선택하세요");
+        }
       }
     },
     resetForm() { // 초기화 버튼 클릭시 실행할 함수

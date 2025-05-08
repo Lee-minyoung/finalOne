@@ -22,7 +22,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">라인번호</label>
-                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly />
+                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly disabled />
               </div>
             </div>
             <!-- 라인명 -->
@@ -36,7 +36,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
-                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly />
+                <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
@@ -79,15 +79,15 @@
             </thead>
             <tbody>
               <tr v-for="(row, index) in lnDtlRows" :key="'new-' + index">
-                <td><input v-model="row.seq" type="text" class="form-control" readonly /></td>
-                <td><input v-model="row.proc_code_no" type="text" class="form-control" readonly /></td>
-                <td><input v-model="row.proc_code_nm" type="text" class="form-control" readonly /></td>
+                <td><input v-model="row.seq" type="text" class="form-control" readonly disabled /></td>
+                <td><input v-model="row.proc_code_no" type="text" class="form-control" readonly disabled /></td>
+                <td><input v-model="row.proc_code_nm" type="text" class="form-control" readonly disabled /></td>
                 <td>
                   <div class="input-group"><input v-model="row.eqp_no" type="text" class="form-control" readonly/>
                     <button class="btn btn-outline-secondary" @click="openEqpModal(index)">🔍</button>
                   </div>
                 </td>
-                <td><input v-model="row.eqp_nm" type="text" class="form-control" readonly /></td>
+                <td><input v-model="row.eqp_nm" type="text" class="form-control" readonly disabled /></td>
               </tr>
             </tbody>
           </table>
