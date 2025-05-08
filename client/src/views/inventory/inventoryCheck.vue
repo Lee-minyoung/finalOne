@@ -20,7 +20,7 @@
           <span>
             <b>{{ isExpanded(reqNo) ? '▼' : '▶' }}</b>
             출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건)
-            <button class="btn btn-success rounded-pill px-3" @click=""type="button">자재확인</button>
+            <button class="btn btn-success rounded-pill px-3" @click="checkMat(reqNo)"type="button">자재확인</button>
           </span>
         </td>
       </tr>
@@ -47,8 +47,10 @@
         <td v-else-if="item['단위']=='ml'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}L</td>
         <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
         <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
-        <td v-if="item['자재출고처리']=='q1' "> <button class="btn btn-success rounded-pill px-3" @click=""type="button">자재요청</button></td>
-        
+        <td v-if="item['부족수량'] >item['현재재고'] "> <button class="btn btn-success rounded-pill px-3 py-2 rounded-pill" @click="goToReqPage(item)"type="button">자재요청</button></td>
+        <td v-if="item['부족수량'] <= 0">
+  <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
+</td>
       </tr>
     </template>
   </tbody>
@@ -158,7 +160,8 @@ import axios from 'axios';
       filteredPurPlan:[], //최소주문수량 이상인 자재구매계획 조회하기 
       min:'', //최소수량 
       rawData:[], 
-      expandedReqNos: [] // ** 펼쳐진 출고요청번호 목록
+      expandedReqNos: [], // ** 펼쳐진 출고요청번호 목록
+      proPlnData:[],
     };
   },
   async created(){
@@ -284,13 +287,117 @@ import axios from 'axios';
           matId:matId
         }
       })
-      this.rawData=result.data; 
-      console.log('생산계획조회',this.rawData);
+      this.proPlnData=result.data; 
+      console.log('생산계획조회',this.proPlnData);
     }catch(error){
       console.log('생산계획조회 실패',error); 
     }
    
+  },
+  
+  async checkMat(reqNo){
+    //프론트에서 표시되는 자재 
+    const matList=this.groupedInventory[reqNo];
+    //출고가능자재 
+    const availableMats = matList.filter(item => item['부족수량']<= 0);
+      
+    try{
+      const payload=availableMats.map(item=>({
+        mat_no:item['자재ID'], 
+        req_qty:item['총필요량'], 
+        pln_id:item['계획ID']
+      }))
+      console.log('payload',payload);
+      await axios.post('/api/inventory/lotMinusList',payload); 
+      alert('출고 가능한 자재가 처리 되었습니다');             
+
+    }catch(err){
+        if(err.response && err.response.status===400){
+          alert(err.response.data.message);
+        }else{
+          alert('서버오류가 부족합니다')
+        }
+    }
+
+    console.log('availableMats',availableMats);
+    console.log('matList',matList);
+    //출고완료된 재고는 removeList 
+     // 모든 자재가 출고 가능한지 검사
+    const allAvailable = matList.every(item => {
+    const reqQty = parseFloat(item['총필요량']);
+    const curQty = parseFloat(item['현재재고']);
+   // console.log('allAvailabe실행중..',item);
+   
+    return curQty >= reqQty;
+  });
+
+  if (!allAvailable) {
+    alert('일부 자재의 재고가 부족합니다.');
+    return;
   }
+
+
+
+
+    console.log('matList',matList); 
+    for(const item of matList){
+     const plnId= item['계획ID'];
+     const reqQty=item['총필요량']; 
+     const curQty=item['현재재고']; //
+     const matNo=item['자재ID']; 
+     const minStk=item['최소재고량']; 
+      //lot에 있는 현재재고가 더 많은경우  
+     if(curQty>=reqQty){
+      try{
+         const res=await axios.post('/api/inventory/lotMinus',{
+          mat_no:matNo, 
+          req_qty:reqQty,
+          pln_id:plnId
+         
+         });
+         
+
+
+         if(curQty<minStk){
+          console.log('자재구매계획으로 이동');
+
+         }
+
+  // this.inventoryStatus = this.inventoryStatus.filter(item => {
+  //   return !removeList.some(r =>
+  //     r.plnId === item['계획ID'] && r.matNo === item['자재ID']
+  //   );
+  // });
+         this.inventoryStatus=this.inventoryStatus.filter(item=>item['계획ID']!==reqNo);
+         this.expandedReqNos=this.expandedReqNos.filter(id=>id!==reqNo);
+
+         alert('출고가 완료 되었습니다'); 
+      
+      }catch(err){
+        console.log(err); 
+        alert('실패')
+      }
+     }
+     //현재재고가 더 총필요량보다 적은경우 
+    //   else if(curQty<reqQty){
+
+    //  }
+   
+    
+
+    }
+  },
+  goToReqPage(item){
+    this.$router.push({
+      name:'MatReq',
+      query:{
+        matId:item['자재ID'], 
+        matNm:item['자재명']
+      } 
+    });
+  }
+
+
 }
 }
 

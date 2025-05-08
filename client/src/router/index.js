@@ -93,6 +93,11 @@ const routes = [
         path: '/LineMang',
         name: '라인관리상세',
         component: () => import('@/views/production/line/lineManagement'),
+      },
+      {
+        path:'/MatReq',
+        name:'MatReq', 
+        component:()=>import('@/views/inventory/matReq.vue')
       }
       //상단 {}를 복사하여 사용하시면 됩니다. 
     ],
