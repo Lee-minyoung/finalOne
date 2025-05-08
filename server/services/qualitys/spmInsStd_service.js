@@ -8,62 +8,76 @@ const findPrd = async () => {
   return list;
 };
 
+// 제품번호, 제품명 불러오기
 const findSpmInsStdList = async (prd_no) => {
   try {
     const list = await mariadb.query("selectSpmInsStd", [prd_no]); // SQL 쿼리에 prd_no 전달
     return list;
   } catch (err) {
-    console.error('검사 정보 조회 실패:', err);
     throw err;
   }
 };
+
 // 등록
 const addSpmInsStd = async (spmInsStdInfo) => {
-  let insertColumns = ['spm_ins_std_no', 'prd_no', 'ins_itm', 'ins_mthd', 'ins_spc', 'ins_eqp', 'crt_by', 'rgt_dt', 'mdf_dt', 'rmk'];
-  // 사용자가 전달한 북정보 중 insert문에 정의된 컬럼들 기준으로 값을 선별 : 객체 -> 배열
+  let insertColumns = ['prd_no', 'ins_itm', 'ins_mthd', 'ins_spc', 'ins_eqp', 'crt_by', 'rmk'];
+
   let data = convertObjToAry(spmInsStdInfo, insertColumns);
 
-  let resInfo = await mariadb.query("SpmInsStdInsert", data)
-                              .catch(err => console.log(err));
-  // mariadb 모듈은 DML(insert, update, delete)의 결과를 { affectedRows: 1, insertId: 1, warningStatus: 0 } 로 반환
-  // affectedRows : 실제 실행된 행수 (default : 0)
-  // insertId     : AUTO_INCREMENT를 사용하는 경우 자동 부여된 PRIMARY KEY를 가짐, 무조건 Number 타입 (default : 0)
+  let resInfo = await mariadb.query("spmInsStdInsert", data)
+                              .catch(err => console.log('쿼리 실행 오류:', err));
 
   let result = null;
-  if (resInfo.insertId > 0) {
-    // 정상적으로 등록된 경우
+  if (resInfo && resInfo.affectedRows > 0) {
     result = {
       isSuccessed: true,
-      prdNo: resInfo.insertId,
+      prdNo: spmInsStdInfo.prd_no, // 등록된 제품 번호 반환
     };
   } else {
-    // 등록되지 않은 경우
     result = {
       isSuccessed: false,
+      message: '등록되지 않았습니다.',
     };
   }
   return result;
 };
 
 
-/*
 // 수정
-const updateSpmInsStd = async (prd_no, spmInsStdInfo) => {
-  let data = [spmInsStdInfo, prd_no]; // 수정할 데이터와 prd_no를 배열로 묶음
-  let resInfo = await mariadb.query("updateSpmInsStd", data); // SQL 쿼리에 prd_no 전달
-  let result = null;
-  if (resInfo.affectedRows > 0) {
-    spmInsStdInfo.prd_no = prd_no; // 수정된 데이터에 prd_no 추가
-    result = { isUpdated: true, spmInsStdInfo };
-  } else {
-    result = { isUpdated: false };
+const updateSpmInsStd = async (spm_ins_std_no, spmInsStdInfo) => {
+  const updateColumns = ['ins_itm', 'ins_mthd', 'ins_spc', 'ins_eqp', 'rmk', 'spm_ins_std_no'];
+  const data = convertObjToAry(spmInsStdInfo, updateColumns);
+
+  console.log('수정 데이터:', data); // 로그 추가
+  console.log('spm_ins_std_no:', spm_ins_std_no); // 로그 추가
+
+  try {
+    const resInfo = await mariadb.query("updateSpmInsStd", data); // SQL 쿼리에 prd_no 전달
+    console.log('쿼리 실행 결과:', resInfo); // 로그 추가
+    return resInfo;
+  } catch (err) {
+    console.error('수정 실패:', err);
+    throw err;
   }
-  return result;
 };
-*/
+
+// 삭제
+const deleteSpmInsStd = async (spm_ins_std_no) => {
+  try {
+    const resInfo = await mariadb.query("deleteSpmInsStd", [spm_ins_std_no]); // SQL 쿼리에 prd_no 전달
+    return resInfo;
+  } catch (err) {
+    console.error('삭제 실패:', err);
+    throw err;
+  }
+};
+
+
 
 module.exports ={
   findPrd,
   findSpmInsStdList,
   addSpmInsStd,
+  updateSpmInsStd,
+  deleteSpmInsStd
 }

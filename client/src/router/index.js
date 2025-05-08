@@ -40,6 +40,11 @@ const routes = [
         component: () => import('@/views/qualitys/spmInsStd.vue'),
       },
       {
+        path: '/SpmInsRslt',
+        name: 'SpmInsRslt',
+        component: () => import('@/views/qualitys/spmInsRslt.vue'),
+      },
+      {
         path:'/SaleList',
         name:'SaleList',
         component:()=> import('@/views/sales/saleList.vue'),

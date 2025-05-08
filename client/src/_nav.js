@@ -73,8 +73,13 @@ export default [
     items: [
       {
         component: 'CNavItem',
-        name: '완제품검사기준',
+        name: '완제품검사기준서',
         to: '/SpmInsStd',
+      },
+      {
+        component: 'CNavItem',
+        name: '완제품검사성적서',
+        to: '/SpmInsRslt',
       },
     ],
   },
