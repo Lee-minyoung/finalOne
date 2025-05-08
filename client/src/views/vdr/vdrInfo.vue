@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addVdr">추가</button>
+        <button class="btn btn-primary me-2" @click="addVdr">등록</button>
         <button class="btn btn-danger" @click="deleteVdr(vdrInfo.vdr_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
@@ -13,7 +13,7 @@
       </div>
     </div>
     <!-- 우측 상세보기 영역 시작 -->
-    <div class="card p-4">
+    <div class="card p-4"> 
       <h4 class="mb-4">상세 보기</h4>
       <div v-if="vdrInfo.vdr_no">
         <table class="align-middle" style="border:none;width:100%;">
@@ -98,15 +98,15 @@ export default { // 거래처 상세 정보 컴포넌트
     vdr: Object, // 거래처 데이터
   },
   data() { // 거래처 상세 정보 컴포넌트의 데이터
-    return {
-      vdrInfo: {},
+    return {  
+      vdrInfo: {}, 
     };
   },
   watch: { // 거래처 상세 정보 컴포넌트의 데이터 변경 감지
     vdr() { // 부모 컴포넌트에서 전달받은 데이터 변경 감지  
-      let searchNo = this.vdr;
-      console.log(searchNo.vdr_no);
-      this.getVdrInfo(searchNo.vdr_no);
+      let searchNo = this.vdr; // 부모 컴포넌트에서 전달받은 거래처 데이터
+      console.log(searchNo.vdr_no); 
+      this.getVdrInfo(searchNo.vdr_no); 
     }
   },
   methods: {

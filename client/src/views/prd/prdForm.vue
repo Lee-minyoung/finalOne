@@ -27,8 +27,9 @@
               <th style="width: 20%; min-width: 120px; border:none;">제품유형</th>
               <td colspan="3" style="border:none;">
                 <select class="form-select" v-model="prdInfo.prd_tp">
-                  <option value="p1">제품</option>
-                  <option value="p2">반제품</option>
+                  <option value="">선택</option>
+                  <option value="j5">제품</option>
+                  <option value="j4">반제품</option>
                 </select>
               </td>
             </tr>
@@ -56,7 +57,7 @@ export default {
       prdInfo: {
         prd_no: '',
         prd_nm: '',
-        prd_tp: 'p1',
+        prd_tp: '',
         exp_dt: 0,
         opt_stk_qty: 0
       }
@@ -100,7 +101,7 @@ export default {
       this.prdInfo = {
         prd_no: '',
         prd_nm: '',
-        prd_tp: 'p1',
+        prd_tp: '',
         exp_dt: 0,
         opt_stk_qty: 0
       };

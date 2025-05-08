@@ -13,7 +13,7 @@
         <tbody>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">자재번호</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matNo" readonly style="max-width: 400px; width:100%;" /></td>
+            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.matNo" readonly style="max-width: 400px; width:100%;" /></td>
           </tr>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">자재명</th>
@@ -23,6 +23,7 @@
             <th style="width: 20%; min-width: 120px; border:none;">자재유형</th>
             <td colspan="3" style="border:none;">
               <select class="form-select form-control" v-model="matInfo.mat_tp" style="max-width: 300px; width:100%;">
+                <option value="">선택</option>
                 <option value="b1">원재료</option>
                 <option value="b2">부재료</option>
                 <option value="b3">소모품</option>
@@ -33,6 +34,7 @@
             <th style="width: 20%; min-width: 120px; border:none;">대표거래처</th>
             <td colspan="3" style="border:none;">
               <select class="form-select form-control" v-model="matInfo.mn_vdr" style="max-width: 300px; width:100%;">
+                <option value="">선택</option>
                 <option v-for="vdr in vdrList" :key="vdr.vdr_no" :value="vdr.vdr_no">{{ vdr.cpy_nm }}</option>
               </select>
             </td>
@@ -72,7 +74,7 @@ export default {
       today: '',
       matInfo: {
         mat_nm: '',
-        mat_tp: 'b1',
+        mat_tp: '',
         mn_vdr: '',
         min_ord_qty: 0,
         min_stk_qty: 0,
@@ -115,7 +117,7 @@ export default {
     resetForm() {
       this.matInfo = {
         mat_nm: '',
-        mat_tp: 'b1',
+        mat_tp: '',
         mn_vdr: '',
         min_ord_qty: 0,
         min_stk_qty: 0,
@@ -134,16 +136,12 @@ export default {
           alert('자재유형을 선택하세요.');
           return;
         }
-        if (!this.matInfo.mn_vdr) {
-          alert('대표거래처를 선택하세요.');
-          return;
-        }
 
         // 서버에 전달할 정보를 객체로 구성
         let obj = {
-          mat_nm: this.matInfo.mat_nm,
+          mat_nm: this.matInfo.mat_nm, // 
           mat_tp: this.matInfo.mat_tp,
-          mn_vdr: this.matInfo.mn_vdr,
+          mn_vdr: this.matInfo.mn_vdr || null, // 거래처가 선택되지 않은 경우 null로 설정
           min_ord_qty: Number(this.matInfo.min_ord_qty) || 0,
           min_stk_qty: Number(this.matInfo.min_stk_qty) || 0,
           unit: this.matInfo.unit || '',
@@ -156,7 +154,7 @@ export default {
         let result = await axios.post('/api/mat', obj);
         console.log('자재 등록 응답:', result.data);
 
-        if (result.data.isAdded) {
+        if (result.data.isSuccessed) {
           alert('자재가 등록되었습니다.');
           this.$emit('mat-reload');
           this.$emit('goToInfo', true);

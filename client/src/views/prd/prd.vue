@@ -9,8 +9,8 @@
           <input type="text" class="form-control w-50" placeholder="제품명 검색..." v-model="searchQuery" />
           <select class="form-select w-25" v-model="selectedType">
             <option value="">전체</option>
-            <option value="p1">제품</option>
-            <option value="p2">반제품</option>
+            <option value="j4">반제품</option>
+            <option value="j5">제품</option>
           </select>
         </div>
         <!-- 좌측 리스트 영역 -->
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     getPrdType(code) {
-      const types = { p1: '제품', p2: '반제품' };
+      const types = { j4: '반제품', j5: '제품' };
       return types[code] || code;
     },
     async getPrdList() {

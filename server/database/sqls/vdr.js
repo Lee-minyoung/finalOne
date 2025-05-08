@@ -14,8 +14,7 @@ const selectVdrList =
     mgr_ctt,
     cpy_nm,
     ceo_nm,
-    biz_reg_no
-    
+    biz_reg_no  
 FROM vdr
 :searchKeyword
 ORDER BY vdr_no`;
@@ -54,26 +53,6 @@ const updateVdr =
 `UPDATE vdr
 SET ?
 WHERE vdr_no = ?`;
-
-// `UPDATE vdr
-// SET mdf_dt = sysdate(), ?
-// WHERE vdr_no = ?`;
-
-
-// const updateVdr =
-// `UPDATE vdr
-// SET 
-//     use_yn = ?,
-//     ofc_tp = ?,
-//     ofc_sts = ?,
-//     ofc_ctt = ?,
-//     ofc_addr = ?,
-//     mgr_nm = ?,
-//     mgr_ctt = ?,
-//     cpy_nm = ?,
-//     ceo_nm = ?,
-//     biz_reg_no = ?
-// WHERE vdr_no = ?`;
 
 // 삭제
 const deleteVdr =

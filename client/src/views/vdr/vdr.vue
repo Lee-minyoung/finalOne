@@ -3,7 +3,7 @@
     <div class="row">
       <h1>거래처 관리</h1>
       <!-- 좌측 영역 시작 -->
-      <div class="col-md-6">
+      <div class="col-md-7">
         <!-- 좌측 검색 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
           <input type="text" class="form-control w-50" placeholder="거래처명 검색..." v-model="searchQuery" />
@@ -45,14 +45,14 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <vdrInfo v-if="InfoView" :vdr="selectedVdr" @goToForm="msg" @vdr-reload="getVdrList" /> <!-- 거래처 상세 정보 컴포넌트 -->
-      <vdrForm v-if="!InfoView" @goToInfo="msg" @vdr-reload="getVdrList" /> <!-- 거래처 등록/수정 폼 컴포넌트 -->
+      <vdrInfo v-if="InfoView" :vdr="selectedVdr" @goToForm="msg" @vdr-reload="getVdrList" /> <!-- 거래처 상세 정보 컴포넌트 "":"부모가 자식에게 주는 -->
+      <vdrForm v-if="!InfoView" @goToInfo="msg" @vdr-reload="getVdrList" /> <!-- 거래처 등록/수정 폼 컴포넌트 @부모가 자식에게 주는 이벤트 발생-->
     </div>
   </div>
 </template>
 
 <script>
-import CommonCodeFormat from '@/utils/useCommonCode.js' //
+import CommonCodeFormat from '@/utils/useCommonCode.js' // 공통코드 포멧 정의
 // AJAX 모듈  
 import axios from 'axios';
 // 자식 컴포넌트 import
@@ -60,22 +60,20 @@ import vdrInfo from './vdrInfo.vue'; // 거래처 상세 정보 컴포넌트
 import vdrForm from './vdrForm.vue'; // 거래처 등록/수정 폼 컴포넌트  
 
 export default {
-  components: {
-    vdrInfo,
-    vdrForm,
-  },
+  components: { vdrInfo, vdrForm, }, // 자식 컴포넌트 등록
+  name: 'vdr', // 컴포넌트 이름
   data() {
     return {
-      searchQuery: "", // 검색어 초기 값
-      selectedFilter: "", // 필터 선택 값
-      selectedVdr: null, // 선택된 거래처(상세보기에 표시될 거래처 데이터)
-      vdrList: [], // 거래처리스트 데이터 담을 배열 //////////////// 뭐가 문제여 
-      InfoView: true, // 거래처 상세 정보 영역 표시 여부
+      searchQuery: "", // 검색어
+      selectedFilter: "", // 거래처유형 필터
+      selectedVdr: null, // 선택된 거래처
+      vdrList: [], // 거래처 목록
+      InfoView: true, // 상세보기 여부
     };
   },
   computed: {
-    filteredVdrList() { // 필터된 VdrList 보여줌           //////////// 모르것네
-      return this.vdrList.filter(vdr =>
+    filteredVdrList() { // 거래처 목록 필터링
+      return this.vdrList.filter(vdr => //
         vdr.cpy_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) && // 검색창에 입력한 searchQuery(검색어)를 소문자로 바꾼 값이 cpy_nm에 포함되어 있으면 True  
         (this.selectedFilter === "" || vdr.ofc_tp === this.selectedFilter) // 드롭다운, 거래처 유형이 전체이거나 필터 선택 값과 일치하는 경우
         // === 값과 타입이 일치, 필터조건 <option value="">의 값이 ""(전체)이거나, 필터조건의 value값이 vdr.ofc_tp과 같으면 True
@@ -83,9 +81,9 @@ export default {
     },
   },
   created() { // 페이지 열 때 vdrList데이터 받아오기 실행
-    this.getVdrList(); //////////////////// 왜 안열리냐
+    this.getVdrList(); 
   },
-  methods: {
+  methods: { 
     CommonCodeFormat(value) { // 날짜 데이터 포멧 정의
       return CommonCodeFormat.CommonCodeFormat(value);
     },
@@ -96,7 +94,7 @@ export default {
         'b3': '혼합',
         'b4': '외주처'
       };
-      return types[code] || code;
+      return types[code] || code; // 기본값으로 코드 반환
     },
     getOfficeStatus(code) { // 거래처 상태 포멧 정의
       const status = {
@@ -118,7 +116,7 @@ export default {
       this.selectedVdr = vdr; // 클릭한 거래처를 selectedVdr에 저장
     },
     msg(data) { // 상세보기 컴포넌트로 전송 
-      this.InfoView = data; //
+      this.InfoView = data; // 상세보기 영역 표시
     }
   }
 };

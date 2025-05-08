@@ -43,70 +43,74 @@
 </template>
 
 <script>
-import matInfo from './matInfo.vue';
-import matForm from './matForm.vue';
-import axios from 'axios';
+import matInfo from './matInfo.vue'; // 자재 상세 정보 컴포넌트
+import matForm from './matForm.vue'; // 자재 등록/수정 폼 컴포넌트
+import axios from 'axios'; // AJAX 모듈
 
 export default {
-  components: { matInfo, matForm },
+  components: { matInfo, matForm }, // 자식 컴포넌트 등록
+  name: 'mat',//
   data() {
     return {
-      searchQuery: '',
-      selectedType: '',
-      selectedMat: null,
-      matList: [],
-      InfoView: true,
+      searchQuery: "", // 검색어
+      selectedType: "", // 자재유형 필터
+      selectedMat: null, // 선택된 자재
+      matList: [], // 자재 목록
+      InfoView: true, // 상세보기 여부
     };
   },
   computed: {
-    filteredMatList() {
-      const matTypeMap = {
+    filteredMatList() { // 자재 목록 필터링
+      const matTypeMap = { // 자재유형 코드와 이름 매핑
         'b1': '원재료',
         'b2': '부재료',
         'b3': '소모품'
       };
-      
-      return this.matList.filter(mat =>
-        mat.mat_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
-        (this.selectedType === '' || mat.mat_tp === matTypeMap[this.selectedType])
+      return this.matList.filter(mat =>   
+        mat.mat_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) && 
+        (this.selectedType === '' || mat.mat_tp === matTypeMap[this.selectedType]) 
       );
     },
   },
-  created() {
+  created() { // 페이지 열 때 자재 목록 조회
     this.getMatList();
   },
-  methods: {
-    getMatType(code) {
-      const types = { b1: '원재료', b2: '부재료', b3: '소모품' };
-      return types[code] || code;
+  methods: { 
+    getMatType(code) { // 자재유형 포멧 정의
+      const types = { 
+        b1: '원재료', 
+        b2: '부재료', 
+        b3: '소모품' 
+      };
+      return types[code] || code; // 기본값으로 코드 반환
     },
-    async getMatList() {
+    async getMatList() { // 자재 목록 조회
       try {
-        let result = await axios.get('/api/mat');
-        this.matList = result.data;
+        let result = await axios.get('/api/mat'); // 자재 목록 API 호출
+        this.matList = result.data; //
       } catch (err) {
         console.error('자재 목록 조회 실패:', err);
         alert('자재 목록을 불러오는데 실패했습니다.');
       }
     },
-    async selectMat(matNo) {
-      this.InfoView = true;
-      try {
-        const result = await axios.get(`/api/mat/${matNo}`);
-        if (result.data) {
+    async selectMat(matNo) { // 자재 선택 시 상세 정보 조회
+      this.InfoView = true; 
+      try { 
+        const result = await axios.get(`/api/mat/${matNo}`); // 자재 상세 정보 API 호출
+        if (result.data) { 
           this.selectedMat = result.data;
-          console.log('Selected Mat:', this.selectedMat);
-        } else {
+          console.log('Selected Mat:', this.selectedMat); // 선택된 자재 정보
+        } else { // 자재 정보가 없을 경우
           console.error('자재를 찾을 수 없습니다:', matNo);
           alert('자재 정보를 찾을 수 없습니다.');
         }
-      } catch (err) {
+      } catch (err) { // 자재 상세 정보 조회 실패
         console.error('자재 상세 정보 조회 실패:', err);
         alert('자재 상세 정보를 불러오는데 실패했습니다.');
       }
     },
-    msg(data) {
-      this.InfoView = data;
+    msg(data) { // 상세보기 컴포넌트로 전송
+      this.InfoView = data; // 상세보기 여부
     },
   },
 };
@@ -121,4 +125,4 @@ export default {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
-</style> 
+</style>

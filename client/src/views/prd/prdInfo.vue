@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addPrd">추가</button>
+        <button class="btn btn-primary me-2" @click="addPrd">등록</button>
         <button class="btn btn-danger" @click="deletePrd(prdInfo.prd_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
@@ -30,8 +30,8 @@
               <th style="width: 20%; min-width: 120px; border:none;">제품유형</th>
               <td colspan="3" style="border:none;">
                 <select class="form-select" v-model="prdInfo.prd_tp">
-                  <option value="p1">제품</option>
-                  <option value="p2">반제품</option>
+                  <option value="j5">제품</option>
+                  <option value="j4">반제품</option>
                 </select>
               </td>
             </tr>

@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between mb-3">
       <div></div>
       <div>
-        <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
+        <button class="btn btn-warning me-2" @click="resetForm">등록</button>
         <button class="btn btn-success" @click="saveVdr">저장</button>
       </div>
     </div>
@@ -58,15 +58,15 @@
               </select>
             </td>
           </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
-            <td colspan="3" style="border:none;">
-              <select class="form-select form-control w-auto d-inline-block" v-model="vdrInfo.use_yn" style="max-width: 300px; width:100%;">
-                <option value="f1">여</option>
-                <option value="f2">부</option>
-              </select>
-            </td>
-          </tr>
+          <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
+              <td colspan="3" style="border:none;">
+                <select class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
+                  <option value="f1">여</option>
+                  <option value="f2">부</option>
+                </select>
+              </td>
+            </tr>
         </tbody>
       </table>
     </div> <!-- 우측 상세보기 영역 끝 -->
@@ -76,10 +76,10 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+import userDateUtils from '@/utils/useDates.js'; 
 
 export default { // 거래처 등록 컴포넌트
-  data() {
+  data() {// 데이터 속성 정의
     return {
       vdrNo: '',
       today: '',
@@ -97,7 +97,7 @@ export default { // 거래처 등록 컴포넌트
       },
     };
   },
-  created() {
+  created() { 
     this.getVdrNo();
     this.getToday();
   },
@@ -112,9 +112,9 @@ export default { // 거래처 등록 컴포넌트
     },
     // vdr_no를 받아 데이터 받아오는 함수
     async getVdrNo() {
-      let result = await axios.get(`/api/vdrNo`)   //////////////////////// 안열리냐구 
-        .catch(err => console.log(err));
-      this.vdrNo = result.data[0].addVdrNo;
+      let result = await axios.get(`/api/vdrNo`)  // 서버에 vdrNo 요청
+        .catch(err => console.log(err));// 서버에 요청한 결과를 result에 저장
+      this.vdrNo = result.data[0].addVdrNo; // 서버에서 받은 거래처 번호를 vdrNo에 저장
     },
     resetForm() { // 초기화 버튼 클릭시 실행할 함수   
       this.vdrInfo = {
