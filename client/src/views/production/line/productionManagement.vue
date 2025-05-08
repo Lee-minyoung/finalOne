@@ -85,7 +85,7 @@
     </div>
   </div>
 </div>
-
+<!-- 모달은 여기까지! 모달 따로 관리 예정!!!!-->
             <!-- <select v-model="item.selected_line" class="form-select form-select-sm" @focus="fetchLines(item)">
               <option disabled value="">라인 선택</option>
               <option v-for="line in item.lineList || []" :key="line.ln_no" :value="line.ln_no">
