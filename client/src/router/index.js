@@ -54,8 +54,12 @@ const routes = [
         name: 'proc',
         component: () => import('@/views/proc/proc.vue'),
       },
-      // 거래처
-      { 
+      { // 자재
+        path: '/mat',
+        name: 'mat',
+        component: () => import('@/views/mat/mat.vue'),
+      },
+      { // 거래처
         path: '/vdr',
         name: 'vdr',
         component: () => import('@/views/vdr/vdr.vue'),
@@ -79,16 +83,6 @@ const routes = [
         path:'/ordview',
         name:'OrdView',
         component:()=> import('@/views/inventory/ordView.vue'),
-      },
-      {
-        path: '/SpmInsStdEdit',
-        name: 'SpmInsStdEdit',
-        component: () => import('@/views/qualitys/spmInsStdEdit.vue'),
-      },
-      {
-        path: '/SpmInsRst',
-        name: 'SpmInsRst',
-        component: () => import('@/views/qualitys/spmInsRst.vue'),
       },
       {
         path: '/ProdMeng',

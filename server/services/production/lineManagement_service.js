@@ -8,12 +8,15 @@ const findProdInstAll = async () => {
 }
 
 // 라인 드롭다운 버튼
-const findLineDrop = async () => {
-    const pdn_ord_no = req.res.send
-    let lineList = await mariadb.query("selectLineDropdown", [pdn_ord_no])
-                            .catch(err=> console.log(err));
-                            res.send(lineList);
-}
+const findLineDrop = async (pdn_ord_no) => {
+    try {
+      const lineList = await mariadb.query("selectLineDropdown", [pdn_ord_no])
+      return lineList
+    } catch (err) {
+      console.error("❌ Line dropdown 조회 실패:", err)
+      throw err
+    }
+  }
 
 // 지시상세조회
 

@@ -8,110 +8,81 @@
           <th>지시ID</th>
           <th>제품명</th>
           <th>지시수량</th>
-          <th>지시일자자</th>
-          <th>지시자</th> 
+          <th>지시일자</th>
+          <th>지시자</th>
           <th>진행상황</th>
           <th>라인 지정</th>
           <th>지시 실행</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in instructionList" :key="item.pdn_ord_no">
+        <tr v-for="item in instructionList" :key="item.pdn_ord_dtl_no">
           <td>{{ item.pdn_ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.ord_qty }}</td>
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
-          
-          <td v-if="item.mat_ins_sts === 'P1'">입고대기</td>
-          <td v-else-if="item.mat_ins_sts === 'P2'">입고완료</td>
-          <td v-else>오류</td>
-
           <td>
-            <!-- 버튼 클릭시 모달창-->
-            <button class="btn btn-sm btn-secondary" @click="fetchLines(item)" data-bs-toggle="modal" data-bs-target="#lineModal">
-              라인 선택
-            </button>
-            <!-- 라인 선택 모달 -->
-<div class="modal fade" id="lineModal" tabindex="-1" aria-labelledby="lineModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="lineModalLabel">라인 선택</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-hover text-center align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>라인번호</th>
-              <th>라인명</th>
-              <th>상태</th>
-              <th>선택</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="line in item.lineList || []" :key="line.ln_no">
-              <td>{{ line.ln_no }}</td>
-              <td>{{ line.ln_nm }}</td>
-              <td>
-                <span
-                  class="badge"
-                  :class="{
-                    'bg-success': line.ln_sts === 'f1',
-                    'bg-secondary': line.ln_sts !== 'f1'
-                  }"
-                >
-                  {{ line.ln_sts === 'f1' ? '사용 가능' : '사용 중' }}
-                </span>
-              </td>
-              <td>
-                <button
-                  class="btn btn-sm btn-outline-primary"
-                  @click="selectLine(line.ln_no)"
-                  :disabled="line.ln_sts !== 'f1'"
-                >
-                  선택
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-primary" @click="assignLine(item)" data-bs-dismiss="modal">지시</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- 모달은 여기까지! 모달 따로 관리 예정!!!!-->
-            <!-- <select v-model="item.selected_line" class="form-select form-select-sm" @focus="fetchLines(item)">
-              <option disabled value="">라인 선택</option>
-              <option v-for="line in item.lineList || []" :key="line.ln_no" :value="line.ln_no">
-                {{ line.ln_nm }}
-              </option>
-            </select> -->
+            <span v-if="item.mat_ins_sts === 'P1'">입고대기</span>
+            <span v-else-if="item.mat_ins_sts === 'P2'">입고완료</span>
+            <span v-else>오류</span>
           </td>
+          <td>
+  <div class="d-flex align-items-center justify-content-center gap-2">
+    <span v-if="item.selected_line">
+      {{ item.selected_line }}
+    </span>
+    <span v-else class="text-muted">
+      미지정
+    </span>
+    <button class="btn btn-light border" @click="openModal(item)">
+  <i class="bi bi-search fs-4"></i> <!-- 🔍 돋보기 아이콘 -->
+</button>
+  </div>
+</td>
           <td>
             <button class="btn btn-sm btn-primary" @click="assignLine(item)">지시</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <LineInstructionModal
+  v-if="showLineModal"
+  :item="selectedItem"
+  :used-lines="usedLines"
+  @set-line="setLine"
+  @close="showLineModal = false"
+/>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
+import useDateUtils from '@/utils/useDates'
+import LineInstructionModal from './LineInstructionModal.vue'
 
 export default {
+  components: { LineInstructionModal },
   data() {
     return {
       instructionList: [],
-      lineList: []
+      selectedItem: null,
+      showLineModal: false
     }
+  },
+  computed: {
+    dateFormat() {
+      return useDateUtils.dateFormat
+    },
+    usedLines() {
+    return this.instructionList
+      .filter(item => item.selected_line)
+      .map(item => item.selected_line)
+  }
+  },
+  created() {
+    this.fetchInstructions()
   },
   methods: {
     async fetchInstructions() {
@@ -119,58 +90,60 @@ export default {
       this.instructionList = res.data.map(row => ({ ...row, selected_line: '' }))
     },
 
-    async fetchLines(item) {
-  const res = await axios.get('/api/lineDrop', {
-    params: { prd_no: item.pdn_ord_no  }
+    openModal(item) {
+  this.selectedItem = { ...item }  // 얕은 복사도 충분 (단, lineList는 새로 붙임)
+  this.selectedItem.lineList = []  // 초기화
+  axios.get('/api/lineDrop', {
+    params: { pdn_ord_dtl_no: item.pdn_ord_dtl_no }
+  }).then(res => {
+    this.selectedItem.lineList = res.data
+    this.showLineModal = true
   })
-  console.log(`📦 ${item.pdn_ord_no }의 라인 목록:`, res.data)
+},
 
-  // 👉 개별 item에 붙이기
-  item.lineList = res.data.map(line => ({
-    ln_no: line.ln_no,
-    ln_nm: line.ln_nm 
-  }))
+setLine(item) {
+  const index = this.instructionList.findIndex(
+    i => i.pdn_ord_dtl_no === item.pdn_ord_dtl_no
+  )
+
+  if (index !== -1) {
+    this.instructionList[index].selected_line = item.selected_line
+    console.log("✅ 반영된 라인:", item.selected_line, "→", this.instructionList[index])
+  } else {
+    console.warn("❗ 지시상세번호 못 찾음:", item.pdn_ord_dtl_no)
+  }
 },
 
     async assignLine(item) {
-      if (item.mat_ins_sts !==   'P2') return alert('입고완료 상태에서만 지시 가능합니다.')
-      if (!item.selected_line) return alert('라인을 선택하세요')
+      if (!item.selected_line) return alert('라인을 먼저 지정하세요.')
+      if (item.mat_ins_sts !== 'P2') return alert('입고완료 상태에서만 지시 가능합니다.')
+
       const payload = {
         pdn_ord_no: item.pdn_ord_no,
         line_no: item.selected_line
       }
 
-      await axios.post('/api/prodinst/assign', payload)
-      alert('라인 지시가 완료되었습니다.')
-      this.fetchInstructions()
-    },
-    dateFormat(value, format) {
-      return useDateUtils.dateFormat(value, format)
-    },
-  },
-  mounted() {
-    this.fetchInstructions()
-    this.fetchLines()
+      try {
+        await axios.post('/api/prodinst/assign', payload)
+        alert('지시 완료!')
+        this.fetchInstructions()
+        this.showLineModal = false
+      } catch (err) {
+        console.error("❌ 지시 실패:", err)
+        alert('지시 중 오류가 발생했습니다.')
+      }
+    }
   }
 }
 </script>
 
 <style scoped>
-.table td, .table th {
-  vertical-align: middle;
-}
-</style>
-
-<style scoped>
-h2 {
-  font-weight: bold;
-  text-align: left;
-}
 .table td,
 .table th {
   vertical-align: middle;
 }
-.table-primary {
-  background-color: #cce5ff !important;
+.selected-line {
+  font-weight: 600;
+  color: #198754; /* 부트스트랩 success 색상 */
 }
 </style>

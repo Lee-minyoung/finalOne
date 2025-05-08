@@ -53,6 +53,12 @@ const deleteDept =
 `DELETE FROM dept
 WHERE dept_no = ?`;
 
+// 모달에서 사용할 부서목록 조회
+const selectDeptListModal = 
+`SELECT dept_no, dept_nm
+FROM dept
+WHERE use_yn = 'f1'`;
+
 module.exports = {
   selectDeptList,
   selectDeptOne,
@@ -60,4 +66,5 @@ module.exports = {
   updateDept,
   deleteDept,
   selectDeptNo,
+  selectDeptListModal,
 };

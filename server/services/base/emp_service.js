@@ -23,7 +23,7 @@ const findEmpNo = async() => {
 
 // 부서 등록
 const addNewEmp = async (empInfo) => {
-  let insertColumns = ['pwd', 'nm', 'ctt', 'bnk_nm', 'acct_no', 'addr', 'hire_dt', 'lv_rsn', 'hr_hist', 'dept_no', 'pst_no'];
+  let insertColumns = ['emp_no', 'pwd', 'nm', 'ctt', 'bnk_nm', 'acct_no', 'addr', 'hire_dt', 'lv_rsn', 'hr_hist', 'dept_no', 'pst_no'];
   let data = convertObjToAry(empInfo, insertColumns);
   let resInfo = await mariadb.query("insertEmp", data);
   let result = null;

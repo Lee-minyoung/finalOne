@@ -40,6 +40,7 @@ const salesRouter=require('./routers/sales/sales_router.js');
 const inventoryRouter=require('./routers/inventory/inventory_router.js');
 const lineManagementRouter = require('./routers/production/lineManagement_rouder.js');
 
+// 기본 라우팅
 app.get('/', (req, res)=>{
   res.send('Welcome MES!!');
 })

@@ -6,8 +6,8 @@
       <div class="col-md-6">
         <!-- 좌측 검색 및 필터 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
-            <input type="text" class="form-control w-50" placeholder="부서명 검색..." v-model="searchQuery" />
-            <!-- <select class="form-select w-25" v-model="selectedFilter">
+          <input type="text" class="form-control w-50" placeholder="부서명 검색..." v-model="searchQuery" />
+          <!-- <select class="form-select w-25" v-model="selectedFilter">
               <option value="">전체</option>
               <option value="토끼부">토끼부</option>
               <option value="거북이부">거북이부</option>
@@ -16,7 +16,8 @@
         <!-- 좌측 리스트 영역 시작 -->
         <div class="card p-3">
           <h4>부서 목록</h4>
-            <table class="table table-bordered">
+          <div class="table-container">
+            <table class="table table-container">
               <thead>
                 <tr>
                   <th>부서번호</th>
@@ -26,7 +27,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)" class="table-hover">
+                <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)"
+                  class="table-hover">
                   <td>{{ dept.dept_no }}</td>
                   <td>{{ dept.dept_nm }}</td>
                   <td>{{ dept.nm }}</td>
@@ -34,12 +36,13 @@
                 </tr>
               </tbody>
             </table>
+          </div>
         </div> <!-- 좌측 리스트 영역 끝 -->
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <deptInfo v-if="InfoView" :dept="selectedDept" @goToForm="msg" @dept-reload="getDeptList"/>
-      <deptForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList"/>
+      <deptInfo v-if="InfoView" :dept="selectedDept" @goToForm="msg" @dept-reload="getDeptList" />
+      <deptForm v-if="!InfoView" @goToInfo="msg" @dept-reload="getDeptList" />
     </div>
   </div>
 </template>
@@ -54,7 +57,7 @@ import deptInfo from './deptInfo.vue';
 import deptForm from './deptForm.vue';
 
 export default {
-  components : {
+  components: {
     deptInfo,
     deptForm,
   },
@@ -65,7 +68,7 @@ export default {
       selectedDept: null, // 선택된 부서(상세보기에 표시될 부서 데이터)
       deptList: [], // 부서리스트 데이터 담을 배열
 
-      InfoView : true,
+      InfoView: true,
     };
   },
   // watch: {
@@ -87,13 +90,13 @@ export default {
   },
   methods: {
     // 날짜 데이터 포멧 정의
-    CommonCodeFormat(value) { 
+    CommonCodeFormat(value) {
       return CommonCodeFormat.CommonCodeFormat(value);
     },
     // deptList데이터 받아오는 함수
-    async getDeptList() { 
+    async getDeptList() {
       let result = await axios.get('/api/dept')
-                              .catch(err=>console.log(err));
+        .catch(err => console.log(err));
       this.deptList = result.data; //deptList배열에 결과값 담음
     },
     // 상세보기에 보여질 데이터 받아오는 함수
@@ -113,12 +116,76 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
+
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  height: 550px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.table {
+  margin-bottom: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: 0px;
+}
+
+.table td,
+.table th {
+  width: 20%;
+  padding: 8px;
+  /* border-top: 1px solid #dee2e6; */
+  border-right: 1px solid #dee2e6;
+  border-left: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table thead tr,
+.table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table tbody {
+  display: block;
+  overflow-y: auto;
+  height: calc(550px - 42px);
+}
+
+.table tbody tr td:first-child,
+.table thead tr th:first-child {
+  border-left: none;
+}
+
+.table tbody tr td:last-child,
+.table thead tr th:last-child {
+  border-right: none;
 }
 </style>

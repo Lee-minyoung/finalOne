@@ -31,12 +31,12 @@
               </thead>
               <tbody>
                 <tr v-for="emp in filteredEmpList" v-bind:key="emp.emp_no" @click="selectEmp(emp.emp_no)"
-                  class="table-hover">
+                  :class="{ 'table-primary': selectedEmp && selectedEmp.emp_no === emp.emp_no }" class="table-hover">
                   <td>{{ emp.emp_no }}</td>
                   <td>{{ emp.nm }}</td>
                   <td>{{ emp.dept_nm }}</td>
                   <td>{{ emp.pst_nm }}</td>
-                  <td>{{ emp.emp_sts }}</td>
+                  <td>{{ empStatusFormat(emp.emp_sts) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -88,28 +88,28 @@ export default {
     this.getEmpList();
   },
   methods: {
-    // 날짜 데이터 포멧 정의
-    CommonCodeFormat(value) {
-      return CommonCodeFormat.CommonCodeFormat(value);
+    // 재직상태 포멧
+    empStatusFormat(value) {
+      return CommonCodeFormat.empStatusFormat(value);
     },
-    // deptList데이터 받아오는 함수
+    // empList데이터 받아오는 함수
     async getEmpList() {
       let result = await axios.get('/api/emp')
         .catch(err => console.log(err));
-      this.empList = result.data; //deptList배열에 결과값 담음
+      this.empList = result.data; // empList배열에 결과값 담음
+      this.selectedLn = null; // 선택된 사원 초기화
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectEmp(empNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
+    selectEmp(empNo) { // 리스트에서 선택한 emp정보를 selectedEmp에 저장(상세보기에 표시될 사원 데이터)
       this.InfoView = true;
       const emp = this.empList.find(emp => emp.emp_no === empNo);
-      console.log(emp);
-      this.selectedEmp = emp;  // 클릭한 부서를 selectedDept에 저장
+      this.selectedEmp = emp;  // 클릭한 사원을 selectedEmp에 저장
     },
-    // goToInfo(deptNo) { // 상세보기 컴포넌트로 전송
-    //   this.$router.push({ name : 'deptInfo', params : { no : deptNo }});
-    // },
     msg(data) {
       this.InfoView = data;
+      if (!data) {
+        this.selectedLn = null; // lnForm이 활성화되면 선택된 라인 초기화
+      }
     }
   }
 };
@@ -140,7 +140,7 @@ export default {
 }
 
 tr {
-  border : 0px;
+  border: 0px;
 }
 
 .table td,
