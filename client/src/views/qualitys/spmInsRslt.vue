@@ -48,10 +48,13 @@
       </div>
 
       <!-- 종합판정 -->
-      <div class="input" style="width:50%">
-        <h6>종합판정</h6>
+      <div class="rst">
+        <div class="hstack gap-3">
+        <div>종합판정</div>
+        <div class="vr"></div>
         <button class="btn btn-success me-2" style="width:150px; height:100px">합격</button>
         <button class="btn btn-danger" style="width:150px; height:100px">불합격</button>
+      </div>
       </div>
     </div>
     <!-- 테이블 -->
@@ -385,8 +388,9 @@ export default {
 }
 
 #table {
-  width:500px;
-  height:200px;
+  width:650px;
+  height:130px;
+  margin-right:20px;
 }
 .rslInput{
   width:100px;
@@ -394,5 +398,11 @@ export default {
 .middle {
   display: flex;
   align-items: center;
+}
+.rst{
+  width:650px;
+  
+  border: 1px solid lightgray;
+  padding: 10px;
 }
 </style>
