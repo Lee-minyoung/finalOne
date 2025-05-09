@@ -1,11 +1,14 @@
-const mariadb = require("../../database/mapper.js"); 
-const { convertObjToAry, convertObjToQuery } = require('../../utils/converts.js'); 
+const mariadb = require("../../database/mapper.js");
+const {
+  convertObjToAry,
+  convertObjToQuery
+} = require('../../utils/converts.js');
 
 // 다양한 검색조건을 가지는 전체조회
 const findVdrList = async (searchList) => {
   // 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariadb.query("selectVdrList", searchKeyword); 
+  let list = await mariadb.query("selectVdrList", searchKeyword);
   return list;
 };
 
@@ -17,7 +20,7 @@ const findByVdrNo = async (vdrNo) => { // 거래처번호
 };
 
 // 추가시 적용되는 거래처번호
-const findVdrNo = async() => { // 거래처번호
+const findVdrNo = async () => { // 거래처번호
   return await mariadb.query("selectVdrNo"); // 거래처번호를 기반으로 한 단건조회
 }
 // 거래처 등록
@@ -48,7 +51,7 @@ const modifyVdrInfo = async (vdrNo, vdrInfo) => { // 거래처번호, 거래처�
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1
     vdrInfo.no = vdrNo; // 거래처번호를 거래처정보에 추가
-    result = { 
+    result = {
       isUpdated: true, // 결과가 있으면 isUpdated = true
       resInfo, // 결과가 있으면 resInfo = 결과
     };
@@ -56,7 +59,7 @@ const modifyVdrInfo = async (vdrNo, vdrInfo) => { // 거래처번호, 거래처�
     result = {
       isUpdated: false, // 결과가 없으면 isUpdated = false  
     };
-  } 
+  }
   return result;
 };
 
@@ -74,4 +77,4 @@ module.exports = { // 모듈 내보내기
   modifyVdrInfo,
   removeVdrInfo,
   findVdrNo
-}; 
+};

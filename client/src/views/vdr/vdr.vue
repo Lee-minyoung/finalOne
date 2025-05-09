@@ -19,29 +19,29 @@
         <div class="card p-3">
           <h4>거래처 목록</h4>
           <div class="table-container">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
                   <th class="text-center">거래처번호</th>
                   <th class="text-center">상호명</th>
                   <th class="text-center">사업자등록번호</th>
                   <th class="text-center">담당자</th>
                   <th class="text-center">사업장유형</th>
                   <th class="text-center">사업장상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="vdr in filteredVdrList" v-bind:key="vdr.vdr_no" @click="selectVdr(vdr.vdr_no)"
-                class="table-hover">
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="vdr in filteredVdrList" v-bind:key="vdr.vdr_no" @click="selectVdr(vdr.vdr_no)"
+                  :class="{ 'table-primary': selectedVdr && selectedVdr.vdr_no === vdr.vdr_no }" class="table-hover">
                   <td class="text-center">{{ vdr.vdr_no }}</td>
-                <td>{{ vdr.cpy_nm }}</td>
+                  <td>{{ vdr.cpy_nm }}</td>
                   <td class="text-center">{{ vdr.biz_reg_no }}</td>
                   <td class="text-center">{{ vdr.mgr_nm }}</td>
                   <td class="text-center">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
                   <td class="text-center">{{ officeStatusFormat(vdr.ofc_sts) }}</td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     officeTypeFormat(value) {
-      switch(value) {
+      switch (value) {
         case 'b1': return '판매처';
         case 'b2': return '구매처';
         case 'b3': return '혼합';
@@ -95,7 +95,7 @@ export default {
       }
     },
     officeStatusFormat(value) {
-      switch(value) {
+      switch (value) {
         case 'd1': return '정상';
         case 'd2': return '휴업';
         case 'd3': return '폐업';
@@ -133,7 +133,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -166,5 +166,9 @@ export default {
 
 .table-container tbody tr {
   height: 45px;
+}
+
+.table-primary {
+  background-color: #cce5ff;
 }
 </style>

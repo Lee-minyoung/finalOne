@@ -15,7 +15,7 @@
                 <!-- 로그인 제목 -->
                 <h1 class="text-center">밥먹고하시조</h1>
                 <!-- 부제목 -->
-                <p class="text-muted text-center">Sign In to your account</p>
+                <p class="text-muted text-center">오늘도 당신 덕분에 따뜻한 밥이 완성됩니다!</p>
 
                 <!-- 사원번호 입력하는 필드 -->
                 <div class="mb-3">
@@ -23,36 +23,27 @@
                     <span class="input-group-text">
                       <i class="bi bi-person"></i>
                     </span>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="loginInfo.emp_no" 
-                      placeholder="사원번호"
-                      autocomplete="emp_no" 
-                    />
+                    <input type="text" class="form-control form-control-lg bg-light small-placeholder"
+                      v-model="loginInfo.emp_no" placeholder="사원번호" autocomplete="emp_no" />
                   </div>
                 </div>
 
-                <!-- 비밀번호 입력 필드 -->     
+                <!-- 비밀번호 입력 필드 -->
                 <div class="mb-3">
                   <div class="input-group">
                     <span class="input-group-text">
                       <i class="bi bi-lock"></i>
                     </span>
-                    <input 
-                      type="password" 
-                      class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="loginInfo.pwd" 
-                      placeholder="비밀번호"
-                      autocomplete="current-password" 
-                      @keyup.enter = "userLogin"
-                    />
+                    <input type="password" class="form-control form-control-lg bg-light small-placeholder"
+                      v-model="loginInfo.pwd" placeholder="비밀번호" autocomplete="current-password"
+                      @keyup.enter="userLogin" />
                   </div>
                 </div>
 
                 <!-- 비밀번호 찾기 링크 -->
                 <div class="mb-3 text-end">
-                  <button type="button" class="btn btn-link text-decoration-none px-0 small-text" @click="$router.push({ name: 'findPwd' })">
+                  <button type="button" class="btn btn-link text-decoration-none px-0 small-text"
+                    @click="$router.push({ name: 'findPwd' })">
                     비밀번호 찾기
                   </button>
                 </div>
@@ -107,7 +98,7 @@ export default {
 
         // 로그인이 성공했다면
         if (loginRes.result) {
-          
+
           // 3. 로그인한 사용자 정보를 Pinia 스토어(stores/empStore)에 저장
           this.setLoginInfo({
             emp_no: loginRes.emp_no,
@@ -157,6 +148,7 @@ export default {
   color: #0D6EFD;
   font-size: 0.875rem;
 }
+
 .btn-link:hover {
   color: #0a58ca;
 }
@@ -165,6 +157,7 @@ export default {
 .card {
   transition: transform 0.2s;
 }
+
 .card:hover {
   transform: translateY(-5px);
 }

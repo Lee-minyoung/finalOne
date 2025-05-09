@@ -89,13 +89,13 @@ const books = require('./sqls/books.js');
     ...users,
  }- service.js
  SET ?
- WHERE user_id = ?`; ? ? ? ?
+ WHERE user_id = ?`;
 
 
 
 
 module.exports = {
-  selectUserList
+  selectUserList,
   findUserInfoByUserId,
   selectUserOne,
   userInsert,

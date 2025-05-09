@@ -13,22 +13,25 @@
       </div>
     </div>
     <!-- 우측 상세보기 영역 시작 -->
-    <div class="card p-4"> 
+    <div class="card p-4">
       <h4 class="mb-4">상세 보기</h4>
       <div v-if="vdrInfo.vdr_no">
         <table class="align-middle" style="border:none;width:100%;">
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">거래처번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.vdr_no"
+                  readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">사업자등록번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.biz_reg_no" /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control"
+                  v-model="vdrInfo.biz_reg_no" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">상호명</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="vdrInfo.cpy_nm" /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control"
+                  v-model="vdrInfo.cpy_nm" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">대표자명</th>
               <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ceo_nm" /></td>
             </tr>
@@ -37,17 +40,20 @@
               <td colspan="3" style="border:none;">
                 <div class="d-flex gap-2 align-items-center" style="max-width: 400px; width:100%;">
                   <input type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly style="height: 38px;" />
-                  <button class="btn btn-primary" @click="openDaumPostcode" style="height: 38px; min-width: 90px; font-size: 0.9rem; padding: 0 10px;">주소 검색</button>
+                  <button class="btn btn-primary" @click="openDaumPostcode"
+                    style="height: 38px; min-width: 90px; font-size: 0.9rem; padding: 0 10px;">주소 검색</button>
                 </div>
               </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">사업장연락처</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt" /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
+              </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">담당자</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="vdrInfo.mgr_nm" /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control"
+                  v-model="vdrInfo.mgr_nm" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">담당자연락처</th>
               <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.mgr_ctt" /></td>
             </tr>
@@ -81,7 +87,8 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">생성일자</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control w-auto" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control w-auto"
+                  :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
             </tr>
           </tbody>
         </table>
@@ -291,7 +298,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -302,7 +309,8 @@ export default {
 }
 
 /* 입력 필드 스타일 개선 */
-.form-control, .form-select {
+.form-control,
+.form-select {
   padding: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -311,7 +319,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -322,7 +331,8 @@ table tr {
 }
 
 /* 입력 필드 hover 효과 */
-.form-control:hover, .form-select:hover {
+.form-control:hover,
+.form-select:hover {
   border-color: #86b7fe;
 }
 
@@ -334,7 +344,8 @@ th {
 }
 
 /* 입력 필드 너비 조정 */
-.form-control, .form-select {
+.form-control,
+.form-select {
   width: 100%;
   max-width: none;
 }

@@ -17,22 +17,23 @@
         <div class="card p-3">
           <h4>제품 목록</h4>
           <div class="table-container">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
                   <th class="text-center" style="width: 30%;">제품번호</th>
                   <th class="text-center" style="width: 40%;">제품명</th>
                   <th class="text-center" style="width: 30%;">제품유형</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="prd in filteredPrdList" :key="prd.prd_no" @click="selectPrd(prd.prd_no)" class="table-hover">
-                <td>{{ prd.prd_no }}</td>
-                <td>{{ prd.prd_nm }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="prd in filteredPrdList" :key="prd.prd_no" @click="selectPrd(prd.prd_no)"
+                  :class="{ 'table-primary': selectedPrd && selectedPrd.prd_no === prd.prd_no }" class="table-hover">
+                  <td class="text-center">{{ prd.prd_no }}</td>
+                  <td>{{ prd.prd_nm }}</td>
                   <td class="text-center">{{ prdTypeFormat(prd.prd_tp) }}</td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -44,29 +45,7 @@
 </template>
 
 <script>
-/**
- * @prd
- * 제품 관리 페이지의 메인 컴포넌트
- * 
- * 주요 기능:
- * 1. 제품 목록 조회 및 표시
- * 2. 제품 선택 시 상세 정보 표시
- * 3. 제품 등록 페이지로 이동
- * 
- * 컴포넌트 구조:
- * - 좌측: 제품 목록 테이블
- * - 우측: 제품 상세 정보 또는 등록 폼
- * 
- * 데이터 흐름:
- * 1. 컴포넌트 생성 시 제품 목록 자동 조회
- * 2. 제품 선택 시 상세 정보 조회 및 표시
- * 3. 등록 버튼 클릭 시 등록 폼으로 전환
- * 
- * 이벤트 처리:
- * - prd-reload: 제품 목록 새로고침
- * - goToForm: 등록 폼으로 전환
- * - goToInfo: 상세 정보로 전환
- */
+// 제품 관리 컴포넌트
 import prdInfo from './prdInfo.vue'; // 제품 상세 정보 컴포넌트
 import prdForm from './prdForm.vue'; // 제품 등록/수정 폼 컴포넌트
 import axios from 'axios'; // AJAX 모듈
@@ -96,7 +75,7 @@ export default {
   },
   methods: {
     prdTypeFormat(value) { // 제품유형 코드를 한글로 변환
-      switch(value) {
+      switch (value) {
         case 'j4': return '반제품';
         case 'j5': return '제품';
         default: return value;
@@ -133,7 +112,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -155,16 +134,27 @@ export default {
   top: 0;
   background-color: #fff;
   z-index: 1;
-  padding: 12px 8px; /* 헤더 패딩 조정 */
+  padding: 12px 8px;
+  /* 헤더 패딩 조정 */
 }
 
 .table-container tbody td {
-  padding: 10px 8px; /* 셀 패딩 조정 */
-  vertical-align: middle; /* 수직 정렬 */
-  line-height: 1.4; /* 줄 간격 조정 */
+  padding: 10px 8px;
+  /* 셀 패딩 조정 */
+  vertical-align: middle;
+  /* 수직 정렬 */
+  line-height: 1.4;
+  /* 줄 간격 조정 */
 }
 
 .table-container tbody tr {
-  height: 45px; /* 행 높이 고정 */
+  height: 45px;
+  /* 행 높이 고정 */
 }
+
+.table-primary {
+  background-color: #cce5ff;
+}
+
 </style>
+

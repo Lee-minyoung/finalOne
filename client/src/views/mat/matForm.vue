@@ -1,5 +1,5 @@
-<template>
-  <div class="col-md-5">
+<template>  
+  <div class="col-md-5"> 
     <div class="d-flex justify-content-between mb-3">
       <div></div>
       <div>
@@ -13,11 +13,13 @@
         <tbody>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">자재번호</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.matNo" readonly style="max-width: 400px; width:100%;" /></td>
+            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matNo" readonly
+                style="max-width: 400px; width:100%;" /></td>
           </tr>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">자재명</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_nm" style="max-width: 400px; width:100%;" /></td>
+            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_nm"
+                style="max-width: 400px; width:100%;" /></td>
           </tr>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">자재유형</th>
@@ -41,21 +43,27 @@
           </tr>
           <tr class="mb-4">
             <th style="width: 20%; min-width: 120px; border:none;">최소주문량</th>
-            <td style="border:none; padding-right:20px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:20px;"><input type="number" class="form-control"
+                v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">최소재고량</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0"
+                style="max-width: 300px; width:100%;" /></td>
           </tr>
           <tr class="mb-4">
             <th style="width: 20%; min-width: 120px; border:none;">단위</th>
-            <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit"
+                style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">리드타임(일)</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0"
+                style="max-width: 300px; width:100%;" /></td>
           </tr>
           <tr>
             <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control" :value="today" readonly style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:40px;"><input type="text" class="form-control" :value="today" readonly
+                style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-            <td style="border:none;"><input type="text" class="form-control" value="-" readonly style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="text" class="form-control" value="-" readonly
+                style="max-width: 300px; width:100%;" /></td>
           </tr>
         </tbody>
       </table>
@@ -96,19 +104,18 @@ export default {
     getToday() {
       this.today = this.dateFormat(null, 'yyyy-MM-dd');
     },
+    // 자재번호 조회
+    // 자재번호는 서버에서 자동으로 생성되므로, 클라이언트에서 직접 생성할 필요 없음
+    // 서버에서 자재번호를 가져오는 API 호출
     async getMatNo() {
-      try {
-        let result = await axios.get('/api/matNo');
-        this.matNo = result.data[0].addMatNo;
-      } catch (err) {
-        console.error('자재번호 조회 실패:', err);
-        alert('자재번호를 가져오는데 실패했습니다.');
-      }
+      let result = await axios.get(`/api/matNo`)
+        .catch(err => console.log(err));
+      this.matNo = 'M-' + (result.data[0].matNo).padStart(3, '0');
     },
     async getVdrList() {
       try {
         let result = await axios.get('/api/vdr');
-      this.vdrList = result.data;
+        this.vdrList = result.data;
       } catch (err) {
         console.error('거래처 목록 조회 실패:', err);
         alert('거래처 목록을 가져오는데 실패했습니다.');
@@ -175,7 +182,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -185,9 +192,24 @@ export default {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-table.align-middle th, table.align-middle td {
+table.align-middle th,
+table.align-middle td {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   vertical-align: middle;
 }
-</style> 
+
+/* readonly와 disabled 입력창 스타일 */
+input[readonly],
+input[disabled] {
+  background-color: #e9ecef !important;
+  cursor: not-allowed;
+}
+
+input[readonly]:focus,
+input[disabled]:focus {
+  background-color: #e9ecef !important;
+  border-color: #ced4da;
+  box-shadow: none;
+}
+</style>
