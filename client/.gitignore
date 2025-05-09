@@ -8,6 +8,7 @@ tests/e2e/reports/
 .env.*.local
 *.env
 
+
 # dependencies
 /node_modules
 package-lock.json
