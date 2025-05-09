@@ -19,9 +19,15 @@ const selectMaterialStatusByRequest =
   m.unit AS 단위,
   mrq.mat_ins_sts AS 자재출고처리,
   mrq.mat_req_no AS 자재출고요청번호,
-  m.min_stk_qty AS 최소재고량
+  m.min_stk_qty AS 최소재고량,
+  m.mn_vdr AS 대표거래처번호,
+  v.cpy_nm AS  거래처명,
+  m.prc AS 단가,
+        m.prc * mrq.qty AS 총가격,
+        mrq.prc_rslt AS 자재처리결과
 FROM mat_rls_req mrq
 JOIN mat m ON mrq.mat_no = m.mat_no
+JOIN vdr v ON m.mn_vdr=v.vdr_no
 LEFT JOIN mat_stk ms ON m.mat_no = ms.mat_no
 GROUP BY 
   mrq.mat_req_no, mrq.mat_no, m.mat_nm, mrq.qty, mrq.sts, mrq.mat_ins_sts
@@ -201,7 +207,7 @@ const updateMatStkBylotNo=
 `UPDATE mat_stk 
 SET cur_stk=cur_stk -? 
 WHERE lot_no =? `;
-//자재출고처리 => q2 로 하는데   계획id(reqNo,matNo) 둘다받음 
+//자재출고처리 => q2 로 하는데  계획id(reqNo,matNo) 둘다받음 
 const updateMatStsToq2BymatNo=
 `UPDATE mat_rls_req
 SET mat_ins_sts='q2'
@@ -233,5 +239,6 @@ updateMatCurStkMinus,
 updateMatInsStsToq2, 
 matMaxLotList, 
 updateMatStkBylotNo,
-updateMatStsToq2BymatNo,  
+updateMatStsToq2BymatNo,
+ // 자재출고처리 c3로 변경 
 };
