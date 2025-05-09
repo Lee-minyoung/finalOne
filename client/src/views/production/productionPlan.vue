@@ -180,7 +180,7 @@ export default {
     isSelected(row) {
       return this.instructionStore.selectedPlans.some(p => p.pdn_pln_dtl_no === row.pdn_pln_dtl_no)
     },
-
+// 백분률 계산 함수.
     // 백분율 계산 (계획 대비 누적지시)
     getProgress(planQty, instQty) {
       const qty = Number(planQty || 0)
@@ -204,6 +204,8 @@ export default {
       if (percent < 100) return 'bg-warning text-dark'
       return 'bg-success'
     },
+// 여기까지..백분률
+
 
     // 🧾 계획 등록 관련 --------------------------
 
@@ -307,7 +309,7 @@ handleSelectedProducts(selectedList) {
   // 모달 닫기
   this.showProductModal = false
 },
-// ---------------------여기부터 리뷰 -------------------------
+
     // ✅ 테이블 선택 관련 --------------------------
 
     // 계획 row 클릭 시 선택 토글
@@ -324,6 +326,7 @@ handleSelectedProducts(selectedList) {
       }
     },
 
+// ---------------------여기부터 리뷰 -------------------------
     // ✅ 계획 지시 관련 --------------------------
 
     // 계획지시 모달 열기
@@ -342,7 +345,7 @@ handleSelectedProducts(selectedList) {
       this.instructionStore.generateInstructionRows()
       this.showInstructionModal = true
     },
-
+ // 
     // 지시 등록 (여러 계획번호별로 나눠서 등록)
     async submitInstructions() {
       // 📦 1. Pinia 상태에서 지시할 데이터(instructionRows)를 가져옴

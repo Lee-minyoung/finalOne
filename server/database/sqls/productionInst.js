@@ -23,6 +23,7 @@ const getPrdNoByPlanDtl =
 `SELECT prd_no 
    FROM pdn_pln_dtl 
   WHERE pdn_pln_dtl_no = ?;`
+  // 제품 생산 종류
 
 const getBomByPrdNo =
 `SELECT bm.mat_no, bm.cap

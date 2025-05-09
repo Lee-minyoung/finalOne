@@ -2,18 +2,61 @@
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex gap-4">
-        <h2 class="mb-4">완제품검사기준서</h2>
+        <h2 class="mb-4">완제품검사성적서</h2>
       </div>
     </div>
     <!-- 조회 조건 -->
     <div class="input">
-      제품번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
+      LOT번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
       <button class="btn btn-outline-secondary" id="icon-btn" @click="openProductModal">🔍</button>
+      제품번호 <input :value="selectedProductName" class="form-control" id="input" readonly
+        style="background-color: #eee;" />
       제품명 <input :value="selectedProductName" class="form-control" id="input" readonly
+        style="background-color: #eee;" />
+      <br>
+      납품업체 <input :value="selectedProductName" class="form-control" id="input" readonly
+        style="background-color: #eee;" />
+      검사일자 <input :value="selectedProductName" class="form-control" id="input" readonly
+        style="background-color: #eee;" />
+      검사자 <input :value="selectedProductName" class="form-control" id="input" readonly
         style="background-color: #eee;" />
     </div>
     <br>
+    <div class="middle">
+      <!-- 결점구분 -->
+      <div>
+        <table class="table table-bordered text-center" id="table">
+          <thead class="table-light">
+            <tr>
+              <th>결점구분</th>
+              <th>검사량</th>
+              <th>합격량</th>
+              <th>불량량</th>
+            </tr>
+          </thead>
 
+          <!-- 수량 입력칸 -->
+          <tbody>
+            <tr>
+              <td>수량</td>
+              <td><input v-model="newItem.ins_itm" class="rslInput" placeholder="검사량" /></td>
+              <td><input v-model="newItem.ins_itm" class="rslInput" placeholder="합격량" /></td>
+              <td><input v-model="newItem.ins_mthd" class="rslInput" placeholder="불량량" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 종합판정 -->
+      <div class="rst">
+        <div class="hstack gap-3">
+        <div>종합판정</div>
+        <div class="vr"></div>
+        <button class="btn btn-success me-2" style="width:150px; height:100px">합격</button>
+        <button class="btn btn-danger" style="width:150px; height:100px">불합격</button>
+      </div>
+      </div>
+    </div>
     <!-- 테이블 -->
     <!-- 테이블 헤더 -->
     <table class="table table-bordered text-center ">
@@ -79,7 +122,7 @@
           </td>
           <td>
             <template v-if="item.editMode">
-              <input v-model="item.mdf_dt" class="form-control" readonly style="background-color: #eee;"/>
+              <input v-model="item.mdf_dt" class="form-control" readonly style="background-color: #eee;" />
             </template>
             <template v-else>
               {{ dateFormat(item.mdf_dt, 'yyyy-MM-dd') }}
@@ -314,12 +357,12 @@ export default {
 .input {
   border: 1px solid lightgray;
   padding: 30px;
-  padding-left: 330px;
+  padding-left: 100px;
 }
 
 .form-control {
   display: inline-block;
-  width: 130px;
+  width: 200px;
 }
 
 #input {
@@ -339,7 +382,27 @@ export default {
   display: inline-block;
   width: 150px;
 }
+
 #icon-btn {
-  margin-right: 100px;
+  margin-right: 55px;
+}
+
+#table {
+  width:650px;
+  height:130px;
+  margin-right:20px;
+}
+.rslInput{
+  width:100px;
+}
+.middle {
+  display: flex;
+  align-items: center;
+}
+.rst{
+  width:650px;
+  
+  border: 1px solid lightgray;
+  padding: 10px;
 }
 </style>

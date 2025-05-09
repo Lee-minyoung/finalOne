@@ -104,6 +104,6 @@ module.exports = {
     selectProdInstList, 
     selectLineDropdown,
     selectLineList,
-    updateLinePreparing : 'CALL line_start(?, ?)',
+    updateLinePreparing : 'CALL line_preparing(?, ?)',
     updateLineStop,
 }

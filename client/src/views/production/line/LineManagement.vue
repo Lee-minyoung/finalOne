@@ -25,7 +25,17 @@
           <td>{{ item.ord_qty }}</td>
           <td>{{ item.pdn_qty }}</td>
           <td>{{ item.dft_qty }}</td>
-          <td>{{ item.ln_sts }}</td>
+          <td>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              
+              <span v-if="item.ln_stse"><{{ item.ln_sts }}></span>
+              <span v-else class="text-muted">미지정</span>
+              <button class="btn btn-light border" @click="openModal(item)">
+                <i class="bi bi-search fs-4"></i>
+              </button>
+            </div>
+          </td>
+          <!-- <td>{{ item.ln_sts }}</td> -->
         </tr>
       </tbody>
     </table>
