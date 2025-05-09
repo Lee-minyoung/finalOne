@@ -168,4 +168,3 @@ export default {
   height: 45px; /* 행 높이 고정 */
 }
 </style>
-

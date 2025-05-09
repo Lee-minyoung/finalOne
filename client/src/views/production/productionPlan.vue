@@ -239,7 +239,7 @@ export default {
         }
         alert('등록 완료!')
         this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: 'r1' }
+          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
         ]
         this.getProdPlanList()
       } catch (err) {
@@ -373,7 +373,6 @@ handleSelectedProducts(selectedList) {
         pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
         prd_no: row.prd_no,                  // 제품 코드
         instruction_qty: row.instruction_qty, // 지시 수량
-        ord_sts:'r1',                        // 상태값 고정
         rmk: row.rmk                         // 비고
       })
     }

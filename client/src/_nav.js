@@ -42,7 +42,7 @@ export default [
         component: 'CNavItem',
         name: '라인관리상세',
         to: '/LineMangDtl',
-      }          ,
+      },
     ],
   },
 
