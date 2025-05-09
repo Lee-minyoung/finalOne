@@ -59,11 +59,11 @@
         <div v-if="selectVdr" class="col-12 mt-4">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">거래처 코드</label>
+              <label class="form-label">거래처코드</label>
               <input v-model="selectVdr.vdr_no" type="text" class="form-control" readonly />
             </div>
             <div class="col-md-6">
-              <label class="form-label">거래처 명</label>
+              <label class="form-label">거래처명</label>
               <input v-model="selectVdr.cpy_nm" type="text" class="form-control" readonly />
             </div>
           </div>
@@ -181,7 +181,8 @@ async created(){
   const res=await axios.get('/api/inventory/mat');
   this.mat=res.data;
   const vdrs=await axios.get('/api/vdrList');
-  this.vdr=vdrs.data;   
+  this.vdr=vdrs.data; 
+  await this.fetchInventoryPurPlan(); // 자재구매계획 데이터 가져오기  
 },
 computed: {
 totalPrc() {
@@ -224,7 +225,18 @@ methods:{
   } catch (err) {
     console.error('저장 실패:', err);
   }
-}
+}, 
+async fetchInventoryPurPlan(){
+    try{
+      const result=await axios.get('/api/inventory/matPurPlan')
+      this.inventoryPurPlan=result.data; 
+    }catch(error){
+      console.log('자재구매계획 실패',error); 
+    }
+
+   }, 
+   
+
 
 }, 
 

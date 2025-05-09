@@ -201,7 +201,8 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
   const {matId,vdrNo,vdrNm,prc,qty,check,reqId}=info; 
   const date=new Date()
   const formattedDate = date.toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 변환
-
+    console.log('!!!info!!!',info);
+   
   try{
     // 1. 마지막 코드 조회
     const lastMatNo = await inventoryService.findLastMatNo(); //1  숫자 이런식으로 나타남 
@@ -211,7 +212,7 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
     //자재출고요청서에 가장최근 자재처리결과 c3()으로 업데이트
     const info=[formattedMatNo,formattedDate,matId,vdrNo,qty,prc,check];            
     await  purordInstService.addPurPlnByBtnClick(info);
-    await purordInstService.updateMatPrcToC3(reqId,matId); //자재출고요청서에 c3으로 업데이트
+   // await  purordInstService.updateMatPrcToC3(reqId,matId); //자재출고요청서에 c3으로 업데이트
 
    res.status(200).json({message:'자재요청후 구매계획 등록완료'}); 
   }catch(err){

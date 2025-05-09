@@ -44,7 +44,16 @@ router.post('/addPurOrd', async (req, res) => {
     res.status(500).send({ error: '서버 오류 발생', detail: err.message });
   }
 });
-
+router.get('/getPurPlnChecked', async (req, res) => {
+  try {
+    // 발주서에서 자재구매계획 체크된것만 조회 후 발주서페이지 밑에 보이게하기
+    const result = await purOrdInstService.findMatPurPlanChecked();
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: '서버 오류 발생', detail: err.message });
+  }
+});
 
 const findNextCode = (lastCode) => {
     const baseCode = Number(lastCode ?? 0);
