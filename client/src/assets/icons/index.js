@@ -1,4 +1,3 @@
-<<<<<<< .merge_file_NZjGpP
 // icons/index.js 또는 assets/icons/index.js 위치에서 관리하세요
 
 import {
@@ -10,36 +9,6 @@ import {
   cilFile,
   cilSpeedometer,
   cilGraph,
-=======
-import {
-  cibFacebook,
-  cibTwitter,
-  cibLinkedin,
-  cibFlickr,
-  cibTumblr,
-  cibXing,
-  cibGithub,
-  cibGoogle,
-  cibStackoverflow,
-  cibYoutube,
-  cibDribbble,
-  cibInstagram,
-  cibPinterest,
-  cibVk,
-  cibYahoo,
-  cibBehance,
-  cibReddit,
-  cibVimeo,
-  cibCcMastercard,
-  cibCcVisa,
-  cibCcStripe,
-  cibCcPaypal,
-  cibCcApplePay,
-  cibCcAmex,
-} from '@coreui/icons'
-import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from '@coreui/icons'
-import {
->>>>>>> .merge_file_bfgRKi
   cilArrowBottom,
   cilArrowRight,
   cilArrowTop,
@@ -53,10 +22,6 @@ import {
   cilCheck,
   cilChevronBottom,
   cilChevronTop,
-<<<<<<< .merge_file_NZjGpP
-=======
-  cilCheckCircle,
->>>>>>> .merge_file_bfgRKi
   cilCode,
   cilCommentSquare,
   cilContrast,
@@ -69,10 +34,6 @@ import {
   cilExternalLink,
   cilGlobeAlt,
   cilGrid,
-<<<<<<< .merge_file_NZjGpP
-=======
-  cilFile,
->>>>>>> .merge_file_bfgRKi
   cilJustifyCenter,
   cilLaptop,
   cilLayers,
@@ -92,10 +53,6 @@ import {
   cilSettings,
   cilShieldAlt,
   cilSpeech,
-<<<<<<< .merge_file_NZjGpP
-=======
-  cilSpeedometer,
->>>>>>> .merge_file_bfgRKi
   cilStar,
   cilSun,
   cilTask,
@@ -103,7 +60,6 @@ import {
   cilUserFemale,
   cilUserFollow,
   cilXCircle,
-<<<<<<< .merge_file_NZjGpP
   cilCart,
   cilBuilding
 } from '@coreui/icons'
@@ -131,13 +87,10 @@ import {
   cibCcPaypal,
   cibCcApplePay,
   cibCcAmex
-=======
->>>>>>> .merge_file_bfgRKi
 } from '@coreui/icons'
 
 export const iconsSet = Object.assign(
   {},
-<<<<<<< .merge_file_NZjGpP
   
   {
     cilBriefcase,
@@ -148,9 +101,6 @@ export const iconsSet = Object.assign(
     cilFile,
     cilSpeedometer,
     cilGraph,
-=======
-  {
->>>>>>> .merge_file_bfgRKi
     cilArrowBottom,
     cilArrowRight,
     cilArrowTop,
@@ -205,7 +155,6 @@ export const iconsSet = Object.assign(
     cilUserFemale,
     cilUserFollow,
     cilXCircle,
-<<<<<<< .merge_file_NZjGpP
     // ✅ 사용자 지정 추가 아이콘
     cilBriefcase,
     cilCart,
@@ -214,22 +163,11 @@ export const iconsSet = Object.assign(
   },
   {
     cifUs, cifBr, cifIn, cifFr, cifEs, cifPl
-=======
-  },
-  {
-    cifUs,
-    cifBr,
-    cifIn,
-    cifFr,
-    cifEs,
-    cifPl,
->>>>>>> .merge_file_bfgRKi
   },
   {
     cibFacebook,
     cibTwitter,
     cibLinkedin,
-<<<<<<< .merge_file_NZjGpP
     cibGithub,
     cibGoogle,
     cibYoutube,
@@ -237,34 +175,11 @@ export const iconsSet = Object.assign(
     cibPinterest,
     cibDribbble,
     cibReddit,
-=======
-    cibFlickr,
-    cibTumblr,
-    cibXing,
-    cibGithub,
-    cibGoogle,
-    cibStackoverflow,
-    cibYoutube,
-    cibDribbble,
-    cibInstagram,
-    cibPinterest,
-    cibVk,
-    cibYahoo,
-    cibBehance,
-    cibReddit,
-    cibVimeo,
->>>>>>> .merge_file_bfgRKi
     cibCcMastercard,
     cibCcVisa,
     cibCcStripe,
     cibCcPaypal,
     cibCcApplePay,
-<<<<<<< .merge_file_NZjGpP
     cibCcAmex
   }
 )
-=======
-    cibCcAmex,
-  },
-)
->>>>>>> .merge_file_bfgRKi

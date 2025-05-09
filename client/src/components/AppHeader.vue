@@ -16,11 +16,7 @@
 
       <!-- 우측: 다크모드 + 설정 + 로그아웃 -->
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
-<<<<<<< .merge_file_3BSDqr
         <!-- <button class="btn btn-light btn-sm" @click="setColorMode('light')" :class="{ active: colorMode === 'light' }">
-=======
-        <button class="btn btn-light btn-sm" @click="setColorMode('light')" :class="{ active: colorMode === 'light' }">
->>>>>>> .merge_file_6XF7eo
           <i class="bi bi-sun"></i>
         </button>
         <button class="btn btn-dark btn-sm" @click="setColorMode('dark')" :class="{ active: colorMode === 'dark' }">
@@ -28,11 +24,7 @@
         </button>
         <button class="btn btn-secondary btn-sm" @click="setColorMode('auto')" :class="{ active: colorMode === 'auto' }">
           <i class="bi bi-circle-half"></i>
-<<<<<<< .merge_file_3BSDqr
         </button> -->
-=======
-        </button>
->>>>>>> .merge_file_6XF7eo
         <button class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-gear me-1"></i> 설정
         </button>
@@ -59,13 +51,6 @@ const { colorMode, setColorMode } = useColorModes("coreui-free-vue-admin-templat
 const route = useRoute(); // 현재 라우트 정보 가져오기
 const router = useRouter(); // 페이지 이동
 
-<<<<<<< .merge_file_3BSDqr
-=======
-// Pinia 저장소에서 로그인한 사용자 정보 가져오기
-const empStore = useEmpStore();
-const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
-const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
->>>>>>> .merge_file_6XF7eo
 
 // 사이드바 토글
 const toggleSidebar = () => {
@@ -74,7 +59,6 @@ const toggleSidebar = () => {
 
 // 현재 위치 표시용
 const currentPathLabel = computed(() => {
-<<<<<<< .merge_file_3BSDqr
   return route.name || "대시보드";
 });
 
@@ -83,12 +67,6 @@ const currentPathLabel = computed(() => {
 const empStore = useEmpStore();
 const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
 const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
-=======
-  return route.path.replace("/", "").replace(/-/g, " ") || "대시보드";
-});
-
-
->>>>>>> .merge_file_6XF7eo
 
 // 로그아웃 처리 함수
 const handleLogout = async () => {

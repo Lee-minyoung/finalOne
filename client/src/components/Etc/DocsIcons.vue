@@ -8,22 +8,13 @@ import IconsImg from '@/assets/images/icons.webp'
       <div class="col-xl-auto col-12 d-none d-xl-block p-0">
         <img class="img-fluid" :src="IconsImg" width="160px" height="160px" alt="CoreUI Icons" />
       </div>
-<<<<<<< .merge_file_b43k4O
       <!-- <div class="col-md col-12 px-lg-4">
-=======
-      <div class="col-md col-12 px-lg-4">
->>>>>>> .merge_file_LWhx8f
         CoreUI Icons package is delivered with more than 1500 icons in multiple formats SVG, PNG,
         and Webfonts. CoreUI Icons are beautifully crafted symbols for common actions and items. You
         can use them in your digital products for web or mobile app. For more information please
         visit our documentation.
-<<<<<<< .merge_file_b43k4O
       </div> -->
       <!-- <div class="col-md-auto col-12 mt-3 mt-lg-0">
-=======
-      </div>
-      <div class="col-md-auto col-12 mt-3 mt-lg-0">
->>>>>>> .merge_file_LWhx8f
         <a
           class="btn btn-warning text-nowrap text-white"
           href="https://coreui.io/vue/docs/components/icon.html"
@@ -32,11 +23,7 @@ import IconsImg from '@/assets/images/icons.webp'
         >
           Explore Documentation
         </a>
-<<<<<<< .merge_file_b43k4O
       </div> -->
-=======
-      </div>
->>>>>>> .merge_file_LWhx8f
     </div>
   </div>
 </template>
