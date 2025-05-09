@@ -12,4 +12,44 @@ router.get('/prcCode', async (req, res) => {
   res.send(prcCodeList);
 });
 
+// 단건조회 => 조건 : proc_code_no
+router.get('/prcCode/:no', async (req, res) => {
+  let prcCodeNo = req.params.no;
+  let prcCodeInfo = await prcCodeService.findByProcCodeNo(prcCodeNo)
+    .catch(err => console.log(err));
+  res.send(prcCodeInfo);
+});
+
+// 추가시 적용되는 공정코드번호
+router.get('/prcCodeNo', async (req, res) => {
+  let prcCodeNo = await prcCodeService.findProcCodeNo()
+  .catch(err => console.log(err));
+  res.send(prcCodeNo);
+})
+
+// 공정코드 등록
+router.post('/prcCode', async (req, res) => {
+  let prcCodeInfo = req.body;
+  let result = await prcCodeService.addNewProcCode(prcCodeInfo)
+    .catch(err => console.log(err));
+  res.send(result);
+});
+
+// 수정
+router.put('/prcCode/:no', async (req, res) => {
+  let prcCodeNo = req.params.no;
+  let prcCodeInfo = req.body;
+  let result = await prcCodeService.modifyPrcoCodeInfo(prcCodeNo, prcCodeInfo)
+    .catch(err => console.log(err));
+  res.send(result);
+});
+
+// 삭제
+router.delete('/prcCode/:no', async (req, res) => {
+  let prcCodeNo = req.params.no;
+  let resInfo = await prcCodeService.removeProcCodeInfo(prcCodeNo)
+    .catch(err => console.log(err));
+  res.send(resInfo);
+})
+
 module.exports = router

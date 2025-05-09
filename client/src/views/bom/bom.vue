@@ -92,9 +92,12 @@ export default {
       this.bomList = result.data; //deptList배열에 결과값 담음
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectBom(bomNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
-      this.InfoView = true;
+    async selectBom(bomNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
       const bom = this.bomList.find(bom => bom.bom_no === bomNo);
+      // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+      this.InfoView = true;
+      // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+      await this.$nextTick();
       this.selectedBom = bom;  // 클릭한 부서를 selectedDept에 저장
     },
     msg(data) {

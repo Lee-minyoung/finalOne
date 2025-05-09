@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addBom">추가</button>
+        <button class="btn btn-primary me-2" @click="addBom">등록</button>
         <button class="btn btn-danger" @click="deleteBom(bomMatInfo[0].bom_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
@@ -22,7 +22,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="bomNo" class="form-label fw-bold me-3" style="min-width: 100px;">BOM번호</label>
-                <input id="bomNo" type="text" class="form-control" v-model="bom_no" readonly disabled/>
+                <input id="bomNo" type="text" class="form-control" v-model="bom_no" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
@@ -61,10 +61,10 @@
             <tbody>
               <template v-if="bomMatInfo.length > 0">
                 <tr v-for="(row, index) in bomMatInfo" :key="'new-' + index">
-                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled/></td>
-                  <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled/></td>
+                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled /></td>
+                  <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled /></td>
                   <td><input v-model.number="row.cap" type="number" class="form-control" /></td>
-                  <td><input v-model="row.unit" type="text" class="form-control" readonly disabled/></td>
+                  <td><input v-model="row.unit" type="text" class="form-control" readonly disabled /></td>
                   <td><input v-model="row.rmk" type="text" class="form-control" /></td>
                   <td>
                     <button class="btn btn-outline-danger me-1" @click="removeMatRow(index)"> X </button>
@@ -170,7 +170,9 @@ export default {
       }
     },
     saveBom() { // 저장 버튼 클릭시 실행할 함수
-      this.bomUpdate(); // 수정내용 저장
+      if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
+        this.bomUpdate(); // 수정내용 저장
+      }
     },
     // 추가 버튼 클릭시 실행할 함수
     addBom() {
@@ -179,17 +181,18 @@ export default {
     // 삭제 버튼 클릭시 실행할 함수
     async deleteBom(bomNo) {
       if (bomNo > 0) { // 선택된 dept가 있을 경우 
-        let result = await axios.delete(`/api/bom/${bomNo}`)
-          .catch(err => console.log(err));
-        this.bomMatInfo = result.data;
-        let sqlRes = result.data;
-        let sqlResult = sqlRes.affectedRows;
-        if (sqlResult > 0) {
-          alert('정상적으로 삭제되었습니다.');
-          // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-          this.$emit('bom-reload');
-        } else {
-          alert('삭제되지 않았습니다.');
+        if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
+          let result = await axios.delete(`/api/bom/${bomNo}`)
+            .catch(err => console.log(err));
+          let sqlRes = result.data;
+          let sqlResult = sqlRes.affectedRows;
+          if (sqlResult > 0) {
+            alert('정상적으로 삭제되었습니다.');
+            // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
+            this.$emit('bom-reload');
+          } else {
+            alert('삭제되지 않았습니다.');
+          }
         }
       } else { // 선택된 BOM이 없을 경우
         alert("삭제할 BOM을 선택하세요");

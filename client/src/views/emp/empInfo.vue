@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addEmp">추가</button>
+        <button class="btn btn-primary me-2" @click="addEmp">등록</button>
         <button class="btn btn-danger" @click="deleteEmp(empInfo.emp_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
@@ -29,11 +29,10 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="hireDt" class="form-label fw-bold me-3" style="min-width: 100px;">입사일자</label>
-                <input id="hireDt" type="date" class="form-control" 
-                       :value="formatHireDate" 
-                       @input="updateHireDate($event.target.value)" /> 
-                       <!--@input => HTML 입력 요소의 값이 변경될 때마다 발생-->
-                       <!-- $event.target.value는 이벤트가 발생한 input요소의 현재 값 -->
+                <input id="hireDt" type="date" class="form-control" :value="formatHireDate"
+                  @input="updateHireDate($event.target.value)" />
+                <!--@input => HTML 입력 요소의 값이 변경될 때마다 발생-->
+                <!-- $event.target.value는 이벤트가 발생한 input요소의 현재 값 -->
               </div>
             </div>
             <!-- 이름 -->
@@ -152,8 +151,13 @@ export default {
   },
   watch: {
     emp() {
-      let searchNo = this.emp;
-      this.getEmpInfo(searchNo.emp_no);
+      if (this.emp) {
+        let searchNo = this.emp;
+        this.getEmpInfo(searchNo.emp_no);
+      } else {
+        this.empInfo = {};
+        this.getEmpInfo(null);
+      }
     }
   },
   computed: {
@@ -197,18 +201,20 @@ export default {
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.put(`/api/emp/${this.empInfo.emp_no}`, obj)
         .catch(err => console.log(err));
-        console.log(result);
+      console.log(result);
       let updateRes = result.data;
       if (updateRes.isUpdated) {
         alert('수정되었습니다.');
         this.$emit('emp-reload');
-        this.getEmpInfo(this.empInfo.emp_no); 
+        this.getEmpInfo(this.empInfo.emp_no);
       } else {
         alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
       };
     },
     saveEmp() { // 저장 버튼 클릭시 실행할 함수
-      this.empUpdate(); // 수정내용 저장
+      if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
+        this.empUpdate(); // 수정내용 저장
+      }
     },
     // 추가 버튼 클릭시 실행할 함수
     addEmp() {
@@ -217,16 +223,18 @@ export default {
     // 삭제 버튼 클릭시 실행할 함수
     async deleteEmp(empNo) {
       if (empNo > 0) { // 선택된 dept가 있을 경우 
-        let result = await axios.delete(`/api/emp/${empNo}`)
-          .catch(err => console.log(err));
-        let sqlRes = result.data;
-        let sqlResult = sqlRes.affectedRows;
-        if (sqlResult > 0) {
-          alert('정상적으로 삭제되었습니다.');
-          // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-          this.$emit('emp-reload');
-        } else {
-          alert('삭제되지 않았습니다.');
+        if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
+          let result = await axios.delete(`/api/emp/${empNo}`)
+            .catch(err => console.log(err));
+          let sqlRes = result.data;
+          let sqlResult = sqlRes.affectedRows;
+          if (sqlResult > 0) {
+            alert('정상적으로 삭제되었습니다.');
+            // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
+            this.$emit('emp-reload');
+          } else {
+            alert('삭제되지 않았습니다.');
+          }
         }
       } else { // 선택된 dept가 없을 경우
         alert("삭제할 사원을 선택하세요");

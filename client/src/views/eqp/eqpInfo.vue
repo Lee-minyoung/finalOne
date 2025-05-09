@@ -4,7 +4,7 @@
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
-        <button class="btn btn-primary me-2" @click="addEqp">추가</button>
+        <button class="btn btn-primary me-2" @click="addEqp">등록</button>
         <button class="btn btn-danger" @click="deleteEqp(eqpInfo.eqp_no)">삭제</button>
       </div>
       <div> <!-- 버튼 오른쪽 정렬 -->
@@ -121,7 +121,9 @@ export default {
       };
     },
     saveEqp() { // 저장 버튼 클릭시 실행할 함수
-      this.eqpUpdate(); // 수정내용 저장
+      if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
+        this.eqpUpdate(); // 수정내용 저장
+      }
     },
     // 추가 버튼 클릭시 실행할 함수
     addEqp() {
@@ -130,16 +132,18 @@ export default {
     // 삭제 버튼 클릭시 실행할 함수
     async deleteEqp(eqpNo) {
       if (eqpNo > 0) { // 선택된 eqp가 있을 경우 
-        let result = await axios.delete(`/api/eqp/${eqpNo}`)
-          .catch(err => console.log(err));
-        let sqlRes = result.data;
-        let sqlResult = sqlRes.affectedRows;
-        if (sqlResult > 0) {
-          alert('정상적으로 삭제되었습니다.');
-          // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-          this.$emit('eqp-reload'); // 전체 목록 새로고침
-        } else {
-          alert('삭제되지 않았습니다.');
+        if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
+          let result = await axios.delete(`/api/eqp/${eqpNo}`)
+            .catch(err => console.log(err));
+          let sqlRes = result.data;
+          let sqlResult = sqlRes.affectedRows;
+          if (sqlResult > 0) {
+            alert('정상적으로 삭제되었습니다.');
+            // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
+            this.$emit('eqp-reload'); // 전체 목록 새로고침
+          } else {
+            alert('삭제되지 않았습니다.');
+          }
         }
       } else { // 선택된 eqp가 없을 경우
         alert("삭제할 사원을 선택하세요");
