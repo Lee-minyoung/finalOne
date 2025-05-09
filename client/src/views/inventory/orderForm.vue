@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <!-- <table class="table table-striped table-hover">
       <thead class="table-light">
         <tr>
           <th>자재ID</th>
@@ -90,7 +90,11 @@
           <td>120000</td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+
+
+
+
 
     <mat-select-modal
       v-if="showModal"
@@ -99,7 +103,6 @@
       @select-mat="handleMaterialSelect"
       @close="showModal = false"
     />
-
     <vdr-select-modal
       v-if="showVdrModal"
       :vdr-list="vdr"
@@ -108,6 +111,44 @@
       @close="showVdrModal = false"
     />
   </div>
+
+  <h3>자재구매계획 </h3>
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">계획ID</th>
+      <th scope="col">자재ID</th>
+      <th scope="col">자재명</th>
+      <th scope="col">수량</th>
+      <th scope="col">단가</th>
+      <th scope="col">총가격</th>
+      <th scope="col">도착예정일</th>
+      <th scope="col">거래처</th>
+      <th scope="col">생산계획</th>
+      <th scope="col">발주</th>            
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 필터.. -->
+    <tr v-for="(item,index) in inventoryPurPlan" :key="index">
+      <th scope="row">{{ item['계획ID'] }}</th>
+      <td>{{ item['자재ID'] }}</td>
+      <td>{{ item['자재명'] }}</td>
+      <td>{{ item['수량'] }}</td>
+      <td>{{ item['단가'] }}</td>
+      <td>{{ item['총가격'] }}</td>
+      <td>{{ item['실시간도착예정일'].substring(0,10) }}</td>
+      <td>{{ item['대표거래처'] }}</td>    
+    <td>
+      <button class="btn btn-success rounded-pill px-3" @click="minCheckAndPurOrd(item['자재ID'],item['수량'],item['계획ID'])"  type="button">발주하기</button>
+    </td>
+    </tr> 
+  </tbody>
+</table>
+
+
+
+
 </template>
 
 
@@ -133,6 +174,7 @@ data() {
    qty:0,  
    purDt:'',
    crtDt:new Date().toISOString().slice(0, 10),
+   inventoryPurPlan:[],
   }
 },
 async created(){

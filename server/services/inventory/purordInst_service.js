@@ -7,9 +7,19 @@ const addPurOrdNoByPlnNo=async (info) => {
     return result; 
   }
 
+const addPurPlnByBtnClick=async (info) => {
+    const result = await mariadb.query('insertPurPlnByBtnClick',info);
+    return result; 
+  }
+const updateMatPrcToC3= async () => {
+    const result = await mariadb.query('updateMatPrcToC3');
+    return result;
+  }         
 
 
 
 module.exports={
-    addPurOrdNoByPlnNo, 
+    addPurOrdNoByPlnNo,
+    addPurPlnByBtnClick,
+    updateMatPrcToC3, //   
 }

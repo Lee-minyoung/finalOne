@@ -23,8 +23,6 @@ router.post('/addPurOrd', async (req, res) => {
       total
     } = req.body;
 
-
-
     //sdfsdf
     // 3. 유효성 검사
     if (!vdr_no || !crt_dt || !pur_dt || !mat_no || !qty || !prc || !total) {
