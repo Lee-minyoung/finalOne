@@ -11,8 +11,6 @@ const login=require('./sqls/login.js');
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const purOrdInst=require('./sqls/purOrdInst.js'); 
 
-
-
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
 const emp = require('./sqls/emp.js'); // 사원

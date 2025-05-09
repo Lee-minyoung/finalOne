@@ -97,6 +97,12 @@ const removeProc = async (procSrlNo) => {
   return result;
 };
 
+// 라인에서 사용하고 있는 공정인지 확인 (조건 : 제품번호)
+const findUseLine = async (prdNo) => {
+  let result = await mariadb.query("selectUseLine", prdNo);
+  return result;
+};
+
 module.exports = {
   findProcList,
   findOneProcList,
@@ -105,4 +111,5 @@ module.exports = {
   modifyProcList,
   removeProcList,
   removeProc,
+  findUseLine,
 };

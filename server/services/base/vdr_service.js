@@ -20,19 +20,19 @@ const findByVdrNo = async (vdrNo) => { // 거래처번호
 const findVdrNo = async() => { // 거래처번호
   return await mariadb.query("selectVdrNo"); // 거래처번호를 기반으로 한 단건조회
 }
-
 // 거래처 등록
 const addNewVdr = async (vdrInfo) => { // 거래처정보
-  //
+  // 거래처정보를 배열로 변환하기 위한 컬럼명
   let insertColumns = ['ofc_tp', 'ofc_sts', 'ofc_ctt', 'ofc_addr', 'mgr_nm', 'mgr_ctt', 'cpy_nm', 'ceo_nm', 'biz_reg_no'];
   let data = convertObjToAry(vdrInfo, insertColumns); // 거래처정보를 배열로 변환
-  let resInfo = await mariadb.query("insertVdr", data); // 거래처정보를 배열로 변환
+  let resInfo = await mariadb.query("insertVdr", data); // 거래처정보를 배열로 변환하여 SQL문에 전달
+
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1 
     result = {
       isSuccessed: true,
     };
-  } else { //
+  } else { // 결과가 없으면 isSuccessed = false
     result = {
       isSuccessed: false,
     };
@@ -43,7 +43,7 @@ const addNewVdr = async (vdrInfo) => { // 거래처정보
 // 거래처 수정
 const modifyVdrInfo = async (vdrNo, vdrInfo) => { // 거래처번호, 거래처정보
   let data = [vdrInfo, vdrNo]; // 거래처정보와 거래처번호를 배열로 변환
-  let resInfo = await mariadb.query("updateVdr", data); // 거래처정보와 거래처번호를 배열로 변환  
+  let resInfo = await mariadb.query("updateVdr", data); // 거래처정보를 배열로 변환하여 SQL문에 전달
 
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1

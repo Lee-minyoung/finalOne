@@ -15,7 +15,7 @@
       <div>
         <div>
           <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptNo" readonly />
+          <input type="text" class="form-control" v-model="deptNo" readonly disabled/>
           <label class="form-label">부서명</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
@@ -32,9 +32,9 @@
 
 
           <label class="form-label">사용여부</label>
-          <input type="text" class="form-control" value="여" readonly />
+          <input type="text" class="form-control" value="여" readonly disabled/>
           <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="today" readonly />
+          <input type="text" class="form-control" v-model="today" readonly disabled/>
         </div>
       </div>
 

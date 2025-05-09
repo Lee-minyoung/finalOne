@@ -8,16 +8,24 @@ WHERE bm.mat_no = ?`;
 
 //자재출고요청서를 바탕으로한 자재현황 파악 
 const selectMaterialStatusByRequest =
-`SELECT mrq.mat_req_no as 계획ID,
-        mrq.mat_no as 자재ID,
-        m.mat_nm as 자재명,
-        mrq.qty as 총필요량,
-        ms.cur_stk as 현재재고,
-        mrq.qty - ms.cur_stk as 부족수량 ,
-        mrq.sts as 상태  
-FROM        mat_rls_req mrq
-             JOIN  mat m ON(mrq.mat_no=m.mat_no)
-	     JOIN  mat_stk ms ON(m.mat_no=ms.mat_no)`; 
+`SELECT 
+  mrq.mat_req_no AS 계획ID,
+  mrq.mat_no AS 자재ID,
+  m.mat_nm AS 자재명,
+  mrq.qty AS 총필요량,
+  IFNULL(SUM(ms.cur_stk), 0) AS 현재재고,
+  (mrq.qty - IFNULL(SUM(ms.cur_stk), 0)) AS 부족수량,
+  mrq.sts AS 상태,
+  m.unit AS 단위,
+  mrq.mat_ins_sts AS 자재출고처리,
+  mrq.mat_req_no AS 자재출고요청번호,
+  m.min_stk_qty AS 최소재고량
+FROM mat_rls_req mrq
+JOIN mat m ON mrq.mat_no = m.mat_no
+LEFT JOIN mat_stk ms ON m.mat_no = ms.mat_no
+GROUP BY 
+  mrq.mat_req_no, mrq.mat_no, m.mat_nm, mrq.qty, mrq.sts, mrq.mat_ins_sts
+`; 
 //자재출고요청서에 상태가 c1,c2(확인)인것만 알아서 한건 기준  자재구매계획에 insert
 const insertMaterialPlan=
 `INSERT INTO mat_pur_pln (
@@ -141,6 +149,65 @@ const updateMatReqSts=
 SET sts='g2'
 WHERE mat_req_no = ?`;
 
+//자재입출고요청서에서 자재LOT에서 현재재고확인
+const selectMatStkCurStk=`SELECT SUM(cur_stk) as 자재합 
+FROM mat_stk 
+WHERE mat_no='MAT102'
+AND cls_yn='p1'
+AND cnsm_lmt_dt > SYSDATE()`; 
+//현재재고확인후 자재LOT에서의 요청량보다 보다 많으면 P2로 변경 
+const updateMatStkSts=
+`UPDATE mat_rls_req 
+SET mat_ins_sts='P2' 
+WHERE mat_req_no=?`;
+//자재lot에서 출고요청서ID에 의한 자재 재고확인 
+const selectMatStCurStkByReqNo=
+`SELECT  mrq.mat_req_no AS 요청서번호, 
+	 IFNULL(SUM(ms.cur_stk), 0) AS 현재재고,
+         mrq.qty AS 요청수량,  
+	 ms.mat_no AS 자재번호,
+         IFNULL(SUM(ms.cur_stk)-mrq.qty,0) AS lot에남는양, 
+         m.min_stk_qty AS 최소재고량
+FROM mat_rls_req mrq
+JOIN mat_stk ms ON mrq.mat_no = ms.mat_no
+JOIN mat m ON ms.mat_no=m.mat_no
+WHERE mrq.mat_req_no= ?
+GROUP BY 
+  mrq.mat_req_no, mrq.mat_no,mrq.qty, mrq.sts, mrq.mat_ins_sts`; 
+
+// 자재차감 
+const updateMatCurStkMinus=
+`UPDATE mat_stk 
+SET cur_stk= greatest( cur_stk - ? ,0)      
+WHERE mat_no=(SELECT mat_no  
+FROM mat_stk
+WHERE mat_no= ?
+order by cur_stk desc
+LIMIT 1)`;
+
+// 자재출고처리 q2 
+const updateMatInsStsToq2=
+`UPDATE mat_rls_req
+SET mat_ins_sts='q2'
+WHERE mat_req_no = ?`;
+//자재 lot리스트 재고 많은순 리스트
+const matMaxLotList=
+`SELECT lot_no,mat_no,cur_stk  
+FROM mat_stk
+WHERE mat_no=?
+order by cur_stk desc`;  
+//자재 차감 
+const updateMatStkBylotNo=
+`UPDATE mat_stk 
+SET cur_stk=cur_stk -? 
+WHERE lot_no =? `;
+//자재출고처리 => q2 로 하는데   계획id(reqNo,matNo) 둘다받음 
+const updateMatStsToq2BymatNo=
+`UPDATE mat_rls_req
+SET mat_ins_sts='q2'
+WHERE mat_req_no = ?
+AND mat_no= ?` 
+
 module.exports = {
  selectPrdPlanByMaterial,
  selectMaterialStatusByRequest,
@@ -157,5 +224,14 @@ insertMatPurPlan,
 updateMatRes,
 updateMatResPr,
 selectCountPrc,
-updateMatReqSts,        
+updateMatReqSts, 
+//자재lot에서 해당자재ID 현재재고확인 합 
+selectMatStkCurStk,
+updateMatStkSts, 
+selectMatStCurStkByReqNo,
+updateMatCurStkMinus, 
+updateMatInsStsToq2, 
+matMaxLotList, 
+updateMatStkBylotNo,
+updateMatStsToq2BymatNo,  
 };

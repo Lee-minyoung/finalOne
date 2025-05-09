@@ -37,16 +37,18 @@
         :class="{
           'bg-success': line.ln_sts === 'l1',
           'bg-primary': line.ln_sts === 'l2',
-          'bg-warning': line.ln_sts === 'l3',
-          'bg-secondary': line.ln_sts === 'l4',
+          'bg-primary': line.ln_sts === 'l3',
+          'bg-warning': line.ln_sts === 'l4',
+          'bg-secondary': line.ln_sts === 'l5',
           'bg-danger': !['l1','l2','l3','l4'].includes(line.ln_sts)
         }"
       >
         {{
           line.ln_sts === 'l1' ? '사용 가능' :
           line.ln_sts === 'l2' ? '사용 중' :
-          line.ln_sts === 'l3' ? '수리 중' :
-          line.ln_sts === 'l4' ? '점검 중' :
+          line.ln_sts === 'l3' ? '대기 중' :
+          line.ln_sts === 'l4' ? '수리 중' :
+          line.ln_sts === 'l5' ? '점검 중' :
           '오류'
         }}
       </span>
@@ -87,21 +89,30 @@
 <script>
 export default {
   props: {
-    item: Object,
-    usedLines: Array
+    item: Object,       // 선택된 지시 항목 객체 (lineList, selected_line 포함 예상)
+    usedLines: Array    // 이미 다른 항목에서 사용된 라인 번호 리스트
   },
+
   data() {
     return {
+      // 선택된 라인 번호 (초기값: item.selected_line 이 있으면 사용, 없으면 '')
       selectedLine: this.item.selected_line || ''
     }
   },
+
   computed: {
-  filteredLineList() {
-    return (this.item.lineList || []).filter(
-      line => !this.usedLines.includes(line.ln_no)
-    )
+    /**
+     * 사용 가능한 라인 목록 필터링
+     * - item.lineList: 해당 지시 항목에서 선택 가능한 전체 라인
+     * - usedLines: 이미 다른 항목에서 선택한 라인들
+     * → 겹치지 않는 라인만 보여주기 위함
+     */
+    filteredLineList() {
+      return (this.item.lineList || []).filter(
+        line => !this.usedLines.includes(line.ln_no)
+      )
+    }
   }
-}
 }
 </script>
 

@@ -19,7 +19,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
-                <input id="empNo" type="text" class="form-control" v-model="emp_no" readonly />
+                <input id="empNo" type="text" class="form-control" v-model="emp_no" readonly disabled/>
               </div>
             </div>
             <!-- 입사일자 -->
@@ -93,14 +93,14 @@
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">재직상태</label>
-                <input id="lnNo" type="text" class="form-control" value="재직" readonly />
+                <input id="lnNo" type="text" class="form-control" value="재직" readonly disabled />
               </div>
             </div>
             <!-- 휴직사유 -->
             <div class="col-md-12 mb-3">
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                  style="height: 100px" v-model="lv_rsn"></textarea>
+                  style="height: 100px" v-model="lv_rsn" readonly disabled></textarea>
                 <label for="floatingTextarea2" class="form-label fw-bold">휴직사유</label>
               </div>
             </div>

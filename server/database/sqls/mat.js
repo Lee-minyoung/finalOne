@@ -2,7 +2,7 @@
 
 // 전체조회
 const selectMatList =
-`SELECT mat_no, mat_nm, mat_tp
+`SELECT mat_no, mat_nm, mat_tp, unit
 FROM mat
 ORDER BY mat_no`;
 

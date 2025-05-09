@@ -124,5 +124,77 @@ router.get('/vdrList',async(req,res)=>{
                   .catch(err=>console.log(err));  
    res.json(vdrList); 
 })
+// 자재출고요청서에서 자재확인 클릭했을때
+router.get('/inventory/matStByReqNo',async(req,res)=>{
+  const {reqNo}=req.query; 
+  console.log('reqNo',reqNo); 
+  const matInfoList=await inventoryService.findMatStByReqNo(reqNo)
+                      .catch(err=>console.log(err)); 
+  res.json(matInfoList); 
+})  
+// 자재차감 
+router.post('/inventory/lotMinus',async(req,res)=>{
+  try{
+    const {req_qty,mat_no,pln_id}=req.body; //프론트에서 받음
+   //lot 선택  const lot=await
+                await inventoryService.minusLotCurStk(req_qty,mat_no)
+                await inventoryService.changeMatStsToq2(pln_id); //자재출고처리 q2로변함 
+  
+    
+   //
+                      
+    res.json(result); 
+   // 
+  }catch(err){
+    console.log(err); 
+  }
+})
+//자재여러개 차감 
+router.post('/inventory/lotMinusList',async (req,res)=>{
+  try{
+      const matList=req.body; //배열로 우선받음 [{mat_no,req_qty,pln_id}]
+      console.log('matList',matList); 
+      console.log(req.body);
+      for(const mat of matList){
+        let {mat_no,req_qty,pln_id}=mat;
+        const lots=await inventoryService.findMatLotList(mat_no);
+        
+         //lot 여러개
+        //lot여러개중에 하나 
+        // if(!Array.isArray(lots)){
+        //   console.warn(`lot데이터가 배열이아님`,lots);
+        //   continue;  
+        // }
+        
+
+        for(const lot of lots){
+            const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
+            await inventoryService.minusCurStkByLot(lot.lot_no,minusQty);
+            req_qty-=minusQty;      
+          } 
+          if(req_qty>0){
+            console.log('자재lot부족');
+            //서버 ->  프론트로 알려야함 바로 자재구매계획 등록?? 일단그건보류... 
+            return res.status(400).json({
+              success:false,
+              message:`자재${mat_no}의 재고가 부족합니다`
+            });           
+          }else if(req_qty<=0){
+            console.log('요청수량 자재충분! ');
+            await inventoryService.changeMatStsToq2ByMatNo(pln_id,mat_no); //q2로 업데이트 처리됨
+
+          }
+      }
+
+    
+
+
+
+  }catch(err){
+    console.log(err);
+    res.json({message:'lot차감실패',error:err.message});  
+  }
+})
+
 
 module.exports=router;

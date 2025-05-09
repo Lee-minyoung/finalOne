@@ -98,7 +98,49 @@ const findMatAllInfo=async()=>{
 const findVdrAllInfo=async() =>{
   const vdrList=await mariadb.query('selectVdr'); 
   return vdrList;
+}
+// 출고요청번호 클릭시 자재확인 클릭했을때 
+const findMatStByReqNo=async(reqNo) =>{
+  const matInfoList=await mariadb.query('selectMatStCurStkByReqNo',reqNo); 
+  return matInfoList; 
+}
+// 자재입출고 요청시 자재lot에서 자재 빼기  
+const minusLotCurStk=async(reqQty,matNo)=>{
+  const result=await mariadb.query('updateMatCurStkMinus',[reqQty,matNo]); 
+  return result; 
+}
+//q2로 바꾸기  
+const changeMatStsToq2=async(reqNo)=>{
+  const result=await mariadb.query('updateMatInsStsToq2',reqNo);
+  return result; 
+}
+const findMatLotList=async(matNo)=>{
+//   const [rows] = await mariadb.query('matMaxLotList', [matNo]);
+//   // 한 건만 나올 경우에도 배열로 강제 래핑
+//   console.log('[DEBUG] rows:', rows);
+// console.log('[DEBUG] rows 타입:', Array.isArray(rows) ? '배열' : typeof rows);
+
+//   return Array.isArray(rows) ? rows : [rows];
+const [rows] = await mariadb.query('matMaxLotList', [matNo]);
+
+// rows가 배열이면 그대로, 아니면 배열로 감싸서 리턴
+const list = Array.isArray(rows) ? rows : [rows];
+console.log('[DEBUG] 최종 lot list:', list);
+return list;
+
+
 } 
+//자재차감 
+const minusCurStkByLot=async(lotNo,minus)=>{
+  const result=await mariadb.query('updateMatStkBylotNo',[minus,lotNo]); 
+  return result; 
+}
+//자재번호,자재출고요청번호 받아서 q2로 업데이트 
+const changeMatStsToq2ByMatNo=async(reqNo,matNo)=>{
+  const result=await mariadb.query('updateMatStsToq2BymatNo',[reqNo,matNo]);
+  return result;
+}    
+
 
 module.exports = {
 
@@ -119,5 +161,12 @@ findMatReqPrRemain,
 changeMatReqSts, 
 // 발주서입력-자재전체조회,거래처조회  
 findMatAllInfo,
-findVdrAllInfo,    
+findVdrAllInfo, 
+// 자재출고요청서에서 자재확인 클릭했을때
+findMatStByReqNo, 
+minusLotCurStk, //현재고량 > lot 재고량 많은경우 자재차감 
+changeMatStsToq2, //자재입출고요청서 자재출고처리 q2로 바꿈 
+findMatLotList, //lot 많은순 리스트 
+minusCurStkByLot,
+changeMatStsToq2ByMatNo,   
 }; 

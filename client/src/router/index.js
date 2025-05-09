@@ -74,6 +74,16 @@ const routes = [
         name: 'ln',
         component: () => import('@/views/ln/ln.vue'),
       },
+      { // eqp 설비
+        path: 'eqp',
+        name: 'eqp',
+        component: () => import('@/views/eqp/eqp.vue'),
+      },
+      { // eqp 설비
+        path: 'prc-code',
+        name: 'prcCode',
+        component: () => import('@/views/prcCode/prcCode.vue'),
+      },
       {
         path:'/inventoryCheck',
         name:'InventoryCheck',
@@ -96,10 +106,20 @@ const routes = [
       },
       {
         path: '/LineMang',
-        name: '라인관리상세',
+        name: '라인관리',
         component: () => import('@/views/production/line/lineManagement'),
+      },
+      {
+        path: '/LineMangDtl',
+        name: '라인관리상세',
+        component: () => import('@/views/production/line/LineManagementDtl'),
+      },
+      {
+         path:'/MatReq',
+        name:'MatReq', 
+        component:()=>import('@/views/inventory/matReq.vue')
       }
-      //상단 {}를 복사하여 사용하시면 됩니다. 
+      //상단 {}를 복사하여 사용하시면 됩니다.   
     ],
   },
   { // 로그인

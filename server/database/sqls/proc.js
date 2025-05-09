@@ -57,6 +57,14 @@ const deleteProcAll =
 `DELETE FROM proc
 WHERE proc_no = ?`;
 
+// 라인에서 사용하고 있는 공정인지 확인 (조건 : 제품번호)
+const selectUseLine =
+`SELECT DISTINCT l.ln_no, l.ln_nm
+FROM ln l LEFT OUTER JOIN proc p
+ON l.prd_no = p.prd_no
+WHERE l.prd_no = ?
+ORDER BY l.ln_no`
+
 module.exports = {
   selectProcList,
   selectProcOne,
@@ -64,4 +72,5 @@ module.exports = {
   insertProc,
   deleteProc,
   deleteProcAll,
+  selectUseLine,
 };
