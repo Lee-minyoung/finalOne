@@ -53,8 +53,8 @@ SELECT CONCAT('ODR-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_no, 5) AS UNSIGNED)
 FROM pdn_ord;`
 
 const insertProdOrdDtl =
-`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio)
-SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?
+`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio, ord_sts)
+SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?, 'r1'
 FROM pdn_ord_dtl;`
 
 // pdn_ord_dtl_no ===> SELECT CONCAT('SPM-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED))

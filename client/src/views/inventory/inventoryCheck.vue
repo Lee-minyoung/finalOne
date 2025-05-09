@@ -1,6 +1,6 @@
 <template>
   <h3>자재현황파악</h3>
-  <table class="table table-bordered text-center">
+  <table class="table table-bordered text-center" >
   <thead>
     <tr class="table-light">
       <th>출고요청번호</th>

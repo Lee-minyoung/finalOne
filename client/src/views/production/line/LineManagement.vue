@@ -25,17 +25,29 @@
           <td>{{ item.ord_qty }}</td>
           <td>{{ item.pdn_qty }}</td>
           <td>{{ item.dft_qty }}</td>
+          <!-- 라인 상태별 버튼 동적 렌더링 -->
           <td>
-            <div class="d-flex align-items-center justify-content-center gap-2">
-              
-              <span v-if="item.ln_stse"><{{ item.ln_sts }}></span>
-              <span v-else class="text-muted">미지정</span>
-              <button class="btn btn-light border" @click="openModal(item)">
-                <i class="bi bi-search fs-4"></i>
-              </button>
-            </div>
+            <!-- l1: 비활성화 상태 -->
+            <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>
+              대기 중
+            </button>
+            <!-- l2: 실행 버튼 -->
+            <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">
+              실행
+            </button>
+            <!-- l3: 작업현황 버튼 -->
+            <button v-else-if="item.ln_sts === 'l3'" class="btn btn-sm btn-warning" @click="showStatus(item)">
+              작업현황
+            </button>
+            <!-- l4: 수리 중 버튼 -->
+            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-danger" @click="repair(item)">
+              수리 중
+            </button>
+            <!-- l5: 점검 중 버튼 -->
+            <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-info" @click="checkStatus(item)">
+              점검 중
+            </button>
           </td>
-          <!-- <td>{{ item.ln_sts }}</td> -->
         </tr>
       </tbody>
     </table>

@@ -28,7 +28,7 @@ router.post('/prodpln', async (req, res) => {
 
     // 2. 파라미터 준비
     const planData = [nextPlanCode, 1000]; //관리자로 임시 1000 으로 등록함.
-    const detailData = [nextDetailCode, nextPlanCode, req.body.prd_no, req.body.qty, req.body.st_dt, req.body.end_dt, '계획완료', req.body.rmk];
+    const detailData = [nextDetailCode, nextPlanCode, req.body.prd_no, req.body.qty, req.body.st_dt, req.body.end_dt, 'r1', req.body.rmk];
 
     // 3. 트랜잭션 insert
     await productionPlanServices.addProdPlanData(planData, detailData); 

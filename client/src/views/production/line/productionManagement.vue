@@ -16,7 +16,7 @@
         </tr>
       </thead>
 
-      <!-- ✅ 진행상태가 'r3' (지시가능 상태) -->
+      <!-- ✅ 진행상태가 'r1' (지시가능 상태) -->
       <tbody>
         <tr v-for="item in activeList" :key="item.pdn_ord_dtl_no">
           <td>{{ item.pdn_ord_no }}</td>
@@ -25,7 +25,7 @@
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
           <td>
-            <span class="badge" :class="{
+            <span class="badge " style="font-size: 0.9rem; padding: 0.4rem 0.8rem;" :class="{
               'bg-warning text-dark': item.mat_ins_sts === 'q1',
               'bg-success': item.mat_ins_sts === 'q2'
             }">
@@ -58,9 +58,12 @@
           <td>{{ item.ord_qty }}</td>
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
-          <td colspan="3">
-            <span class="badge bg-warning text-dark">라인 대기 중</span>
+          <td colspan="2">
+            <span class="badge bg-warning text-dark" style="font-size: 1.5rem; padding: 0.5rem 1rem;" >라인 대기 중</span>
           </td>
+          <td style="opacity: 1;">
+            <button class="btn btn-sm btn-primary" @click="stopLine(item)">취소</button>
+          </td> 
         </tr>
       </tbody>
     </table>
@@ -105,7 +108,7 @@ export default {
 
     // r3 상태: 지시가능 상태
     activeList() {
-      return this.instructionList.filter(i => i.ord_sts === 'r3');
+      return this.instructionList.filter(i => i.ord_sts === 'r1');
     },
 
     // r2 상태: 라인 대기 상태
@@ -192,6 +195,22 @@ export default {
       } catch (err) {
         console.error("❌ 지시 실패:", err)
         alert('지시 중 오류가 발생했습니다.')
+      }
+    },
+    async stopLine(item) {
+      const payload = {
+        pdn_ord_dtl_no: item.pdn_ord_dtl_no,  // ✅ 라우터와 프로시저 파라미터에 맞춤
+        ln_no: item.selected_line
+      }
+
+      try {
+        await axios.post('/api/stopLine', payload)
+        alert('취소 완료!')
+        this.fetchInstructions()
+        this.showLineModal = false
+      } catch (err) {
+        console.error("❌ 지시 실패:", err)
+        alert('취소 중 오류가 발생했습니다.')
       }
     }
   }
