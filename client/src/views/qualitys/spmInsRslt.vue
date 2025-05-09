@@ -50,27 +50,25 @@
       <!-- 종합판정 -->
       <div class="rst">
         <div class="hstack gap-3">
-        <div>종합판정</div>
+        <div style="padding-left:50px;">종합판정</div>
         <div class="vr"></div>
         <button class="btn btn-success me-2" style="width:150px; height:100px">합격</button>
         <button class="btn btn-danger" style="width:150px; height:100px">불합격</button>
       </div>
       </div>
     </div>
+    <h5>검사결과</h5>
     <!-- 테이블 -->
     <!-- 테이블 헤더 -->
     <table class="table table-bordered text-center ">
       <thead class="table-light">
         <tr>
-          <th>NO</th>
           <th>검사항목</th>
+          <th>검사일자</th>
           <th>검사기준</th>
-          <th>규격</th>
-          <th>사용장비</th>
-          <th>작성자</th>
-          <th>수정일자</th>
+          <th>검사결과</th>
+          <th>판정</th>
           <th>비고</th>
-          <th>수정</th>
         </tr>
       </thead>
 
@@ -120,28 +118,6 @@
               {{ item.crt_by }}
             </template>
           </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.mdf_dt" class="form-control" readonly style="background-color: #eee;" />
-            </template>
-            <template v-else>
-              {{ dateFormat(item.mdf_dt, 'yyyy-MM-dd') }}
-            </template>
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.rmk" class="form-control" />
-            </template>
-            <template v-else>
-              {{ item.rmk }}
-            </template>
-          </td>
-          <td>
-            <button v-if="!item.editMode" @click="enableEditMode(index)" class="btn btn-warning btn-sm">수정</button>
-            <button v-if="item.editMode" @click="saveRow(index)" class="btn btn-success btn-sm">저장</button>
-            <button v-if="item.editMode" @click="disableEditMode(index)" class="btn btn-secondary btn-sm">취소</button>
-            <button @click="deleteRow(index)" class="btn btn-danger btn-sm">삭제</button>
-          </td>
         </tr>
 
         <!-- 기준서 항목 추가 시 테이블 입력칸 -->
@@ -152,17 +128,13 @@
           <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
           <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
           <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
-              style="background-color: #eee;" />
-          </td>
-          <td><input v-model="newItem.mdf_dt" class="form-control" placeholder="수정일자" readonly
               style="background-color: #eee;" /></td>
-          <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
-          <td>
-            <button @click="spmInsStdInsert" class="btn btn-primary btn-sm">추가</button>
-          </td>
         </tr>
       </tbody>
     </table>
+    <div class="center-button">
+  <button class="btn btn-primary" @click="spmInsStdInsert">성적서 반영</button>
+</div>
   </div>
 
   <!-- 제품 검색 모달 -->
@@ -378,10 +350,10 @@ export default {
   float: right;
 }
 
-.input-group {
+/* .input-group {
   display: inline-block;
   width: 150px;
-}
+} */
 
 #icon-btn {
   margin-right: 55px;
@@ -397,12 +369,18 @@ export default {
 }
 .middle {
   display: flex;
-  align-items: center;
 }
 .rst{
   width:650px;
-  
+  height:130px;
   border: 1px solid lightgray;
   padding: 10px;
+}
+.center-button {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  height: 50px; /* 버튼 컨테이너 높이 설정 */
+  margin-top: 20px; /* 위쪽 여백 */
 }
 </style>
