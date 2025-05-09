@@ -20,11 +20,13 @@
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no" readonly disabled /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no"
+                  readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품명</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_nm" /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_nm" />
+              </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품유형</th>
@@ -37,19 +39,23 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">유통기한(개월)</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt" min="0" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt"
+                  min="0" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">적정재고량</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" min="0" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control"
+                  v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">생성일자</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control"
+                  :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control"
+                  :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly /></td>
             </tr>
           </tbody>
         </table>
@@ -117,7 +123,7 @@ export default {
     },
     savePrd() {
       if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
-      this.prdUpdate();
+        this.prdUpdate();
       }
     },
     addPrd() {
@@ -126,18 +132,18 @@ export default {
     async deletePrd(prdNo) {
       if (prdNo) {
         if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
-        try {
-          let result = await axios.delete(`/api/prd/${prdNo}`);
-          if (result.data.affectedRows > 0) {
-            alert('정상적으로 삭제되었습니다.');
-            this.$emit('prd-reload');
-            this.prdInfo = {};
-          } else {
-            alert('삭제되지 않았습니다.');
-          }
-        } catch (err) {
-          console.error('제품 삭제 실패:', err);
-          alert('제품 삭제에 실패했습니다.');
+          try {
+            let result = await axios.delete(`/api/prd/${prdNo}`);
+            if (result.data.affectedRows > 0) {
+              alert('정상적으로 삭제되었습니다.');
+              this.$emit('prd-reload');
+              this.prdInfo = {};
+            } else {
+              alert('삭제되지 않았습니다.');
+            }
+          } catch (err) {
+            console.error('제품 삭제 실패:', err);
+            alert('제품 삭제에 실패했습니다.');
           }
         }
       } else {
@@ -151,7 +157,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -161,7 +167,8 @@ export default {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   padding: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -170,7 +177,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -179,7 +187,8 @@ table tr {
   margin-bottom: 1rem;
 }
 
-.form-control:hover, .form-select:hover {
+.form-control:hover,
+.form-select:hover {
   border-color: #86b7fe;
 }
 
@@ -189,7 +198,8 @@ th {
   padding: 0.75rem 0;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   width: 100%;
   max-width: none;
 }
@@ -201,4 +211,4 @@ th {
 td {
   padding: 0.5rem 0;
 }
-</style> 
+</style>

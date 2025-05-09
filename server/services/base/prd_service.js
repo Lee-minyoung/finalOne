@@ -1,5 +1,8 @@
 const mariadb = require("../../database/mapper.js");
-const { convertObjToAry, convertObjToQuery } = require('../../utils/converts.js');
+const {
+  convertObjToAry,
+  convertObjToQuery
+} = require('../../utils/converts.js');
 
 // 다양한 검색조건을 가지는 전체조회
 const findPrdList = async (searchList) => {
@@ -17,28 +20,25 @@ const findPrdOne = async (prdNo) => { // 제품번호
 };
 
 // 추가시 적용되는 제품번호
-const findPrdNo = async() => { // 제품번호
+const findPrdNo = async () => { // 제품번호
   return await mariadb.query("selectPrdNo"); // 제품번호를 기반으로 한 단건조회
 };
 
 // 제품 등록
-const addPrd = async (prdInfo) => { // 제품정보
-  // 제품정보를 배열로 변환하기 위한 컬럼명
-  let insertColumns = ['prd_nm', 'prd_tp', 'exp_dt', 'opt_stk_qty'];
-  let data = convertObjToAry(prdInfo, insertColumns); // 제품정보를 배열로 변환
-  let resInfo = await mariadb.query("insertPrd", data); // 제품정보를 배열로 변환하여 SQL문에 전달
+const addPrd = async (prdInfo) => {
+  try {
+    let insertColumns = ['prd_nm', 'prd_tp', 'exp_dt', 'opt_stk_qty'];
+    let data = convertObjToAry(prdInfo, insertColumns);
+    let resInfo = await mariadb.query("insertPrd", data);
 
-  let result = null;
-  if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1
-    result = {
-      isSuccessed: true,
+    return {
+      isSuccessed: resInfo.affectedRows > 0,
+      message: resInfo.affectedRows > 0 ? '제품이 등록되었습니다.' : '제품 등록에 실패했습니다.'
     };
-  } else { // 결과가 없으면 isSuccessed = false
-    result = {
-      isSuccessed: false,
-    };
+  } catch (err) {
+    console.error('제품 등록 서비스 오류:', err);
+    throw err;
   }
-  return result;
 };
 
 // 제품 수정

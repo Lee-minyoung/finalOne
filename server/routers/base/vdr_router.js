@@ -12,7 +12,7 @@ router.get("/vdr", async (req, res) => { // 전체조회
 });
 
 // 단건조회 => 조건 : vdr_no
-router.get("/vdr/:no", async (req, res) => { 
+router.get("/vdr/:no", async (req, res) => {
   let vdrNo = req.params.no; // 거래처번호
   let vdrInfo = await vdrService.findByVdrNo(vdrNo) // 서비스에서 단건조회 호출
     .catch(err => console.log(err)); // 예외처리
@@ -30,7 +30,7 @@ router.get("/vdrNo", async (req, res) => {
 router.post("/vdr", async (req, res) => {
   let vdrInfo = req.body; // 요청 본문에 있는 데이터를 가져옴
   let result = await vdrService.addNewVdr(vdrInfo) // 서비스에서 거래처 등록 호출
-    .catch(err => console.log(err));  // 예외처리
+    .catch(err => console.log(err)); // 예외처리
   res.send(result); // 응답
 });
 
@@ -44,11 +44,11 @@ router.put("/vdr/:no", async (req, res) => {
 });
 
 // 거래처 삭제
-router.delete("/vdr/:no", async (req, res) => { 
+router.delete("/vdr/:no", async (req, res) => {
   let vdrNo = req.params.no; // 거래처번호
   let resInfo = await vdrService.removeVdrInfo(vdrNo) // 서비스에서 거래처 삭제 호출
     .catch(err => console.log(err));
-  res.send(resInfo); 
+  res.send(resInfo);
 });
 
 

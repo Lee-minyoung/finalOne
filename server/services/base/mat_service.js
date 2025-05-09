@@ -1,5 +1,8 @@
 const mariadb = require("../../database/mapper.js");
-const { convertObjToAry, convertObjToQuery } = require('../../utils/converts.js');
+const {
+  convertObjToAry,
+  convertObjToQuery
+} = require('../../utils/converts.js');
 
 // 다양한 검색조건을 가지는 전체조회
 const findMatList = async (searchList) => {
@@ -27,7 +30,7 @@ const addNewMat = async (matInfo) => { // 자재정보
   let insertColumns = ['mat_nm', 'mat_tp', 'mn_vdr', 'min_ord_qty', 'min_stk_qty', 'unit', 'ld_tm'];
   let data = convertObjToAry(matInfo, insertColumns); // 자재정보를 배열로 변환
   let resInfo = await mariadb.query("insertMat", data); // 자재정보를 배열로 변환하여 SQL문에 전달
-  
+
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1
     result = {

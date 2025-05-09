@@ -1,7 +1,7 @@
 // Table : emp
 // 사원번호를 기준으로 정보 조회 => 로그인
 const findEmpInfoByEmpNo =
-`SELECT e.emp_no
+    `SELECT e.emp_no
         , e.pwd
         , e.nm
         , e.ctt
@@ -14,7 +14,7 @@ WHERE emp_no = ?`;
 
 // 비밀번호 업데이트
 const updatePwd =
-`UPDATE emp
+    `UPDATE emp
 SET pwd = ?
 WHERE emp_no = ?`;
 

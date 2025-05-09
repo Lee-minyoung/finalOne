@@ -23,7 +23,7 @@ router.get("/mat/:no", async (req, res) => {
 router.get("/matNo", async (req, res) => {
   let matNo = await matService.findMatNo() // 서비스에서 등록 자재번호 조회 호출
     .catch(err => console.log(err)); // 예외처리
-  res.send([{ addMatNo: matNo }]); // 배열 형태로 응답
+  res.send(matNo);
 });
 
 // 자재 등록

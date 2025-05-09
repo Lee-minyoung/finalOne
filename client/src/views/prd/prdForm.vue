@@ -17,11 +17,13 @@
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no" readonly /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no"
+                  readonly /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품명</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_nm" /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_nm" />
+              </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">제품유형</th>
@@ -35,11 +37,13 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">유통기한(개월)</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.exp_dt" />
+              </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">적정재고량</th>
-              <td colspan="3" style="border:none;"><input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" min="0" /></td>
+              <td colspan="3" style="border:none;"><input type="number" class="form-control"
+                  v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
           </tbody>
         </table>
@@ -53,7 +57,7 @@ import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
 import CommonCodeFormat from '@/utils/useCommonCode.js'
 
-export default {
+export default { // 제품 등록/수정 폼 컴포넌트
   data() {
     return {
       prdInfo: {
@@ -74,11 +78,11 @@ export default {
     },
     async getPrdNo() {
       try {
-        let result = await axios.get('/api/prd/no');
-        this.prdInfo.prd_no = result.data.addPrdNo;
+        let result = await axios.get('/api/prdNo');
+        this.prdInfo.prd_no = 'P-' + (result.data[0].addPrdNo).padStart(3, '0');
       } catch (err) {
         console.error('제품번호 조회 실패:', err);
-        alert('제품번호를 불러오는데 실패했습니다.');
+        alert('제품번호를 가져오는데 실패했습니다.');
       }
     },
     async savePrd() {
@@ -90,12 +94,12 @@ export default {
         }
 
         let result = await axios.post('/api/prd', this.prdInfo);
-        if (result.data.success) {
+        if (result.data.isSuccessed) {
           alert('등록되었습니다.');
           this.$emit('prd-reload');
           this.$emit('goToInfo', true);
         } else {
-          alert(result.data.message || '등록되지 않았습니다.\n데이터를 확인해보세요.');
+          alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
         }
       } catch (err) {
         console.error('제품 등록 실패:', err);
@@ -116,7 +120,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -126,7 +130,8 @@ export default {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   padding: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -135,7 +140,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -144,7 +150,8 @@ table tr {
   margin-bottom: 1rem;
 }
 
-.form-control:hover, .form-select:hover {
+.form-control:hover,
+.form-select:hover {
   border-color: #86b7fe;
 }
 
@@ -154,7 +161,8 @@ th {
   padding: 0.75rem 0;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   width: 100%;
   max-width: none;
 }
@@ -166,4 +174,18 @@ th {
 td {
   padding: 0.5rem 0;
 }
-</style> 
+
+/* readonly와 disabled 입력창 스타일 */
+input[readonly],
+input[disabled] {
+  background-color: #e9ecef !important;
+  cursor: not-allowed;
+}
+
+input[readonly]:focus,
+input[disabled]:focus {
+  background-color: #e9ecef !important;
+  border-color: #ced4da;
+  box-shadow: none;
+}
+</style>

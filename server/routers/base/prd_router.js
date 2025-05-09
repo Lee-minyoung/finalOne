@@ -12,7 +12,7 @@ router.get('/prd', async (req, res) => { // 전체조회
 });
 
 // 단건조회 => 조건 : prd_no
-router.get('/prd/:no', async (req, res) => { 
+router.get('/prd/:no', async (req, res) => {
   let prdNo = req.params.no; // 제품번호
   let prdInfo = await prdService.findPrdOne(prdNo) // 서비스에서 단건조회 호출
     .catch(err => console.log(err)); // 예외처리
@@ -28,10 +28,17 @@ router.get('/prdNo', async (req, res) => {
 
 // 제품 등록
 router.post('/prd', async (req, res) => {
-  let prdInfo = req.body; // 요청 본문에 있는 데이터를 가져옴
-  let result = await prdService.addPrd(prdInfo) // 서비스에서 제품 등록 호출
-    .catch(err => console.log(err));  // 예외처리
-  res.send(result); // 응답
+  try {
+    let prdInfo = req.body;
+    let result = await prdService.addPrd(prdInfo);
+    res.send(result);
+  } catch (err) {
+    console.error('제품 등록 라우터 오류:', err);
+    res.status(500).json({
+      isSuccessed: false,
+      message: '제품 등록 중 오류가 발생했습니다.'
+    });
+  }
 });
 
 // 제품 수정
@@ -44,11 +51,11 @@ router.put('/prd/:no', async (req, res) => {
 });
 
 // 제품 삭제
-router.delete('/prd/:no', async (req, res) => { 
+router.delete('/prd/:no', async (req, res) => {
   let prdNo = req.params.no; // 제품번호
   let resInfo = await prdService.removePrd(prdNo) // 서비스에서 제품 삭제 호출
     .catch(err => console.log(err));
-  res.send(resInfo); 
+  res.send(resInfo);
 });
 
 module.exports = router

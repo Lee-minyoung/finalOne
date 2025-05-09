@@ -1,6 +1,6 @@
 // 로그인 관련 서비스 모듈
-const mariadb = require("../database/mapper.js");
-const { createHashedPassword } = require('../utils/crypto.js');
+const mariadb = require("../../database/mapper.js");
+const { createHashedPassword } = require('../../utils/crypto.js');
 
 // 로그인 서비스 객체 생성
 const loginService = {

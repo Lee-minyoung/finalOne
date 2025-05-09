@@ -20,13 +20,8 @@
                     <span class="input-group-text">
                       <i class="bi bi-person"></i>
                     </span>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="findInfo.emp_no" 
-                      placeholder="사원번호"
-                      autocomplete="emp_no" 
-                    />
+                    <input type="text" class="form-control form-control-lg bg-light small-placeholder"
+                      v-model="findInfo.emp_no" placeholder="사원번호" autocomplete="emp_no" />
                   </div>
                 </div>
 
@@ -36,13 +31,8 @@
                     <span class="input-group-text">
                       <i class="bi bi-person-badge"></i>
                     </span>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-lg bg-light small-placeholder" 
-                      v-model="findInfo.nm" 
-                      placeholder="이름"
-                      autocomplete="name" 
-                    />
+                    <input type="text" class="form-control form-control-lg bg-light small-placeholder"
+                      v-model="findInfo.nm" placeholder="이름" autocomplete="name" />
                   </div>
                 </div>
 
@@ -129,6 +119,7 @@ export default {
   color: #0D6EFD;
   font-size: 0.875rem;
 }
+
 .btn-link:hover {
   color: #0a58ca;
 }
@@ -137,6 +128,7 @@ export default {
 .card {
   transition: transform 0.2s;
 }
+
 .card:hover {
   transform: translateY(-5px);
 }

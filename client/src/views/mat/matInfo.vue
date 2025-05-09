@@ -17,11 +17,13 @@
           <tbody>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">자재번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_no" readonly disabled /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_no"
+                  readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">자재명</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_nm" /></td>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_nm" />
+              </td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">자재유형</th>
@@ -44,21 +46,27 @@
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">최소주문량</th>
-              <td style="border:none; padding-right:20px;"><input type="number" class="form-control" v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
+              <td style="border:none; padding-right:20px;"><input type="number" class="form-control"
+                  v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">최소재고량</th>
-              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0" style="max-width: 300px; width:100%;" /></td>
+              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0"
+                  style="max-width: 300px; width:100%;" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">단위</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control"
+                  v-model="matInfo.unit" style="max-width: 300px; width:100%;" /></td>
               <th style="width: 20%; min-width: 120px; border:none;">리드타임(일)</th>
-              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0" style="max-width: 300px; width:100%;" /></td>
+              <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0"
+                  style="max-width: 300px; width:100%;" /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
-              <td style="border:none; padding-right:20px;"><input type="text" class="form-control" :value="dateFormat(matInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
+              <td style="border:none; padding-right:20px;"><input type="text" class="form-control"
+                  :value="dateFormat(matInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
               <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-              <td style="border:none;"><input type="text" class="form-control" :value="dateFormat(matInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></td>
+              <td style="border:none;"><input type="text" class="form-control"
+                  :value="dateFormat(matInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></td>
             </tr>
           </tbody>
         </table>
@@ -111,17 +119,17 @@ export default {
         let result = await axios.get(`/api/mat/${matNo}`);
         if (result.data) {
           console.log('서버에서 받은 자재 정보:', result.data);
-          
+
           // 자재유형 문자열을 코드값으로 변환
           const matTypeMap = {
             '원재료': 'b1',
             '부재료': 'b2',
             '소모품': 'b3'
           };
-          
+
           const matInfo = { ...result.data };
           matInfo.mat_tp = matTypeMap[result.data.mat_tp] || result.data.mat_tp;
-          
+
           this.matInfo = matInfo;
           console.log('설정된 자재 정보:', this.matInfo);
         } else {
@@ -174,7 +182,7 @@ export default {
     },
     saveMat() {
       if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {
-      this.matUpdate();
+        this.matUpdate();
       }
     },
     addMat() {
@@ -183,18 +191,18 @@ export default {
     async deleteMat(matNo) {
       if (matNo) {
         if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
-        try {
-          let result = await axios.delete(`/api/mat/${matNo}`);
-          let sqlRes = result.data;
-          if (sqlRes.affectedRows > 0) {
-            alert('정상적으로 삭제되었습니다.');
-            this.$emit('mat-reload');
-          } else {
-            alert('삭제되지 않았습니다.');
-          }
-        } catch (err) {
-          console.error('자재 삭제 중 오류 발생:', err);
-          alert('자재 삭제 중 오류가 발생했습니다.');
+          try {
+            let result = await axios.delete(`/api/mat/${matNo}`);
+            let sqlRes = result.data;
+            if (sqlRes.affectedRows > 0) {
+              alert('정상적으로 삭제되었습니다.');
+              this.$emit('mat-reload');
+            } else {
+              alert('삭제되지 않았습니다.');
+            }
+          } catch (err) {
+            console.error('자재 삭제 중 오류 발생:', err);
+            alert('자재 삭제 중 오류가 발생했습니다.');
           }
         }
       } else {
@@ -207,7 +215,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -218,7 +226,8 @@ export default {
 }
 
 /* 입력 필드 스타일 개선 */
-.form-control, .form-select {
+.form-control,
+.form-select {
   padding: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -227,7 +236,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -238,7 +248,8 @@ table tr {
 }
 
 /* 입력 필드 hover 효과 */
-.form-control:hover, .form-select:hover {
+.form-control:hover,
+.form-select:hover {
   border-color: #86b7fe;
 }
 
@@ -250,7 +261,8 @@ th {
 }
 
 /* 입력 필드 너비 조정 */
-.form-control, .form-select {
+.form-control,
+.form-select {
   width: 100%;
   max-width: none;
 }
@@ -264,4 +276,4 @@ th {
 td {
   padding: 0.5rem 0;
 }
-</style> 
+</style>

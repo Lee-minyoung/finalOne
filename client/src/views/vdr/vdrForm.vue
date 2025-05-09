@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between mb-3">
       <div></div>
       <div>
-        <button class="btn btn-warning me-2" @click="resetForm">등록</button>
+        <button class="btn btn-warning me-2" @click="resetForm">초기화</button>
         <button class="btn btn-success" @click="saveVdr">저장</button>
       </div>
     </div>
@@ -16,33 +16,53 @@
       <table class="align-middle" style="border:none;width:100%;">
         <tbody>
           <tr class="mb-3">
+            <th style="width: 20%; min-width: 120px; border:none;">거래처번호</th>
+            <td colspan="3" style="border:none;">
+              <div class="d-flex align-items-center">
+                <input type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled
+                  style="max-width: 400px; width:100%;" />
+              </div>
+            </td>
+          </tr>
+          <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">사업자등록번호</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.biz_reg_no" style="max-width: 400px; width:100%;" /></td>
+            <td colspan="3" style="border:none;">
+              <div class="d-flex align-items-center">
+                <input type="text" class="form-control" v-model="vdrInfo.biz_reg_no"
+                  style="max-width: 400px; width:100%;" />
+              </div>
+            </td>
           </tr>
           <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">상호명</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control" v-model="vdrInfo.cpy_nm" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:40px;"><input type="text" class="form-control"
+                v-model="vdrInfo.cpy_nm" style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">대표자명</th>
-            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ceo_nm" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ceo_nm"
+                style="max-width: 300px; width:100%;" /></td>
           </tr>
           <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">사업장소재지</th>
             <td colspan="3" style="border:none;">
               <div class="d-flex gap-2 align-items-center" style="max-width: 400px; width:100%;">
                 <input type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly style="height: 38px;" />
-                <button class="btn btn-primary" @click="openDaumPostcode" style="height: 38px; min-width: 90px; font-size: 0.9rem; padding: 0 10px;">주소 검색</button>
+                <button class="btn btn-primary" @click="openDaumPostcode"
+                  style="height: 38px; min-width: 90px; font-size: 0.9rem; padding: 0 10px;">주소 검색</button>
               </div>
             </td>
           </tr>
           <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">사업장연락처</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt" style="max-width: 400px; width:100%;" /></td>
+            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt"
+                style="max-width: 400px; width:100%;" /></td>
           </tr>
           <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">담당자</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control" v-model="vdrInfo.mgr_nm" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none; padding-right:40px;"><input type="text" class="form-control"
+                v-model="vdrInfo.mgr_nm" style="max-width: 300px; width:100%;" /></td>
             <th style="width: 20%; min-width: 120px; border:none;">담당자연락처</th>
-            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.mgr_ctt" style="max-width: 300px; width:100%;" /></td>
+            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.mgr_ctt"
+                style="max-width: 300px; width:100%;" /></td>
           </tr>
           <tr class="mb-3">
             <th style="width: 20%; min-width: 120px; border:none;">사업장유형</th>
@@ -64,18 +84,18 @@
             </td>
           </tr>
           <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
-              <td colspan="3" style="border:none;">
-                <select class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
-                  <option value="f1">여</option>
-                  <option value="f2">부</option>
-                </select>
-              </td>
-            </tr>
+            <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
+            <td colspan="3" style="border:none;">
+              <select class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
+                <option value="f1">여</option>
+                <option value="f2">부</option>
+              </select>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div> <!-- 우측 상세보기 영역 끝 -->
-  </div> <!-- 우측 영역 끝 -->    
+  </div> <!-- 우측 영역 끝 -->
 </template>
 
 <script>
@@ -84,7 +104,7 @@ import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
 import CommonCodeFormat from '@/utils/useCommonCode.js'
 
-export default { 
+export default {
   /**
    * 거래처 등록 컴포넌트
    * - 새로운 거래처 정보를 입력하고 등록하는 기능 제공
@@ -97,6 +117,7 @@ export default {
       vdrNo: '', // 거래처 번호
       today: '', // 오늘 날짜
       vdrInfo: {
+        vdr_no: '', // 거래처 번호
         cpy_nm: '', // 상호명
         ceo_nm: '', // 대표자명
         biz_reg_no: '', // 사업자등록번호
@@ -110,7 +131,7 @@ export default {
       },
     };
   },
-  created() { 
+  created() {
     this.getVdrNo(); // 거래처 번호 조회
     this.getToday(); // 오늘 날짜 설정
   },
@@ -157,15 +178,23 @@ export default {
      * - API 호출을 통해 새로운 거래처 번호를 받아옴
      * - 조회 실패 시 에러 메시지 표시
      */
+
     async getVdrNo() {
-      try {
-        let result = await axios.get('/api/vdrNo');
-        this.vdrNo = result.data[0].addVdrNo;
-      } catch (err) {
-        console.error('거래처번호 조회 실패:', err);
-        alert('거래처번호를 불러오는데 실패했습니다.');
-      }
+      let result = await axios.get(`/api/vdrNo`)
+        .catch(err => console.log(err));
+      console.log(result);
+      this.vdrInfo.vdr_no = result.data[0].addVdrNo;
     },
+
+    // async getVdrNo() {
+    //   try {
+    //     let result = await axios.get('/api/vdrNo');
+    //     this.vdrNo = result.data[0].addVdrNo;
+    //   } catch (err) {
+    //     console.error('거래처번호 조회 실패:', err);
+    //     alert('거래처번호를 가져오는데 실패했습니다.');
+    //   }
+    // },
 
     /**
      * 입력 폼 초기화
@@ -174,6 +203,7 @@ export default {
      */
     resetForm() {
       this.vdrInfo = {
+        vdr_no: '', // 거래처 번호
         cpy_nm: '',
         ceo_nm: '',
         biz_reg_no: '',
@@ -185,6 +215,7 @@ export default {
         mgr_ctt: '',
         use_yn: 'f1'
       };
+      this.getVdrNo(); // 거래처 번호 다시 조회
     },
 
     /**
@@ -238,9 +269,9 @@ export default {
     },
   }
 };
-</script> 
+</script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -251,7 +282,8 @@ export default {
 }
 
 /* 입력 필드 스타일 개선 */
-.form-control, .form-select {
+.form-control,
+.form-select {
   padding: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -260,7 +292,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -271,7 +304,8 @@ table tr {
 }
 
 /* 입력 필드 hover 효과 */
-.form-control:hover, .form-select:hover {
+.form-control:hover,
+.form-select:hover {
   border-color: #86b7fe;
 }
 
@@ -280,5 +314,41 @@ th {
   font-weight: 500;
   color: #495057;
   padding: 0.75rem 0;
+}
+
+/* 입력 필드 너비 조정 */
+.form-control,
+.form-select {
+  width: 100%;
+  max-width: none;
+}
+
+/* 카드 내부 여백 조정 */
+.card {
+  padding: 1.5rem;
+}
+
+/* 테이블 셀 패딩 조정 */
+td {
+  padding: 0.5rem 0;
+}
+
+/* 행 간 높이 조정 */
+table tr {
+  height: 45px;
+}
+
+/* readonly와 disabled 입력창 스타일 */
+input[readonly],
+input[disabled] {
+  background-color: #e9ecef !important;
+  cursor: not-allowed;
+}
+
+input[readonly]:focus,
+input[disabled]:focus {
+  background-color: #e9ecef !important;
+  border-color: #ced4da;
+  box-shadow: none;
 }
 </style>
