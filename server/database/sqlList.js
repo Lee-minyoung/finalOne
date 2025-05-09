@@ -12,7 +12,6 @@ const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const lineProgress = require('./sqls/LineProgress.js') // 라인 진행 상태
 const purOrdInst=require('./sqls/purOrdInst.js'); 
 
-
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
 const emp = require('./sqls/emp.js'); // 사원
