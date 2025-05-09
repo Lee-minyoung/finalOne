@@ -48,13 +48,16 @@ const selectLineList =
       , lo.ord_qty
       , lo.pdn_qty
       , lo.dft_qty
-   FROM ln l
-   LEFT JOIN prd p ON l.prd_no = p.prd_no
-   LEFT JOIN ln_dtl ld ON l.ln_no = ld.ln_no
-   LEFT JOIN ln_opr_dt lod ON ld.ln_dtl_no = lod.ln_dtl_no
-   LEFT JOIN ln_opr lo ON lod.ln_opr_no = lo.ln_opr_no
+   FROM ln_opr lo
+   LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
+   LEFT JOIN ln l ON pod.ln_no = l.ln_no
+   LEFT JOIN prd p ON pod.prd_no = p.prd_no
    ORDER BY l.ln_no;`
 
+  //  LEFT JOIN prd p ON l.prd_no = p.prd_no
+  //  LEFT JOIN ln_dtl ld ON l.ln_no = ld.ln_no
+  //  LEFT JOIN ln_opr_dt lod ON ld.ln_dtl_no = lod.ln_dtl_no
+  //  LEFT JOIN ln_opr lo ON lod.ln_opr_no = lo.ln_opr_no
 
 const updateLinePreparing =
 `CALL line_preparing(?, ?)`;
