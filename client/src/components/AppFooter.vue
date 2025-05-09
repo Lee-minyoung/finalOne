@@ -7,7 +7,11 @@
     </div>
     <div class="ms-auto">
       <span class="me-1" target="_blank">Powered by</span>
+<<<<<<< .merge_file_2UXP1K
       <a href="https://coreui.io/vue">MES 프로젝트 밥먹고하시조</a>
+=======
+      <a href="https://coreui.io/vue">MES 프로젝트 밥먹고합시조</a>
+>>>>>>> .merge_file_obiio2
     </div>
   </CFooter>
 </template>
