@@ -71,31 +71,6 @@
       </div>
     </div>
 
-    <!-- <table class="table table-striped table-hover">
-      <thead class="table-light">
-        <tr>
-          <th>자재ID</th>
-          <th>자재명</th>
-          <th>수량</th>
-          <th>단가</th>
-          <th>총가격</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Otto</td>
-          <td>100</td>
-          <td>1200</td>
-          <td>120000</td>
-        </tr>
-      </tbody>
-    </table> -->
-
-
-
-
-
     <mat-select-modal
       v-if="showModal"
       :mat-list="mat"
@@ -124,7 +99,6 @@
       <th scope="col">총가격</th>
       <th scope="col">도착예정일</th>
       <th scope="col">거래처</th>
-      <th scope="col">생산계획</th>
       <th scope="col">발주</th>            
     </tr>
   </thead>
@@ -174,7 +148,7 @@ data() {
    qty:0,  
    purDt:'',
    crtDt:new Date().toISOString().slice(0, 10),
-   inventoryPurPlan:[],
+   matPurPlanChecked:[],
   }
 },
 async created(){
@@ -210,13 +184,13 @@ methods:{
   }, 
   async saveOrder() {
   const payload = {
-    vdr_no: this.selectVdr?.vdr_no,  // 거래처번호
-    crt_dt:this.crtDt,     
+    vdr_no: this.selectVdr?.vdr_no,       // 거래처번호
+    crt_dt:this.crtDt,                    
     pur_dt: this.purDt,                   // 발주일자
     mat_no: this.selectMats[0]?.mat_no,   // 자재번호
     qty: this.qty,                        // 수량
-    prc: this.selectMats[0]?.prc,     // 단가
-    total: this.totalPrc                  // 총가격 (computed)
+    prc: this.selectMats[0]?.prc,         // 단가
+    total: this.totalPrc                  // 총가격(computed)
   };
 
   try {
@@ -228,20 +202,15 @@ methods:{
 }, 
 async fetchInventoryPurPlan(){
     try{
-      const result=await axios.get('/api/inventory/matPurPlan')
-      this.inventoryPurPlan=result.data; 
+      const result=await axios.get('/api/getPurPlnChecked')
+      this.matPurPlanChecked=result.data; 
+      console.log('matPurPlanChecked',this.matPurPlanChecked); 
     }catch(error){
       console.log('자재구매계획 실패',error); 
     }
-
-   }, 
-   
-
-
+   },    
 }, 
 
-// created() {
-//   this.getOrdList()
-// },
+
 }
 </script>

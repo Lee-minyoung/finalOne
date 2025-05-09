@@ -8,7 +8,7 @@ const insertPurPlnByBtnClick=
  VALUES (?,?,?,?,?,?,?)`;
  //c3으로수정  
  const updateMatPrcToC3=
- `UPDATE mat_pln_req 
+ `UPDATE mat_rls_req 
   SET  prc_rslt='c3'
   WHERE mat_req_no= ? 
   AND mat_no= ?`; 
@@ -22,9 +22,25 @@ const selectMatPurPlanChecked=
  GROUP BY mpp.mat_no, DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")
  ORDER BY DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")`;
 
+ //자재출고요청 -> q1(출고요청) 인지 ,q2(출고완료) 인지조회 
+ const selectMatStsChkq1q2=
+ `SELECT mat_ins_sts AS 자재출고처리
+FROM mat_rls_req
+WHERE mat_req_no=?
+AND mat_no=?`; 
+//자재구매계획 -> 발주로 넘어간 자재구매계획번호 조회  
+const selectPurPlnToPurOldNo=`
+SELECT DISTINCT p.mat_pur_pln_no AS 계획ID 
+FROM pur_ord p
+JOIN mat_pur_pln mpp ON p.mat_pur_pln_no=mpp.mat_pur_pln_no`;
+
+
+
 module.exports={
     insertPurOrdNoPlnNo,
     insertPurPlnByBtnClick,
     updateMatPrcToC3,
     selectMatPurPlanChecked, 
+    selectMatStsChkq1q2,
+    selectPurPlnToPurOldNo,  
 }

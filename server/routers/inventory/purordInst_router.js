@@ -59,8 +59,19 @@ const findNextCode = (lastCode) => {
     const baseCode = Number(lastCode ?? 0);
     return baseCode + 1;
   };
-
-
+//출고요청 확인 q1 인지 q2 인지 
+router.get('/MatStatus',async(req,res)=>{
+  const {reqId,matId}=req.query;
+  const q=await purOrdInstService.chkMatStsq1q2(reqId,matId)
+                    .catch(err=>console.log(err)); 
+      res.json(q);       
+})
+// 자재 -> 발주 처리된 자재구매계획번호 조회 
+router.get('/PlnToOrd',async(req,res)=>{
+  const plnToOrd=await purOrdInstService.findPlnToOrd()
+                        .catch(err=>console.log(err))
+      res.json(plnToOrd); 
+})
 
 
 
