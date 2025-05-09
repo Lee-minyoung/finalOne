@@ -97,12 +97,15 @@ export default {
       let result = await axios.get('/api/emp')
         .catch(err => console.log(err));
       this.empList = result.data; // empList배열에 결과값 담음
-      this.selectedEmp = null; // 선택된 사원 초기화
+      
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectEmp(empNo) { // 리스트에서 선택한 emp정보를 selectedEmp에 저장(상세보기에 표시될 사원 데이터)
-      this.InfoView = true;
+    async selectEmp(empNo) { // 리스트에서 선택한 emp정보를 selectedEmp에 저장(상세보기에 표시될 사원 데이터)
       const emp = this.empList.find(emp => emp.emp_no === empNo);
+      // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+      this.InfoView = true;
+      // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+      await this.$nextTick();
       this.selectedEmp = emp;  // 클릭한 사원을 selectedEmp에 저장
     },
     msg(data) {
