@@ -64,4 +64,12 @@ router.delete('/proc/:no', async (req, res) => {
   res.send(resInfo);
 });
 
+// 라인에서 사용하고 있는 공정인지 확인 (조건 : 제품번호)
+router.get('/useLine/:no', async (req, res) => {
+  let prdNo = req.params.no;
+  let resInfo = await procService.findUseLine(prdNo)
+    .catch(err => console.log(err));
+  res.send(resInfo);
+});
+
 module.exports = router

@@ -7,11 +7,6 @@
         <!-- 좌측 검색 및 필터 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
           <input type="text" class="form-control w-50" placeholder="부서명 검색..." v-model="searchQuery" />
-          <!-- <select class="form-select w-25" v-model="selectedFilter">
-              <option value="">전체</option>
-              <option value="토끼부">토끼부</option>
-              <option value="거북이부">거북이부</option>
-            </select> -->
         </div> <!-- 좌측 검색 및 필터 영역 끝 -->
         <!-- 좌측 리스트 영역 시작 -->
         <div class="card p-3">
@@ -28,7 +23,7 @@
               </thead>
               <tbody>
                 <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)"
-                  class="table-hover">
+                  :class="{ 'table-primary': selectedDept && selectedDept.dept_no === dept.dept_no }" class="table-hover">
                   <td>{{ dept.dept_no }}</td>
                   <td>{{ dept.dept_nm }}</td>
                   <td>{{ dept.nm }}</td>
@@ -98,6 +93,7 @@ export default {
       let result = await axios.get('/api/dept')
         .catch(err => console.log(err));
       this.deptList = result.data; //deptList배열에 결과값 담음
+      this.selectedDept = null;
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     selectDept(deptNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)

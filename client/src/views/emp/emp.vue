@@ -97,7 +97,7 @@ export default {
       let result = await axios.get('/api/emp')
         .catch(err => console.log(err));
       this.empList = result.data; // empList배열에 결과값 담음
-      this.selectedLn = null; // 선택된 사원 초기화
+      this.selectedEmp = null; // 선택된 사원 초기화
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     selectEmp(empNo) { // 리스트에서 선택한 emp정보를 selectedEmp에 저장(상세보기에 표시될 사원 데이터)
@@ -108,7 +108,7 @@ export default {
     msg(data) {
       this.InfoView = data;
       if (!data) {
-        this.selectedLn = null; // lnForm이 활성화되면 선택된 라인 초기화
+        this.selectedEmp = null; // lnForm이 활성화되면 선택된 라인 초기화
       }
     }
   }

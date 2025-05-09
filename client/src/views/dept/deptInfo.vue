@@ -18,7 +18,7 @@
       <div v-if="dept"> <!-- 리스트에서 선택된 데이터가 있을 때 -->
         <div>
           <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_no" readonly />
+          <input type="text" class="form-control" v-model="deptInfo.dept_no" readonly disabled />
           <label class="form-label">부서명</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
@@ -33,9 +33,9 @@
             <option value="f2">부</option>
           </select>
           <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="formattedCrtDt" readonly />
+          <input type="text" class="form-control" v-model="formattedCrtDt" readonly disabled />
           <label class="form-label">수정일자</label>
-          <input type="text" class="form-control" v-model="formattedMdfDt" readonly />
+          <input type="text" class="form-control" v-model="formattedMdfDt" readonly disabled />
         </div>
       </div>
       <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->
@@ -43,8 +43,8 @@
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
 
-    <empSelectModal v-if="showEmpModal" :empList="empList" :selected="deptInfo.dept_mgr"
-    @select-emp="handleSelectedEmp" @close="showEmpModal = false" />
+    <empSelectModal v-if="showEmpModal" :empList="empList" :selected="deptInfo.dept_mgr" @select-emp="handleSelectedEmp"
+      @close="showEmpModal = false" />
 
   </div>
 </template>
@@ -73,7 +73,6 @@ export default {
   watch: {
     dept() {
       let searchNo = this.dept;
-      console.log(searchNo.dept_no);
       this.getDeptInfo(searchNo.dept_no);
     }
   },
