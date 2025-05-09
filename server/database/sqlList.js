@@ -9,6 +9,7 @@ const productionInst=require('./sqls/productionInst.js')
 const login=require('./sqls/login.js'); 
 
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
+const lineProgress = require('./sqls/LineProgress.js') // 라인 진행 상태
 const purOrdInst=require('./sqls/purOrdInst.js'); 
 
 
@@ -34,6 +35,7 @@ module.exports = {
     ...prodeuctinPlan,//생산계획, 지시
     ...productionInst,
     ...lineManagement,//라인관리
+    ...lineProgress,//라인진행상태
     ...login,
     
     ...vdr, 
