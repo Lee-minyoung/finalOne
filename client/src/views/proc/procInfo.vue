@@ -120,19 +120,22 @@ export default {
       useLine: [], // 해당공정을 사용하고 있는 라인의 정보
     };
   },
-  watch: {
-    proc() {
-      if (this.proc) { // proc이 null이 아닌 경우에만 실행
-        let searchNo = this.proc;
-        this.getProcList(searchNo.proc_no);
-      } else {
-        // proc이 null인 경우 데이터를 초기화
-        this.proc_no = '';
-        this.proc_nm = '';
-        this.prd_no = '';
-        this.prd_nm = '';
-        this.procRows = [];
-      }
+  watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
+    // watch는 특정 데이터의 변화를 감시
+    // handler는 그 감시하던 데이터가 변경될 때 실행되는 함수(콜백 함수)
+    proc: { // dept props의 변화를 감시, props로 받은 dept 값이 변경될 때마다 실행
+      handler(newVal) { // dept 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 dept 값
+        if (newVal) {
+          this.getProcList(newVal.proc_no);
+        } else {
+          this.proc_no = '';
+          this.proc_nm = '';
+          this.prd_no = '';
+          this.prd_nm = '';
+          this.procRows = [];
+        }
+      },
+      immediate: true //이 옵션이 있으면 컴포넌트가 처음 생성될 때도 watch 핸들러를 즉시 실행
     }
   },
   methods: {
@@ -181,7 +184,7 @@ export default {
 
         if (result.data.message === '수정 완료') {
           alert('수정되었습니다.');
-          this.$emit('bom-reload');
+          this.$emit('proc-reload');
           await this.getProcList(this.proc_no);
         } else {
           throw new Error('서버 응답이 올바르지 않습니다.');
@@ -232,6 +235,12 @@ export default {
             let sqlResult = sqlRes.affectedRows;
             if (sqlResult > 0) {
               alert('정상적으로 삭제되었습니다.');
+              this.proc_no = '';
+              this.proc_nm = '';
+              this.prd_no = '';
+              this.prd_nm = '';
+              this.procRows = [];
+              this.$emit('clear-selection'); // 선택된 부서 초기화
               this.$emit('proc-reload');
             } else {
               alert('삭제되지 않았습니다.');

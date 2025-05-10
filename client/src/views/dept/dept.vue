@@ -23,7 +23,8 @@
               </thead>
               <tbody>
                 <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)"
-                  :class="{ 'table-primary': selectedDept && selectedDept.dept_no === dept.dept_no }" class="table-hover">
+                  :class="{ 'table-primary': selectedDept && selectedDept.dept_no === dept.dept_no }"
+                  class="table-hover">
                   <td>{{ dept.dept_no }}</td>
                   <td>{{ dept.dept_nm }}</td>
                   <td>{{ dept.nm }}</td>
@@ -66,11 +67,6 @@ export default {
       InfoView: true,
     };
   },
-  // watch: {
-  //   List() {
-  //     this.getDeptList();
-  //   }
-  // },
   computed: {
     filteredDeptList() { // 필터된 DeptList 보여줌
       return this.deptList.filter(dept =>
@@ -93,20 +89,25 @@ export default {
       let result = await axios.get('/api/dept')
         .catch(err => console.log(err));
       this.deptList = result.data; //deptList배열에 결과값 담음
-      this.selectedDept = null;
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectDept(deptNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
-      this.InfoView = true;
-      const dept = this.deptList.find(dept => dept.dept_no === deptNo);
-      console.log(dept);
-      this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
+    async selectDept(deptNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
+      try {
+        const dept = this.deptList.find(dept => dept.dept_no === deptNo);
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedDept = dept;  // 클릭한 부서를 selectedDept에 저장
+      } catch (err) {
+        console.error('부서 선택 중 오류 발생:', err);
+      }
     },
-    // goToInfo(deptNo) { // 상세보기 컴포넌트로 전송
-    //   this.$router.push({ name : 'deptInfo', params : { no : deptNo }});
-    // },
     msg(data) {
       this.InfoView = data;
+      if (!data) {
+        this.selectedDept = null; // deptForm이 활성화되면 선택된 라인 초기화
+      }
     }
   }
 };

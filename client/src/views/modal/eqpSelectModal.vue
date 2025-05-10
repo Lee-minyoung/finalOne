@@ -8,7 +8,14 @@
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <input type="text" class="form-control w-25" placeholder="설비명 검색" v-model="search" />
+            <div class="d-flex gap-2" style="width: 450px;">
+              <input type="text" class="form-control" style="width: 60%" placeholder="설비명 검색" v-model="search" />
+              <select class="form-select" style="width: 40%" v-model="selectedFilter">
+                <option value="">전체</option>
+                <option value=true>사용중설비</option>
+                <option value=false>미사용설비</option>
+              </select>
+            </div>
             <button class="btn btn-sm btn-primary" @click="$emit('select-eqp', selectedEqp)">설비 등록</button>
           </div>
           <div class="table-container">
@@ -50,12 +57,19 @@ export default {
     return {
       search: '',
       selectedEqp: null,
+      selectedFilter : "",
     }
   },
   computed: {
     filteredEqp() {
-      if (!this.eqpList) return []
-      return this.eqpList.filter(eqp => eqp.eqp_nm?.includes(this.search))
+      if (!this.eqpList) return [];
+      return this.eqpList.filter(eqp => {
+        // 검색어 필터링
+        const matchesSearch = !this.search || eqp.eqp_nm.toLowerCase().includes(this.search.toLowerCase());
+        // 사용중/미사용 필터링
+        const matchesFilter = this.selectedFilter === "" || (eqp.ln_nm ? this.selectedFilter === "true" : this.selectedFilter === "false");
+        return matchesSearch && matchesFilter;
+      });
     }
   },
   created() {

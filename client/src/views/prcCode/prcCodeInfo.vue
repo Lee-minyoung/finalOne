@@ -47,10 +47,18 @@ export default {
       prcCodeInfo: {}, // 공정코드 상세정보
     };
   },
-  watch: {
-    prcCode() {
-      let searchNo = this.prcCode;
-      this.getPrcCodeInfo(searchNo.proc_code_no);
+  watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
+    // watch는 특정 데이터의 변화를 감시
+    // handler는 그 감시하던 데이터가 변경될 때 실행되는 함수(콜백 함수)
+    prcCode: { // dept props의 변화를 감시, props로 받은 dept 값이 변경될 때마다 실행
+      handler(newVal) { // dept 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 dept 값
+        if (newVal) {
+          this.getPrcCodeInfo(newVal.proc_code_no);
+        } else {
+          this.prcCodeInfo = {}; // dept가 null일 때 deptInfo 초기화
+        }
+      },
+      immediate: true //이 옵션이 있으면 컴포넌트가 처음 생성될 때도 watch 핸들러를 즉시 실행
     }
   },
   methods: {
@@ -100,6 +108,8 @@ export default {
           if (sqlResult > 0) {
             alert('정상적으로 삭제되었습니다.');
             // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
+            this.prcCodeInfo = {}; // 로컬 데이터 초기화
+            this.$emit('clear-selection'); // 선택된 부서 초기화
             this.$emit('prcCode-reload'); // 전체 목록 새로고침
           } else {
             alert('삭제되지 않았습니다.');

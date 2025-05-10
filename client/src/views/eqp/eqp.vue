@@ -43,7 +43,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <eqpInfo v-if="InfoView" :eqp="selectedEqp" @goToForm="msg" @eqp-reload="getEqpList" />
+      <eqpInfo v-if="InfoView" :eqp="selectedEqp" @goToForm="msg" @eqp-reload="getEqpList"
+        @clear-selection="clearSelection" />
       <eqpForm v-if="!InfoView" @goToInfo="msg" @eqp-reload="getEqpList" />
     </div>
   </div>
@@ -95,15 +96,16 @@ export default {
       let result = await axios.get('/api/eqpList')
         .catch(err => console.log(err));
       this.eqpList = result.data; // eqpList배열에 결과값 담음
-      this.selectedEqp = null; // 선택된 설비 초기화
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     async selectEqp(eqpNo) {
       try {
         const eqp = this.eqpList.find(eqp => eqp.eqp_no === eqpNo);
-        this.InfoView = true; // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
-        await this.$nextTick(); // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
-        this.selectedEqp = eqp;  
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedEqp = eqp;
       } catch (err) {
         console.error('설비 선택 중 오류 발생:', err);
       }
@@ -113,7 +115,10 @@ export default {
       if (!data) {
         this.selectedEqp = null; // lnForm이 활성화되면 선택된 라인 초기화
       }
-    }
+    },
+    clearSelection() {
+      this.selectedEqp = null;
+    },
   }
 };
 </script>
