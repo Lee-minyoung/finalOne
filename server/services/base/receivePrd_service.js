@@ -4,31 +4,36 @@ const {
   convertObjToQuery
 } = require('../../utils/converts.js');
 
-// bom => 다양한 검색조건을 가지는 전체조회
-const findBomList = async (searchList) => {
-  // 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
-  let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariadb.query("selectBomList", searchKeyword);
-  return list;
+// 입고대기 전체조회
+const findWaitSpmInsRsltList = async () => {
+  return await mariadb.query("selectWaitSpmInsRsltList");
 };
 
-// bom 단건 조회 == bom_no을 조건으로한 bom_mat 전체조회
-const findBomMatList = async (bomNo) => {
-  // 검색정보가 넘어온 경우 SQL문에 반영하기 위해 문자열로 변환하는 함수 호출
-  let list = await mariadb.query("selectBomOne", bomNo);
-  return list;
+// 입고완료 전체조회
+const findCompleteSpmInsRsltList = async () => {
+  return await mariadb.query("selectCompleteSpmInsRsltList");
 };
 
-// 추가시 적용되는 BOM번호
-const findBomNo = async () => {
-  return await mariadb.query("selectBomNo");
+// 추가시 적용되는 제품LOT번호
+// 제품 LOT번호 = PRD250510001 = PRD + yyMMdd + 3자리 숫자, 
+const findLotNo = async () => {
+  return await mariadb.query("selectLotNo");
 }
 
-// BOM 등록
-const addNewBom = async (BomInfo) => {
-  let insertColumns = ['prd_no'];
-  let data = convertObjToAry(BomInfo, insertColumns);
-  let resInfo = await mariadb.query("insertBom", data);
+// 제품LOT추가시 생산일자 및 유통기한 조회
+// 조건 : rslt_no (성적서번호)
+// 라인가동번호, 제품번호, 종료시간, 유통기한(개월), 종료시간에서 유통기한 더한 실제 유통기한(시점)
+const findEndTmAndLastDt = async (rsltNo) => {
+  return await mariadb.query("selectEndTmAndLastDt", rsltNo);
+}
+
+// 제품LOT 추가 prd_stk
+// LOT번호, 제품번호, 현재재고(합격수량), 창고번호, 생산일자, 유통기한, 마감여부
+// 창고번호 1로 고정, 마감여부 f2(부) 고정
+const addNewPrdStk = async (prdStkInfo) => {
+  let insertColumns = ['lot_no', 'prd_no', 'cur_stk', 'pdn_dt', 'exp_dt'];
+  let data = convertObjToAry(prdStkInfo, insertColumns);
+  let resInfo = await mariadb.query("insertPrdStk", data);
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1
     result = {
@@ -42,11 +47,18 @@ const addNewBom = async (BomInfo) => {
   return result;
 };
 
-// BOM_MAT 등록 
-const addNewBomMat = async (BomMatInfo) => {
-  let insertColumns = ['bom_no', 'mat_no', 'cap', 'unit', 'rmk'];
-  let data = convertObjToAry(BomMatInfo, insertColumns);
-  let resInfo = await mariadb.query("insertBomMat", data);
+// 추가시 적용되는 제품재고이력번호
+const findPrdStkHistNo = async () => {
+  return await mariadb.query("selectPrdStkHistNo");
+}
+
+// 제품입출고이력 추가 prd_stk_hist
+// 이력번호, LOT번호, 입출고유형, 수량, 날짜, 관련문서
+// 입출고유형은 o2입고로 고정, 날짜는 sysdate()로 고정
+const addNewPrdStkHist = async (prdStkInfo) => {
+  let insertColumns = ['prd_stk_hist_no', 'lot_no', 'qty', 'rel_doc'];
+  let data = convertObjToAry(prdStkInfo, insertColumns);
+  let resInfo = await mariadb.query("insertPrdStkHist", data);
   let result = null;
   if (resInfo.affectedRows > 0) { // 결과가 있으면 affectedRows = 1
     result = {
@@ -60,28 +72,52 @@ const addNewBomMat = async (BomMatInfo) => {
   return result;
 };
 
-const addBomAndBomMat = async (bomInfo, bomMatInfoArray) => {
+const addPrdStkAndPrdStkHist = async (rsltNo, prdStkInfo) => {
   const conn = await mariadb.getConnection();
   try {
     await conn.beginTransaction();
 
-    // 첫번째 쿼리 => bom등록
-    let insertColumns = ['prd_no'];
-    let data = convertObjToAry(bomInfo, insertColumns);
+    // 추가시 적용되는 제품LOT번호
+    // 제품 LOT번호 = PRD250510001 = PRD + yyMMdd + 3자리 숫자
     // 실제 SQL문을 가지고 오는 작업
-    selectedSql = await mariadb.selectedQuery('insertBom', data);
+    let selectedSql = await mariadb.selectedQuery("selectLotNo");
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    await conn.query(selectedSql, data);
+    let lotNo = await conn.query(selectedSql).addLotNo;
 
-    // 두번쨰 쿼리 => bom_mat List등록
-    insertColumns = ['bom_no', 'mat_no', 'cap', 'unit', 'rmk'];
-    for (let i = 0; i < bomMatInfoArray.length; i++) {
-      data = convertObjToAry(bomMatInfoArray[i], insertColumns);
-      // 실제 SQL문을 가지고 오는 작업  
-      selectedSql = await mariadb.selectedQuery("insertBomMat", data);
-      // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-      let insertBomMatList = await conn.query(selectedSql, data);
-    }
+    // 제품LOT추가시 생산일자 및 유통기한 조회
+    // 조건 : rslt_no (성적서번호)
+    // 라인가동번호, 제품번호, 종료시간, 유통기한(개월), 종료시간에서 유통기한 더한 실제 유통기한(시점)
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery("selectEndTmAndLastDt", rsltNo);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    let endTm = await conn.query(selectedSql, rsltNo).end_tm;
+    let lastDt = await conn.query(selectedSql, rsltNo).last_dt;
+
+    // 제품LOT 추가 prd_stk
+    // LOT번호, 제품번호, 현재재고(합격수량), 창고번호, 생산일자, 유통기한, 마감여부
+    // 창고번호 1로 고정, 마감여부 f2(부) 고정
+    let insertColumns = ['prd_no', 'cur_stk'];
+    let data = convertObjToAry(prdStkInfo, insertColumns);
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery('insertPrdStk', lotNo, data, endTm, lastDt);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    await conn.query(selectedSql, lotNo, data, endTm, lastDt);
+
+    // 추가시 적용되는 제품재고이력번호
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery("selectPrdStkHistNo");
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    let PrdStkHistNo = await conn.query(selectedSql).addPrdStkHistNo;
+
+    // 제품입출고이력 추가 prd_stk_hist
+    // 이력번호, LOT번호, 입출고유형, 수량, 날짜, 관련문서
+    // 입출고유형은 o2입고로 고정, 날짜는 sysdate()로 고정
+    insertColumns = ['qty'];
+    data = convertObjToAry(prdStkInfo, insertColumns);
+    // 실제 SQL문을 가지고 오는 작업
+    selectedSql = await mariadb.selectedQuery('insertPrdStkHist', PrdStkHistNo, lotNo, data, rsltNo);
+    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
+    await conn.query(selectedSql, PrdStkHistNo, lotNo, data, rsltNo);
 
     conn.commit();
 
@@ -92,109 +128,15 @@ const addBomAndBomMat = async (bomInfo, bomMatInfoArray) => {
   } finally {
     if (conn) conn.release();
   }
-};
-
-// 기존 BOM정보 수정
-const modifyBomInfo = async (bomNo, bomInfo) => {
-  let data = [bomInfo, bomNo];
-  let resInfo = await mariadb.query("updateBom", data);
-
-  let result = null;
-  if (resInfo.affectedRows > 0) {
-    result = {
-      isUpdated: true,
-      resInfo,
-    };
-  } else {
-    result = {
-      isUpdated: false,
-    };
-  }
-  return result;
-};
-
-// 기존 BOM_MAT정보 수정
-const modifyBomMatInfo = async (bomMatNo, bomInfo, bomNo) => {
-  let data = [bomInfo, bomMatNo, bomNo];
-  let resInfo = await mariadb.query("updateBomMat", data);
-
-  let result = null;
-  if (resInfo.affectedRows > 0) {
-    result = {
-      isUpdated: true,
-      resInfo,
-    };
-  } else {
-    result = {
-      isUpdated: false,
-    };
-  }
-  return result;
-};
-
-const modifyBomAndBomMat = async (bomNo, bomInfo, bomMatInfoArray) => {
-  const conn = await mariadb.getConnection();
-  try {
-    await conn.beginTransaction();
-
-    // 첫번째 쿼리 => bom수정
-    let data = [bomInfo, bomNo];
-    // 실제 SQL문을 가지고 오는 작업
-    selectedSql = await mariadb.selectedQuery("updateBom", data);
-    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    await conn.query(selectedSql, data);
-
-    // 두번째 쿼리 => bom_mat List 삭제 (조건 : bom_no)
-    data = bomNo;
-    // 실제 SQL문을 가지고 오는 작업
-    selectedSql = await mariadb.selectedQuery("deleteBomMatAll", data);
-    // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    await conn.query(selectedSql, data);
-
-    // 세번째 쿼리 => bom_mat List등록
-    insertColumns = ['bom_no', 'mat_no', 'cap', 'unit', 'rmk'];
-    for (let i = 0; i < bomMatInfoArray.length; i++) {
-      data = convertObjToAry(bomMatInfoArray[i], insertColumns);
-      // 실제 SQL문을 가지고 오는 작업  
-      selectedSql = await mariadb.selectedQuery("insertBomMat", data);
-      // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-      await conn.query(selectedSql, data);
-    }
-
-    conn.commit();
-
-    //  에러 뜨면 rollback
-  } catch (err) {
-    if (conn) await conn.rollback();
-    console.error('트랜잭션 롤백:', err);
-  } finally {
-    if (conn) conn.release();
-  }
-};
-
-// BOM 삭제 => BOM을 삭제하면 Bom_no 동일한 Bom_Mat 자동 삭제
-const removeBomInfo = async (bomNo) => {
-  let result = await mariadb.query("deleteBom", bomNo);
-  return result;
-};
-
-// 개별 BOM_MAT 삭제
-const removeBomMatInfo = async (bomMatNo, bomNo) => {
-  let data = [bomMatNo, bomNo];
-  let result = await mariadb.query("deleteBomMat", data);
-  return result;
 };
 
 module.exports = {
-  findBomList,
-  findBomMatList,
-  findBomNo,
-  addNewBom,
-  addNewBomMat,
-  modifyBomInfo,
-  modifyBomMatInfo,
-  removeBomInfo,
-  removeBomMatInfo,
-  addBomAndBomMat,
-  modifyBomAndBomMat
+  findWaitSpmInsRsltList,
+  findCompleteSpmInsRsltList,
+  findLotNo,
+  findEndTmAndLastDt,
+  addNewPrdStk,
+  findPrdStkHistNo,
+  addNewPrdStkHist,
+  addPrdStkAndPrdStkHist,
 };
