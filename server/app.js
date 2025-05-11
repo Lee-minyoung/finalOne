@@ -40,6 +40,11 @@ app.listen(3000, () => {
 const prodPlanRouter = require('./routers/production/productPlan_router.js');
 const prodInstRouter = require('./routers/production/productionInst_router.js');
 const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
+const spmInsRsltRouter = require('./routers/qualitys/spmInsRslt_router.js');
+const incInsStd = require('./routers/qualitys/incInsStd_router.js');
+const incInsRsltRouter = require('./routers/qualitys/incInsRslt_router.js');
+const spmMrkRouter = require('./routers/spm/spmMrk_router.js');
+const spmFnsRouter = require('./routers/spm/spmFns_router.js');
 const salesRouter = require('./routers/sales/sales_router.js');
 const inventoryRouter = require('./routers/inventory/inventory_router.js');
 const lineManagementRouter = require('./routers/production/lineManagement_rouder.js');
@@ -88,6 +93,14 @@ app.use('/', vdrRouter);
 
 //품질 모듈
 app.use('/', spmInsStd);
+app.use('/', spmInsRsltRouter);
+app.use('/', incInsStd);
+app.use('/', incInsRsltRouter);
+
+//출하
+app.use('/', spmMrkRouter);
+app.use('/', spmFnsRouter);
+
 app.use('/', salesRouter);
 
 // 로그인 라우팅

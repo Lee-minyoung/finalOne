@@ -72,6 +72,26 @@ export default [
 
   {
     component: 'CNavGroup',
+    name: '출하',
+    icon: 'cil-layers',
+    visible: true,
+    items: [
+      {
+        component: 'CNavItem',
+        name: '출하표지',
+        to: '/SpmMrk',
+      },
+      {
+        component: 'CNavItem',
+        name: '출고조회',
+        to: '/SpmFns',
+      },
+    ],
+  },
+
+
+  {
+    component: 'CNavGroup',
     name: '품질',
     icon: 'cil-check-circle',
     visible: true,
@@ -85,6 +105,16 @@ export default [
         component: 'CNavItem',
         name: '완제품검사성적서',
         to: '/SpmInsRslt',
+      },
+      {
+        component: 'CNavItem',
+        name: '입고검사기준서',
+        to: '/IncInsStd',
+      },
+      {
+        component: 'CNavItem',
+        name: '입고검사성적서',
+        to: '/IncInsRslt',
       },
     ],
   },
