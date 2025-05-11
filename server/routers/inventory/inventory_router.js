@@ -142,7 +142,7 @@ router.post('/inventory/lotMinus',async(req,res)=>{
    //lot 선택  const lot=await
                 await inventoryService.minusLotCurStk(req_qty,mat_no)
                 await inventoryService.changeMatStsToq2(pln_id); //자재출고처리 q2로변함 
-  
+                inventory/lotMinusList
     
    //
                       
@@ -169,7 +169,6 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
         //   continue;  
         // }
         
-
         for(const lot of lots){
             const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
             await inventoryService.minusCurStkByLot(lot.lot_no,minusQty);

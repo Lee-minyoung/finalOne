@@ -113,6 +113,16 @@ const routes = [
          path:'/MatReq',
         name:'MatReq', 
         component:()=>import('@/views/inventory/matReq.vue')
+      },
+      {
+        path:'/SpmInst',
+        name:'SpmInst', 
+        component:()=>import('@/views/sales/spmInst.vue') 
+      },
+      {
+        path:'/MatImport',
+        name:'MatImport', 
+        component:()=>import('@/views/inventory/matImport.vue')
       }
       //상단 {}를 복사하여 사용하시면 됩니다.   
     ],

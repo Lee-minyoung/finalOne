@@ -64,7 +64,56 @@ router.get('/ord/by-date', async (req, res) => {
   const result = await salesService.findOrdDate(startDate, endDate); // 서비스 함수 호출
   res.send(result);
 });
-// 주문등록 
+//출하지시등록 
+router.post('/addSpm',async(req,res)=>{
+   //출하마지막번호  
+   try{
+   const lastSpmNo = await salesService.findLastSpmNo(); 
+   const nextSpmNo = findNextCode(lastSpmNo);  
+   //출하세부 마지막번호 
+   const lastdtlNo=await salesService.findLastSpmDtlNo();
+   const nextDtlNo=findNextCode(lastdtlNo);  
+ // 사용자가 받아온것
+   const {ord_no,dlv_addr,spm_dt,vdr_no } = req.body;
+   console.log('프론트잘받아오나확인');
+   
+   //수주번호,배송지,출하일자,배송지번호
+   console.log(ord_no,dlv_addr,spm_dt,vdr_no); //잘받아옴 
+
+   const info=await salesService.findSpmInfo(ord_no);
+ //사용자가 선택한 거래처와 기존대표거래처가 다름
+ //사용자가 선택한 거래처로 출하등록을 하겠다는 소리임
+ //
+let vdrNo; 
+//거래처변경 했을경우 기존꺼 말고 다른거래처로 등록가능  
+if(vdr_no!=null){ //사용자가 거래처변경을 한경우 
+    vdrNo=vdr_no.vdr_no;
+}else { //사용자가 거래처변경을 안한경우 
+  vdrNo=info[0].vdr_no; //기존에 있는 거래처로 선택    
+}
+
+
+console.log('거래처번호',vdrNo); 
+ const spmData=[nextSpmNo,ord_no,vdrNo,info[0].emp_no,spm_dt,dlv_addr];
+
+  
+ const unitPrc=100; //가격어디서...? 
+ const dtlData=[nextDtlNo,nextSpmNo,info[0].prd_qty,unitPrc,info[0].prd_no];
+
+  await salesService.addSpmData(spmData)
+  await salesService.addSpmDtlData(dtlData) 
+ res.status(200).json({message:'등록완료',code:nextSpmNo});}
+catch(err){
+    console.error("🔥 등록 중 에러:", err);
+    res.status(500).json({ message: '등록 실패', error: err.message });
+  }
+})
+
+router.get('/ordInfo',async(req,res)=>{
+ const ordNo=req.query.ordNo; 
+ const info= await salesService.findSpmInfo(ordNo);
+ res.json(info);  
+})
 
 
 

@@ -10,7 +10,7 @@ const login=require('./sqls/login.js');
 
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const purOrdInst=require('./sqls/purOrdInst.js'); 
-
+const matImport=require('./sqls/matImport.js'); //자재입고  
 
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
@@ -35,7 +35,7 @@ module.exports = {
     ...productionInst,
     ...lineManagement,//라인관리
     ...login,
-    
+    ...matImport, 
     ...vdr, 
     ...purOrdInst,
     // 기초정보입력

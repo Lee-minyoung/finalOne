@@ -14,6 +14,11 @@ export default [
         name: '수주',
         to: '/SaleList',
       },
+      {
+         component:'CNavItem' , 
+         name:'출하지시',
+         to:'/SpmInst',  
+      }, 
     ],
   },
 
@@ -67,6 +72,11 @@ export default [
         name: '발주서관리',
         to: '/orderForm',
       },
+      {
+        component:'CNavItem', 
+        name:'자재입고처리',
+        to:'/MatImport',
+      }
     ],
   },
 

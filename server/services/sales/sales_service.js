@@ -1,4 +1,6 @@
 const mariadb = require("../../database/mapper.js");
+const mariadbPromise = require('mariadb'); 
+const sqlList = require('../../database/sqlList.js');
 
   //수주,수주 세부 테이블 등록 
   const addOrdData=async (ordData,detailData) =>{
@@ -25,6 +27,16 @@ const mariadb = require("../../database/mapper.js");
      const result = await mariadb.query('selectLastOrdNo'); //1  제대로 가져옴 
      return result[0]?.maxOrdNo || 0; 
    };
+   //출하번호 마지막조회
+ const findLastSpmNo=async()=>{
+  const result=await mariadb.query('selectMaxSpmNo'); 
+  return result[0]?.maxSpmNo || 0; 
+ } 
+ //출하상세 마지막조회 
+ const findLastSpmDtlNo=async()=>{
+  const result=await mariadb.query('selectMaxSpmDtlNo'); 
+  return result[0]?.maxSpmDtlNo || 0; 
+ }   
    
    // 수주세부번호 마지막조회
    const findLastDetail = async () => {
@@ -58,6 +70,43 @@ const findLastPrdCode= async () =>{
   const result=await mariadb.query('selectLastPrd'); 
   return result[0]; 
 } ; 
+//출하지시,출하세부 할때 여러정보 찾기
+const findSpmInfo=async(ordNo)=>{
+  const result=await mariadb.query('selectSpmInfo',ordNo); 
+  return result; 
+} 
+
+const addSpmData=async(spmdata)=>{
+  const result=await mariadb.query('insertSpm', spmdata); 
+  return result; 
+}
+const addSpmDtlData=async(dtlData)=>{
+  const result=await mariadb.query('insertSpmDtl',dtlData);
+  return result;  
+}
+
+
+//왜 안되는지...ㅠㅠㅠ 
+// const addSpmData=async (spmData,dtlData) =>{
+//      const conn = await mariadb.getConnection();
+//     try {
+//       await conn.beginTransaction();
+//        //첫번째 테이블 
+//       await mariadb.query('insertSpm', spmData, conn);
+//       //두번째 테이블  
+//       await mariadb.query('insertSpmDtl',dtlData, conn); 
+
+//       await conn.commit();
+//     } catch(err){
+//       await conn.rollback();
+//       console.error("트랜잭션 실패, 롤백", err);
+//       throw err;
+//     } finally{
+//       conn.release();
+//     }
+//   }; 
+
+
 
   module.exports={
     addOrdData, 
@@ -66,5 +115,11 @@ const findLastPrdCode= async () =>{
     findOrdAll, 
     findLastPrdCode,
     findOrdAllList,
-    findOrdDate, 
+    findOrdDate,
+    findLastSpmNo, 
+    findSpmInfo, 
+    addSpmData,
+    findLastSpmDtlNo, 
+    addSpmDtlData,
+    addSpmData, 
   }
