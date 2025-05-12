@@ -61,9 +61,7 @@
             <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
             <td style="border:none; padding-right:40px;"><input type="text" class="form-control" :value="today" readonly
                 style="max-width: 300px; width:100%;" /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-            <td style="border:none;"><input type="text" class="form-control" value="-" readonly
-                style="max-width: 300px; width:100%;" /></td>
+
           </tr>
         </tbody>
       </table>
@@ -146,6 +144,7 @@ export default {
 
         // 서버에 전달할 정보를 객체로 구성
         let obj = {
+          mat_no: this.matNo, // 자재번호
           mat_nm: this.matInfo.mat_nm, // 자재명
           mat_tp: this.matInfo.mat_tp, // 자재유형
           mn_vdr: this.matInfo.mn_vdr || null, // 거래처가 선택되지 않은 경우 null로 설정

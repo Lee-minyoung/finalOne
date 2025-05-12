@@ -5,8 +5,10 @@ const dateFormat = function (value, format) {
   // value : 문자열로 된 날짜
   // format : 출력 포맷 ( 년도는 yyyy, 월은 MM 일은 dd로 표시)
 
-  // value가 null인 경우엔 오늘을 값으로 가지도록 함
-  let date = value == null ? new Date() : new Date(value);
+  // value가 null, undefined, 빈 문자열, 잘못된 날짜인 경우 빈 문자열 반환
+  if (!value || isNaN(new Date(value).getTime())) return '';
+
+  let date = new Date(value);
 
   // 4자리로 표시하는 년도
   let year = date.getFullYear();
