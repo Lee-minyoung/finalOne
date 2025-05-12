@@ -49,12 +49,38 @@ router.post('/stopLine', async (req, res) => {
   const { pdn_ord_dtl_no, ln_no } = req.body;
   try {
     await lineManagementServices.modifyLineStop(pdn_ord_dtl_no, ln_no);
-    res.status(200).json({ message: '✅ 라인 시작 성공' });
+    res.status(200).json({ message: '✅ 라인 정지 성공' });
   } catch (error) {
-    console.error('❌ 라인 시작 실패:', error);
-    res.status(500).json({ message: '라인 시작 중 오류 발생', error });
+    console.error('❌ 라인 정지 실패:', error);
+    res.status(500).json({ message: '라인 정지 중 오류 발생', error });
   }
 });
+
+// 라인대기상태 해제
+router.post('/startLine', async (req, res) => {
+  const { ln_no, mgr } = req.body;
+  try {
+    await lineManagementServices.addlinestart(ln_no, mgr);
+    res.status(200).json({ message: '✅ 라인 가동 성공' });
+  } catch (error) {
+    console.error('❌ 라인 가동 실패:', error);
+    res.status(500).json({ message:  '라인 가동 중 오류 발생', error });
+  }
+});
+
+router.get('/lineDetail/:ln_opr_no', async (req, res) => {
+  const { ln_opr_no } = req.params;
+  console.log('라인 가동 번호:', ln_opr_no);  // 🔍 구체적인 로그 찍기
+
+  try {
+    const data = await lineManagementServices.findLineListOne(ln_opr_no);
+    res.json(data);
+  } catch (err) {
+    console.error("❌ lineDetail 오류:", err.message);  // 🔍 구체적인 로그 찍기
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 
 module.exports = router;

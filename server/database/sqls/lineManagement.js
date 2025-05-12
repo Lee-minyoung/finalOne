@@ -50,14 +50,34 @@ const selectLineList =
       , lo.dft_qty
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
-   LEFT JOIN ln l ON pod.ln_no = l.ln_no
+   RIGHT JOIN ln l ON pod.ln_no = l.ln_no
    LEFT JOIN prd p ON pod.prd_no = p.prd_no
    ORDER BY l.ln_no;`
 
-  //  LEFT JOIN prd p ON l.prd_no = p.prd_no
-  //  LEFT JOIN ln_dtl ld ON l.ln_no = ld.ln_no
-  //  LEFT JOIN ln_opr_dt lod ON ld.ln_dtl_no = lod.ln_dtl_no
-  //  LEFT JOIN ln_opr lo ON lod.ln_opr_no = lo.ln_opr_no
+const selectLineDetail =  
+`SELECT ln.ln_opr_dtl_no
+      , pc.proc_code_nm
+      , p.proc_nm
+      , ln.ln_opr_no
+      , ln.st_tm
+      , ln.end_tm
+      , ln.ord_qty
+      , ln.pdn_qty
+      , ln.dft_qty
+      , ln.eqp_err_no
+      , ln.ln_dtl_no
+      , ln.std_tm
+      , ln.std_val
+      , ln.seq
+      , eq.eqp_sts
+   FROM ln_opr_dt ln
+   LEFT JOIN ln_dtl ld ON ln.ln_dtl_no = ld.ln_dtl_no
+   LEFT JOIN proc p ON ld.proc_srl_no = p.proc_srl_no
+   LEFT JOIN prc_code pc ON p.proc_code_no = pc.proc_code_no
+   LEFT JOIN eqp eq ON ld.eqp_no = eq.eqp_no
+  WHERE ln_opr_no = ?
+ ORDER BY ln.seq;`
+
 
 const updateLinePreparing =
 `CALL line_preparing(?, ?)`;
@@ -107,6 +127,8 @@ module.exports = {
     selectProdInstList, 
     selectLineDropdown,
     selectLineList,
+    selectLineDetail,
     updateLinePreparing : 'CALL line_preparing(?, ?)',
     updateLineStop : 'CALL line_stop(?, ?)',
+    insterLineStart : 'CALL line_start(?, ?)'
 } 

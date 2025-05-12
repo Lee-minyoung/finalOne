@@ -52,16 +52,41 @@
       </tbody>
     </table>
   </div>
+
+<LineManagementDtl 
+  v-if="showLineModal"
+  :details="processDetailList"
+  :line-no="selectedLineNo"
+  @close="showLineModal = false"
+/>
 </template>
 
 <script>
 import axios from 'axios';
+import { useEmpStore } from '@/stores/empStore.js';  // 추가
+import LineManagementDtl from './LineManagementDtl.vue'
 // import useDateUtils from '@/composables/useDateUtils';
 
 export default {
+  components: {
+    LineManagementDtl   // ✅ 등록도 꼭 추가
+  },
   data(){
     return {
       LineList: [],
+      empStore: useEmpStore(),
+      showLineModal: false,            // ✅ 모달 표시 여부
+      selectedLineNo: '',              // ✅ 선택된 라인
+      processDetailList: []            // ✅ 모달에 넘길 데이터
+      // empNo: empStore.loginInfo.emp_no || null
+    }
+  },
+  computed: {
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';  //  추가
+    },
+    employeeNo() {
+      return this.empStore.loginInfo.emp_no || '';  //추가
     }
   },
   created() {
@@ -72,6 +97,35 @@ export default {
         const res = await axios.get('/api/lineList');
         this.LineList = res.data;
     },
+    async startLine(item) {
+      const payload = {
+        // pdn_ord_dtl_no: item.pdn_ord_dtl_no,  // ✅ 라우터와 프로시저 파라미터에 맞춤
+        ln_no: item.ln_no,
+        mgr: this.empStore.loginInfo.emp_no  // 추가
+      }
+
+      try {
+        await axios.post('/api/startLine', payload)
+        alert('지시 완료!')
+        this.fetchLineList();
+      } catch (err) {
+        console.error("❌ 지시 실패:", err)
+        alert('지시 중 오류가 발생했습니다.')
+      }
+    },
+    async showStatus(item) {
+  this.selectedLineNo = item.ln_opr_no;      // ✅ props로 넘길 lineNo
+  this.showLineModal = true;
+
+  try {
+    const res = await axios.get(`/api/lineDetail/${item.ln_opr_no}`);
+    console.log("✅ 상세 데이터:", res.data); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
+    this.processDetailList = res.data;       // ✅ props로 넘길 details
+  } catch (err) {
+    console.error("❌ 라인 상세 조회 실패:", err);
+    alert("라인 상세 정보를 불러오지 못했습니다.");
+  }
+}
   }
 
 }
