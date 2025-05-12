@@ -47,31 +47,9 @@
         <td v-else-if="item['단위']=='ml'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}L</td>
         <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
         <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
-        <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-</td>
-
-<td v-else-if="item['부족수량'] > item['현재재고'] && reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <span class="badge bg-success px-3 py-2 rounded-pill">요청완료</span>
-</td>
-
+        <td v-if="item['부족수량'] >item['현재재고'] "> <button class="btn btn-success rounded-pill px-3 py-2 rounded-pill" @click="goToReqPage(item)"type="button">자재요청</button></td>
         <td v-if="item['부족수량'] <= 0">
   <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-</td> -->
-<td>
-  <template v-if="item['부족수량'] <= 0">
-    <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-  </template>
-
-  <template v-else-if="item['부족수량']>=0 &&item['자재처리결과']=='c3' || item['부족수량']>=0 && reqClickedList.includes(item['계획ID'] + item['자재명'])">
-    <span class="badge bg-info px-3 py-2 rounded-pill">요청완료</span>
-  </template>
-
-  <template v-else-if="item['부족수량']>0 &&!(item['자재처리결과']=='c3') && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-    <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-  </template>
-
-  
 </td>
       </tr>
     </template>
@@ -103,7 +81,7 @@
       <td>{{ item['수량'] }}</td>
       <td>{{ item['단가'] }}</td>
       <td>{{ item['총가격'] }}</td>
-      <td>{{ item['실시간도착예정일']}}</td>
+      <td>{{ item['실시간도착예정일'].substring(0,10) }}</td>
       <td>{{ item['대표거래처'] }}</td>
       <!--생산계획 버튼-->
       <td>
@@ -178,26 +156,18 @@ import axios from 'axios';
   data() {
     return {
       inventoryStatus: [], //자재현황조회 
-      allPurPlan:[], //모든 자재구매계획 조회회
-      inventoryPurPlan:[], //발주처리된 자재구매계획 조회 
+      inventoryPurPlan:[], //자재구매계획 조회 
       filteredPurPlan:[], //최소주문수량 이상인 자재구매계획 조회하기 
       min:'', //최소수량 
       rawData:[], 
       expandedReqNos: [], // ** 펼쳐진 출고요청번호 목록
       proPlnData:[],
-      //자재요청클릭 
-      reqClickedList: [],
-      lotMinusDoneReqNo:[], //출고 마감 완료  
-      plnToOrdNo:[], 
-     
     };
   },
   async created(){
    await this.fetchInventoryStatus();
    await this.fetchInventoryPurPlan(); //자재구매계획 일단불러오기   
    await this.filteredPurPlanList(); //수량을 
- 
- 
   },
   // ** 지시번호별 번호 묶기
   computed: {
@@ -208,23 +178,9 @@ import axios from 'axios';
       if (!grouped[reqNo]) grouped[reqNo] = []
       grouped[reqNo].push(item)
     })
-      //
-     const filterGrouped={} 
-     for(const reqNo in grouped){
-      const items=grouped[reqNo] // 계획 번호 하나당 처리된거, 
-      const allDone=items.every(item=>
-            item['부족수량']<0  || item['자재처리결과'] ==='c3' || this.reqClickedList.includes(item['계획ID']+item['자재명'])
-      )
-      if(!allDone){
-           filterGrouped[reqNo]=items 
-      }
-     } 
-    return filterGrouped
+    return grouped
   }
 },
-
-
-
   methods: {
    async fetchInventoryStatus(){
       try{
@@ -238,17 +194,7 @@ import axios from 'axios';
    async fetchInventoryPurPlan(){
     try{
       const result=await axios.get('/api/inventory/matPurPlan')
-      //allPurPlan 모든 자재구매계획을 불러옴 
-      this.allPurPlan=result.data; 
-    
-      // 자재구매계획 -> 발주 처리된 자재구매계획번호를 서버에서 불러옴  
-      //  // 발주처리된 자재구매계획은 안보여지게함    
-      const Nos=await axios.get('/api/PlnToOrd') //
-      this.plnToOrdNo=Nos.data.map(p => p['계획ID']);
-      console.log('allpurPlan',this.allPurPlan);
-      console.log(this.plnToOrdNo); 
-      this.inventoryPurPlan = this.allPurPlan.filter(p => !this.plnToOrdNo.includes(p['계획ID']));
-  
+      this.inventoryPurPlan=result.data; 
     }catch(error){
       console.log('자재구매계획 실패',error); 
     }
@@ -262,7 +208,7 @@ import axios from 'axios';
     for (const item of rawData){
       const matId=item['자재ID']; 
       const minQty=await this.getMinOrdqty(matId);
-    //   console.log('minQty',minQty.min_ord_qty); 
+       console.log('minQty',minQty.min_ord_qty); 
       // console.log('for문 minQty',minQty); 
       //  console.log('item수량'); 
       //  console.log(item['수량']); 
@@ -352,10 +298,9 @@ import axios from 'axios';
   async checkMat(reqNo){
     //프론트에서 표시되는 자재 
     const matList=this.groupedInventory[reqNo];
-    console.log('matList',matList);
     //출고가능자재 
     const availableMats = matList.filter(item => item['부족수량']<= 0);
-   
+      
     try{
       const payload=availableMats.map(item=>({
         mat_no:item['자재ID'], 
@@ -363,23 +308,8 @@ import axios from 'axios';
         pln_id:item['계획ID']
       }))
       console.log('payload',payload);
-
-
-
-      //서버에서 출고완료 됐는지 안됐는지 확인   
-      const matsts=await axios.get('/api/MatStatus',{params:{
-        reqId:payload.pln_id,
-        matId:payload.mat_no
-      }});
-
-      if(matsts=='q1'){
-      // 출고요청이 된 상태면  if조건문으로 감싸기 if(matsts=='q1'){}  
-      await axios.post('/api/inventory/lotMinusList',payload); //자재차감 되고 자재출고처리 -> q2로 변환 
-      //한번만 실행되었음을 저장 
-      }else{
-        alert('출고 가능한 자재가 처리 되었습니다');    
-      }
-              
+      await axios.post('/api/inventory/lotMinusList',payload); 
+      alert('출고 가능한 자재가 처리 되었습니다');             
 
     }catch(err){
         if(err.response && err.response.status===400){
@@ -388,6 +318,7 @@ import axios from 'axios';
           alert('서버오류가 부족합니다')
         }
     }
+
     console.log('availableMats',availableMats);
     console.log('matList',matList);
     //출고완료된 재고는 removeList 
@@ -404,6 +335,7 @@ import axios from 'axios';
     alert('일부 자재의 재고가 부족합니다.');
     return;
   }
+
     console.log('matList',matList); 
     for(const item of matList){
      const plnId= item['계획ID'];
@@ -419,13 +351,20 @@ import axios from 'axios';
           req_qty:reqQty,
           pln_id:plnId
          
-         });         
+         });
+         
+
 
          if(curQty<minStk){
           console.log('자재구매계획으로 이동');
 
          }
 
+  // this.inventoryStatus = this.inventoryStatus.filter(item => {
+  //   return !removeList.some(r =>
+  //     r.plnId === item['계획ID'] && r.matNo === item['자재ID']
+  //   );
+  // });
          this.inventoryStatus=this.inventoryStatus.filter(item=>item['계획ID']!==reqNo);
          this.expandedReqNos=this.expandedReqNos.filter(id=>id!==reqNo);
 
@@ -441,13 +380,11 @@ import axios from 'axios';
 
     //  }
    
-    
+
 
     }
-  },
+  },  
   goToReqPage(item){
-    
-    console.log('자재요청item',item);
     this.$router.push({
       name:'MatReq',
       query:{
@@ -455,28 +392,8 @@ import axios from 'axios';
         matNm:item['자재명']
       } 
     });
-  }, 
-  //자재요청버튼클릭 -> 자재구매계획 insert하기
-  async addPurOrd(item){
-  console.log('자재요청item', item);
-  try {
-    const result = await axios.post('/api/inventory/purOrdByClickButton', {
-      matId: item['자재ID'],
-      vdrNo: item['대표거래처번호'],
-      vdrNm: item['거래처명'],
-      prc: item['단가'],
-      qty: item['부족수량'],
-      check: 'check', 
-      reqId:item['계획ID'],
-    });
-
-    console.log('자재요청성공', result); 
-    this.reqClickedList.push(item['계획ID'] + item['자재명']); //한페이지 안에서 머무르는건 가능.... 
-    alert('자재요청이 완료 되었습니다');
-  } catch (error) {
-    console.log('자재요청실패', error); 
   }
-}
+
 
 }
 }
