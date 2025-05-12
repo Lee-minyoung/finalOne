@@ -109,6 +109,7 @@ export default {
         alert('지시 중 오류가 발생했습니다.')
       }
     },
+
     async showStatus(item) {
       console.log("🧩 선택된 item:", item);
       this.selectedLineNo = item.ln_no;

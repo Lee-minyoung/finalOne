@@ -51,7 +51,23 @@ const findLineListOne = async (pdn_ord_dtl_no) => {
   }
 };
 
-//
+
+const modifyLineOper = async (p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty) => {
+  try {
+    const result = await mariadb.query('updateLineOper', [p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty]);
+    return result;
+  } catch (err) {
+    console.error("❌ findLineDetailByOpNo 오류:", err);
+    throw err;
+  }
+};
+//updateLineOper
+/*
+  IN p_ln_opr_dtl_no
+  IN p_seq 
+  IN p_dft_qty 
+  IN p_pdn_qty 
+*/
 
 module.exports = {
     findProdInstAll,
@@ -60,5 +76,6 @@ module.exports = {
     findLineListOne,
     modifyLinePreparing,
     modifyLineStop,
-    addlinestart
+    addlinestart,
+    modifyLineOper
 }
