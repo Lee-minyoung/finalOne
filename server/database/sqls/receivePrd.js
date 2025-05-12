@@ -19,9 +19,10 @@ WHERE ovr_jdg = 'n1'
 AND s.rslt_no NOT IN (
                         SELECT rel_doc
                         FROM prd_stk_hist
-                        WHERE rel_doc = s.rslt_no)`; 
+                        WHERE rel_doc = s.rslt_no)
+ORDER BY s.ins_dt`; 
 
-// 입고완료 전체조회
+// 입고완료 전체조회 // 입고일자 까지 나오면 좋겠다.
 const selectCompleteSpmInsRsltList =
 `SELECT 
         s.ins_dt, 

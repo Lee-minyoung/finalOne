@@ -45,6 +45,11 @@
               <td colspan="3" style="border:none;"><input type="number" class="form-control"
                   v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
+              <td colspan="3" style="border:none;"><input type="text" class="form-control"
+                  :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -75,6 +80,9 @@ export default { // 제품 등록/수정 폼 컴포넌트
   methods: {
     CommonCodeFormat(value) {
       return CommonCodeFormat.CommonCodeFormat(value);
+    },
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
     },
     async getPrdNo() {
       try {

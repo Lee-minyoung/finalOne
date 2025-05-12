@@ -9,12 +9,7 @@
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <input
-              type="text"
-              class="form-control w-25"
-              placeholder="제품명 검색"
-              v-model="search"
-            />
+            <input type="text" class="form-control w-25" placeholder="제품명 검색" v-model="search" />
             <button class="btn btn-sm btn-primary" @click="$emit('select-product', selectedProd)">제품 등록</button>
           </div>
 
@@ -26,13 +21,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="item in filteredProducts"
-                :key="item.prd_no"
-                @click="toggleProdSelection(item)"
-                :class="{ 'table-primary': isSelected(item) }"
-                style="cursor: pointer;"
-              >
+              <tr v-for="item in filteredProducts" :key="item.prd_no" @click="toggleProdSelection(item)"
+                :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
                 <td>{{ item.prd_no }}</td>
                 <td>{{ item.prd_nm }}</td>
               </tr>

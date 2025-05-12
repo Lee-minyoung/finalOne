@@ -7,19 +7,15 @@
     </div>
     <!-- 조회 조건 -->
     <div class="input">
-      LOT번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
-      <button class="btn btn-outline-secondary" id="icon-btn" @click="openProductModal">🔍</button>
-      제품번호 <input :value="selectedProductName" class="form-control" id="input" readonly
-        style="background-color: #eee;" />
-      제품명 <input :value="selectedProductName" class="form-control" id="input" readonly
-        style="background-color: #eee;" />
-      <br>
-      납품업체 <input :value="selectedProductName" class="form-control" id="input" readonly
-        style="background-color: #eee;" />
-      검사일자 <input :value="selectedProductName" class="form-control" id="input" readonly
-        style="background-color: #eee;" />
-      검사자 <input :value="selectedProductName" class="form-control" id="input" readonly
-        style="background-color: #eee;" />
+       제품검색 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
+      <button class="btn btn-outline-secondary" id="icon-btn" @click="openProductModal" style="margin-right:505px;">🔍</button>
+      성적서번호 <input :value="selectedRsltNo" class="form-control" id="input" readonly style="background-color: #eee;" />
+      <hr style="margin-left:-75px;">
+
+      라인번호 <input :value="selectedLineId" class="form-control" id="input" readonly style="background-color: #eee;" />
+      제품명 <input :value="selectedProductName" class="form-control" id="input" readonly style="background-color: #eee;" />
+      작성일자 <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee;" />
+      검사자 <input :value="selectedInsDev" class="form-control" id="input" readonly style="background-color: #eee;" />
     </div>
     <br>
     <div class="middle">
@@ -39,9 +35,9 @@
           <tbody>
             <tr>
               <td>수량</td>
-              <td><input v-model="newItem.ins_itm" class="rslInput" placeholder="검사량" /></td>
-              <td><input v-model="newItem.ins_itm" class="rslInput" placeholder="합격량" /></td>
-              <td><input v-model="newItem.ins_mthd" class="rslInput" placeholder="불량량" /></td>
+              <td><input v-model="newItem.mgr_count" class="rslInput" placeholder="검사량" /></td>
+              <td><input v-model="newItem.succ_count" class="rslInput" placeholder="합격량" /></td>
+              <td><input v-model="newItem.dft_count" class="rslInput" placeholder="불량량" /></td>
             </tr>
           </tbody>
         </table>
@@ -49,13 +45,20 @@
 
       <!-- 종합판정 -->
       <div class="rst">
-        <div class="hstack gap-3">
-        <div style="padding-left:50px;">종합판정</div>
-        <div class="vr"></div>
-        <button class="btn btn-success me-2" style="width:150px; height:100px">합격</button>
-        <button class="btn btn-danger" style="width:150px; height:100px">불합격</button>
-      </div>
-      </div>
+  <div class="hstack gap-3">
+    <div style="padding-left:50px;">종합판정</div>
+    <div class="vr"></div>
+    <button
+      :class="['jdg-btn', overallJdg === '합격' ? 'btn-green' : '']"
+      @click="overallJdg = '합격'"
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">합격</button>
+    <button
+      :class="['jdg-btn', overallJdg === '불합격' ? 'btn-red' : '']"
+      @click="overallJdg = '불합격'"
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+    >불합격</button>
+  </div>
+</div>
     </div>
     <h5>검사결과</h5>
     <!-- 테이블 -->
@@ -64,7 +67,6 @@
       <thead class="table-light">
         <tr>
           <th>검사항목</th>
-          <th>검사일자</th>
           <th>검사기준</th>
           <th>검사결과</th>
           <th>판정</th>
@@ -72,63 +74,20 @@
         </tr>
       </thead>
 
-      <!-- 테이블 바디 -->
+      <!-- 테이블 바디 : 검사결과  -->
       <tbody>
         <tr v-for="(item, index) in spmInsStdList" :key="item.spm_ins_std_no">
-          <td>
-            {{ index + 1 }}
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.ins_itm" class="form-control" />
-            </template>
-            <template v-else>
-              {{ item.ins_itm }}
-            </template>
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.ins_mthd" class="form-control" />
-            </template>
-            <template v-else>
-              {{ item.ins_mthd }}
-            </template>
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.ins_spc" class="form-control" />
-            </template>
-            <template v-else>
-              {{ item.ins_spc }}
-            </template>
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.ins_eqp" class="form-control" />
-            </template>
-            <template v-else>
-              {{ item.ins_eqp }}
-            </template>
-          </td>
-          <td>
-            <template v-if="item.editMode">
-              <input v-model="item.crt_by" class="form-control" readonly style="background-color: #eee;" />
-            </template>
-            <template v-else>
-              {{ item.crt_by }}
-            </template>
-          </td>
-        </tr>
-
-        <!-- 기준서 항목 추가 시 테이블 입력칸 -->
-        <tr>
-          <td></td>
-          <td><input v-model="newItem.ins_itm" class="form-control" placeholder="검사항목" /></td>
-          <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
-          <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
-          <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
-              style="background-color: #eee;" /></td>
+          <td>{{ item.ins_itm }}</td>
+    <td>{{ item.ins_mthd }}</td>
+    <td>
+      <input v-model="newItemList[index].mgr_rslt" class="form-control" placeholder="검사결과" />
+    </td>
+    <td>
+      {{ getJdg(item, newItemList[index].mgr_rslt) }}
+    </td>
+    <td>
+      <input v-model="newItemList[index].rmk" class="form-control" placeholder="결점원인, 결점코드 등"/>
+    </td>
         </tr>
       </tbody>
     </table>
@@ -145,7 +104,7 @@
 <script>
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
-import PrdSelModal from '@/views/qualitys/PrdSelModal.vue'; // 모달
+import PrdSelModal from '@/views/qualitys/PrdRsltSelModal.vue'; // 모달
 
 import { ref, onBeforeMount } from 'vue';
 
@@ -156,137 +115,103 @@ export default {
   components: { PrdSelModal },
   data() {
     return {
-      searchQuery: '',             // 제품 ID
+      searchQuery: '',             // 제품검색
+      selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
+      selectedInsDate: this.getToday(),     // 날짜
+      newItemList: [],
       spmInsStdList: [],
       prodList: [],
       showProductModal: false,
-      newItem: {
-        ins_itm: '',
-        ins_mthd: '',
-        ins_spc: '',
-        ins_eqp: '',
-        rmk: '',
-        crt_by: '',
-        mdf_dt: '',
-      },
-      // updateItem: {
-      //   ins_itm: '',
-      //   ins_mthd: '',
-      //   ins_spc: '',
-      //   ins_eqp: '',
-      //   rmk: '',
-      //   spm_ins_std_no: '',
-      // },
+      newItem: [],
+      overallJdg: '',
+      selectedRsltNo: '', // 성적서 번호
     };
+  },
+  created() {
+    this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
   },
   methods: {
     // 등록
     async spmInsStdInsert() {
-      if (!this.searchQuery) {
-        alert('제품을 먼저 선택하세요.');
-        return;
-      }
+  if (!this.selectedRsltNo) {
+    alert('성적서 번호가 없습니다.');
+    return;
+  }
 
-      let obj = {
-        ...this.newItem,
-        prd_no: this.searchQuery, // 선택된 제품 번호
-        crt_by: this.selectedCrtBy, // 작성자
-        rgt_dt: new Date(), // 등록일자
-        mdf_dt: new Date(), // 수정일자
-      };
+  // 1. 성적서(마스터) 저장
+  let obj = {
+    rslt_no: this.selectedRsltNo,
+    mgr: this.selectedInsDev,
+    ins_dt: this.selectedInsDate,
+    mgr_count: this.newItem.mgr_count,
+    succ_count: this.newItem.succ_count,
+    dft_count: this.newItem.dft_count,
+    ovr_jdg: this.overallJdg,
+    rmk: this.newItem.rmk || '',
+    ln_opr_no: this.selectedLineId,
+    prd_no: this.searchQuery
+  };
 
-      try {
-        let result = await axios.post("/api/spmInsStd", obj);
-        let addRes = result.data;
+  try {
+    let result = await axios.post("/api/spmInsRslt", obj);
+    let addRes = result.data;
 
-        if (addRes.isSuccessed) {
-          alert('등록되었습니다.');
-          this.spmInsStdList.push({ ...obj, spm_ins_std_no: addRes.prdNo }); // 테이블에 추가
-          this.newItem = { ins_itm: '', ins_mthd: '', ins_spc: '', ins_eqp: '', rmk: '', crt_by: '', mdf_dt: '' }; // 입력 필드 초기화
-        } else {
-          alert('모든 필드를 확인하세요.');
-        }
-      } catch (err) {
-        alert('등록 중 오류가 발생했습니다.');
-      }
+    if (addRes.isSuccessed) {
+      // 2. 상세(행별) 저장
+      const dtlList = this.spmInsStdList.map((item, idx) => ({
+        spm_ins_rslt_dtl_no: null, // auto_increment면 null
+        mgr_date: this.selectedInsDate, // 검사일자
+        spm_ins_std_no: item.spm_ins_std_no,
+        mgr_rslt: this.newItemList[idx].mgr_rslt, // ← 검사결과
+        jdg: this.getJdg(item, this.newItemList[idx].mgr_rslt), // ← 판정
+        dft_quy: null, // 필요시 입력
+        rslt_no: this.selectedRsltNo,
+        qrd_no: null, // 필요시 입력
+        rmk: this.newItemList[idx].rmk // ← 비고
+      }));
+
+      await axios.post("/api/spmInsRslt/dtl", dtlList);
+
+      alert('등록되었습니다.');
+      // 필요시 화면 갱신
+    } else {
+      alert('모든 필드를 확인하세요.');
+    }
+  } catch (err) {
+    alert('등록 중 오류가 발생했습니다.');
+  }
+},
+
+    getJdg(item, mgr_rslt) {
+       if (mgr_rslt === '' || mgr_rslt === null || mgr_rslt === undefined) return '';
+
+  const std = Number(item.ins_mthd);
+  const tol = Number(item.ins_spc);
+  const result = Number(mgr_rslt);
+
+  if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
+    const min = std - tol;
+    const max = std + tol;
+    return (result >= min && result <= max) ? 'OK' : 'ERROR';
+  }
+  if (mgr_rslt === '1' || mgr_rslt === 1) return 'OK';
+  if (mgr_rslt === '0' || mgr_rslt === 0) return 'ERROR';
+
+  return '';
+},
+
+    getToday() {
+    const today = new Date();
+    // YYYY-MM-DD 형식
+    return today.toISOString().slice(0, 10);
     },
-
     // 날짜 포맷
     dateFormat(value, format) {
       return useDateUtils.dateFormat(value, format)
     },
 
-    // 수정 활성화
-    enableEditMode(index) {
-      // 현재 데이터를 originalData에 저장
-      this.spmInsStdList[index].originalData = { ...this.spmInsStdList[index] };
-      this.spmInsStdList[index].editMode = true; // 수정 모드 활성화
-    },
-    // 수정 비활성화(취소)
-    disableEditMode(index) {
-      // originalData를 사용하여 데이터를 복원
-      if (this.spmInsStdList[index].originalData) {
-        this.spmInsStdList[index] = {
-          ...this.spmInsStdList[index].originalData,
-          editMode: false, // 수정 모드 비활성화
-        };
-        delete this.spmInsStdList[index].originalData; // 복원 후 originalData 삭제
-      } else {
-        this.spmInsStdList[index].editMode = false; // 수정 모드 비활성화
-      }
-    },
 
-    // 수정
-    async saveRow(index) {
-      let obj = {
-        ins_itm: this.spmInsStdList[index].ins_itm || '', // null 값 방지
-        ins_mthd: this.spmInsStdList[index].ins_mthd || '',
-        ins_spc: this.spmInsStdList[index].ins_spc || '',
-        ins_eqp: this.spmInsStdList[index].ins_eqp || '',
-        rmk: this.spmInsStdList[index].rmk || '',
-        spm_ins_std_no: this.spmInsStdList[index].spm_ins_std_no || '', // 수정할 기준항목번호
-      };
-
-      if (!this.spmInsStdList[index].spm_ins_std_no) {
-        alert('spm_ins_std_no 값이 없습니다. 데이터를 확인하세요.');
-        return;
-      }
-
-      try {
-        let result = await axios.put(`/api/spmInsStd/${this.spmInsStdList[index].spm_ins_std_no}`, obj);
-        let updateRes = result.data;
-
-        if (updateRes.isUpdated) {
-          alert('수정되었습니다.');
-          this.spmInsStdList[index].editMode = false; // 수정 모드 비활성화
-          delete this.spmInsStdList[index].originalData; // 저장 후 originalData 삭제
-        } else {
-          alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
-        }
-      } catch (err) {
-        alert('수정 중 오류가 발생했습니다.');
-      }
-    },
-
-    // 삭제
-    async deleteRow(index) {
-      if (confirm('정말 삭제하시겠습니까?')) {
-        try {
-          let result = await axios.delete(`/api/spmInsStd/${this.spmInsStdList[index].spm_ins_std_no}`);
-          let deleteRes = result.data;
-
-          if (deleteRes.isDeleted) {
-            alert('삭제되었습니다.');
-            this.spmInsStdList.splice(index, 1); // 테이블에서 삭제
-          } else {
-            alert('삭제되지 않았습니다.\n데이터를 확인해보세요.');
-          }
-        } catch (err) {
-          alert('삭제 중 오류가 발생했습니다.');
-        }
-      }
-    },
     // 모달
     showModal() {
       this.showProductModal = true; // 모달 열기
@@ -295,32 +220,54 @@ export default {
       this.showProductModal = false; // 모달 닫기
     },
     openProductModal() {
-      axios.get('/api/spmInsStd/prdList') // 제품 목록 가져오기
+      axios.get('/api/spmInsRslt/prdList') // 제품 목록 가져오기
         .then(res => {
+          console.log('제품목록:', res.data);
           this.prodList = Array.isArray(res.data) ? res.data : []; // 배열인지 확인 후 설정
           this.showProductModal = true; // 모달 열기
+        })
+      .catch(err => {
+          console.error('제품 목록 불러오기 실패', err);
+          this.prodList = []; // 실패 시 빈 배열로 설정
         });
     },
 
     // 제품 선택 시
-    handleSelectedProduct(item) {
-      this.searchQuery = item.prd_no;
-      this.selectedProductName = item.prd_nm;
+   async handleSelectedProduct(item) {
+  this.selectedLineId = item.ln_opr_no;
+  this.selectedProductName = item.prd_nm;
+  this.searchQuery = item.prd_no;  
+  this.selectedInsDate = this.getToday();
 
-      this.showProductModal = false;
+  this.showProductModal = false;
 
-      this.getSpmInsStdList(item.prd_no); // 검사 기준서 목록 가져오기
-    },
+  // 성적서 번호 자동 할당
+  try {
+    const res = await axios.get('/api/spmInsRslt/lastRsltNo');
+  // lastNo는 '001', '002'처럼 숫자만 반환되어야 함
+  const lastNo = Number(res.data.lastNo) || 0;
+  const nextNo = String(lastNo + 1).padStart(3, '0');
+  this.selectedRsltNo = `SJS-${nextNo}`;
+} catch (err) {
+  this.selectedRsltNo = 'SJS-001'; // 실패 시 기본값
+  }
 
+  this.getSpmInsStdList(item.prd_no);
+},
     // 기준서 목록 가져오기
     async getSpmInsStdList(prd_no) {
-      try {
-        const result = await axios.get('/api/spmInsStd', { params: { prd_no } });
-        this.spmInsStdList = result.data; // 가져온 데이터를 테이블에 바인딩
-      } catch (err) {
-        alert('기준서 목록을 가져오는 중 오류가 발생했습니다.');
-      }
-    }
+  try {
+    const result = await axios.get('/api/spmInsStd', { params: { prd_no } });
+    this.spmInsStdList = result.data;
+    // 행 개수만큼 입력값 배열 초기화 (반응형)
+    this.newItemList = this.spmInsStdList.map(() => ({
+      mgr_rslt: '',
+      rmk: ''
+    }));
+  } catch (err) {
+    alert('기준서 목록을 가져오는 중 오류가 발생했습니다.');
+  }
+}
   }
 }
 
@@ -334,11 +281,11 @@ export default {
 
 .form-control {
   display: inline-block;
-  width: 200px;
+  width: 150px;
 }
 
 #input {
-  margin-right: 100px;
+  margin-right: 52px;
 
 }
 
@@ -348,15 +295,6 @@ export default {
 
 .btn1 {
   float: right;
-}
-
-/* .input-group {
-  display: inline-block;
-  width: 150px;
-} */
-
-#icon-btn {
-  margin-right: 55px;
 }
 
 #table {
@@ -376,11 +314,12 @@ export default {
   border: 1px solid lightgray;
   padding: 10px;
 }
-.center-button {
-  display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  height: 50px; /* 버튼 컨테이너 높이 설정 */
-  margin-top: 20px; /* 위쪽 여백 */
+.jdg-btn.btn-green {
+  background-color: #4caf50 !important;
+  color: #fff !important;
+}
+.jdg-btn.btn-red {
+  background-color: #e53935 !important;
+  color: #fff !important;
 }
 </style>

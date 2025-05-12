@@ -38,61 +38,61 @@
   </header>
 </template>
 
-<script setup>
-import { computed } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import { useColorModes } from "@coreui/vue";
-import { useRoute, useRouter } from "vue-router";
-import { useEmpStore } from "@/stores/empStore.js"; // Pinia 저장소 가져오기
+<script>
+import { computed } from 'vue';
+import { useSidebarStore } from '@/stores/sidebar.js';
+import { useColorModes } from '@coreui/vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useEmpStore } from '@/stores/empStore.js';
 import axios from 'axios';
 
-const sidebar = useSidebarStore();
-const { colorMode, setColorMode } = useColorModes("coreui-free-vue-admin-template-theme");
-const route = useRoute(); // 현재 라우트 정보 가져오기
-const router = useRouter(); // 페이지 이동
+export default {
+  name: 'YourComponentName', // 컴포넌트 이름 필요 시 지정
 
+  data() {
+    return {
+      sidebar: useSidebarStore(),
+      empStore: useEmpStore(),
+      route: useRoute(),
+      router: useRouter(),
+      color: useColorModes('coreui-free-vue-admin-template-theme'),
+    };
+  },
 
-// 사이드바 토글
-const toggleSidebar = () => {
-  sidebar.toggleVisible();
-};
-
-// 현재 위치 표시용
-const currentPathLabel = computed(() => {
-  return route.name || "대시보드";
-});
-
-
-// Pinia 저장소에서 로그인한 사용자 정보 가져오기
-const empStore = useEmpStore();
-const employeeName = computed(() => empStore.loginInfo.nm || ""); //사원명
-const employeePstNm = computed(() => empStore.loginInfo.pst_nm || ""); //직급명
-
-// 로그아웃 처리 함수
-const handleLogout = async () => {
-  try {
-    // 서버에 로그아웃 요청
-    const result = await axios.get('/api/logout');
-    console.log(result); // 서버 응답 로그 출력
-
-    const logoutRes = result.data; // 서버 응답 데이터
-    console.log(logoutRes); // 응답 데이터 로그 출력
-
-    if (logoutRes.result) {
-      // 로그아웃 성공 시 Pinia store 초기화
-      empStore.$reset();
-      alert("로그아웃 되었습니다!");
-      // 로그인 페이지로 리다이렉트 
-      router.push({ name: 'login' });
-    } else {
-      // 로그아웃 실패 시 메시지 표시
-      alert("로그아웃 처리 중 오류가 발생했습니다.");
+  computed: {
+    currentPathLabel() {
+      return this.route.name || '대시보드';
+    },
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
+    employeePstNm() {
+      return this.empStore.loginInfo.pst_nm || '';
     }
-  } catch (error) {
-    console.error('로그아웃 처리 중 오류 발생:', error);
-    alert("서버 오류가 발생했습니다.");
+  },
+
+  methods: {
+    toggleSidebar() {
+      this.sidebar.toggleVisible();
+    },
+
+    async handleLogout() {
+      try {
+        const result = await axios.get('/api/logout');
+        const logoutRes = result.data;
+
+        if (logoutRes.result) {
+          this.empStore.$reset();
+          alert('로그아웃 되었습니다!');
+          this.router.push({ name: 'login' });
+        } else {
+          alert('로그아웃 처리 중 오류가 발생했습니다.');
+        }
+      } catch (error) {
+        console.error('로그아웃 처리 중 오류 발생:', error);
+        alert('서버 오류가 발생했습니다.');
+      }
+    }
   }
 };
-
-
 </script>

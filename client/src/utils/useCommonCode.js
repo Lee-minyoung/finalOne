@@ -66,6 +66,8 @@ const eqpStatusFormat = function (value) {
     result = '수리중' 
   } else if (value == 'h3') {
     result = '점검중' 
+  } else if (value == 'h4') {
+    result = '사용중' 
   } 
   return result;
 }

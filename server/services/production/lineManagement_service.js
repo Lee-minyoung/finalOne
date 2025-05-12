@@ -36,10 +36,29 @@ async function modifyLineStop(pdn_ord_dtl_no, ln_no) {
   return await mariadb.query('updateLineStop', [pdn_ord_dtl_no, ln_no]);
 }
 
+async function addlinestart(ln_no, mgr) {
+  return await mariadb.query('insterLineStart', [ln_no, mgr]);
+}
+
+const findLineListOne = async (pdn_ord_dtl_no) => {
+  try {
+    console.log('라인 가동 번호2:', pdn_ord_dtl_no);  // 🔍 구체적인 로그 찍기
+    const result = await mariadb.query('selectLineDetail', [pdn_ord_dtl_no]);
+    return result;
+  } catch (err) {
+    console.error("❌ findLineDetailByOpNo 오류:", err);
+    throw err;
+  }
+};
+
+//
+
 module.exports = {
     findProdInstAll,
     findLineDrop,
     findLineListAll,
+    findLineListOne,
     modifyLinePreparing,
-    modifyLineStop
+    modifyLineStop,
+    addlinestart
 }

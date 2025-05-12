@@ -36,7 +36,8 @@
                 <td>{{ row.qty - row.ord_qty - row.instruction_qty || 0 }}</td>
                 <td style="width: 100px;">
                   <!-- <input type="number" class="form-control" v-model.number="row.instruction_qty" /> -->
-                  <input type="number" class="form-control" v-model.number="row.instruction_qty" min="0" :max="row.qty - row.ord_qty" @input="handleInput(index)"/>
+                  <input type="number" class="form-control" v-model.number="row.instruction_qty" min="0"
+                    :max="row.qty - row.ord_qty" @input="handleInput(index)" />
                 </td>
                 <td></td>
                 <td>
@@ -59,20 +60,20 @@
 </template>
 
 <script>
-import { useInstructionStore  } from '../../stores/instructionStore';
+import { useInstructionStore } from '../../stores/instructionStore';
 
 export default {
   name: 'InstructionModal',
   emits: ['submit', 'close'],
 
   computed: {
-  instructionStore() {
-    return useInstructionStore()
+    instructionStore() {
+      return useInstructionStore()
+    },
+    rows() {
+      return this.instructionStore.instructionRows
+    }
   },
-  rows() {
-    return this.instructionStore.instructionRows
-  }
-},
 
   methods: {
     // ---------------------여기부터 리뷰 -------------------------
@@ -84,15 +85,15 @@ export default {
         row.instruction_qty = 0
       }
     },
-// ---------------------여기부터 까지 -------------------------
+    // ---------------------여기부터 까지 -------------------------
     submit() {
-    const rows = this.instructionStore.instructionRows
+      const rows = this.instructionStore.instructionRows
 
-    console.log("🔥 지시 등록 emit 실행됨!")
-    console.log("전송할 rows:", rows)
+      console.log("🔥 지시 등록 emit 실행됨!")
+      console.log("전송할 rows:", rows)
 
-    this.$emit('submit') // 부모에서 처리함
-  }
+      this.$emit('submit') // 부모에서 처리함
+    }
   }
 }
 </script>

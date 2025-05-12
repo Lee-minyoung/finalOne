@@ -70,11 +70,24 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async prcCodeUpdate() {
+
+      // 필수 입력값 검증
+      if (!this.prcCodeInfo.proc_code_nm?.trim()) {
+        alert('공정명을 입력해주세요.');
+        return;
+      }
+      if (!this.prcCodeInfo.proc_std?.trim()) {
+        alert('공정기준을 입력해주세요.');
+        return;
+      }
+
+      // 데이터 정제 (공백 제거)
       let obj = { // 공정명, 공정기준, 비고 수정가능
-        proc_code_nm: this.prcCodeInfo.proc_code_nm, // 공정명
-        proc_std: this.prcCodeInfo.proc_std, // 공정기준
-        rmk: this.prcCodeInfo.rmk, // 비고
+        proc_code_nm: this.prcCodeInfo.proc_code_nm.trim(), // 공정명
+        proc_std: this.prcCodeInfo.proc_std.trim(), // 공정기준
+        rmk: this.prcCodeInfo.rmk?.trim() || '' // 비고는 선택사항이므로 없으면 빈 문자열
       };
+
       // 서버에 데이터를 요청 : PUT + http://localhost:3000/dept/100 => proxy ) /api/dept/100
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.put(`/api/prcCode/${this.prcCodeInfo.proc_code_no}`, obj)

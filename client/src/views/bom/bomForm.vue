@@ -21,14 +21,14 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="bomNo" class="form-label fw-bold me-3" style="min-width: 100px;">BOM번호</label>
-                <input id="bomNo" type="text" class="form-control" v-model="bom_No" readonly disabled/>
+                <input id="bomNo" type="text" class="form-control" v-model="bom_No" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
-                <input id="useYn" type="text" class="form-control" value="여" readonly disabled/>
+                <input id="useYn" type="text" class="form-control" value="여" readonly disabled />
               </div>
             </div>
             <!-- 제품명 -->
@@ -43,7 +43,8 @@
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;" @click="openMatModal">자재추가</button>
+              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;"
+                @click="openMatModal">자재추가</button>
             </div>
           </div>
           <table class="table table-bordered text-center">
@@ -65,10 +66,10 @@
               </template>
               <template v-else>
                 <tr v-for="(row, index) in bomRows" :key="'new-' + index">
-                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled/></td>
-                  <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled/></td>
+                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled /></td>
+                  <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled /></td>
                   <td><input v-model.number="row.cap" type="number" class="form-control" /></td>
-                  <td><input v-model="row.unit" type="text" class="form-control" readonly disabled/></td>
+                  <td><input v-model="row.unit" type="text" class="form-control" readonly disabled /></td>
                   <td><input v-model="row.rmk" type="text" class="form-control" /></td>
                   <td>
                     <button class="btn btn-outline-danger me-1" @click="removeMatRow(index)"> X </button>
@@ -149,6 +150,34 @@ export default {
     },
     // 저장 버튼 클릭시 실행할 함수 
     async bomInsert() {
+
+      // 제품 선택 검증
+      if (!this.prd_no) {
+        alert('제품을 선택해주세요.');
+        return;
+      }
+
+      // 자재 목록 검증
+      if (!this.bomRows || this.bomRows.length === 0 || this.bomRows[0].mat_no === '') {
+        alert('자재를 추가해주세요.');
+        return;
+      }
+
+      // 각 자재의 용량 검증
+      for (let i = 0; i < this.bomRows.length; i++) {
+        const row = this.bomRows[i];
+        if (!row.cap || row.cap <= 0) {
+          alert(`${row.mat_nm}의 용량을 입력해주세요.`);
+          return;
+        }
+      }
+      
+      // 비고란 공백 제거
+      this.bomRows = this.bomRows.map(row => ({
+        ...row,
+        rmk: row.rmk?.trim() || ''
+      }));
+
       // 서버에 전달할 정보를 객체로 따로 구성
       let bomObj = {
         prd_no: this.prd_no,
@@ -167,7 +196,7 @@ export default {
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.post("/api/bomAndBomMat", [bomObj, bomMatObj])
         .catch(err => console.log(err));
-        
+
       if (result.data.message == '등록 완료') {
         alert('등록되었습니다.');
         this.$emit('bom-reload');

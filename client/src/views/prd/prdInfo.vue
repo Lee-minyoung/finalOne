@@ -48,14 +48,14 @@
                   v-model="prdInfo.opt_stk_qty" min="0" /></td>
             </tr>
             <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">생성일자</th>
+              <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
               <td colspan="3" style="border:none;"><input type="text" class="form-control"
-                  :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly /></td>
+                  :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
             </tr>
             <tr class="mb-4">
               <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
               <td colspan="3" style="border:none;"><input type="text" class="form-control"
-                  :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly /></td>
+                  :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></td>
             </tr>
           </tbody>
         </table>

@@ -31,7 +31,7 @@
             }">
               {{
                 item.mat_ins_sts === 'q1' ? '입고대기' :
-                item.mat_ins_sts === 'q2' ? '입고완료' : '오류'
+                  item.mat_ins_sts === 'q2' ? '입고완료' : '오류'
               }}
             </span>
           </td>
@@ -59,22 +59,17 @@
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
           <td colspan="2">
-            <span class="badge bg-warning text-dark" style="font-size: 1.5rem; padding: 0.5rem 1rem;" >라인 대기 중</span>
+            <span class="badge bg-warning text-dark" style="font-size: 1.5rem; padding: 0.5rem 1rem;">라인 대기 중</span>
           </td>
           <td style="opacity: 1;">
             <button class="btn btn-sm btn-primary" @click="stopLine(item)">취소</button>
-          </td> 
+          </td>
         </tr>
       </tbody>
     </table>
 
-    <LineInstructionModal
-      v-if="showLineModal"
-      :item="selectedItem"
-      :used-lines="usedLines"
-      @set-line="setLine"
-      @close="showLineModal = false"
-    />
+    <LineInstructionModal v-if="showLineModal" :item="selectedItem" :used-lines="usedLines" @set-line="setLine"
+      @close="showLineModal = false" />
   </div>
 </template>
 
@@ -222,6 +217,7 @@ export default {
 .table th {
   vertical-align: middle;
 }
+
 .selected-line {
   font-weight: 600;
   color: #198754;

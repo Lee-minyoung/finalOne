@@ -1,70 +1,103 @@
 <template>
-  <div class="container mt-4">
-    <h2 class="mb-4">1번 라인 관리 상세</h2> 
-    <table class="table table-bordered text-center">
-      <thead class="table-light">
-        <tr>
-          <th>순서</th>
-          <th>공정명</th>
-          <th>설비명</th> 
-          <th>시작시간</th>
-          <th>종료시간</th>
-          <th>투입량</th>
-          <th>불량량</th>
-          <th>생산량</th>
-          <th>상태</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in lineProcessDetails" :key="index">
-          <td>{{ row.step_no }}</td>
-          <td>{{ row.proc_nm }}</td>
-          <td>{{ row.eqp_nm }}</td>
-          <td>{{ row.start_time }}</td>
-          <td>{{ row.end_time }}</td>
-          <td>{{ row.input_qty }}</td>
-          <td>{{ row.defect_qty }}</td>
-          <td>{{ row.output_qty }}</td>
-          <td>{{ row.status }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" @click.self="$emit('close')">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ lineNo }} 라인 상세 정보</h5>
+          <button type="button" class="btn-close" @click="$emit('close')"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container mt-4">
+            <h2 class="mb-4">{{ lineNo }} 라인 관리 상세</h2>
+            <table class="table table-bordered text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>순서</th>
+                  <th>공정명</th>
+                  <th>설비명</th>
+                  <th>시작시간</th>
+                  <th>종료시간</th>
+                  <th>투입량</th>
+                  <th>불량량</th>
+                  <th>생산량</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, index) in processDetailList" :key="row.seq">
+                  <td>{{ row.seq }}</td>
+                  <td>{{ row.proc_code_nm }}</td>
+                  <td>{{ row.proc_nm }}</td>
+                  <td>{{ row.st_tm }}</td>
+                  <td>{{ row.end_tm }}</td>
+
+                  <!-- ✅ 투입량은 항상 읽기 전용 -->
+                  <td>{{ row.ord_qty }}</td>
+
+                  <!-- ✅ 불량량: 공정중일 때만 input 가능 -->
+                  <td>
+                    <input v-if="row.eqp_sts === 'h5'" type="number" class="form-control form-control-sm text-end"
+                      v-model.number="row.dft_qty" @input="updatePdnQty(row)" :max="row.ord_qty" min="0" />
+                    <span v-else>{{ row.dft_qty }}</span>
+                  </td>
+
+                  <!-- ✅ 생산량: 공정중일 때만 input 가능 -->
+                  <td>
+                    <span>{{ row.pdn_qty }}</span>
+                  </td>
+
+                  <td>
+                    <span v-if="row.eqp_sts === 'h1'">정상</span>
+                    <span v-else-if="row.eqp_sts === 'h2'">수리중</span>
+                    <span v-else-if="row.eqp_sts === 'h3'">점검중</span>
+                    <span v-else-if="row.eqp_sts === 'h4'">
+                      <button class="btn btn-sm btn-secondary" disabled>작업대기</button>
+                    </span>
+                    <span v-else-if="row.eqp_sts === 'h5'">
+                      <button class="btn btn-sm btn-primary" @click="startLine(row, index)">공정완료</button>
+                    </span>
+                    <span v-else-if="row.eqp_sts === 'h6'">
+                      <button class="btn btn-sm btn-danger" @click="repair(row, index)">작업완료</button>
+                    </span>
+                    <span v-else>미정</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'LineProcessDetail',
+  name: 'LineManagementDtl',
+  props: {
+    details: Array,
+    lineNo: String
+  },
+  emits: ['close'],
   data() {
     return {
-      lineProcessDetails: [
-        { step_no: 1, proc_nm: '재료입고', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 2, proc_nm: '세척', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 3, proc_nm: '침지', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 4, proc_nm: '충전', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 5, proc_nm: '취사', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 6, proc_nm: '포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 7, proc_nm: '냉각', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 8, proc_nm: '중량(검사)', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 9, proc_nm: '라벨부착', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 10, proc_nm: '최종포장', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-        { step_no: 11, proc_nm: '종합', eqp_nm: '', start_time: '', end_time: '', input_qty: '', defect_qty: '', output_qty: '', status: '' },
-      ]
+      processDetailList: []
+    };
+  },
+  watch: {
+    details: {
+      immediate: true,
+      handler(newVal) {
+        this.processDetailList = Array.isArray(newVal) ? newVal : [];
+      }
+    }
+  },
+  methods: {
+    updatePdnQty(row) {
+      const dft = Number(row.dft_qty || 0);
+      const ord = Number(row.ord_qty || 0);
+      row.pdn_qty = Math.max(ord - dft, 0);  // 음수 방지
     }
   }
-}
+};
 </script>
-
-<style scoped>
-h2 {
-  font-weight: bold;
-  text-align: left;
-}
-.table td,
-.table th {
-  vertical-align: middle;
-}
-.table-primary {
-  background-color: #cce5ff !important;
-}
-</style>

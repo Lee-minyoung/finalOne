@@ -56,17 +56,18 @@
           <td></td>
           <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
           <td>
-            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1"> - </button>
+            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1">
+              - </button>
           </td>
-        </tr> 
+        </tr>
         <!--@click="!isFullyInstructed(row) && togglePlanSelection(row)"  지시완료되면 선택이 안됨 
             :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
             클래스를 동적으로 사용 isSelected 선택시 파란색 배경, isFullyInstructed 지시완료시 회색 글씨 \
             style 지시 완료면 마우스모양 : 아니면 손가락모양 표현-->
         <tr v-for="row in sortedProdPlanList" :key="row.pdn_pln_no"
-            @click="!isFullyInstructed(row) && togglePlanSelection(row)" 
-            :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
-            :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
+          @click="!isFullyInstructed(row) && togglePlanSelection(row)"
+          :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
+          :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
           <td>{{ row.pdn_pln_no }}</td>
           <td>{{ row.prd_nm }}</td>
           <td>{{ row.qty }}</td>
@@ -79,8 +80,8 @@
              여기가 퍼센트에 따라 진행률 바 체워짐-->
             <div class="progress" style="height: 22px;">
               <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty)"
-              :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
-              {{ getStatus(row.qty, row.ord_qty) }}
+                :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
+                {{ getStatus(row.qty, row.ord_qty) }}
               </div>
             </div>
           </td>
@@ -90,19 +91,10 @@
       </tbody>
     </table>
 
-    <ProductSelectModal
-      v-if="showProductModal"
-      :prodList="prodList"
-      :selected="planRows"
-      @select-product="handleSelectedProducts"
-      @close="showProductModal = false"
-    />
+    <ProductSelectModal v-if="showProductModal" :prodList="prodList" :selected="planRows"
+      @select-product="handleSelectedProducts" @close="showProductModal = false" />
 
-    <InstructionModal
-      v-if="showInstructionModal"
-      @submit="submitInstructions"
-      @close="showInstructionModal = false"
-    />
+    <InstructionModal v-if="showInstructionModal" @submit="submitInstructions" @close="showInstructionModal = false" />
   </div>
 </template>
 
@@ -129,7 +121,8 @@ export default {
       ],
       showProductModal: false, // 제품 선택 모달 표시 여부
       showInstructionModal: false, // 계획 지시 모달 표시 여부
-      prodList: [] // 모달에 표시할 제품 목록
+      prodList: [], // 모달에 표시할 제품 목록
+      empStore: useEmpStore(),
     }
   },
 
@@ -137,6 +130,14 @@ export default {
     // Pinia 스토어 연결: instructionStore는 계획 지시 관련 상태를 관리함
     instructionStore() {
       return useInstructionStore()
+    },
+    computed: {
+      employeeName() {
+        return this.empStore.loginInfo.nm || '';  //  추가
+      },
+      employeeNo() {
+        return this.empStore.loginInfo.emp_no || '';  //추가
+      }
     },
     // 진행률에 따라 완료되지 않은 항목이 먼저 오도록 정렬
     sortedProdPlanList() {
@@ -180,7 +181,7 @@ export default {
     isSelected(row) {
       return this.instructionStore.selectedPlans.some(p => p.pdn_pln_dtl_no === row.pdn_pln_dtl_no)
     },
-// 백분률 계산 함수.
+    // 백분률 계산 함수.
     // 백분율 계산 (계획 대비 누적지시)
     getProgress(planQty, instQty) {
       const qty = Number(planQty || 0)
@@ -204,7 +205,7 @@ export default {
       if (percent < 100) return 'bg-warning text-dark'
       return 'bg-success'
     },
-// 여기까지..백분률
+    // 여기까지..백분률
 
 
     // 🧾 계획 등록 관련 --------------------------
@@ -239,7 +240,7 @@ export default {
         }
         alert('등록 완료!')
         this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: 'r1' }
+          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: 'r1', crt_by: this.empStore.loginInfo.emp_no }
         ]
         this.getProdPlanList()
       } catch (err) {
@@ -260,55 +261,56 @@ export default {
         })
     },
 
-//  모달에서 선택한 제품 목록을 기존 입력 행(planRows)에 병합하는 함수
-handleSelectedProducts(selectedList) {
-  //  기존 입력 행을 복사 (불변성 유지 위해 spread 사용)
-  let updatedRows = [...this.planRows]
+    //  모달에서 선택한 제품 목록을 기존 입력 행(planRows)에 병합하는 함수
+    handleSelectedProducts(selectedList) {
+      //  기존 입력 행을 복사 (불변성 유지 위해 spread 사용)
+      let updatedRows = [...this.planRows]
 
-  //  이미 등록된 제품 번호를 추적하기 위한 Set 생성
-  const existingPrdNos = new Set(updatedRows.map(r => r.prd_no))
+      //  이미 등록된 제품 번호를 추적하기 위한 Set 생성
+      const existingPrdNos = new Set(updatedRows.map(r => r.prd_no))
 
-  // 1. 빈 행이 존재하면, 거기에 선택된 제품을 순서대로 채워 넣음
-  let productIndex = 0 // 선택된 제품 리스트에서 몇 번째 제품을 처리 중인지 추적
-  for (let i = 0; i < updatedRows.length && productIndex < selectedList.length; i++) {
-    const row = updatedRows[i]              // 현재 입력 행
-    const product = selectedList[productIndex] // 현재 선택된 제품
+      // 1. 빈 행이 존재하면, 거기에 선택된 제품을 순서대로 채워 넣음
+      let productIndex = 0 // 선택된 제품 리스트에서 몇 번째 제품을 처리 중인지 추적
+      for (let i = 0; i < updatedRows.length && productIndex < selectedList.length; i++) {
+        const row = updatedRows[i]              // 현재 입력 행
+        const product = selectedList[productIndex] // 현재 선택된 제품
 
-    // 빈 행이고 중복 제품이 아닐 경우 채운다
-    // has 메소드는 Set에 해당 값이 있는지 확인하는 메소드
-    if (!row.prd_no && !existingPrdNos.has(product.prd_no)) {
-      row.prd_no = product.prd_no
-      row.prd_nm = product.prd_nm
-      existingPrdNos.add(product.prd_no) // 중복 방지를 위해 Set에 등록
-      productIndex++
-    }
-  }
+        // 빈 행이고 중복 제품이 아닐 경우 채운다
+        // has 메소드는 Set에 해당 값이 있는지 확인하는 메소드
+        if (!row.prd_no && !existingPrdNos.has(product.prd_no)) {
+          row.prd_no = product.prd_no
+          row.prd_nm = product.prd_nm
+          existingPrdNos.add(product.prd_no) // 중복 방지를 위해 Set에 등록
+          productIndex++
+        }
+      }
 
-  // 2️ 아직 채워지지 못한 제품이 있다면, 새로운 행으로 추가
-  for (const product of selectedList) {
-    if (!existingPrdNos.has(product.prd_no)) {
-      updatedRows.push({
-        prd_no: product.prd_no,    // 제품 코드
-        prd_nm: product.prd_nm,    // 제품 이름
-        qty: '',                   // 수량은 비워둠 (사용자 입력 대상)
-        st_dt: '',                 // 시작일 (입력 필요)
-        end_dt: '',                // 종료일 (입력 필요)
-        rmk: '',                   // 비고
-        status: '계획완료'          // 초기 상태 값
-      })
-      existingPrdNos.add(product.prd_no) // 추가한 제품은 Set에도 반영
-    }
-  }
+      // 2️ 아직 채워지지 못한 제품이 있다면, 새로운 행으로 추가
+      for (const product of selectedList) {
+        if (!existingPrdNos.has(product.prd_no)) {
+          updatedRows.push({
+            prd_no: product.prd_no,    // 제품 코드
+            prd_nm: product.prd_nm,    // 제품 이름
+            qty: '',                   // 수량은 비워둠 (사용자 입력 대상)
+            st_dt: '',                 // 시작일 (입력 필요)
+            end_dt: '',                // 종료일 (입력 필요)
+            rmk: '',                   // 비고
+            crt_by: this.empStore.loginInfo.emp_no, // 생성자 (로그인한 사용자)
+            status: '계획완료'          // 초기 상태 값
+          })
+          existingPrdNos.add(product.prd_no) // 추가한 제품은 Set에도 반영
+        }
+      }
 
-  // 3️⃣ 선택된 제품 외의 행은 삭제 (최종적으로 선택된 제품만 반영)
-  // some 배열안에 조건을 만족하는 요소가 하나이상 있는지 찾는 메소드드
-  this.planRows = updatedRows.filter(row =>
-    row.prd_no && selectedList.some(sel => sel.prd_no === row.prd_no)
-  )
+      // 3️⃣ 선택된 제품 외의 행은 삭제 (최종적으로 선택된 제품만 반영)
+      // some 배열안에 조건을 만족하는 요소가 하나이상 있는지 찾는 메소드드
+      this.planRows = updatedRows.filter(row =>
+        row.prd_no && selectedList.some(sel => sel.prd_no === row.prd_no)
+      )
 
-  // 모달 닫기
-  this.showProductModal = false
-},
+      // 모달 닫기
+      this.showProductModal = false
+    },
 
     // ✅ 테이블 선택 관련 --------------------------
 
@@ -326,7 +328,7 @@ handleSelectedProducts(selectedList) {
       }
     },
 
-// ---------------------여기부터 리뷰 -------------------------
+    // ---------------------여기부터 리뷰 -------------------------
     // ✅ 계획 지시 관련 --------------------------
 
     // 계획지시 모달 열기
@@ -345,7 +347,7 @@ handleSelectedProducts(selectedList) {
       this.instructionStore.generateInstructionRows()
       this.showInstructionModal = true
     },
- // 
+    // 
     // 지시 등록 (여러 계획번호별로 나눠서 등록)
     async submitInstructions() {
       // 📦 1. Pinia 상태에서 지시할 데이터(instructionRows)를 가져옴
@@ -355,61 +357,61 @@ handleSelectedProducts(selectedList) {
       const grouped = {}
 
       // 🔁 3. 각 지시 행(row)을 순회하면서 유효성 검사 및 그룹화
-        for (const row of rows) {
-      // 🚨 유효성 검사: 지시 수량이 0보다 작거나, 계획 수량보다 많은 경우는 오류
+      for (const row of rows) {
+        // 🚨 유효성 검사: 지시 수량이 0보다 작거나, 계획 수량보다 많은 경우는 오류
         if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
           alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
           return // 유효하지 않으면 함수 종료
         }
 
-      // 🗃️ 그룹화 키: 계획번호(pdn_pln_no) 기준
-      const key = row.pdn_pln_no
+        // 🗃️ 그룹화 키: 계획번호(pdn_pln_no) 기준
+        const key = row.pdn_pln_no
 
-      // 📌 해당 계획번호에 대한 배열이 없으면 초기화
-      if (!grouped[key]) grouped[key] = []
+        // 📌 해당 계획번호에 대한 배열이 없으면 초기화
+        if (!grouped[key]) grouped[key] = []
 
-      // 🧩 상세 지시 정보를 해당 그룹에 추가
-      grouped[key].push({
-        pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
-        prd_no: row.prd_no,                  // 제품 코드
-        instruction_qty: row.instruction_qty, // 지시 수량
-        ord_sts:'r1',                        // 상태값 고정
-        rmk: row.rmk                         // 비고
-      })
-    }
+        // 🧩 상세 지시 정보를 해당 그룹에 추가
+        grouped[key].push({
+          pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
+          prd_no: row.prd_no,                  // 제품 코드
+          instruction_qty: row.instruction_qty, // 지시 수량
+          ord_sts: 'r1',                        // 상태값 고정
+          rmk: row.rmk                         // 비고
+        })
+      }
 
       // 📤 4. 그룹화된 데이터를 하나씩 서버에 POST 요청 (계획번호별로 여러 건 전송)
-    try {
-      //구조 분해 할당 (Destructuring)
-      // Object.entries(grouped): { 'PLN001': [...], 'PLN002': [...] } → [[key1, val1], [key2, val2], ...]
-      /*
-        "pdn_pln_no": "PLN001",
-        "details": [
-          { "prd_no": "A", "instruction_qty": 10, ... },
-          { "prd_no": "B", "instruction_qty": 20, ... }
-      */
-      for (const [pdn_pln_no, details] of Object.entries(grouped)) {
-      // 전송 payload 생성
-      const payload = { pdn_pln_no, details }
+      try {
+        //구조 분해 할당 (Destructuring)
+        // Object.entries(grouped): { 'PLN001': [...], 'PLN002': [...] } → [[key1, val1], [key2, val2], ...]
+        /*
+          "pdn_pln_no": "PLN001",
+          "details": [
+            { "prd_no": "A", "instruction_qty": 10, ... },
+            { "prd_no": "B", "instruction_qty": 20, ... }
+        */
+        for (const [pdn_pln_no, details] of Object.entries(grouped)) {
+          // 전송 payload 생성
+          const payload = { pdn_pln_no, details }
 
-      // 💬 axios POST 요청 (비동기 통신)
-      await axios.post('/api/prodinst', payload, {
-         headers: { 'Content-Type': 'application/json' }
-       })
-     }
+          // 💬 axios POST 요청 (비동기 통신)
+          await axios.post('/api/prodinst', payload, {
+            headers: { 'Content-Type': 'application/json' }
+          })
+        }
 
-      // ✅ 등록 성공 시 처리
-    alert("지시 등록 완료!")
-      this.showInstructionModal = false // 모달 닫기
-      this.instructionStore.reset()     // 스토어 내부 상태 초기화 (선택/지시 모두)
-      this.getProdPlanList()            // 다시 리스트 조회해서 반영
+        // ✅ 등록 성공 시 처리
+        alert("지시 등록 완료!")
+        this.showInstructionModal = false // 모달 닫기
+        this.instructionStore.reset()     // 스토어 내부 상태 초기화 (선택/지시 모두)
+        this.getProdPlanList()            // 다시 리스트 조회해서 반영
 
-    } catch (err) {
-    // ❌ 에러 발생 시 콘솔 출력 및 사용자 알림
-    console.error("지시 등록 실패", err.response?.data || err.message)
-    alert("지시 등록 실패")
-  }
-}
+      } catch (err) {
+        // ❌ 에러 발생 시 콘솔 출력 및 사용자 알림
+        console.error("지시 등록 실패", err.response?.data || err.message)
+        alert("지시 등록 실패")
+      }
+    }
   }
 }
 </script>
@@ -421,10 +423,12 @@ h2 {
   font-weight: bold;
   text-align: left;
 }
+
 .table td,
 .table th {
   vertical-align: middle;
 }
+
 .table-primary {
   background-color: #cce5ff !important;
 }

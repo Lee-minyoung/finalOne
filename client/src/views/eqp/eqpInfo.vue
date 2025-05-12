@@ -31,6 +31,7 @@
             <option value="h1">정상</option>
             <option value="h2">수리중</option>
             <option value="h3">점검중</option>
+            <option value="h4">사용중</option>
           </select>
           <label class="form-label">등록된라인</label>
           <input type="text" class="form-control" v-model="useLine" readonly disabled />
@@ -114,8 +115,33 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async eqpUpdate() {
+      // 설비명 검증
+      if (!this.eqpInfo.eqp_nm?.trim()) {
+        alert('설비명을 입력해주세요.');
+        return;
+      }
+
+      // 설비관리자 검증
+      if (!this.eqpInfo.eqp_mgr) {
+        alert('설비관리자를 선택해주세요.');
+        return;
+      }
+
+      // 설비상태 검증
+      if (!this.eqpInfo.eqp_sts) {
+        alert('설비상태를 선택해주세요.');
+        return;
+      }
+
+      // 사용여부 검증
+      if (!this.eqpInfo.use_yn) {
+        alert('사용여부를 선택해주세요.');
+        return;
+      }
+
+
       let obj = {
-        eqp_nm: this.eqpInfo.eqp_nm, // 설비명
+        eqp_nm: this.eqpInfo.eqp_nm.trim(), // 설비명
         eqp_mgr: this.eqpInfo.eqp_mgr, // 설비관리자 사원번호
         eqp_sts: this.eqpInfo.eqp_sts, // 설비상태
         use_yn: this.eqpInfo.use_yn, // 사용여부

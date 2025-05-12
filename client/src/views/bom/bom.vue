@@ -20,17 +20,17 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>BOM번호</th>
-                  <th>제품명 </th>
-                  <th>사용여부</th>
+                  <th class="w-10">BOM번호</th>
+                  <th class="w-30">제품명 </th>
+                  <th class="w-10">사용여부</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="bom in filteredBomList" v-bind:key="bom.bom_no" @click="selectBom(bom.bom_no)"
                   :class="{ 'table-primary': selectedBom && selectedBom.bom_no === bom.bom_no }" class="table-hover">
-                  <td>{{ bom.bom_no }}</td>
-                  <td>{{ bom.prd_nm }}</td>
-                  <td>{{ CommonCodeFormat(bom.use_yn) }}</td>
+                  <td class="w-10">{{ bom.bom_no }}</td>
+                  <td class="w-30">{{ bom.prd_nm }}</td>
+                  <td class="w-10">{{ CommonCodeFormat(bom.use_yn) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -119,79 +119,5 @@ export default {
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.table-primary {
-  background-color: #cce5ff;
-}
-
-.table-container {
-  height: 550px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-}
-
-.table {
-  margin-bottom: 0;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-tr {
-  border: 0px;
-}
-
-.table td,
-.table th {
-  width: 20%;
-  padding: 8px;
-  /* border-top: 1px solid #dee2e6; */
-  border-right: 1px solid #dee2e6;
-  border-left: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.table thead {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 1;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.table thead tr,
-.table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table tbody {
-  display: block;
-  overflow-y: auto;
-  height: calc(550px - 42px);
-}
-
-.table tbody tr td:first-child,
-.table thead tr th:first-child {
-  border-left: none;
-}
-
-.table tbody tr td:last-child,
-.table thead tr th:last-child {
-  border-right: none;
-}
+@import '@/assets/styles/base-table.css';
 </style>
