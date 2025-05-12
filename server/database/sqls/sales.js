@@ -23,8 +23,17 @@ const selectOrdList=
 //          mdf_dt
 //   FROM ord`;
 
-`select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
-from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
+// `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
+// from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
+`select o.ord_no,o.vdr_no,v.cpy_nm,od.prd_no,p.prd_nm,SUM(od.prd_qty) as 요청수량,ps.cur_stk as lot수량,DATE_FORMAT(DATE_ADD(o.rgt_dt,INTERVAL 14 DAY)," %Y-%m-%d") as 납기예정,ps.lot_no,v.ofc_addr 
+from ord o join ord_dtl od on o.ord_no=od.ord_no
+join prd p on od.prd_no=p.prd_no
+right join  prd_stk ps on od.prd_no=ps.prd_no
+join vdr v on o.vdr_no=v.vdr_no
+where o.ord_no is not null
+GROUP BY o.vdr_no , od.prd_no
+order by DATE_FORMAT(DATE_ADD(o.rgt_dt,INTERVAL 14 DAY)," %Y-%m-%d")`;
+
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
@@ -102,7 +111,16 @@ INSERT INTO spm (spm_no,ord_no,vdr_no,mgr,spm_dt,dlv_addr)
 VALUES(?,?,?,?,?,?)`; 
 const insertSpmDtl=`
 INSERT INTO spm_dtl (spm_dtl_no,spm_no,qty,unt_prc,prd_no)
-VALUES(?,?,?,?,?)`; 
+VALUES(?,?,?,?,?)`;
+
+const updatePrdStk=`
+UPDATE prd_stk 
+SET cur_stk=cur_stk - ?
+WHERE lot_no= ?
+AND prd_no=?`;
+const insertPrdStkHist=`
+INSERT INTO prd_stk_hist (prd_stk_hist_no,lot_no,io_tp,qty,dt,rel_doc)
+ VALUES (?,?,?,?,?,?);` 
 
  module.exports={
   insertOrd,
@@ -119,5 +137,7 @@ VALUES(?,?,?,?,?)`;
   selectSpmInfo,
   selectMaxSpmDtlNo, 
   insertSpm,  
-  insertSpmDtl,  
+  insertSpmDtl,
+  updatePrdStk,
+  insertPrdStkHist   
  }
