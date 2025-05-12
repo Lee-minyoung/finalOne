@@ -72,6 +72,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'LineManagementDtl',
   props: {
@@ -97,7 +99,29 @@ export default {
       const dft = Number(row.dft_qty || 0);
       const ord = Number(row.ord_qty || 0);
       row.pdn_qty = Math.max(ord - dft, 0);  // 음수 방지
-    }
+    },
+
+    async startLine(item) {
+      const payload = {
+        p_ln_opr_no: item.ln_opr_no,
+        p_ln_opr_dtl_no: item.ln_opr_dtl_no,
+        p_seq: item.seq,
+        p_dft_qty: item.dft_qty,
+        p_pdn_qty: item.pdn_qty
+      }
+
+      try {
+        await axios.post('/api/lineOperation', payload)
+        const res = await axios.get(`/api/lineDetail/${this.lineNo}`);
+        this.processDetailList = res.data;
+        alert('공정 완료!')
+      } catch (err) {
+        console.error("❌ 지시 실패:", err)
+        alert('지시 중 오류가 발생했습니다.')
+      }
+    },
   }
 };
+
+///lineOperation
 </script>
