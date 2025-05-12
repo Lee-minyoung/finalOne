@@ -1,6 +1,6 @@
 <template>
   <!-- 우측 영역 시작 -->
-  <div class="col-md-5">
+  <div class="col-md-7">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div></div>
@@ -13,87 +13,121 @@
     <!-- 우측 상세보기 영역 시작 -->
     <div class="card p-3">
       <h4>거래처 등록</h4>
-      <table class="align-middle" style="border:none;width:100%;">
-        <tbody>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">거래처번호</th>
-            <td colspan="3" style="border:none;">
+      <div>
+        <div>
+          <div class="row mb-2">
+            <!-- 1행: 거래처번호 + 사업자등록번호 -->
+            <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <input type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled
-                  style="max-width: 400px; width:100%;" />
+                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
+                <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled />
               </div>
-            </td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">사업자등록번호</th>
-            <td colspan="3" style="border:none;">
+            </div>
+            <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <input type="text" class="form-control" v-model="vdrInfo.biz_reg_no"
-                  style="max-width: 400px; width:100%;" />
+                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
+                <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
-            </td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">상호명</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control"
-                v-model="vdrInfo.cpy_nm" style="max-width: 300px; width:100%;" /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">대표자명</th>
-            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ceo_nm"
-                style="max-width: 300px; width:100%;" /></td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">사업장소재지</th>
-            <td colspan="3" style="border:none;">
-              <div class="d-flex gap-2 align-items-center" style="max-width: 400px; width:100%;">
-                <input type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly style="height: 38px;" />
-                <button class="btn btn-primary" @click="openDaumPostcode"
-                  style="height: 38px; min-width: 90px; font-size: 0.9rem; padding: 0 10px;">주소 검색</button>
+            </div>
+
+
+
+            <!-- <div class="col-md-4 mb-3 p-0">
+              <div class="d-flex align-items-center">
+                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
+                <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled style="flex:1;" />
               </div>
-            </td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">사업장연락처</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.ofc_ctt"
-                style="max-width: 400px; width:100%;" /></td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">담당자</th>
-            <td style="border:none; padding-right:40px;"><input type="text" class="form-control"
-                v-model="vdrInfo.mgr_nm" style="max-width: 300px; width:100%;" /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">담당자연락처</th>
-            <td style="border:none;"><input type="text" class="form-control" v-model="vdrInfo.mgr_ctt"
-                style="max-width: 300px; width:100%;" /></td>
-          </tr>
-          <tr class="mb-3">
-            <th style="width: 20%; min-width: 120px; border:none;">사업장유형</th>
-            <td style="border:none; padding-right:40px;">
-              <select class="form-select form-control" v-model="vdrInfo.ofc_tp" style="max-width: 300px; width:100%;">
-                <option value="b1">판매처</option>
-                <option value="b2">구매처</option>
-                <option value="b3">혼합</option>
-                <option value="b4">외주처</option>
-              </select>
-            </td>
-            <th style="width: 20%; min-width: 120px; border:none;">사업장상태</th>
-            <td style="border:none;">
-              <select class="form-select form-control" v-model="vdrInfo.ofc_sts" style="max-width: 300px; width:100%;">
-                <option value="d1">정상</option>
-                <option value="d2">휴업</option>
-                <option value="d3">폐업</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">사용여부</th>
-            <td colspan="3" style="border:none;">
-              <select class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
-                <option value="f1">여</option>
-                <option value="f2">부</option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div class="col-md-8 mb-3 p-0">
+              <div class="d-flex align-items-center">
+                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
+                <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" style="flex:1;" />
+              </div>
+            </div> -->
+  
+            <!-- 3행: 상호명 + 대표자명 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="cpyNm" class="form-label fw-bold me-3" style="min-width: 100px;">상호명</label>
+                <input id="cpyNm" type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ceoNm" class="form-label fw-bold me-3" style="min-width: 100px;">대표자명</label>
+                <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm"  />
+              </div>
+            </div>
+            <!-- 4행: 사업장주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcAddr" class="form-label fw-bold me-3" style="min-width: 100px;">사업장주소</label>
+                <div class="flex-grow-1 d-flex gap-2">
+                  <input id="ofcAddr" type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly />
+                  <button class="btn btn-outline-secondary" @click="openDaumPostcode" style="min-width: 40px;">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- 상세주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label style="min-width: 100px;" class="me-3"></label>
+                <div class="flex-grow-1">
+                  <input id="ofcAddrDetail" type="text" class="form-control" v-model="tempAddrDetail" @input="updateFullAddress" placeholder="상세주소" />
+                </div>
+              </div>
+            </div>
+            <!-- 5행: 전화번호 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcCtt" class="form-label fw-bold me-3" style="min-width: 100px;">전화번호</label>
+                <input id="ofcCtt" type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
+              </div>
+            </div>
+            <!-- 6행: 담당자 + 담당자연락처 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="mgrNm" class="form-label fw-bold me-3" style="min-width: 100px;">담당자</label>
+                <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="mgrCtt" class="form-label fw-bold me-3" style="min-width: 100px;">담당자연락처</label>
+                <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
+              </div>
+            </div>
+            <!-- 7행: 사업장유형 + 사업장상태 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcTp" class="form-label fw-bold me-3" style="min-width: 100px;">사업장유형</label>
+                <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
+                  <option value="">선택</option>
+                  <option value="b1">판매처</option>
+                  <option value="b2">구매처</option>
+                  <option value="b3">혼합</option>
+                  <option value="b4">외주처</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcSts" class="form-label fw-bold me-3" style="min-width: 100px;">사업장상태</label>
+                <input id="mgrCtt" type="text" class="form-control" value="정상" readonly disabled/>
+              </div>
+            </div>
+            <!-- 8행: 등록일자 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="rgtDt" class="form-label fw-bold me-3" style="min-width: 100px;">등록일자</label>
+                <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
   </div> <!-- 우측 영역 끝 -->
 </template>
@@ -116,18 +150,20 @@ export default {
     return {
       vdrNo: '', // 거래처 번호
       today: '', // 오늘 날짜
+      tempAddrDetail: '', // 임시 상세주소
+      baseAddress: '', // 기본 주소 저장용
       vdrInfo: {
         vdr_no: '', // 거래처 번호
         cpy_nm: '', // 상호명
         ceo_nm: '', // 대표자명
         biz_reg_no: '', // 사업자등록번호
-        ofc_tp: 'b1', // 사업장유형 (기본값: 판매처)
-        ofc_sts: 'd1', // 사업장상태 (기본값: 정상)
+        ofc_tp: '', // 사업장유형 (기본값: 판매처)
+        ofc_sts: '', // 사업장상태 (기본값: 정상)
         ofc_ctt: '', // 사업장연락처
         ofc_addr: '', // 사업장소재지
         mgr_nm: '', // 담당자
         mgr_ctt: '', // 담당자연락처
-        use_yn: 'f1' // 사용여부 (기본값: 사용)
+        use_yn: '' // 사용여부 (기본값: 사용)
       },
     };
   },
@@ -145,6 +181,12 @@ export default {
     const script = document.createElement('script');
     script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     document.head.appendChild(script);
+
+    // Bootstrap Icons 추가
+    const link = document.createElement('link');
+    link.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
   },
   methods: {
     /**
@@ -215,6 +257,8 @@ export default {
         mgr_ctt: '',
         use_yn: 'f1'
       };
+      this.tempAddrDetail = ''; // 상세주소 초기화
+      this.baseAddress = ''; // 기본 주소 초기화
       this.getVdrNo(); // 거래처 번호 다시 조회
     },
 
@@ -263,9 +307,23 @@ export default {
     openDaumPostcode() {
       new window.daum.Postcode({
         oncomplete: (data) => {
-          this.vdrInfo.ofc_addr = data.address;
+          this.baseAddress = `[${data.zonecode}] ${data.address}`;
+          this.vdrInfo.ofc_addr = this.baseAddress;
+          this.tempAddrDetail = ''; // 상세주소 초기화
         }
       }).open();
+    },
+
+    /**
+     * 전체 주소 업데이트
+     * - 기본 주소와 상세주소를 합쳐서 저장
+     */
+    updateFullAddress() {
+      if (this.tempAddrDetail) {
+        this.vdrInfo.ofc_addr = `${this.baseAddress} ${this.tempAddrDetail}`;
+      } else {
+        this.vdrInfo.ofc_addr = this.baseAddress;
+      }
     },
   }
 };
@@ -298,11 +356,6 @@ export default {
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-/* 테이블 행 간격 조정 */
-table tr {
-  margin-bottom: 1rem;
-}
-
 /* 입력 필드 hover 효과 */
 .form-control:hover,
 .form-select:hover {
@@ -310,32 +363,10 @@ table tr {
 }
 
 /* 라벨 스타일 */
-th {
+.form-label {
   font-weight: 500;
   color: #495057;
-  padding: 0.75rem 0;
-}
-
-/* 입력 필드 너비 조정 */
-.form-control,
-.form-select {
-  width: 100%;
-  max-width: none;
-}
-
-/* 카드 내부 여백 조정 */
-.card {
-  padding: 1.5rem;
-}
-
-/* 테이블 셀 패딩 조정 */
-td {
-  padding: 0.5rem 0;
-}
-
-/* 행 간 높이 조정 */
-table tr {
-  height: 45px;
+  margin-bottom: 0;
 }
 
 /* readonly와 disabled 입력창 스타일 */
@@ -350,5 +381,21 @@ input[disabled]:focus {
   background-color: #e9ecef !important;
   border-color: #ced4da;
   box-shadow: none;
+}
+
+/* 버튼 스타일 */
+.btn {
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
 }
 </style>

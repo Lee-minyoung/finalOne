@@ -3,7 +3,7 @@
     <div class="row">
       <h1>거래처 관리</h1>
       <!-- 좌측 영역 시작 -->
-      <div class="col-md-7">
+      <div class="col-md-5">
         <!-- 좌측 검색 영역 시작 -->
         <div class="d-flex justify-content-between mb-3">
           <input type="text" class="form-control w-50" placeholder="거래처명 검색..." v-model="searchQuery" />
@@ -25,9 +25,9 @@
                   <th class="text-center">거래처번호</th>
                   <th class="text-center">상호명</th>
                   <th class="text-center">사업자등록번호</th>
-                  <th class="text-center">담당자</th>
+                  
                   <th class="text-center">사업장유형</th>
-                  <th class="text-center">사업장상태</th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -36,9 +36,9 @@
                   <td class="text-center">{{ vdr.vdr_no }}</td>
                   <td>{{ vdr.cpy_nm }}</td>
                   <td class="text-center">{{ vdr.biz_reg_no }}</td>
-                  <td class="text-center">{{ vdr.mgr_nm }}</td>
+                  
                   <td class="text-center">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
-                  <td class="text-center">{{ officeStatusFormat(vdr.ofc_sts) }}</td>
+                  
                 </tr>
               </tbody>
             </table>
