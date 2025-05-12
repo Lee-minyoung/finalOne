@@ -85,6 +85,18 @@ const addSpmDtlData=async(dtlData)=>{
   return result;  
 }
 
+const minusLotCurStk=async (list)=>{
+  //요청량 , lot번호, 제품번호
+  const result=await mariadb.query('updatePrdStk',list); 
+  return result; 
+}
+
+const addPrdStkHist=async (prdStkHistData)=>{
+  const result=await mariadb.query('insertPrdStkHist',prdStkHistData); 
+  return result; 
+}
+
+
 
 //왜 안되는지...ㅠㅠㅠ 
 // const addSpmData=async (spmData,dtlData) =>{
@@ -121,5 +133,7 @@ const addSpmDtlData=async(dtlData)=>{
     addSpmData,
     findLastSpmDtlNo, 
     addSpmDtlData,
-    addSpmData, 
+    addSpmData,
+    minusLotCurStk,
+    addPrdStkHist, 
   }

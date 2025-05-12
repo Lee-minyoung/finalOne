@@ -96,7 +96,7 @@ const findMatAllInfo=async()=>{
 } 
 //발주서입력시 거래처 정보 전체조회할때 필요  
 const findVdrAllInfo=async() =>{
-  const vdrList=await mariadb.query('selectVdr'); 
+  const vdrList=await mariadb.query('selectVdrList'); 
   return vdrList;
 }
 // 출고요청번호 클릭시 자재확인 클릭했을때 

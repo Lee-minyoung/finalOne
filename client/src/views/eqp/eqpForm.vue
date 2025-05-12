@@ -77,11 +77,22 @@ export default {
     },
     // 저장 버튼 클릭시 실행할 함수 
     async eqpInsert() {
+      // 설비명 검증
+      if (!this.eqp_nm?.trim()) {
+        alert('설비명을 입력해주세요.');
+        return;
+      }
+
+      // 설비관리자 검증
+      if (!this.eqp_mgr) {
+        alert('설비관리자를 선택해주세요.');
+        return;
+      }
       // Form에 입력된 정보를 기준으로 등록하는 경우
       // 서버에 전달할 정보를 객체로 따로 구성
       let obj = {
         eqp_no: this.eqp_no, // 설비번호
-        eqp_nm: this.eqp_nm, // 설비명
+        eqp_nm: this.eqp_nm.trim(), // 설비명 공백 제거
         eqp_mgr: this.eqp_mgr, // 설비관리자 사원번호
       }
       // 서버에 데이터를 요청 : POST + http://localhost:3000/books => proxy ) /api/books

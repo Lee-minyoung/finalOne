@@ -19,7 +19,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
-                <input id="empNo" type="text" class="form-control" v-model="emp_no" readonly disabled/>
+                <input id="empNo" type="text" class="form-control" v-model="emp_no" readonly disabled />
               </div>
             </div>
             <!-- 입사일자 -->
@@ -69,6 +69,7 @@
               <div class="d-flex align-items-center">
                 <label for="deptNo" class="form-label fw-bold me-3" style="min-width: 100px;">부서명</label>
                 <select id="deptNo" class="form-select form-control" v-model="dept_no">
+                  <option value=null>선택</option>
                   <option v-for="dept in deptInfo" :key="dept.dept_no" :value="dept.dept_no">{{ dept.dept_nm }}</option>
                 </select>
               </div>
@@ -78,6 +79,7 @@
               <div class="d-flex align-items-center">
                 <label for="pstNo" class="form-label fw-bold me-3" style="min-width: 100px;">직급명</label>
                 <select id="pstNo" class="form-select form-control" v-model="pst_no">
+                  <option value=null>선택</option>
                   <option value="8">사원</option>
                   <option value="7">주임</option>
                   <option value="6">대리</option>
@@ -126,19 +128,19 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      emp_no: '', // 사원번호
-      pwd: '', // 비밀번호
-      nm: '', // 이름
-      ctt: '', // 연락처
-      bnk_nm: '', // 은행명
-      acct_no: '', // 계좌번호
-      addr: '', // 주소
-      hire_dt: '', // 입사일자
-      lv_rsn: '', // 휴직사유
-      hr_hist: '', // 인사이력
-      dept_no: '', // 부서번호
-      dept_nm: '', // 부서명
-      pst_no: '', // 직급번호
+      emp_no: null, // 사원번호
+      pwd: null, // 비밀번호
+      nm: null, // 이름
+      ctt: null, // 연락처
+      bnk_nm: null, // 은행명
+      acct_no: null, // 계좌번호
+      addr: null, // 주소
+      hire_dt: null, // 입사일자
+      lv_rsn: null, // 휴직사유
+      hr_hist: null, // 인사이력
+      dept_no: null, // 부서번호
+      dept_nm: null, // 부서명
+      pst_no: null, // 직급번호
 
       deptInfo: [], // 부서 select option 만드는 데이터
     };
@@ -161,21 +163,55 @@ export default {
     },
     // 초기화 버튼 클릭시 실행할 함수
     resetForm() {
-      this.pwd = ''; // 비밀번호
-      this.nm = ''; // 이름
-      this.ctt = ''; // 연락처
-      this.bnk_nm = ''; // 은행명
-      this.acct_no = ''; // 계좌번호
-      this.addr = ''; // 주소
-      this.hire_dt = ''; // 입사일자
-      this.lv_rsn = ''; // 휴직사유
-      this.hr_hist = ''; // 인사이력
-      this.dept_no = ''; // 부서번호
-      this.dept_nm = ''; // 부서명
-      this.pst_no = ''; // 직급번호
+      this.pwd = null; // 비밀번호
+      this.nm = null; // 이름
+      this.ctt = null; // 연락처
+      this.bnk_nm = null; // 은행명
+      this.acct_no = null; // 계좌번호
+      this.addr = null; // 주소
+      this.hire_dt = null; // 입사일자
+      this.lv_rsn = null; // 휴직사유
+      this.hr_hist = null; // 인사이력
+      this.dept_no = null; // 부서번호
+      this.dept_nm = null; // 부서명
+      this.pst_no = null; // 직급번호
     },
     // 저장 버튼 클릭시 실행할 함수 
     async empInsert() {
+      // 필수 입력값 검증
+      if (!this.hire_dt?.trim()) {
+        alert('입사일자를 입력해주세요.');
+        return;
+      }
+      if (!this.nm?.trim()) {
+        alert('이름을 입력해주세요.');
+        return;
+      }
+      if (!this.ctt?.trim()) {
+        alert('연락처를 입력해주세요.');
+        return;
+      }
+      if (!this.addr?.trim()) {
+        alert('주소를 입력해주세요.');
+        return;
+      }
+      if (!this.bnk_nm?.trim()) {
+        alert('은행명을 입력해주세요.');
+        return;
+      }
+      if (!this.acct_no?.trim()) {
+        alert('계좌번호를 입력해주세요.');
+        return;
+      }
+      if (!this.dept_no) {
+        alert('부서를 선택해주세요.');
+        return;
+      }
+      if (!this.pst_no) {
+        alert('직급을 선택해주세요.');
+        return;
+      }
+
       // Form에 입력된 정보를 기준으로 등록하는 경우
       // 서버에 전달할 정보를 객체로 따로 구성
       let obj = {

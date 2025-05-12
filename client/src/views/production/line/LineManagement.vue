@@ -36,7 +36,8 @@
               실행
             </button>
             <!-- l3: 작업현황 버튼 -->
-            <button v-else-if="item.ln_sts === 'l3'" class="btn btn-sm btn-warning" @click="showStatus(item)">
+            <button v-else-if="item.ln_sts === 'l3'" v-bind="item.pdn_opr_dtl_no" class="btn btn-sm btn-warning"
+              @click="showStatus(item)">
               작업현황
             </button>
             <!-- l4: 수리 중 버튼 -->
@@ -53,12 +54,8 @@
     </table>
   </div>
 
-<LineManagementDtl 
-  v-if="showLineModal"
-  :details="processDetailList"
-  :line-no="selectedLineNo"
-  @close="showLineModal = false"
-/>
+  <LineManagementDtl v-if="showLineModal" :details="processDetailList" :line-no="selectedLineNo"
+    @close="showLineModal = false" />
 </template>
 
 <script>
@@ -71,14 +68,13 @@ export default {
   components: {
     LineManagementDtl   // ✅ 등록도 꼭 추가
   },
-  data(){
+  data() {
     return {
       LineList: [],
       empStore: useEmpStore(),
       showLineModal: false,            // ✅ 모달 표시 여부
       selectedLineNo: '',              // ✅ 선택된 라인
       processDetailList: []            // ✅ 모달에 넘길 데이터
-      // empNo: empStore.loginInfo.emp_no || null
     }
   },
   computed: {
@@ -92,10 +88,10 @@ export default {
   created() {
     this.fetchLineList()
   },
-  methods:{
-    async fetchLineList(){
-        const res = await axios.get('/api/lineList');
-        this.LineList = res.data;
+  methods: {
+    async fetchLineList() {
+      const res = await axios.get('/api/lineList');
+      this.LineList = res.data;
     },
     async startLine(item) {
       const payload = {
@@ -114,20 +110,20 @@ export default {
       }
     },
     async showStatus(item) {
-  console.log("✅ 라인 상태 확인 클릭:", item.ln_opr_no); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
-  this.selectedLineNo = item.ln_opr_no;      // ✅ props로 넘길 lineNo
-  console.log("✅ 선택된 라인번호:", this.selectedLineNo); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
-  this.showLineModal = true;
+      console.log("🧩 선택된 item:", item);
+      this.selectedLineNo = item.ln_no;
+      this.showLineModal = true;
 
-  try {
-    const res = await axios.get(`/api/lineDetail/${item.ln_opr_no}`);
-    console.log("✅ 상세 데이터:", res.data); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
-    this.processDetailList = res.data;       // ✅ props로 넘길 details
-  } catch (err) {
-    console.error("❌ 라인 상세 조회 실패:", err);
-    alert("라인 상세 정보를 불러오지 못했습니다.");
-  }
-}
+      try {
+        // ✅ ln_opr_dtl_no → pdn_ord_dtl_no로 변경
+        const res = await axios.get(`/api/lineDetail/${item.pdn_ord_dtl_no}`);
+        console.log("✅ 상세 데이터:", res.data);
+        this.processDetailList = res.data;
+      } catch (err) {
+        console.error("❌ 라인 상세 조회 실패:", err);
+        alert("라인 상세 정보를 불러오지 못했습니다.");
+      }
+    }
   }
 
 }
@@ -139,10 +135,12 @@ h2 {
   font-weight: bold;
   text-align: left;
 }
+
 .table td,
 .table th {
   vertical-align: middle;
 }
+
 .table-primary {
   background-color: #cce5ff !important;
 }

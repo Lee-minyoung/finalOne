@@ -17,11 +17,11 @@
           <label class="form-label">공정코드</label>
           <input type="text" class="form-control" v-model="proc_code_no" readonly disabled />
           <label class="form-label">공정명</label>
-          <input type="text" class="form-control" v-model="proc_code_nm" placeholder="공정명을 입력해주세요."/>
+          <input type="text" class="form-control" v-model="proc_code_nm" placeholder="공정명을 입력해주세요." />
           <label class="form-label">공정기준</label>
-          <input type="text" class="form-control" v-model="proc_std" placeholder="공정기준을 입력해주세요."/>
+          <input type="text" class="form-control" v-model="proc_std" placeholder="공정기준을 입력해주세요." />
           <label class="form-label">비고</label>
-          <input type="text" class="form-control" v-model="rmk" placeholder="비고를 입력해주세요."/>
+          <input type="text" class="form-control" v-model="rmk" placeholder="비고를 입력해주세요." />
         </div>
       </div>
     </div> <!-- 우측 상세보기 영역 끝 -->
@@ -61,12 +61,25 @@ export default {
     async prcCodeInsert() {
       // Form에 입력된 정보를 기준으로 등록하는 경우
       // 서버에 전달할 정보를 객체로 따로 구성
-      let obj = {
-        proc_code_no: this.proc_code_no, // 공정코드번호
-        proc_code_nm: this.proc_code_nm, // 공정코드명
-        proc_std: this.proc_std, // 공정기준
-        rmk: this.rmk, // 비고
+
+      // 필수 입력값 검증
+      if (!this.proc_code_nm?.trim()) {
+        alert('공정명을 입력해주세요.');
+        return;
       }
+      if (!this.proc_std?.trim()) {
+        alert('공정기준을 입력해주세요.');
+        return;
+      }
+
+      // 공백 제거 후 데이터 구성
+      let obj = {
+        proc_code_no: this.proc_code_no,
+        proc_code_nm: this.proc_code_nm.trim(),
+        proc_std: this.proc_std.trim(),
+        rmk: this.rmk?.trim() || '' // 비고는 선택사항이므로 없으면 빈 문자열
+      }
+      
       // 서버에 데이터를 요청 : POST + http://localhost:3000/books => proxy ) /api/books
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.post("/api/prcCode", obj)

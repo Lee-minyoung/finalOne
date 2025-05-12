@@ -86,21 +86,27 @@
     <thead>
       <tr>
         <th scope="col">주문번호</th>
-        <th scope="col">업체명</th>
+        <th scope="col">제품명</th>
+        <th scope="col">거래처명</th>
         <th scope="col">제품</th>
-        <th scope="col">수량</th>
+        <th scope="col">요청수량</th>
+        <th scope="col">lot재고량</th>
+        <!-- <th scope="col">수량</th>
         <th scope="col">주문일자</th>
-        <th scope="col">납기일자</th>
+        <th scope="col">현재수량</th> -->
       </tr>
     </thead>
     <tbody>
       <tr v-for="(item, index) in ordList" :key="index">
         <th scope="row">{{ item.ord_no }}</th>
+        <th>{{ item.prd_nm }}</th>
         <td>{{ item.cpy_nm }}</td>
         <td>{{ item.prd_nm }}</td>
-        <td>{{ item.prd_qty }}</td>
+        <td>{{item['요청수량'] }}</td>
+        <td>{{ item['lot수량'] }}</td>
+        <!-- <td>{{ item.prd_qty }}</td>
         <td>{{ item.rgt_dt.substring(0,10) }}</td>
-        <td>{{ item.due_dt.substring(0,10) }}</td>
+        <td>{{ item.due_dt.substring(0,10) }}</td> -->
       </tr>
     </tbody>
   </table>
@@ -162,8 +168,9 @@ export default {
   methods: {
     async getOrdList() {
       try {
-        const result = await axios.get('/api/ordAll')
+        const result = await axios.get('/api/ord')
         this.ordList = result.data
+        console.log('주문리스트:', this.ordList)
       } catch (err) {
         console.log('주문리스트 불러오기 실패', err)
       }

@@ -8,7 +8,7 @@ const findPrd = async () => {
   return list;
 };
 
-// 제품번호, 제품명 불러오기
+// 기준서 조회
 const findSpmInsStdList = async (prd_no) => {
   try {
     const list = await mariadb.query("selectSpmInsStd", [prd_no]); // SQL 쿼리에 prd_no 전달

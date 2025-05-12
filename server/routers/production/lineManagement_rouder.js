@@ -68,10 +68,12 @@ router.post('/startLine', async (req, res) => {
   }
 });
 
-router.get('/lineDetail/:ln_opr_no', async (req, res) => {
-  const { ln_opr_no } = req.params;
+
+router.get('/lineDetail/:pdn_opr_dtl_no', async (req, res) => {
+  const { pdn_opr_dtl_no } = req.params;
+  console.log('라인 가동 번호1:', pdn_opr_dtl_no);  // 🔍 구체적인 로그 찍기
   try {
-    const data = await lineManagementServices.findLineListOne(ln_opr_no);
+    const data = await lineManagementServices.findLineListOne(pdn_opr_dtl_no);
     res.json(data);
   } catch (err) {
     console.error("❌ lineDetail 오류:", err.message);  // 🔍 구체적인 로그 찍기

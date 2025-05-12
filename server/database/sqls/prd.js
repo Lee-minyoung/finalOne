@@ -33,12 +33,12 @@ FROM prd`;
 
 // 제품 정보 등록
 // - 새로운 제품 정보를 테이블에 추가
-// - 제품번호는 'PRD' + 3자리 숫자로 자동 생성
+// - 제품번호는 'P-' + 3자리 숫자로 자동 생성
 // - 등록일자는 현재 시스템 날짜로 자동 설정
 const insertPrd =
   `INSERT INTO prd (prd_no, prd_nm, prd_tp, exp_dt, opt_stk_qty, rgt_dt)
 SELECT 
-  CONCAT('PRD', LPAD(IFNULL(MAX(CAST(SUBSTRING(prd_no, 4) AS UNSIGNED)), 0) + 1, 3, '0')),
+  CONCAT('P-', LPAD(IFNULL(MAX(CAST(SUBSTRING(prd_no, 3) AS UNSIGNED)), 0) + 1, 3, '0')),
   ?, ?, ?, ?, sysdate()
 FROM prd`;
 

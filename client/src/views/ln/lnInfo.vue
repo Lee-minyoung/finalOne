@@ -136,11 +136,11 @@ export default {
       eqpList: [], // 설비 리스트 (showEqpModal에서 사용)
     };
   },
-  watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
+  watch: { // props로 받은 ln 객체의 변화를 감시(watch)하는 부분
     // watch는 특정 데이터의 변화를 감시
     // handler는 그 감시하던 데이터가 변경될 때 실행되는 함수(콜백 함수)
-    ln: { // dept props의 변화를 감시, props로 받은 dept 값이 변경될 때마다 실행
-      handler(newVal) { // dept 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 dept 값
+    ln: { // ln props의 변화를 감시, props로 받은 ln 값이 변경될 때마다 실행
+      handler(newVal) { // ln 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 ln 값
         if (newVal) {
           this.getLnDtlList(newVal.ln_no);
         } else {
@@ -173,12 +173,43 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async lnUpdate() {
+      // 라인명 검증
+      if (!this.ln_nm?.trim()) {
+        alert('라인명을 입력해주세요.');
+        return;
+      }
+
+      // 라인상태 검증
+      if (!this.ln_sts) {
+        alert('라인상태를 선택해주세요.');
+        return;
+      }
+
+      // 사용여부 검증
+      if (!this.use_yn) {
+        alert('사용여부를 선택해주세요.');
+        return;
+      }
+
+      // 일평균생산량 검증
+      if (!this.dly_avg_pdn_qty || isNaN(Number(this.dly_avg_pdn_qty))) {
+        alert('일평균생산량은 숫자로 입력해주세요.');
+        return;
+      }
+
+      // 설비 선택 검증
+      for (let i = 0; i < this.lnDtlRows.length; i++) {
+        if (!this.lnDtlRows[i].eqp_no) {
+          alert(`${i + 1}번째 공정의 설비를 선택해주세요.`);
+          return;
+        }
+      }
       // 서버에 전달할 정보를 객체로 따로 구성
       let lnInfo = { // ln수정
-        ln_nm: this.ln_nm, // 라인명
+        ln_nm: this.ln_nm.trim(), // 라인명
         ln_sts: this.ln_sts, // 라인상태
         use_yn: this.use_yn, // 사용여부
-        dly_avg_pdn_qty: this.dly_avg_pdn_qty // 일평균생산량
+        dly_avg_pdn_qty: Number(this.dly_avg_pdn_qty) // 일평균생산량
       }
 
       let lndtlInfoArray = []; // ln_dtl 수정

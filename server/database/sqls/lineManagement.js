@@ -49,6 +49,7 @@ const selectLineList =
       , lo.pdn_qty
       , lo.dft_qty
       , pod.pdn_ord_no
+      , pod.pdn_ord_dtl_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
    RIGHT JOIN ln l ON pod.ln_no = l.ln_no
@@ -79,15 +80,9 @@ const selectLineDetail =
    LEFT JOIN eqp eq ON ld.eqp_no = eq.eqp_no
    LEFT JOIN ln_opr lo ON ln.ln_opr_no = lo.ln_opr_no
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
-  WHERE ln_opr_no = ?
+  WHERE pod.pdn_ord_dtl_no = ?
  ORDER BY ln.seq;`
 
-
-const updateLinePreparing =
-`CALL line_preparing(?, ?)`;
-
-const updateLineStop =
-`CALL line_stop(?, ?)`;
 
 /*
 라인에 등록해야 하는 컬럼

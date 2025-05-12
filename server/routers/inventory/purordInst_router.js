@@ -10,7 +10,7 @@ router.post('/addPurOrd', async (req, res) => {
     // 1. 마지막 발주번호 조회 및 생성
     const lastOrdNo = await inventoryService.findLastPurOrdNo();
     const nextOrdNo = findNextCode(lastOrdNo);  
-    console.log('발주번호', nextOrdNo);
+    //console.log('발주번호', nextOrdNo);
 
     // 2. 값 추출
     const {
@@ -59,6 +59,7 @@ const findNextCode = (lastCode) => {
     const baseCode = Number(lastCode ?? 0);
     return baseCode + 1;
   };
+
 //출고요청 확인 q1 인지 q2 인지 
 router.get('/MatStatus',async(req,res)=>{
   const {reqId,matId}=req.query;
