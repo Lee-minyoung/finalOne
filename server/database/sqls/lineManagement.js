@@ -48,6 +48,7 @@ const selectLineList =
       , lo.ord_qty
       , lo.pdn_qty
       , lo.dft_qty
+      , pod.pdn_ord_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
    RIGHT JOIN ln l ON pod.ln_no = l.ln_no
@@ -70,11 +71,14 @@ const selectLineDetail =
       , ln.std_val
       , ln.seq
       , eq.eqp_sts
+      , pod.pdn_ord_no
    FROM ln_opr_dt ln
    LEFT JOIN ln_dtl ld ON ln.ln_dtl_no = ld.ln_dtl_no
    LEFT JOIN proc p ON ld.proc_srl_no = p.proc_srl_no
    LEFT JOIN prc_code pc ON p.proc_code_no = pc.proc_code_no
    LEFT JOIN eqp eq ON ld.eqp_no = eq.eqp_no
+   LEFT JOIN ln_opr lo ON ln.ln_opr_no = lo.ln_opr_no
+   LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
   WHERE ln_opr_no = ?
  ORDER BY ln.seq;`
 

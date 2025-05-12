@@ -70,8 +70,6 @@ router.post('/startLine', async (req, res) => {
 
 router.get('/lineDetail/:ln_opr_no', async (req, res) => {
   const { ln_opr_no } = req.params;
-  console.log('라인 가동 번호:', ln_opr_no);  // 🔍 구체적인 로그 찍기
-
   try {
     const data = await lineManagementServices.findLineListOne(ln_opr_no);
     res.json(data);

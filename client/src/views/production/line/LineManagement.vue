@@ -114,7 +114,9 @@ export default {
       }
     },
     async showStatus(item) {
+  console.log("✅ 라인 상태 확인 클릭:", item.ln_opr_no); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
   this.selectedLineNo = item.ln_opr_no;      // ✅ props로 넘길 lineNo
+  console.log("✅ 선택된 라인번호:", this.selectedLineNo); // ⬅️ 콘솔 찍어서 데이터 들어오는지 확인
   this.showLineModal = true;
 
   try {

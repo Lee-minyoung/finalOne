@@ -13,8 +13,7 @@
               type="text"
               class="form-control w-25"
               placeholder="제품명 검색"
-              v-model="search"
-            />
+              v-model="search" />
           </div>
 
           <table class="table table-sm table-bordered text-center">
