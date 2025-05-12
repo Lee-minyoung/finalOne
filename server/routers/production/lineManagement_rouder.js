@@ -68,11 +68,10 @@ router.post('/startLine', async (req, res) => {
   }
 });
 
-// 라인 가동 번호로 세부정보 조회
+// 라인 가동 번호로 세부정보 조회 pdn_opr_dtl_no 전달달
 router.get('/lineDetail/:pdn_opr_dtl_no', async (req, res) => {
   const { pdn_opr_dtl_no } = req.params;
   console.log('라인 가동 번호1:', pdn_opr_dtl_no);  // 🔍 구체적인 로그 찍기
-
   try {
     const data = await lineManagementServices.findLineListOne(pdn_opr_dtl_no);
     res.json(data);
