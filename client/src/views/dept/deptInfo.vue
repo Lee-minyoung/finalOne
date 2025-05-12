@@ -70,10 +70,18 @@ export default {
       selectedEmp: null, // 선택된 사원
     };
   },
-  watch: {
-    dept() {
-      let searchNo = this.dept;
-      this.getDeptInfo(searchNo.dept_no);
+  watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
+    // watch는 특정 데이터의 변화를 감시
+    // handler는 그 감시하던 데이터가 변경될 때 실행되는 함수(콜백 함수)
+    dept: { // dept props의 변화를 감시, props로 받은 dept 값이 변경될 때마다 실행
+      handler(newVal) { // dept 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 dept 값
+        if (newVal) {
+          this.getDeptInfo(newVal.dept_no);
+        } else {
+          this.deptInfo = {}; // dept가 null일 때 deptInfo 초기화
+        }
+      },
+      immediate: true //이 옵션이 있으면 컴포넌트가 처음 생성될 때도 watch 핸들러를 즉시 실행
     }
   },
   computed: {
@@ -118,7 +126,7 @@ export default {
       if (updateRes.isUpdated) {
         alert('수정되었습니다.');
         this.$emit('dept-reload');
-        this.getDeptInfo(this.deptInfo.dept_no); // 이거안되네 
+        this.getDeptInfo(this.deptInfo.dept_no);
       } else {
         alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
       };
@@ -138,13 +146,13 @@ export default {
         if (confirm('정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
           let result = await axios.delete(`/api/dept/${deptNo}`)
             .catch(err => console.log(err));
-          this.deptInfo = result.data;
           let sqlRes = result.data;
           let sqlResult = sqlRes.affectedRows;
           if (sqlResult > 0) {
+            this.deptInfo = {}; // 로컬 데이터 초기화
+            this.$emit('clear-selection'); // 선택된 부서 초기화
+            this.$emit('dept-reload'); // 목록 새로고침
             alert('정상적으로 삭제되었습니다.');
-            // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-            this.$emit('dept-reload');
           } else {
             alert('삭제되지 않았습니다.');
           }

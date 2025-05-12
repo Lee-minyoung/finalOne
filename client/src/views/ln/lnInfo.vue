@@ -54,8 +54,11 @@
               <div class="d-flex align-items-center">
                 <label for="lnSts" class="form-label fw-bold me-3" style="min-width: 100px;">라인상태</label>
                 <select id="lnSts" class="form-select form-control" v-model="ln_sts">
-                  <option value="l1">가동</option>
-                  <option value="l2">미가동</option>
+                  <option value="l1">비가동</option>
+                  <option value="l2">대기중</option>
+                  <option value="l3">사용중</option>
+                  <option value="l4">수리중</option>
+                  <option value="l5">점검중</option>
                 </select>
               </div>
             </div>
@@ -133,22 +136,25 @@ export default {
       eqpList: [], // 설비 리스트 (showEqpModal에서 사용)
     };
   },
-  watch: {
-    ln() {
-      if (this.ln) { // ln이 null이 아닌 경우에만 실행
-        let searchNo = this.ln;
-        this.getLnDtlList(searchNo.ln_no);
-      } else {
-        // ln이 null인 경우 데이터를 초기화
-        this.ln_no = '';
-        this.ln_nm = '';
-        this.prd_no = '';
-        this.prd_nm = '';
-        this.ln_sts = '';
-        this.use_yn = '';
-        this.dly_avg_pdn_qty = '';
-        this.lnDtlRows = [];
-      }
+  watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
+    // watch는 특정 데이터의 변화를 감시
+    // handler는 그 감시하던 데이터가 변경될 때 실행되는 함수(콜백 함수)
+    ln: { // dept props의 변화를 감시, props로 받은 dept 값이 변경될 때마다 실행
+      handler(newVal) { // dept 값이 변경될 때 실행되는 함수, newVal은 변경된 새로운 dept 값
+        if (newVal) {
+          this.getLnDtlList(newVal.ln_no);
+        } else {
+          this.ln_no = '';
+          this.ln_nm = '';
+          this.prd_no = '';
+          this.prd_nm = '';
+          this.ln_sts = '';
+          this.use_yn = '';
+          this.dly_avg_pdn_qty = '';
+          this.lnDtlRows = [];
+        }
+      },
+      immediate: true //이 옵션이 있으면 컴포넌트가 처음 생성될 때도 watch 핸들러를 즉시 실행
     }
   },
   methods: {
@@ -214,6 +220,15 @@ export default {
           if (sqlResult > 0) {
             alert('정상적으로 삭제되었습니다.');
             this.$emit('ln-reload');
+            this.ln_no = '';
+            this.ln_nm = '';
+            this.prd_no = '';
+            this.prd_nm = '';
+            this.ln_sts = '';
+            this.use_yn = '';
+            this.dly_avg_pdn_qty = '';
+            this.lnDtlRows = [];
+            this.$emit('clear-selection'); // 선택된 부서 초기화
           } else {
             alert('삭제되지 않았습니다.');
           }

@@ -39,7 +39,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <bomInfo v-if="InfoView" :bom="selectedBom" @goToForm="msg" @bom-reload="getBomList" />
+      <bomInfo v-if="InfoView" :bom="selectedBom" @goToForm="msg" @bom-reload="getBomList"
+        @clear-selection="clearSelection" />
       <bomForm v-if="!InfoView" @goToInfo="msg" @bom-reload="getBomList" />
     </div>
   </div>
@@ -93,18 +94,25 @@ export default {
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     async selectBom(bomNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
-      const bom = this.bomList.find(bom => bom.bom_no === bomNo);
-      // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
-      this.InfoView = true;
-      // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
-      await this.$nextTick();
-      this.selectedBom = bom;  // 클릭한 부서를 selectedDept에 저장
+      try {
+        const bom = this.bomList.find(bom => bom.bom_no === bomNo);
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedBom = bom;  // 클릭한 부서를 selectedDept에 저장
+      } catch (err) {
+        console.error('BOM 선택 중 오류 발생:', err);
+      }
     },
     msg(data) {
       this.InfoView = data;
       if (!data) {
         this.selectedBom = null; // bomForm이 활성화되면 선택된 BOM 초기화
       }
+    },
+    clearSelection() {
+      this.selectedBom = null;
     }
   }
 };

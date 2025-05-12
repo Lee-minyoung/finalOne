@@ -22,8 +22,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="prcCode in filteredPrcCodeList" v-bind:key="prcCode.proc_code_no" @click="selectPrcCode(prcCode.proc_code_no)"
-                  :class="{ 'table-primary': selectedPrcCode && selectedPrcCode.proc_code_no === prcCode.proc_code_no }" class="table-hover">
+                <tr v-for="prcCode in filteredPrcCodeList" v-bind:key="prcCode.proc_code_no"
+                  @click="selectPrcCode(prcCode.proc_code_no)"
+                  :class="{ 'table-primary': selectedPrcCode && selectedPrcCode.proc_code_no === prcCode.proc_code_no }"
+                  class="table-hover">
                   <td>{{ prcCode.proc_code_no }}</td>
                   <td>{{ prcCode.proc_code_nm }}</td>
                   <td>{{ prcCode.proc_std }}</td>
@@ -36,7 +38,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <prcCodeInfo v-if="InfoView" :prcCode="selectedPrcCode" @goToForm="msg" @prcCode-reload="getPrcCodeList" />
+      <prcCodeInfo v-if="InfoView" :prcCode="selectedPrcCode" @goToForm="msg" @prcCode-reload="getPrcCodeList"
+        @clear-selection="clearSelection" />
       <prcCodeForm v-if="!InfoView" @goToInfo="msg" @prcCode-reload="getPrcCodeList" />
     </div>
   </div>
@@ -67,7 +70,7 @@ export default {
   computed: {
     filteredPrcCodeList() { // 필터된 prcCodeList 보여줌
       return this.prcCodeList.filter(prcCode =>
-      prcCode.proc_code_nm.toLowerCase().includes(this.searchQuery.toLowerCase())
+        prcCode.proc_code_nm.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
   },
@@ -81,17 +84,18 @@ export default {
       let result = await axios.get('/api/prcCode')
         .catch(err => console.log(err));
       this.prcCodeList = result.data; // prcCodeList배열에 결과값 담음
-      this.selectedPrcCode = null; // 선택된 공정코드 초기화
     },
     // 상세보기에 보여질 데이터 받아오는 함수
     async selectPrcCode(prcCodeNo) {
       try {
         const prcCode = this.prcCodeList.find(prcCode => prcCode.proc_code_no === prcCodeNo);
-        this.InfoView = true; // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
-        await this.$nextTick(); // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
-        this.selectedPrcCode = prcCode;  
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedPrcCode = prcCode;
       } catch (err) {
-        console.error('설비 선택 중 오류 발생:', err);
+        console.error('공정코드 선택 중 오류 발생:', err);
       }
     },
     msg(data) {
@@ -99,7 +103,10 @@ export default {
       if (!data) {
         this.selectedPrcCode = null; // prcCodeForm이 활성화되면 선택된 라인 초기화
       }
-    }
+    },
+    clearSelection() {
+      this.selectedPrcCode = null;
+    },
   }
 };
 </script>

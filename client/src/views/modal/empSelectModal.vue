@@ -8,7 +8,14 @@
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <input type="text" class="form-control w-25" placeholder="사원명 검색" v-model="search" />
+            <div class="d-flex gap-2" style="width: 450px;">
+              <input type="text" class="form-control" style="width: 60%" placeholder="사원명 검색" v-model="search" />
+              <select class="form-select form-control" v-model="selectedFilter" style="width: 40%">
+                <option value="">전체</option>
+                <option v-for="dept in deptInfo" :key="dept.dept_no" :value="dept.dept_nm">{{ dept.dept_nm }}</option>
+              </select>
+            </div>
+
             <button class="btn btn-sm btn-primary" @click="$emit('select-emp', selectedEmp)">사원 등록</button>
           </div>
           <div class="table-container">
@@ -39,6 +46,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     empList: Array,   // 전체 사원 목록 
@@ -48,18 +57,33 @@ export default {
     return {
       search: '',
       selectedEmp: null,
+      selectedFilter: "",
+
+      deptInfo: [], // 부서 select option 만드는 데이터
     }
   },
   computed: {
     filteredEmp() {
       if (!this.empList) return []
-      return this.empList.filter(emp => emp.nm?.includes(this.search))
+      return this.empList.filter(emp => {
+        // 검색어 필터링
+        const matchesSearch = !this.search || emp.nm.toLowerCase().includes(this.search.toLowerCase());
+        // select 필터링
+        const matchesFilter = this.selectedFilter === "" || (emp.dept_nm === this.selectedFilter);
+        return matchesSearch && matchesFilter;
+      });
     }
   },
   created() {
     this.selectedEmp = this.selected ? { emp_no: this.selected } : null;  // 선택 상태 초기화(기존에 선택된 설비가 있다면 selectedEqp에 넣어줌)
+    this.getDeptInfo(); // 부서정보 가져오기
   },
   methods: {
+    async getDeptInfo() {
+      let result = await axios.get(`/api/deptModal`)
+        .catch(err => console.log(err));
+      this.deptInfo = result.data;
+    },
     toggleEmpSelection(item) {
       if (this.selectedEmp && this.selectedEmp.emp_no === item.emp_no) {
         this.selectedEmp = null; // 선택 해제

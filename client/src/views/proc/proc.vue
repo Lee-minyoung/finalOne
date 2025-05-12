@@ -35,7 +35,7 @@
       </div> <!-- 좌측 영역 끝 -->
 
       <!-- 우측 영역 -->
-      <procInfo v-if="InfoView" :proc="selectedProc" @goToForm="msg" @proc-reload="getProcList" />
+      <procInfo v-if="InfoView" :proc="selectedProc" @goToForm="msg" @proc-reload="getProcList" @clear-selection="clearSelection"/>
       <procForm v-if="!InfoView" @goToInfo="msg" @proc-reload="getProcList" />
     </div>
   </div>
@@ -80,19 +80,28 @@ export default {
       let result = await axios.get('/api/proc')
         .catch(err => console.log(err));
       this.procList = result.data; //procList배열에 결과값 담음
-      this.selectedProc = null;
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectProc(ProcNo) { // 리스트에서 선택한 dept정보를 selectedProc에 저장(상세보기에 표시될 부서 데이터)
-      this.InfoView = true;
-      const proc = this.procList.find(proc => proc.proc_no === ProcNo);
-      this.selectedProc = proc;  // 클릭한 부서를 selectedDept에 저장
+    async selectProc(ProcNo) { // 리스트에서 선택한 dept정보를 selectedProc에 저장(상세보기에 표시될 부서 데이터)
+      try {
+        const proc = this.procList.find(proc => proc.proc_no === ProcNo);
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedProc = proc;  // 클릭한 부서를 selectedDept에 저장
+      } catch (err) {
+        console.error('공정 선택 중 오류 발생:', err);
+      }
     },
     msg(data) {
       this.InfoView = data;
       if (!data) {
         this.selectedProc = null; // bomForm이 활성화되면 선택된 BOM 초기화
       }
+    },
+    clearSelection() {
+      this.selectedProc = null;
     },
   }
 };

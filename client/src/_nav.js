@@ -146,13 +146,18 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '제품공정흐름도',
-        to: '/proc',
+        name: 'BOM관리',
+        to: '/bom',
       },
       {
         component: 'CNavItem',
-        name: 'BOM관리',
-        to: '/bom',
+        name: '공정코드관리',
+        to: '/prc-code',
+      },
+      {
+        component: 'CNavItem',
+        name: '제품공정흐름도',
+        to: '/proc',
       },
       {
         component: 'CNavItem',
@@ -166,8 +171,8 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '공정코드관리',
-        to: '/prc-code',
+        name: '완제품입고처리',
+        to: '/receive-prd',
       },
     ],
   },

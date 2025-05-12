@@ -17,15 +17,21 @@ const CommonCodeFormat = function (value) {
 
 // 라인상태 공통코드 처리
 const lineStatusFormat = function (value) {
-  // value : l1, l2
-  //  출력 : l1 == 가동, l2 == 비가동
+  // value : l1, l2, l3, l4, l5
+  //  출력 : l1 == 비가동, l2 == 대기중, l3 == 사용중, l4 == 수리중, l5 == 점검중
   // value가 null인 경우엔 '' 공백을 값으로 가지도록 함
 
   let result = '';
   if (value == 'l1') {
-    result = '가동';
+    result = '비가동';
   } else if (value == 'l2') {
-    result = '비가동' 
+    result = '대기중' 
+  } else if (value == 'l3') {
+    result = '사용중' 
+  } else if (value == 'l4') {
+    result = '수리중' 
+  } else if (value == 'l5') {
+    result = '점검중' 
   } 
   return result;
 }
