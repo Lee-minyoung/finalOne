@@ -24,19 +24,41 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="row in processDetailList" :key="row.seq">
+                <tr v-for="(row, index) in processDetailList" :key="row.seq">
                   <td>{{ row.seq }}</td>
                   <td>{{ row.proc_code_nm }}</td>
                   <td>{{ row.proc_nm }}</td>
                   <td>{{ row.st_tm }}</td>
                   <td>{{ row.end_tm }}</td>
+
+                  <!-- ✅ 투입량은 항상 읽기 전용 -->
                   <td>{{ row.ord_qty }}</td>
-                  <td>{{ row.dft_qty }}</td>
-                  <td>{{ row.pdn_qty }}</td>
+
+                  <!-- ✅ 불량량: 공정중일 때만 input 가능 -->
                   <td>
-                    <span v-if="row.eqp_sts === 's1'">대기</span>
-                    <span v-else-if="row.eqp_sts === 's2'">진행</span>
-                    <span v-else-if="row.eqp_sts === 's3'">완료</span>
+                    <input v-if="row.eqp_sts === 'h5'" type="number" class="form-control form-control-sm text-end"
+                      v-model.number="row.dft_qty" @input="updatePdnQty(row)" :max="row.ord_qty" min="0" />
+                    <span v-else>{{ row.dft_qty }}</span>
+                  </td>
+
+                  <!-- ✅ 생산량: 공정중일 때만 input 가능 -->
+                  <td>
+                    <span>{{ row.pdn_qty }}</span>
+                  </td>
+
+                  <td>
+                    <span v-if="row.eqp_sts === 'h1'">정상</span>
+                    <span v-else-if="row.eqp_sts === 'h2'">수리중</span>
+                    <span v-else-if="row.eqp_sts === 'h3'">점검중</span>
+                    <span v-else-if="row.eqp_sts === 'h4'">
+                      <button class="btn btn-sm btn-secondary" disabled>작업대기</button>
+                    </span>
+                    <span v-else-if="row.eqp_sts === 'h5'">
+                      <button class="btn btn-sm btn-primary" @click="startLine(row, index)">공정완료</button>
+                    </span>
+                    <span v-else-if="row.eqp_sts === 'h6'">
+                      <button class="btn btn-sm btn-danger" @click="repair(row, index)">작업완료</button>
+                    </span>
                     <span v-else>미정</span>
                   </td>
                 </tr>
@@ -68,6 +90,13 @@ export default {
       handler(newVal) {
         this.processDetailList = Array.isArray(newVal) ? newVal : [];
       }
+    }
+  },
+  methods: {
+    updatePdnQty(row) {
+      const dft = Number(row.dft_qty || 0);
+      const ord = Number(row.ord_qty || 0);
+      row.pdn_qty = Math.max(ord - dft, 0);  // 음수 방지
     }
   }
 };

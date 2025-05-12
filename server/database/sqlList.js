@@ -2,7 +2,7 @@
 const sales = require('./sqls/sales.js');
 const equipments = require('./sqls/equipments.js');
 const inventorys = require('./sqls/inventory.js');
-const qualitys = require('./sqls/spm.js');
+const qualitys = require('./sqls/qualitys.js');
 const matQualitys = require('./sqls/MatQualitys.js');
 const spm = require('./sqls/spm.js');
 const userinforms = require('./sqls/userinforms.js');
@@ -41,6 +41,7 @@ module.exports = {
     ...lineManagement,//라인관리
     ...lineProgress,//라인진행상태
     ...login,
+    ...spm,
 
     ...matImport, 
     ...vdr, 

@@ -21,7 +21,6 @@ export default [
       }, 
     ],
   },
-
   {
     component: 'CNavGroup',
     name: '생산',

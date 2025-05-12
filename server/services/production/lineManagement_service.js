@@ -40,10 +40,10 @@ async function addlinestart(ln_no, mgr) {
   return await mariadb.query('insterLineStart', [ln_no, mgr]);
 }
 
-const findLineListOne = async (ln_opr_no) => {
+const findLineListOne = async (pdn_ord_dtl_no) => {
   try {
-    console.log('라인 가동 번호:', ln_opr_no);  // 🔍 구체적인 로그 찍기
-    const result = await mariadb.query('selectLineDetail', [ln_opr_no]);
+    console.log('라인 가동 번호2:', pdn_ord_dtl_no);  // 🔍 구체적인 로그 찍기
+    const result = await mariadb.query('selectLineDetail', [pdn_ord_dtl_no]);
     return result;
   } catch (err) {
     console.error("❌ findLineDetailByOpNo 오류:", err);

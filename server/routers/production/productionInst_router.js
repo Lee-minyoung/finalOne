@@ -10,7 +10,7 @@ router.post('/prodinst', async (req, res) => {
     const { pdn_pln_no, details } = req.body;
 
     // 2. 지시 헤더 데이터 (생산지시)
-    const ordDataList = [[pdn_pln_no, 1000]]; // 1000은 emp_no (추후 세션/토큰 처리)
+    const ordDataList = [[pdn_pln_no, req.crt_by]]; // 1000은 emp_no (추후 세션/토큰 처리)
     
 
     // 3. 지시 세부 (여러 건)
