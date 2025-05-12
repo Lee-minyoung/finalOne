@@ -1,7 +1,7 @@
 <template>
   
   <div class="col-md-10 p-4">
-    <h4 class="mb-4">출하지시</h4>
+    <h4 class="mb-4">출하지시 여러건  테스트</h4>
     <!-- 출하지시 입력 폼 -->
     <div class="row mb-3 g-3">
       <div class="col-md-3">
@@ -68,8 +68,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in ords">
-          <td><input type="checkbox" :value="item" v-model="checkOrd" @change="handleCheckChange" /></td>
+        <tr v-for="(item, index) in ords" :key="item.ord_no">
+          <td><input type="checkbox" :value="item.ord_no" v-model="checkOrd"  /></td>
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
           <td>{{ item.cpy_nm }}</td>
@@ -93,6 +93,10 @@
     <!-- 출하지시 버튼 -->
     <div class="d-flex justify-content-end mt-3">
       <button class="btn btn-primary" @click="saveSpm">출하지시</button>
+    </div>
+
+     <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-primary" @click="manySpms">여러건 출하지시</button>
     </div>
   </div>
 </template>
@@ -120,10 +124,11 @@ export default {
       qty: 0,  //수량
       unitPrc: 0, //단가
       prdNo: '', //제품번호 
-      ords: [],
+      ords: [], //전체주문건 
       checkOrd: [], //체크한 수주번호 건에 대해서   
       lotQty:0,
       memo: '', //비고 
+     // selectedOrds:[], 
 
     };
   },
@@ -196,10 +201,55 @@ export default {
         this.deliver=item.ofc_addr; //배송지     
       } else {
         this.mode = 'basic';
-        alert('하나의 수주만 선택하세요');
+        // alert('하나의 수주만 선택하세요');
         return;
       }
-    }
+    }, 
+async manySpms() {
+  const selectedOrds = this.ords.filter(order => {
+    return this.checkOrd.includes(order.ord_no);
+  });
+  console.log('선택된 주문건', selectedOrds); 
+  try{
+    const payloads=selectedOrds.map(item=>({
+    ord_no:item.ord_no ,            //수주번호  
+    dlv_addr:item.ofc_addr,       //배송지 
+    spm_dt: item['납기예정'],      // 출하일자인데 우선 납기예정으로 하기로함 
+    vdr_no: item.vdr_no,          //거래처번호 
+        //lot 상세보내기
+    lot_no:item.lot_no,
+    prd_no:item.prd_no,
+    lot_qty:item['lot수량'],
+    memo: item.ord_no,  //비고,
+    req_qty:Number(item['요청수량'])   
+    }))   
+
+
+    await axios.post('/api/addSpms',payloads); 
+
+
+    // const lotInfos=selectedOrds.map(item=>({
+    //   lot_no:item.lot_no,
+    //   prd_no:item.prd_no,
+    //   lot_qty:item['lot수량'],
+    //   memo: item.ord_no     //여러건을 보낼경우  
+    // }))
+
+
+//  const lotInfo={
+//       lot_no: this.checkOrd[0].lot_no, //lot번호 
+//       prd_no: this.checkOrd[0].prd_no,// 제품번호
+//       lot_qty: this.lotQty,   //lot재고량 
+//       memo:this.memo, //비고
+//       }; 
+
+
+
+  }catch(err){
+    console.log(err); 
+  }
+}
+
 
 
   },
