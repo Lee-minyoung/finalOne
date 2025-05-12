@@ -34,6 +34,7 @@ module.exports = {
     ...equipments,
     ...inventorys,
     ...qualitys,
+    ...spm,
     ...matQualitys,
     ...userinforms,
     ...prodeuctinPlan, //생산계획, 지시

@@ -51,12 +51,11 @@
     <button
       :class="['jdg-btn', overallJdg === '합격' ? 'btn-green' : '']"
       @click="overallJdg = '합격'"
-      style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
-    >합격</button>
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">합격</button>
     <button
       :class="['jdg-btn', overallJdg === '불합격' ? 'btn-red' : '']"
       @click="overallJdg = '불합격'"
-      style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
     >불합격</button>
   </div>
 </div>
@@ -143,12 +142,15 @@ export default {
   // 1. 성적서(마스터) 저장
   let obj = {
     rslt_no: this.selectedRsltNo,
+    mgr: this.selectedInsDev,
+    ins_dt: this.selectedInsDate,
     mgr_count: this.newItem.mgr_count,
     succ_count: this.newItem.succ_count,
     dft_count: this.newItem.dft_count,
     ovr_jdg: this.overallJdg,
     rmk: this.newItem.rmk || '',
-    ln_opr_no: this.selectedLineId
+    ln_opr_no: this.selectedLineId,
+    prd_no: this.searchQuery
   };
 
   try {
@@ -168,6 +170,7 @@ export default {
         qrd_no: null, // 필요시 입력
         rmk: this.newItemList[idx].rmk // ← 비고
       }));
+
       await axios.post("/api/spmInsRslt/dtl", dtlList);
 
       alert('등록되었습니다.');
@@ -190,10 +193,10 @@ export default {
   if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
     const min = std - tol;
     const max = std + tol;
-    return (result >= min && result <= max) ? '적합' : '부적합';
+    return (result >= min && result <= max) ? 'OK' : 'ERROR';
   }
-  if (mgr_rslt === '1' || mgr_rslt === 1) return '적합';
-  if (mgr_rslt === '0' || mgr_rslt === 0) return '부적합';
+  if (mgr_rslt === '1' || mgr_rslt === 1) return 'OK';
+  if (mgr_rslt === '0' || mgr_rslt === 0) return 'ERROR';
 
   return '';
 },
@@ -230,24 +233,26 @@ export default {
     },
 
     // 제품 선택 시
-    async handleSelectedProduct(item) { // ← async 추가!
+   async handleSelectedProduct(item) {
   this.selectedLineId = item.ln_opr_no;
   this.selectedProductName = item.prd_nm;
   this.searchQuery = item.prd_no;  
-  this.selectedInsDate = this.getToday(); // ← 제품 선택 시 오늘 날짜로 갱신
+  this.selectedInsDate = this.getToday();
 
   this.showProductModal = false;
+
   // 성적서 번호 자동 할당
   try {
     const res = await axios.get('/api/spmInsRslt/lastRsltNo');
-    const lastNo = res.data.lastNo || 0;
-    const nextNo = String(Number(lastNo) + 1).padStart(3, '0');
-    this.selectedRsltNo = `SJS-${nextNo}`;
-  } catch (err) {
-    this.selectedRsltNo = 'SJS-001'; // 실패 시 기본값
+  // lastNo는 '001', '002'처럼 숫자만 반환되어야 함
+  const lastNo = Number(res.data.lastNo) || 0;
+  const nextNo = String(lastNo + 1).padStart(3, '0');
+  this.selectedRsltNo = `SJS-${nextNo}`;
+} catch (err) {
+  this.selectedRsltNo = 'SJS-001'; // 실패 시 기본값
   }
 
-  this.getSpmInsStdList(item.prd_no); // 검사 기준서 목록 가져오기
+  this.getSpmInsStdList(item.prd_no);
 },
     // 기준서 목록 가져오기
     async getSpmInsStdList(prd_no) {
