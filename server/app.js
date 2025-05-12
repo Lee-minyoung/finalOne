@@ -86,6 +86,9 @@ app.use('/', lnRouter);
 // 설비 라우팅
 const eqpRouter = require('./routers/base/eqp_router.js');
 app.use('/', eqpRouter);
+// 완제품 입고 라우팅
+const receivePrdRouter = require('./routers/base/receivePrd_router.js');
+app.use('/', receivePrdRouter);
 
 // 거래처 라우팅
 const vdrRouter = require('./routers/base/vdr_router.js');

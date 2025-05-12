@@ -36,7 +36,7 @@
       </div> <!-- 좌측 영역 끝 -->
 
       <!-- 우측 영역 -->
-      <lnInfo v-if="InfoView" :ln="selectedLn" @goToForm="msg" @ln-reload="getLnList" />
+      <lnInfo v-if="InfoView" :ln="selectedLn" @goToForm="msg" @ln-reload="getLnList" @clear-selection="clearSelection"/>
       <lnForm v-if="!InfoView" @goToInfo="msg" @ln-reload="getLnList" />
     </div>
   </div>
@@ -86,19 +86,28 @@ export default {
       let result = await axios.get('/api/ln')
         .catch(err => console.log(err));
       this.lnList = result.data; // lnList배열에 결과값 담음
-      this.selectedLn = null;
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectLn(lnNo) { // 리스트에서 선택한 ln정보를 selectedLn에 저장(상세보기에 표시될 라인 데이터)
-      this.InfoView = true;
-      const ln = this.lnList.find(ln => ln.ln_no === lnNo);
-      this.selectedLn = ln;  // 클릭한 라인을 selectedLn에 저장
+    async selectLn(lnNo) { // 리스트에서 선택한 ln정보를 selectedLn에 저장(상세보기에 표시될 라인 데이터)
+      try {
+        const ln = this.lnList.find(ln => ln.ln_no === lnNo);
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedLn = ln;  // 클릭한 라인을 selectedLn에 저장
+      } catch (err) {
+        console.error('라인 선택 중 오류 발생:', err);
+      }
     },
     msg(data) {
       this.InfoView = data;
       if (!data) {
         this.selectedLn = null; // lnForm이 활성화되면 선택된 라인 초기화
       }
+    },
+    clearSelection() {
+      this.selectedLn = null;
     },
   }
 };

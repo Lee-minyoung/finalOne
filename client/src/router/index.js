@@ -14,7 +14,7 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/Home.vue'),
       },
-      {
+      { // 생산 계획 관리
         path: '/ProdPlan',
         name: 'ProdPlan',
         component: () => import('@/views/production/productionPlan.vue'),
@@ -40,7 +40,7 @@ const routes = [
         name: 'SpmInsStd',
         component: () => import('@/views/qualitys/spmInsStd.vue'),
       },
-      {
+      { // 완제품검사성적서
         path: '/SpmInsRslt',
         name: 'SpmInsRslt',
         component: () => import('@/views/qualitys/spmInsRslt.vue'),
@@ -66,7 +66,7 @@ const routes = [
         name: 'SpmFns',
         component: () => import('@/views/spm/SpmFns.vue'),
       },
-      {
+      { // 주문조회, 총주문수량
         path:'/SaleList',
         name:'SaleList',
         component:()=> import('@/views/sales/saleList.vue'),
@@ -106,37 +106,42 @@ const routes = [
         name: 'prcCode',
         component: () => import('@/views/prcCode/prcCode.vue'),
       },
-      {
+      { // receicePrd 완제품입고처리
+        path: 'receive-prd',
+        name: 'receivePrd',
+        component: () => import('@/views/receivePrd/receivePrd.vue'),
+      },
+      { // 자재현황파악, 자재구매계획
         path:'/inventoryCheck',
         name:'InventoryCheck',
         component:()=> import('@/views/inventory/inventoryCheck.vue'),
       },
-      {
+      { // 발주서입력, 자재구매계획
         path:'/orderForm',
         name:'orderForm',
         component:()=> import('@/views/inventory/orderForm.vue'),
       },
-      {
+      { // 발주서조회
         path:'/ordview',
         name:'OrdView',
         component:()=> import('@/views/inventory/ordView.vue'),
       },
-      {
+      { // 생산지시현황
         path: '/ProdMeng',
         name: '생산지시현황',
         component: () => import('@/views/production/line/productionManagement'),
       },
-      {
+      { // 라인관리
         path: '/LineMang',
         name: '라인관리',
         component: () => import('@/views/production/line/lineManagement'),
       },
-      {
+      { // 라인관리상세
         path: '/LineMangDtl',
         name: '라인관리상세',
         component: () => import('@/views/production/line/LineManagementDtl'),
       },
-      {
+      { // 자재요청페이지
          path:'/MatReq',
         name:'MatReq', 
         component:()=>import('@/views/inventory/matReq.vue')
