@@ -187,6 +187,41 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async empUpdate() {
+      // 필수 입력값 검증 
+      // 옵셔널 체이닝(?.) 연산자 : this.empInfo가 없어도 에러가 안남
+      if (!this.empInfo.hire_dt?.trim()) {
+        alert('입사일자를 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.nm?.trim()) {
+        alert('이름을 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.ctt?.trim()) {
+        alert('연락처를 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.addr?.trim()) {
+        alert('주소를 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.bnk_nm?.trim()) {
+        alert('은행명을 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.acct_no?.trim()) {
+        alert('계좌번호를 입력해주세요.');
+        return;
+      }
+      if (!this.empInfo.dept_no) {
+        alert('부서를 선택해주세요.');
+        return;
+      }
+      if (!this.empInfo.pst_no) {
+        alert('직급을 선택해주세요.');
+        return;
+      }
+
       let obj = {
         hire_dt: this.dateFormat(this.empInfo.hire_dt, 'yyyy-MM-dd'), // 입사일자
         nm: this.empInfo.nm, // 이름

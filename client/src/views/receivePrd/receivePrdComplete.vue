@@ -1,85 +1,134 @@
 <template>
-  <div class="col-md-12">
-    <ul class="nav nav-tabs mb-2">
-      <li class="nav-item">
-        <button class="nav-link active" data-bs-toggle="tab">입고대기</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab">입고완료</button>
-      </li>
-    </ul>
-
-    <div class="table-responsive border">
-      <table class="table table-bordered table-sm text-center mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>검사일자</th>
-            <th>지시번호</th>
-            <th>제품 ID</th>
-            <th>제품명</th>
-            <th>합격수량</th>
-            <th>작업자</th>
-            <th>신규 입고</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.date }}</td>
-            <td>{{ item.instruction }}</td>
-            <td>{{ item.productId }}</td>
-            <td>{{ item.productName }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.worker }}</td>
-            <td>
-              <button class="btn btn-primary btn-sm" @click="registerItem(item)">신규 입고</button>
-            </td>
-          </tr>
-          <tr v-if="items.length === 0">
-            <td colspan="7" class="text-muted">데이터가 없습니다.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="table-responsive border">
+    <table class="table table-bordered table-sm text-center mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>검사일자</th>
+          <th>성적서번호</th>
+          <th>제품번호</th>
+          <th>제품명</th>
+          <th>합격수량</th>
+          <th>작업자</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(CompleteRow, index) in CompleteList" v-bind:key="CompleteRow.rslt_no">
+          <td>{{ dateFormat(CompleteRow.ins_dt) }}</td>
+          <td>{{ CompleteRow.rslt_no }}</td>
+          <td>{{ CompleteRow.prd_no }}</td>
+          <td>{{ CompleteRow.prd_nm }}</td>
+          <td>{{ CompleteRow.succ_count }}</td>
+          <td>{{ CompleteRow.nm }}</td>
+        </tr>
+        <tr v-if="CompleteList.length === 0">
+          <td colspan="7" class="text-muted">데이터가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script scoped>
 import axios from 'axios';
-
+import useDates from '@/utils/useDates.js'
 export default {
 
   data() {
     return {
-      instructionList: ['JSH-001', 'JSH-002'], // 예시
-      items: [],
-      form: {
-        date: '',
-        instruction: '',
-        productId: '',
-        productName: '',
-        quantity: '',
-        worker: ''
-      },
+      CompleteList: [],
     }
   },
+  created() {
+    // 페이지 열 때 waitList데이터 받아오기 실행
+    this.getCompleteListList();
+  },
   methods: {
-    registerItem(item) {
-      if (item) {
-        alert(`${item.productName} 신규 입고 처리!`);
-      } else if (
-        this.form.date &&
-        this.form.instruction &&
-        this.form.productId &&
-        this.form.productName &&
-        this.form.quantity &&
-        this.form.worker
-      ) {
-        this.items.push({ ...this.form });
-        Object.keys(this.form).forEach(key => (this.form[key] = ''));
-      } else {
-        alert('모든 항목을 입력해주세요.');
-      }
-    }
+    // 날짜 데이터 포멧 정의
+    dateFormat(value) {
+      return useDates.dateFormat(value, 'yyyy-MM-dd');
+    },
+    // waitList데이터 받아오는 함수
+    async getCompleteListList() {
+      let result = await axios.get('/api/receivePrdComplete')
+        .catch(err => console.log(err));
+      this.CompleteList = result.data; // waitList배열에 결과값 담음
+    },
   }
 }
 </script>
+<style scoped>
+.table-responsive td {
+  vertical-align: middle;
+}
+
+.card {
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-primary {
+  background-color: #cce5ff;
+}
+
+.table-container {
+  height: 550px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.table {
+  margin-bottom: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: 0px;
+}
+
+.table td,
+.table th {
+  width: 20%;
+  padding: 4px;
+  border-right: 1px solid #dee2e6;
+  border-left: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table thead tr,
+.table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table tbody {
+  display: block;
+  overflow-y: auto;
+  height: calc(550px - 42px);
+}
+
+.table tbody tr td:first-child,
+.table thead tr th:first-child {
+  border-left: none;
+}
+
+.table tbody tr td:last-child,
+.table thead tr th:last-child {
+  border-right: none;
+}
+</style>

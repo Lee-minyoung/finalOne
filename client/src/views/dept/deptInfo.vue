@@ -32,7 +32,7 @@
             <option value="f1">여</option>
             <option value="f2">부</option>
           </select>
-          <label class="form-label">생성일자</label>
+          <label class="form-label">등록일자</label>
           <input type="text" class="form-control" v-model="formattedCrtDt" readonly disabled />
           <label class="form-label">수정일자</label>
           <input type="text" class="form-control" v-model="formattedMdfDt" readonly disabled />
@@ -113,6 +113,21 @@ export default {
     },
     // 수정된 내용을 DB에 저장
     async deptUpdate() {
+
+      // 필수 입력값 검증
+      if (!this.deptInfo.dept_nm?.trim()) {
+        alert('부서명을 입력해주세요.');
+        return;
+      }
+      if (!this.deptInfo.dept_mgr) {
+        alert('부서관리자를 선택해주세요.');
+        return;
+      }
+      if (!this.deptInfo.use_yn) {
+        alert('사용여부를 선택해주세요.');
+        return;
+      }
+      
       let obj = {
         dept_nm: this.deptInfo.dept_nm,
         dept_mgr: this.deptInfo.dept_mgr,

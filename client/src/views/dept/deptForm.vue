@@ -15,7 +15,7 @@
       <div>
         <div>
           <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptNo" readonly disabled/>
+          <input type="text" class="form-control" v-model="deptNo" readonly disabled />
           <label class="form-label">부서명</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
@@ -32,9 +32,9 @@
 
 
           <label class="form-label">사용여부</label>
-          <input type="text" class="form-control" value="여" readonly disabled/>
-          <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="today" readonly disabled/>
+          <input type="text" class="form-control" value="여" readonly disabled />
+          <label class="form-label">등록일자</label>
+          <input type="text" class="form-control" v-model="today" readonly disabled />
         </div>
       </div>
 
@@ -96,6 +96,16 @@ export default {
     },
     // 저장 버튼 클릭시 실행할 함수 
     async deptInsert() {
+
+      // 필수 입력값 검증
+      if (!this.deptInfo.dept_nm?.trim()) {
+        alert('부서명을 입력해주세요.');
+        return;
+      }
+      if (!this.deptInfo.dept_mgr) {
+        alert('부서관리자를 선택해주세요.');
+        return;
+      }
       // Form에 입력된 정보를 기준으로 등록하는 경우
       // 서버에 전달할 정보를 객체로 따로 구성
       let obj = {
@@ -126,9 +136,9 @@ export default {
           console.error('사원 목록 불러오기 실패', err)
         })
     },
-    handleSelectedEmp(selectedEmp) { 
-      this.deptInfo.dept_mgr = selectedEmp.emp_no; 
-      this.deptInfo.nm = selectedEmp.nm; 
+    handleSelectedEmp(selectedEmp) {
+      this.deptInfo.dept_mgr = selectedEmp.emp_no;
+      this.deptInfo.nm = selectedEmp.nm;
       // 모달 닫기
       this.showEmpModal = false;
     },

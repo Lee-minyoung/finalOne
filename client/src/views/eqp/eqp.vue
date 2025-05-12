@@ -22,19 +22,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th style="width: 10%;">설비번호</th>
-                  <th>설비명</th>
-                  <th style="width: 10%;">관리자</th>
-                  <th style="width: 10%;">설비상태</th>
+                  <th class="w-10">설비번호</th>
+                  <th class="w-30">설비명</th>
+                  <th class="w-10">관리자</th>
+                  <th class="w-10">설비상태</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="eqp in filteredEqpList" v-bind:key="eqp.eqp_no" @click="selectEqp(eqp.eqp_no)"
                   :class="{ 'table-primary': selectedEqp && selectedEqp.eqp_no === eqp.eqp_no }" class="table-hover">
-                  <td style="width: 10%;">{{ eqp.eqp_no }}</td>
-                  <td>{{ eqp.eqp_nm }}</td>
-                  <td style="width: 10%;">{{ eqp.nm }}</td>
-                  <td style="width: 10%;">{{ eqpStatusFormat(eqp.eqp_sts) }}</td>
+                  <td class="w-10">{{ eqp.eqp_no }}</td>
+                  <td class="w-30">{{ eqp.eqp_nm }}</td>
+                  <td class="w-10">{{ eqp.nm }}</td>
+                  <td class="w-10">{{ eqpStatusFormat(eqp.eqp_sts) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -124,75 +124,5 @@ export default {
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.table-container {
-  height: 550px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-}
-
-.table {
-  margin-bottom: 0;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-tr {
-  border: 0px;
-}
-
-.table td,
-.table th {
-  width: 20%;
-  padding: 8px;
-  /* border-top: 1px solid #dee2e6; */
-  border-right: 1px solid #dee2e6;
-  border-left: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.table thead {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 1;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.table thead tr,
-.table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table tbody {
-  display: block;
-  overflow-y: auto;
-  height: calc(550px - 42px);
-}
-
-.table tbody tr td:first-child,
-.table thead tr th:first-child {
-  border-left: none;
-}
-
-.table tbody tr td:last-child,
-.table thead tr th:last-child {
-  border-right: none;
-}
+@import '@/assets/styles/base-table.css';
 </style>
