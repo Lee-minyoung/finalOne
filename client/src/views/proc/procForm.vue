@@ -19,14 +19,14 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNo" class="form-label fw-bold me-3" style="min-width: 100px;">공정번호</label>
-                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly disabled/>
+                <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="procNm" class="form-label fw-bold me-3" style="min-width: 100px;">공정명</label>
-                <input id="procNm" type="text" class="form-control" v-model="proc_nm" placeholder="공정명을 입력해주세요."/>
+                <input id="procNm" type="text" class="form-control" v-model="proc_nm" placeholder="공정명을 입력해주세요." />
               </div>
             </div>
             <!-- 제품명 -->
@@ -41,12 +41,13 @@
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;" @click="openPrcCodeModal">공정코드추가</button>
+              <button class="btn btn-outline-secondary align-items-center" style="width: 100%;"
+                @click="openPrcCodeModal">공정코드추가</button>
             </div>
           </div>
           <table class="table table-bordered text-center">
-            <thead class="table-light" >
-              <tr class="small-text" >
+            <thead class="table-light">
+              <tr class="small-text">
                 <th style="white-space: nowrap">순서</th> <!-- style="white-space: nowrap" => 줄바꿈없음 -->
                 <th>공정코드명</th>
                 <th>공정기준</th>
@@ -62,12 +63,15 @@
                 <td colspan="8">공정코드추가 버튼을 눌러 공정코드를 추가해주세요.</td>
               </tr>
             </tbody>
-            <draggable v-else tag="tbody" v-model="procRows" handle=".drag-handle" @end="onDragEnd" class="small-text" itemKey="prco_srl_no">
+            <draggable v-else tag="tbody" v-model="procRows" handle=".drag-handle" @end="onDragEnd" class="small-text"
+              itemKey="prco_srl_no">
               <template #item="{ element, index }">
                 <tr>
                   <td class="drag-handle small-text"><i class="bi bi-grip-vertical">{{ element.seq }}</i></td>
-                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" readonly disabled/></td>
-                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" readonly disabled/></td>
+                  <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" readonly
+                      disabled /></td>
+                  <td><input v-model="element.proc_std" type="text" class="form-control small-text" readonly disabled />
+                  </td>
                   <td><input v-model="element.std_val" type="text" class="form-control small-text" /></td>
                   <td><input v-model="element.std_tm" type="text" class="form-control small-text" /></td>
                   <!-- <td><input v-model="element.outs_vdr" type="text" class="form-control small-text" /></td>
@@ -80,8 +84,8 @@
             </draggable>
           </table>
 
-          <prcCodeSelectModal v-if="showPrcCodeModal" :prcCodeList="prcCodeList" :selected="procRows" @select-prcCode="handleSelectedPrcCodes"
-            @close="showPrcCodeModal = false" />
+          <prcCodeSelectModal v-if="showPrcCodeModal" :prcCodeList="prcCodeList" :selected="procRows"
+            @select-prcCode="handleSelectedPrcCodes" @close="showPrcCodeModal = false" />
           <prdSelectModal v-if="showPrdModal" :prdList="prdList" :selected="prd_no" @select-prd="handleSelectedPrd"
             @close="showPrdModal = false" />
 
@@ -125,7 +129,7 @@ export default {
         //   std_tm: '', // ST 스탠다드타임
         //   std_val: '', // 기준 값
         // }
-      ], 
+      ],
 
       showPrcCodeModal: false, // 자재 선택 모달 초기화값 = 닫힘
       showPrdModal: false, // 제품 선택 모달 초기화값 = 닫힘
@@ -141,18 +145,48 @@ export default {
     async getProcNo() {
       let result = await axios.get(`/api/procNo`)
         .catch(err => console.log(err));
-        // padStart = SQL에서의 LPAD와 동일한 기능을 가진 문자열함수 => .padStart(원하는 길이, 채우려는 문자)
-      this.proc_no = 'PRC-' + (result.data[0].procNo).padStart( 3, '0' ); 
+      // padStart = SQL에서의 LPAD와 동일한 기능을 가진 문자열함수 => .padStart(원하는 길이, 채우려는 문자)
+      this.proc_no = 'PRC-' + (result.data[0].procNo).padStart(3, '0');
     },
     // 초기화 버튼 클릭시 실행할 함수
     resetForm() {
       this.procRows = [],
-      this.proc_nm = '', // 공정명
-      this.prd_no = ''; // 제품번호
+        this.proc_nm = '', // 공정명
+        this.prd_no = ''; // 제품번호
       this.prd_nm = ''; // 제품명
     },
     // 저장 버튼 클릭시 실행할 함수 
     async procInsert() {
+
+      // 공정명 검증
+      if (!this.proc_nm?.trim()) {
+        alert('공정명을 입력해주세요.');
+        return;
+      }
+
+      // 제품 선택 검증
+      if (!this.prd_no) {
+        alert('제품을 선택해주세요.');
+        return;
+      }
+
+      // 공정코드 목록 검증
+      if (!this.procRows || this.procRows.length === 0) {
+        alert('공정코드를 추가해주세요.');
+        return;
+      }
+
+      // 각 공정코드의 기준값과 ST 검증
+      for (const row of this.procRows) {
+        if (!row.std_val || isNaN(Number(row.std_val))) {
+          alert(`[${row.proc_code_nm}] 기준값은 숫자만 입력 가능합니다.`);
+          return;
+        }
+        if (!row.std_tm || isNaN(Number(row.std_tm))) {
+          alert(`[${row.proc_code_nm}] ST(초)는 숫자만 입력 가능합니다.`);
+          return;
+        }
+      }
       // 서버에 전달할 정보를 객체로 따로 구성
       let procObj = [];
       for (let i = 0; i < this.procRows.length; i++) {
@@ -161,20 +195,19 @@ export default {
           proc_no: this.proc_no,
           seq: this.procRows[i].seq,
           proc_code_no: this.procRows[i].proc_code_no,
-          proc_nm: this.proc_nm,
+          proc_nm: this.proc_nm.trim(),
           prd_no: this.prd_no,
           outs_vdr: this.procRows[i].outs_vdr,
-          // outs_yn: this.procRows[i].outs_yn, 
-          outs_yn: 'f2', 
-          std_tm: this.procRows[i].std_tm,
-          std_val: this.procRows[i].std_val,
+          outs_yn: 'f2',
+          std_tm: Number(this.procRows[i].std_tm),  // 숫자로 변환
+          std_val: Number(this.procRows[i].std_val)  // 숫자로 변환
         };
       };
 
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.post("/api/proc", procObj)
         .catch(err => console.log(err));
-        
+
       if (result.data.message == '등록 완료') {
         alert('등록되었습니다.');
         this.$emit('proc-reload');
@@ -285,6 +318,7 @@ export default {
 }
 
 .small-text {
-  font-size: 0.875rem; /* 글씨 크기를 줄임 (14px) */
+  font-size: 0.875rem;
+  /* 글씨 크기를 줄임 (14px) */
 }
 </style>

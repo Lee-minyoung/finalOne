@@ -150,36 +150,53 @@ export default {
       // bom 은 수정 (수정될게 사용여부 뿐임)
       // bom_mat이 일부가 삭제될 수도 있고 추가될 수도 있는데 그걸 체크하기가 번거로움
       // bom_mat은 전부 삭제시키고 새로 insert
-      if (this.bomMatInfo.length == 0) {
-        alert('자재를 추가해주세요');
-        return;
-      } else {
-        let bomInfo = { // bom 수정할 사용여부 내용 저장
-          use_yn: this.use_yn,
-        };
-        let bomMatInfoArray = [];
-        for (let i = 0; i < this.bomMatInfo.length; i++) {
-          bomMatInfoArray[i] = {
-            bom_no: this.bom_no,
-            mat_no: this.bomMatInfo[i].mat_no,
-            cap: this.bomMatInfo[i].cap,
-            unit: this.bomMatInfo[i].unit,
-            rmk: this.bomMatInfo[i].rmk,
-          };
-        };
-        // 서버에 데이터를 요청 : PUT + http://localhost:3000/dept/100 => proxy ) /api/dept/100
-        // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
-        let result = await axios.put(`/api/bomAndBomMat/${this.bom_no}`, [bomInfo, bomMatInfoArray])
-          .catch(err => console.log(err));
 
-        if (result.data.message == '수정 완료') {
-          alert('수정되었습니다.');
-          this.$emit('bom-reload');
-          this.getBomMatInfo(this.bomMatInfo[0].bom_no);
-        } else {
-          alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
+      // 자재 목록 존재 여부 검증
+      if (this.bomMatInfo.length === 0) {
+        alert('자재를 추가해주세요.');
+        return;
+      };
+
+      // 자재별 용량 검증
+      for (const mat of this.bomMatInfo) {
+        if (!mat.cap || mat.cap <= 0) {
+          alert(`${mat.mat_nm}의 용량을 입력해주세요.`);
+          return;
+        }
+      };
+
+      // 사용여부 검증
+      if (!this.use_yn) {
+        alert('사용여부를 선택해주세요.');
+        return;
+      };
+
+      let bomInfo = { // bom 수정할 사용여부 내용 저장
+        use_yn: this.use_yn,
+      };
+
+      let bomMatInfoArray = [];
+      for (let i = 0; i < this.bomMatInfo.length; i++) {
+        bomMatInfoArray[i] = {
+          bom_no: this.bom_no,
+          mat_no: this.bomMatInfo[i].mat_no,
+          cap: this.bomMatInfo[i].cap,
+          unit: this.bomMatInfo[i].unit,
+          rmk: this.bomMatInfo[i].rmk,
         };
-      }
+      };
+      // 서버에 데이터를 요청 : PUT + http://localhost:3000/dept/100 => proxy ) /api/dept/100
+      // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
+      let result = await axios.put(`/api/bomAndBomMat/${this.bom_no}`, [bomInfo, bomMatInfoArray])
+        .catch(err => console.log(err));
+
+      if (result.data.message == '수정 완료') {
+        alert('수정되었습니다.');
+        this.$emit('bom-reload');
+        this.getBomMatInfo(this.bomMatInfo[0].bom_no);
+      } else {
+        alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
+      };
     },
     saveBom() { // 저장 버튼 클릭시 실행할 함수
       if (confirm('정말로 수정하시겠습니까?\n변경된 내용은 즉시 적용됩니다.')) {

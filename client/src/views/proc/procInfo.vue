@@ -158,10 +158,31 @@ export default {
     // 수정된 내용을 DB에 저장
     async procUpdate() {
       try {
-        if (this.procRows.length == 0) {
-          alert('공정코드를 추가해주세요');
+        // 공정명 검증
+        if (!this.proc_nm?.trim()) {
+          alert('공정명을 입력해주세요.');
           return;
         }
+
+        // 공정코드 목록 검증
+        if (!this.procRows || this.procRows.length === 0) {
+          alert('공정코드를 추가해주세요.');
+          return;
+        }
+
+        // 각 공정코드의 기준값과 ST 검증
+        for (const row of this.procRows) {
+          // 숫자 타입 검증
+          if (!row.std_val || isNaN(Number(row.std_val))) {
+            alert(`[${row.proc_code_nm}] 기준값은 숫자만 입력 가능합니다.`);
+            return;
+          }
+          if (!row.std_tm || isNaN(Number(row.std_tm))) {
+            alert(`[${row.proc_code_nm}] ST(초)는 숫자만 입력 가능합니다.`);
+            return;
+          }
+        }
+
         await this.onDragEnd();
         // 서버에 전달할 정보를 객체로 따로 구성
         let procObj = [];
@@ -171,12 +192,12 @@ export default {
             proc_no: this.proc_no,
             seq: this.procRows[i].seq,
             proc_code_no: this.procRows[i].proc_code_no,
-            proc_nm: this.proc_nm,
+            proc_nm: this.proc_nm.trim(),
             prd_no: this.prd_no,
             outs_vdr: this.procRows[i].outs_vdr,
             outs_yn: 'f2',
-            std_tm: this.procRows[i].std_tm,
-            std_val: this.procRows[i].std_val,
+            std_tm: Number(this.procRows[i].std_tm),  // 숫자로 변환
+            std_val: Number(this.procRows[i].std_val)  // 숫자로 변환
           };
         }
 

@@ -15,20 +15,20 @@
             <table class="table table-container">
               <thead>
                 <tr>
-                  <th>부서번호</th>
-                  <th>부서명</th>
-                  <th>부서관리자</th>
-                  <th>사용여부</th>
+                  <th class="w-10">부서번호</th>
+                  <th class="w-20">부서명</th>
+                  <th class="w-15">부서관리자</th>
+                  <th class="w-10">사용여부</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="dept in filteredDeptList" v-bind:key="dept.dept_no" @click="selectDept(dept.dept_no)"
                   :class="{ 'table-primary': selectedDept && selectedDept.dept_no === dept.dept_no }"
                   class="table-hover">
-                  <td>{{ dept.dept_no }}</td>
-                  <td>{{ dept.dept_nm }}</td>
-                  <td>{{ dept.nm }}</td>
-                  <td>{{ CommonCodeFormat(dept.use_yn) }}</td>
+                  <td class="w-10">{{ dept.dept_no }}</td>
+                  <td class="w-20">{{ dept.dept_nm }}</td>
+                  <td class="w-15">{{ dept.nm }}</td>
+                  <td class="w-10">{{ CommonCodeFormat(dept.use_yn) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -114,75 +114,5 @@ export default {
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.table-container {
-  height: 550px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-}
-
-.table {
-  margin-bottom: 0;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-tr {
-  border: 0px;
-}
-
-.table td,
-.table th {
-  width: 20%;
-  padding: 8px;
-  /* border-top: 1px solid #dee2e6; */
-  border-right: 1px solid #dee2e6;
-  border-left: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.table thead {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 1;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.table thead tr,
-.table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table tbody {
-  display: block;
-  overflow-y: auto;
-  height: calc(550px - 42px);
-}
-
-.table tbody tr td:first-child,
-.table thead tr th:first-child {
-  border-left: none;
-}
-
-.table tbody tr td:last-child,
-.table thead tr th:last-child {
-  border-right: none;
-}
+@import '@/assets/styles/base-table.css';
 </style>

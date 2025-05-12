@@ -82,7 +82,8 @@ const addPrdStkAndPrdStkHist = async (rsltNo, prdStkInfo) => {
     // 실제 SQL문을 가지고 오는 작업
     let selectedSql = await mariadb.selectedQuery("selectLotNo");
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    let lotNo = await conn.query(selectedSql).addLotNo;
+    let lotNoResult = await conn.query(selectedSql);
+    let lotNo = lotNoResult[0].addLotNo;
 
     // 제품LOT추가시 생산일자 및 유통기한 조회
     // 조건 : rslt_no (성적서번호)
@@ -90,34 +91,39 @@ const addPrdStkAndPrdStkHist = async (rsltNo, prdStkInfo) => {
     // 실제 SQL문을 가지고 오는 작업
     selectedSql = await mariadb.selectedQuery("selectEndTmAndLastDt", rsltNo);
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    let endTm = await conn.query(selectedSql, rsltNo).end_tm;
-    let lastDt = await conn.query(selectedSql, rsltNo).last_dt;
+    let result = await conn.query(selectedSql, rsltNo);
+    let endTm = result[0].end_tm;
+    let lastDt = result[0].last_dt;
 
     // 제품LOT 추가 prd_stk
     // LOT번호, 제품번호, 현재재고(합격수량), 창고번호, 생산일자, 유통기한, 마감여부
     // 창고번호 1로 고정, 마감여부 f2(부) 고정
     let insertColumns = ['prd_no', 'cur_stk'];
-    let data = convertObjToAry(prdStkInfo, insertColumns);
+    let data = [lotNo, ...convertObjToAry(prdStkInfo, insertColumns), endTm, lastDt];
+
     // 실제 SQL문을 가지고 오는 작업
-    selectedSql = await mariadb.selectedQuery('insertPrdStk', lotNo, data, endTm, lastDt);
+    // selectedSql = await mariadb.selectedQuery('insertPrdStk', lotNo, data, endTm, lastDt);
+    selectedSql = await mariadb.selectedQuery('insertPrdStk', data);
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    await conn.query(selectedSql, lotNo, data, endTm, lastDt);
+    //await conn.query(selectedSql, lotNo, data, endTm, lastDt);
+    await conn.query(selectedSql, data);
 
     // 추가시 적용되는 제품재고이력번호
     // 실제 SQL문을 가지고 오는 작업
     selectedSql = await mariadb.selectedQuery("selectPrdStkHistNo");
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    let PrdStkHistNo = await conn.query(selectedSql).addPrdStkHistNo;
+    let PrdStkHistNoResult = await conn.query(selectedSql);
+    let PrdStkHistNo = PrdStkHistNoResult[0].addPrdStkHistNo;
 
     // 제품입출고이력 추가 prd_stk_hist
     // 이력번호, LOT번호, 입출고유형, 수량, 날짜, 관련문서
     // 입출고유형은 o2입고로 고정, 날짜는 sysdate()로 고정
     insertColumns = ['qty'];
-    data = convertObjToAry(prdStkInfo, insertColumns);
+    data = [PrdStkHistNo, lotNo, ...convertObjToAry(prdStkInfo, insertColumns), rsltNo];
     // 실제 SQL문을 가지고 오는 작업
-    selectedSql = await mariadb.selectedQuery('insertPrdStkHist', PrdStkHistNo, lotNo, data, rsltNo);
+    selectedSql = await mariadb.selectedQuery('insertPrdStkHist', data);
     // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
-    await conn.query(selectedSql, PrdStkHistNo, lotNo, data, rsltNo);
+    await conn.query(selectedSql, data);
 
     conn.commit();
 

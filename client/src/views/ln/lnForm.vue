@@ -20,7 +20,7 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">라인번호</label>
-                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly disabled/>
+                <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly disabled />
               </div>
             </div>
             <!-- 라인명 -->
@@ -80,7 +80,7 @@
                 <td><input v-model="row.proc_code_nm" type="text" class="form-control" readonly disabled /></td>
                 <td>
                   <div class="input-group">
-                    <input v-model="row.eqp_no" type="text" class="form-control" readonly/>
+                    <input v-model="row.eqp_no" type="text" class="form-control" readonly />
                     <button class="btn btn-outline-secondary" @click="openEqpModal(index)">🔍</button>
                   </div>
                 </td>
@@ -169,12 +169,42 @@ export default {
     },
     // 저장 버튼 클릭시 실행할 함수 
     async lnInsert() {
+      // 라인명 검증
+      if (!this.ln_nm?.trim()) {
+        alert('라인명을 입력해주세요.');
+        return;
+      }
+
+      // 제품 선택 검증
+      if (!this.prd_no) {
+        alert('제품을 선택해주세요.');
+        return;
+      }
+
+      // 일평균생산량 검증
+      if (!this.dly_avg_pdn_qty || isNaN(Number(this.dly_avg_pdn_qty))) {
+        alert('일평균생산량은 숫자로 입력해주세요.');
+        return;
+      }
+
+      // 공정별 설비 선택 검증
+      if (!this.lnDtlRows || this.lnDtlRows.length === 0) {
+        alert('공정을 추가해주세요.');
+        return;
+      }
+
+      for (let i = 0; i < this.lnDtlRows.length; i++) {
+        if (!this.lnDtlRows[i].eqp_no) {
+          alert(`${i + 1}번째 공정의 설비를 선택해주세요.`);
+          return;
+        }
+      }
       // 서버에 전달할 정보를 객체로 따로 구성
       let lnInfo = {
         ln_no: this.ln_no,
-        ln_nm: this.ln_nm,
+        ln_nm: this.ln_nm.trim(),
         prd_no: this.prd_no,
-        dly_avg_pdn_qty: this.dly_avg_pdn_qty
+        dly_avg_pdn_qty: Number(this.dly_avg_pdn_qty)
       };
 
       let lnDtlInfoArray = [];
