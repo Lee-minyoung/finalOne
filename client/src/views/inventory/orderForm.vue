@@ -220,7 +220,8 @@ data() {
 async created(){
   const res=await axios.get('/api/inventory/mat');
   this.mat=res.data;
-  const vdrs=await axios.get('/api/vdrList');
+  //const vdrs=await axios.get('/api/vdrList');
+  const vdrs=await axios.get('/api/vdr');
   this.vdr=vdrs.data; 
   await this.fetchInventoryPurPlan(); // 자재구매계획 데이터 가져오기  
 },

@@ -115,7 +115,25 @@ router.get('/ordInfo',async(req,res)=>{
  res.json(info);  
 })
 
+router.post('/updateLot',async(req,res)=>{
 
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const nowStr = now.toISOString().slice(0, 10).replace('T', ' '); //2025-05-12
+
+
+  const {lot_no,prd_no,lot_qty,memo}=req.body; 
+ const lotInfo=[lot_qty,lot_no,prd_no];
+ //prd_stk 상태변경
+ console.log('여기까진옴');
+ console.log(req.body);   
+  await salesService.updateLot(lotInfo); 
+  console.log('lot차감완료'); 
+  await salesService.addPrdStkHist([8,lot_no,'o1',lot_qty,nowStr,memo]);  // lot_hist 
+  console.log('lot_hist 력등록완료');
+  res.json(result); 
+})
 
 
 

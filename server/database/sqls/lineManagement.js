@@ -83,12 +83,6 @@ const selectLineDetail =
  ORDER BY ln.seq;`
 
 
-const updateLinePreparing =
-`CALL line_preparing(?, ?)`;
-
-const updateLineStop =
-`CALL line_stop(?, ?)`;
-
 /*
 라인에 등록해야 하는 컬럼
 라인가동번호 | 자제출고요청번호 | 시작시간 | 종료시간 | 담당자 | 비고 | 생산지시 세부번호 | 지시수량 | 생산수량 | 불량수량 | 자재번호

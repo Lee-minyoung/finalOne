@@ -4,10 +4,10 @@
       <h4 class="mb-4">입고처리</h4>
       <!-- 출하지시 입력 폼 -->
       <div class="row mb-3 g-3">
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <label class="form-label">유통기한</label>
           <input v-model="expDt"  type="date" class="form-control">
-        </div>
+        </div> -->
         <div class="col-md-3">
           <label class="form-label">숫자임!수령자</label>
           <input v-model="rcvr" type="number" class="form-control">
@@ -45,7 +45,7 @@
       @close="showVdrModal = false"
     /> -->
 <p>{{ checkPur }}</p>
-<p>{{ purOrdNo }}</p>
+
       <!-- 제품 목록 테이블 -->
       <table class="table table-bordered text-center mt-4">
         <thead class="table-light">
@@ -55,6 +55,9 @@
             <th>자재ID</th>
             <th>자재명</th>
             <th>수량</th>
+            <th>유통기한</th>
+            <th>거래처ID</th>
+            <th>거래처명</th>
           </tr>
         </thead>
         <tbody>
@@ -78,6 +81,9 @@
             <td>{{item.mat_no  }}</td>
             <td>{{ item['자재명'] }}</td>
             <td>{{ item.qty }}</td>
+            <td> {{ item['유통기한'] }}</td>
+            <td>{{ item.vdr_no }}</td>
+            <td>{{ item['거래처명'] }}</td> 
  </tr> 
         </tbody>
       </table>
@@ -127,7 +133,7 @@ export default {
             pur_ord_no:this.purOrdNo, //발주번호,비고(입고시발주번호) 
             prcsr:this.prcsr, //처리자 
             vdr_no:this.checkPur[0]?.vdr_no, //거래처번호
-            rcvr:this.rcvr, 
+            rcvr:this.rcvr, //수령자
             rcv_mthd:this.rcvrMth //수령방법  
         } 
         try{
@@ -143,7 +149,7 @@ export default {
             const item=this.checkPur[0]; 
             this.mode='checked';
             this.purOrdNo=item.pur_ord_no;
-
+            this.expDt=item['유통기한']; 
         }else{
             this.mode='basic'  
             alert('하나의 발주건만 선택해주세요');

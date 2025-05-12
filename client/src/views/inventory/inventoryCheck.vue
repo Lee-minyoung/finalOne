@@ -68,7 +68,7 @@
       <th scope="col">총가격</th>
       <th scope="col">도착예정일</th>
       <th scope="col">거래처</th>
-      <th scope="col">생산계획</th>
+     
       <th scope="col">발주</th>            
     </tr>
   </thead>
@@ -84,58 +84,7 @@
       <td>{{ item['실시간도착예정일'].substring(0,10) }}</td>
       <td>{{ item['대표거래처'] }}</td>
       <!--생산계획 버튼-->
-      <td>
-        <div>
-        <!--생산계획 보는 모달창 띄우기-->
-        <button type="button" class="btn btn-primary" @click="fetchPrdPlanByMatId(item['자재ID'])" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      생산계획
-    </button>
-  </div>
-
-  <!-- 주문 등록 모달 -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">생산계획</h5>
-            <!-- 테이블 -->
-            <table class="table table-sm table-bordered text-center">
-            <thead class="table-light">
-              <tr>
-                <th>생산계획ID</th>
-                <th>생산계획명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-               
-              >
-                <td>{{ item.vdr_no }}</td>
-                <td>{{ item.cpy_nm }}</td>
-              </tr>
-            </tbody>
-          </table>
-
-
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-       
-
-        
-
-          <!-- 제품 리스트 테이블 -->
-         
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        
-        </div>
-      </div>
-    </div>
-  </div>
-      </td>
+     
 <!--생산계획모달 end-->
 
     <td>
@@ -162,6 +111,14 @@ import axios from 'axios';
       rawData:[], 
       expandedReqNos: [], // ** 펼쳐진 출고요청번호 목록
       proPlnData:[],
+<<<<<<< HEAD
+=======
+      //자재요청클릭 
+      reqClickedList: [],
+      lotMinusDoneReqNo:[], //출고 마감 완료  
+      plnToOrdNo:[], //
+     
+>>>>>>> 3f10e5c3df530bc9c3aa292e2fb67b5c2b907441
     };
   },
   async created(){
@@ -194,7 +151,21 @@ import axios from 'axios';
    async fetchInventoryPurPlan(){
     try{
       const result=await axios.get('/api/inventory/matPurPlan')
+<<<<<<< HEAD
       this.inventoryPurPlan=result.data; 
+=======
+      //allPurPlan 모든 자재구매계획을 불러옴 
+      this.allPurPlan=result.data; 
+    
+      // 자재구매계획 -> 발주 처리된 자재구매계획번호를 서버에서 불러옴  
+      //  // 발주처리된 자재구매계획은 안보여지게함    
+      const Nos=await axios.get('/api/PlnToOrd') //
+      this.plnToOrdNo=Nos.data.map(p => p['계획ID']);
+      console.log('allpurPlan',this.allPurPlan);
+      console.log(this.plnToOrdNo); 
+      this.inventoryPurPlan = this.allPurPlan.filter(p => !this.plnToOrdNo.includes(p['계획ID']));
+     
+>>>>>>> 3f10e5c3df530bc9c3aa292e2fb67b5c2b907441
     }catch(error){
       console.log('자재구매계획 실패',error); 
     }
@@ -203,7 +174,7 @@ import axios from 'axios';
    async filteredPurPlanList(){
    
     const rawData=this.inventoryPurPlan; //item['자재ID']='M-001'
-    console.log('rawdata',rawData);
+    console.log('필터링전 rawdata',rawData);
     const filtered=[]; //수량이  
     for (const item of rawData){
       const matId=item['자재ID']; 
