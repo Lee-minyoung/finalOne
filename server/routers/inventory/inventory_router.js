@@ -142,7 +142,7 @@ router.post('/inventory/lotMinus',async(req,res)=>{
    //lot 선택  const lot=await
                 await inventoryService.minusLotCurStk(req_qty,mat_no)
                 await inventoryService.changeMatStsToq2(pln_id); //자재출고처리 q2로변함 
-  
+                inventory/lotMinusList
     
    //
                       
@@ -169,7 +169,6 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
         //   continue;  
         // }
         
-
         for(const lot of lots){
             const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
             await inventoryService.minusCurStkByLot(lot.lot_no,minusQty);
@@ -212,8 +211,8 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
     //자재출고요청서에 가장최근 자재처리결과 c3()으로 업데이트
     const info=[formattedMatNo,formattedDate,matId,vdrNo,qty,prc,check];            
     await  purordInstService.addPurPlnByBtnClick(info);
-   // await  purordInstService.updateMatPrcToC3(reqId,matId); //자재출고요청서에 c3으로 업데이트
-
+    await  purordInstService.updateMatPrcToC3(reqId,matId); //자재출고요청서에 c3으로 업데이트
+ 
    res.status(200).json({message:'자재요청후 구매계획 등록완료'}); 
   }catch(err){
     console.error("🔥 등록 중 에러:", err);

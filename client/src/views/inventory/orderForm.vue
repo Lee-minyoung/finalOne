@@ -1,6 +1,8 @@
 <template>
-  <div class="container py-4">
-    <h2 class="mb-4 fw-bold">발주서 입력</h2>
+
+  <!--자재구매계획X,사용자직접입력발주하기 -->
+  <div v-if="checkedMatPln.length ===0" class="container py-4">
+    <h2 class="mb-4 fw-bold">발주서입력</h2>
 
     <div class="d-flex justify-content-end mb-3 gap-2">
       <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
@@ -71,31 +73,6 @@
       </div>
     </div>
 
-    <!-- <table class="table table-striped table-hover">
-      <thead class="table-light">
-        <tr>
-          <th>자재ID</th>
-          <th>자재명</th>
-          <th>수량</th>
-          <th>단가</th>
-          <th>총가격</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Otto</td>
-          <td>100</td>
-          <td>1200</td>
-          <td>120000</td>
-        </tr>
-      </tbody>
-    </table> -->
-
-
-
-
-
     <mat-select-modal
       v-if="showModal"
       :mat-list="mat"
@@ -111,47 +88,108 @@
       @close="showVdrModal = false"
     />
   </div>
+  <!--사용자직접입력 발주 end -->
 
-  <h3>자재구매계획 </h3>
+  <!--자재구매계획에서 체크한후 뜨는 입력폼   -->
+  <div v-else-if="checkedMatPln.length>0" class="container py-4">
+    <h2 class="mb-4 fw-bold">발주서입력</h2>
+
+    <div class="d-flex justify-content-end mb-3 gap-2">
+      <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
+      <button class="btn btn-outline-primary" @click="gotoOrdView">발주 조회</button>
+    </div>
+
+    <div class="card p-4 shadow-sm rounded-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">발주일자</label>
+          <input type="date" class="form-control" v-model="purDt" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령인</label>
+          <input type="text" class="form-control" v-model="bizNo" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령방법</label>
+          <input type="text" class="form-control" v-model="dueDt" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">수량</label>
+          <input type="number" class="form-control" v-model="qty" />
+        </div>
+
+     
+<div class="col-12">
+  <div class="row g-3 mt-2">
+    <!-- 첫 번째 줄: 자재정보 -->
+    <div class="col-md-3">
+      <label class="form-label">자재번호</label>
+      <input v-model="selectMats[0].mat_no" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">자재명</label>
+      <input v-model="selectMats[0].mat_nm" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">자재단가</label>
+      <input v-model="selectMats[0].prc" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">금액</label>
+      <input :value="totalPrc" type="text" class="form-control" readonly />
+    </div>
+
+    <!-- 두 번째 줄: 거래처 정보 -->
+     
+    <div class="col-md-3">
+      <label class="form-label">거래처코드</label>
+      <input v-model=" selectMats[0].vdr_no" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">거래처명</label>
+      <input v-model="selectMats[0].cpy_nm" type="text" class="form-control" readonly />
+    </div>
+  </div>
+</div>
+    
+      </div>
+    </div>  
+  </div>
+
+
+  <h3>자재구매계획</h3>
   <table class="table">
   <thead>
     <tr>
-      <th scope="col">계획ID</th>
+      <th scope="col">선택</th>
       <th scope="col">자재ID</th>
       <th scope="col">자재명</th>
       <th scope="col">수량</th>
-      <th scope="col">단가</th>
       <th scope="col">총가격</th>
-      <th scope="col">도착예정일</th>
       <th scope="col">거래처</th>
-      <th scope="col">생산계획</th>
-      <th scope="col">발주</th>            
     </tr>
   </thead>
   <tbody>
-    <!-- 필터.. -->
-    <tr v-for="(item,index) in inventoryPurPlan" :key="index">
-      <th scope="row">{{ item['계획ID'] }}</th>
-      <td>{{ item['자재ID'] }}</td>
-      <td>{{ item['자재명'] }}</td>
-      <td>{{ item['수량'] }}</td>
-      <td>{{ item['단가'] }}</td>
-      <td>{{ item['총가격'] }}</td>
-      <td>{{ item['실시간도착예정일'].substring(0,10) }}</td>
-      <td>{{ item['대표거래처'] }}</td>    
-    <td>
-      <button class="btn btn-success rounded-pill px-3" @click="minCheckAndPurOrd(item['자재ID'],item['수량'],item['계획ID'])"  type="button">발주하기</button>
-    </td>
-    </tr> 
+    <tr v-for="(item, index) in matPurPlanChecked" :key="item['자재번호']">
+  <td>
+    <input 
+      type="checkbox"
+      :value="item" 
+      v-model="checkedMatPln"    
+      @change="handleCheckChange"
+    />
+  </td>
+  <td>{{ item['자재번호'] }}</td>
+  <td>{{ item['자재명'] }}</td>
+  <td>{{ item['총합'] }}</td>
+  <td>{{ item['총가격'] }}</td>
+  <td v-if="!item['거래처코드']">거래처x</td>
+  <td v-else>{{ item['거래처명'] }}</td>
+</tr>
   </tbody>
 </table>
-
-
-
-
 </template>
-
-
 <script>
 import matSelectModal from '@/views/modal/matSelectModal.vue';
 import vdrSelectModal from '@/views/modal/vdrSelectModal.vue'; 
@@ -174,7 +212,9 @@ data() {
    qty:0,  
    purDt:'',
    crtDt:new Date().toISOString().slice(0, 10),
-   inventoryPurPlan:[],
+   matPurPlanChecked:[], //자재요청 -> 체크된 애들 
+   checkedMatPln:[],  //  체크박스 눌렀을때 matpln 
+   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때  
   }
 },
 async created(){
@@ -210,13 +250,13 @@ methods:{
   }, 
   async saveOrder() {
   const payload = {
-    vdr_no: this.selectVdr?.vdr_no,  // 거래처번호
-    crt_dt:this.crtDt,     
+    vdr_no: this.selectVdr?.vdr_no??1000,       // 거래처번호
+    crt_dt:this.crtDt,                    
     pur_dt: this.purDt,                   // 발주일자
     mat_no: this.selectMats[0]?.mat_no,   // 자재번호
     qty: this.qty,                        // 수량
-    prc: this.selectMats[0]?.prc,     // 단가
-    total: this.totalPrc                  // 총가격 (computed)
+    prc: this.selectMats[0]?.prc,         // 단가
+    total: this.totalPrc                  // 총가격(computed)
   };
 
   try {
@@ -224,24 +264,77 @@ methods:{
     alert('발주 저장 완료!');
   } catch (err) {
     console.error('저장 실패:', err);
+    alert('에러발생');
+    console.log('payLoad',payload);
   }
 }, 
 async fetchInventoryPurPlan(){
     try{
-      const result=await axios.get('/api/inventory/matPurPlan')
-      this.inventoryPurPlan=result.data; 
+      const result=await axios.get('/api/getPurPlnChecked')
+      this.matPurPlanChecked=result.data; 
+      console.log('matPurPlanChecked',this.matPurPlanChecked); // 
     }catch(error){
       console.log('자재구매계획 실패',error); 
     }
+   },   
+   //체크박스 클릭후  
+   infoPlntoOrd(item){
+      this.mode='checked'; //자재구매계획
+      this.checkedMatPln=[item]; 
+      this.qty=item['총합'], 
+      this.purDt=new Date().toISOString.slice(0,10);
+      this.selectMats=[
+      {
+        mat_no:item['자재번호'], 
+        mat_nm:item['자재명'], 
+        prc:Number(item['총합']) /Number(item['총합']) || 0 
+      }
+    ]; 
+      if(item['거래처코드']){
+        this.selectVdr={
+          vdr_no:item['거래처코드'], 
+          cpy_nm:item['거래처명']
+        };
+      } else{
+        this.selectVdr=null; 
+      }
+
+    console.log('this.selectMats',this.selectMats);
+
 
    }, 
    
-
+   handleCheckChange() {
+    if (this.checkedMatPln.length === 1) {
+      const item = this.checkedMatPln[0];
+      this.mode = 'checked';
+      this.qty = item['총합'];
+      this.purDt = new Date().toISOString().slice(0, 10);
+      this.selectMats = [{
+        mat_no: item['자재번호'],
+        mat_nm: item['자재명'],
+        prc: Number(item['총가격']) / Number(item['총합']) || 0
+      }];
+      if (item['거래처코드']) {
+        this.selectVdr = {
+          vdr_no: item['거래처코드'],
+          cpy_nm: item['거래처명']
+        };
+      } else {
+        this.selectVdr = null;
+      }
+    } else {
+      // 다중 선택 or 해제 → 초기화
+      this.mode = 'basic';
+      this.selectMats = [];
+      this.selectVdr = null;
+      this.qty = 0;
+      alert('하나의 자재만 선택하세요'); 
+    }
+  }
 
 }, 
 
-// created() {
-//   this.getOrdList()
-// },
+
 }
 </script>

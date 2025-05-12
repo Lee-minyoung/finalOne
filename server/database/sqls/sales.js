@@ -14,14 +14,17 @@ const selectLastOrdNo=
   from ord_dtl`; 
 //  
 const selectOrdList=
-`SELECT ord_no,
-         vdr_no,
-         emp_no,
-         due_dt,
-         ord_sts,
-         rgt_dt,
-         mdf_dt
-  FROM ord`; 
+// `SELECT ord_no,
+//          vdr_no,
+//          emp_no,
+//          due_dt,
+//          ord_sts,
+//          rgt_dt,
+//          mdf_dt
+//   FROM ord`;
+
+`select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
+from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
@@ -68,6 +71,38 @@ WHERE vdr_no= ?`;
 const searchVdrNm=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
 FROM vdr 
 WHERE cpy_nm LIKE'%?%'`; 
+// 수주,수주받은건 조회 
+const selectOrdAllList=`
+SELECT 
+    o.ord_no,
+    o.vdr_no,
+    o.emp_no,
+    o.due_dt,
+    o.ord_sts,
+    d.ord_dtl_no,
+    d.prd_no,
+   sum(d.prd_qty)
+FROM ord o
+JOIN ord_dtl d ON o.ord_no = d.ord_no
+GROUP BY d.prd_no`;
+//출하최대값찾기
+const selectMaxSpmNo=`
+ select max(spm_no) as maxSpmNo
+ from spm`;
+ const selectMaxSpmDtlNo=`
+ select max(spm_dtl_no) as maxSpmDtlNo
+ from spm_dtl`;    
+//출하지시 여러정보 찾기기 
+const selectSpmInfo=`
+SELECT o.vdr_no,o.emp_no,od.prd_qty ,od.prd_no ,o.ord_no,o.ord_sts  
+ FROM  ord o JOIN ord_dtl od on(o.ord_no=od.ord_no)
+ where o.ord_no=?`;     
+const insertSpm=`
+INSERT INTO spm (spm_no,ord_no,vdr_no,mgr,spm_dt,dlv_addr)
+VALUES(?,?,?,?,?,?)`; 
+const insertSpmDtl=`
+INSERT INTO spm_dtl (spm_dtl_no,spm_no,qty,unt_prc,prd_no)
+VALUES(?,?,?,?,?)`; 
 
  module.exports={
   insertOrd,
@@ -79,4 +114,10 @@ WHERE cpy_nm LIKE'%?%'`;
   selectOrdAll,
   selectOrdDate,
   selectOrdDateOne, 
+  selectOrdAllList, 
+  selectMaxSpmNo,
+  selectSpmInfo,
+  selectMaxSpmDtlNo, 
+  insertSpm,  
+  insertSpmDtl,  
  }

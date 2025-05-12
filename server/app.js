@@ -95,7 +95,9 @@ const loginRouter = require('./routers/access/login_router.js');
 app.use('/', loginRouter);
 
 //자재관련 
-app.use('/', salesRouter);
-app.use('/', inventoryRouter);
-const purOrdInstRouter = require('./routers/inventory/purOrdInst_router.js');
-app.use('/', purOrdInstRouter);
+app.use('/',salesRouter);
+app.use('/',inventoryRouter);
+const purOrdInstRouter = require('./routers/inventory/purordInst_router.js');
+app.use('/',purOrdInstRouter);
+const matImportRouter=require('./routers/inventory/matImport_router.js'); 
+app.use('/',matImportRouter); 
