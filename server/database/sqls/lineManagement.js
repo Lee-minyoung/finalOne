@@ -50,7 +50,7 @@ const selectLineList =
       , lo.dft_qty
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
-   LEFT JOIN ln l ON pod.ln_no = l.ln_no
+   RIGHT OUTER JOIN ln l ON pod.ln_no = l.ln_no
    LEFT JOIN prd p ON pod.prd_no = p.prd_no
    ORDER BY l.ln_no;`
 
