@@ -42,10 +42,11 @@ router.get('/spmInsRslt/lastRsltNo', async (req, res) => {
     const lastNo = await spmInsRsltService.findLastRsltNo();
     res.send({ lastNo });
   } catch (err) {
-    res.status(500).send({ lastNo: 0 });
+     res.status(500).send({ lastNo: '000' });
   }
 });
 
+// 성적서 등록
 router.post('/spmInsRslt', async (req, res) => {
   try {
     const result = await spmInsRsltService.addRslt(req.body);

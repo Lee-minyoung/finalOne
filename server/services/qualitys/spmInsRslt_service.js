@@ -19,9 +19,9 @@ const findSpmInsStdList = async (prd_no) => {
 
 // 성적서 등록
 const addRslt = async (spmInsRsltInfo) => {
-  let insertColumns = ['rslt_no', 'mgr_count', 'succ_count', 'dft_count', 'ovr_jdg', 'rmk', 'ln_opr_no'];
+  let insertColumns = ['rslt_no', 'mgr_count', 'succ_count', 'dft_count', 'ovr_jdg', 'rmk', 'ln_opr_no', 'prd_no'];
   let data = insertColumns.map(col => spmInsRsltInfo[col]);
-  let resInfo = await mariadb.query("insertRslt", data)
+  let resInfo = await mariadb.query("insertRslt1", data)
                               .catch(err => console.log('쿼리 실행 오류:', err));
 
   let result = null;
@@ -53,7 +53,8 @@ const addRsltDtl = async (dtlList) => {
 // 마지막 번호 조회
 const findLastRsltNo = async () => {
   let [row] = await mariadb.query("selectLastRsltNo").catch(err => console.log(err));
-  return row?.last_no || 0;
+   console.log('lastNo row:', row); // 로그 추가
+   return (row && row.last_no !== null) ? row.last_no : 0;
 };
 
 module.exports ={

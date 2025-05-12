@@ -64,9 +64,9 @@ ORDER BY prd_nm`;
 // WHERE rslt_no = ?`;
 
 // 성적서 등록
-const insertRslt=
-`INSERT INTO spm_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, succ_count, dft_count, ovr_jdg, rmk, ln_opr_no)
-VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?)`;
+const insertRslt1=
+`INSERT INTO spm_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, succ_count, dft_count, ovr_jdg, rmk, ln_opr_no, prd_no)
+VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl=
 `INSERT INTO spm_ins_rslt_dtl(spm_ins_rslt_dtl_no, mgr_date, spm_ins_std_no, mgr_rslt, jdg, dft_quy, rslt_no, qrd_no, rmk)
@@ -78,7 +78,6 @@ const selectLastRsltNo =
  FROM spm_ins_rslt
  WHERE rslt_no LIKE 'SJS-%'`;
 
-
 module.exports={
   selectPrd,
   selectSpmInsStd,
@@ -86,7 +85,7 @@ module.exports={
   updateSpmInsStd,
   deleteSpmInsStd,
   selectRsltPrd,
-  insertRslt,
+  insertRslt1,
   selectLastRsltNo,
   insertRsltDtl
 };
