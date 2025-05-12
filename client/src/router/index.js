@@ -34,7 +34,8 @@ const routes = [
         name: 'prd',
         component: () => import('@/views/prd/prd.vue'),
       },
-      { // 완제품검사기준서
+      // 품질
+      {
         path: '/SpmInsStd',
         name: 'SpmInsStd',
         component: () => import('@/views/qualitys/spmInsStd.vue'),
@@ -43,6 +44,27 @@ const routes = [
         path: '/SpmInsRslt',
         name: 'SpmInsRslt',
         component: () => import('@/views/qualitys/spmInsRslt.vue'),
+      },
+      {
+        path: '/IncInsStd',
+        name: 'IncInsStd',
+        component: () => import('@/views/qualitys/incInsStd.vue'),
+      },
+      {
+        path: '/IncInsRslt',
+        name: 'IncInsRslt',
+        component: () => import('@/views/qualitys/incInsRslt.vue'),
+      },
+      // 출하
+      {
+        path: '/SpmMrk',
+        name: 'SpmMrk',
+        component: () => import('@/views/spm/SpmMrk.vue'),
+      },
+      {
+        path: '/SpmFns',
+        name: 'SpmFns',
+        component: () => import('@/views/spm/SpmFns.vue'),
       },
       { // 주문조회, 총주문수량
         path:'/SaleList',

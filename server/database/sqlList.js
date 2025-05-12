@@ -2,7 +2,9 @@
 const sales = require('./sqls/sales.js');
 const equipments = require('./sqls/equipments.js');
 const inventorys = require('./sqls/inventory.js');
-const qualitys = require('./sqls/qualitys.js');
+const qualitys = require('./sqls/spm.js');
+const matQualitys = require('./sqls/MatQualitys.js');
+const spm = require('./sqls/spm.js');
 const userinforms = require('./sqls/userinforms.js');
 const prodeuctinPlan = require('./sqls/productionPlan.js');
 const productionInst = require('./sqls/productionInst.js')
@@ -32,6 +34,7 @@ module.exports = {
     ...equipments,
     ...inventorys,
     ...qualitys,
+    ...matQualitys,
     ...userinforms,
     ...prodeuctinPlan, //생산계획, 지시
     ...productionInst,
