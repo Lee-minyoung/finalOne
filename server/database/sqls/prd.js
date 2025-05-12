@@ -2,9 +2,9 @@
 
 // 제품 목록 조회
 // - 모든 제품의 기본 정보를 제품번호 순으로 정렬하여 조회
-// - 기본 정보: 제품번호, 제품명, 제품유형
+// - 기본 정보: 제품번호, 제품명, 제품유형, 유통기한, 등록일자
 const selectPrdList =
-  `SELECT prd_no, prd_nm, prd_tp 
+  `SELECT prd_no, prd_nm, prd_tp, exp_dt, rgt_dt
 FROM prd
 ORDER BY prd_no`;
 

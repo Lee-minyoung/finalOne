@@ -1,6 +1,6 @@
 <template>
   <!-- 우측 영역 시작 -->
-  <div class="col-md-7">
+  <div class="col-md-6">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div></div>
@@ -29,23 +29,7 @@
                 <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
             </div>
-
-
-
-            <!-- <div class="col-md-4 mb-3 p-0">
-              <div class="d-flex align-items-center">
-                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
-                <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled style="flex:1;" />
-              </div>
-            </div>
-            <div class="col-md-8 mb-3 p-0">
-              <div class="d-flex align-items-center">
-                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
-                <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" style="flex:1;" />
-              </div>
-            </div> -->
-  
-            <!-- 3행: 상호명 + 대표자명 -->
+            <!-- 2행: 상호명 + 대표자명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
                 <label for="cpyNm" class="form-label fw-bold me-3" style="min-width: 100px;">상호명</label>
@@ -58,19 +42,20 @@
                 <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm"  />
               </div>
             </div>
-            <!-- 4행: 사업장주소 -->
+            <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="ofcAddr" class="form-label fw-bold me-3" style="min-width: 100px;">사업장주소</label>
                 <div class="flex-grow-1 d-flex gap-2">
-                  <input id="ofcAddr" type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly />
+                  <!-- 기본주소 입력 필드: 우편번호와 기본 도로명/지번 주소만 표시 -->
+                  <input id="ofcAddr" type="text" class="form-control" v-model="baseAddress" readonly />
                   <button class="btn btn-outline-secondary" @click="openDaumPostcode" style="min-width: 40px;">
                     <i class="bi bi-search"></i>
                   </button>
                 </div>
               </div>
             </div>
-            <!-- 상세주소 -->
+            <!-- 상세주소: 건물명, 동/호수 등 상세 정보 입력 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label style="min-width: 100px;" class="me-3"></label>
@@ -141,6 +126,7 @@ import CommonCodeFormat from '@/utils/useCommonCode.js'
 export default {
   /**
    * 거래처 등록 컴포넌트
+   * 
    * - 새로운 거래처 정보를 입력하고 등록하는 기능 제공
    * - 사업자등록번호, 상호명, 대표자명 등 기본 정보 입력
    * - 카카오맵 API를 통한 사업장 소재지 검색 기능
@@ -148,26 +134,31 @@ export default {
    */
   data() {
     return {
-      vdrNo: '', // 거래처 번호
-      today: '', // 오늘 날짜
-      tempAddrDetail: '', // 임시 상세주소
-      baseAddress: '', // 기본 주소 저장용
+      vdrNo: '',           // 거래처 번호 (임시 저장용)
+      today: '',           // 오늘 날짜 (등록일자 표시용)
+      tempAddrDetail: '',  // 임시 상세주소 (주소 분리 처리용)
+      baseAddress: '',     // 기본 주소 저장 (주소 분리 처리용)
       vdrInfo: {
-        vdr_no: '', // 거래처 번호
-        cpy_nm: '', // 상호명
-        ceo_nm: '', // 대표자명
-        biz_reg_no: '', // 사업자등록번호
-        ofc_tp: '', // 사업장유형 (기본값: 판매처)
-        ofc_sts: '', // 사업장상태 (기본값: 정상)
-        ofc_ctt: '', // 사업장연락처
-        ofc_addr: '', // 사업장소재지
-        mgr_nm: '', // 담당자
-        mgr_ctt: '', // 담당자연락처
-        use_yn: '' // 사용여부 (기본값: 사용)
+        vdr_no: '',        // 거래처 번호
+        cpy_nm: '',        // 상호명
+        ceo_nm: '',        // 대표자명
+        biz_reg_no: '',    // 사업자등록번호
+        ofc_tp: '',        // 사업장유형 (기본값: 판매처)
+        ofc_sts: '',       // 사업장상태 (기본값: 정상)
+        ofc_ctt: '',       // 사업장연락처
+        ofc_addr: '',      // 사업장소재지 (내부 데이터용 - 저장 시 전체 주소)
+        mgr_nm: '',        // 담당자
+        mgr_ctt: '',       // 담당자연락처
+        use_yn: ''         // 사용여부 (기본값: 사용)
       },
     };
   },
   created() {
+    /**
+     * 컴포넌트 생성 시 초기화 작업
+     * 1. 새 거래처 번호 자동 발급 요청
+     * 2. 오늘 날짜 설정
+     */
     this.getVdrNo(); // 거래처 번호 조회
     this.getToday(); // 오늘 날짜 설정
   },
@@ -175,14 +166,13 @@ export default {
     /**
      * 카카오맵 주소 검색 API 초기화
      * - 페이지 마운트 시 카카오 주소 검색 API 스크립트를 동적으로 로드
-     * - 스크립트 URL: //t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js
      * - API 로드 후 openDaumPostcode 메서드를 통해 주소 검색 기능 사용 가능
      */
     const script = document.createElement('script');
     script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     document.head.appendChild(script);
 
-    // Bootstrap Icons 추가
+    // Bootstrap Icons 추가 (주소 검색 버튼 아이콘용)
     const link = document.createElement('link');
     link.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css';
     link.rel = 'stylesheet';
@@ -190,7 +180,8 @@ export default {
   },
   methods: {
     /**
-     * 공통 코드 포맷 변환
+     * 공통 코드 포맷 변환 (유틸리티 호출)
+     * 
      * @param {string} value - 변환할 코드 값
      * @returns {string} 변환된 코드 값
      */
@@ -199,9 +190,10 @@ export default {
     },
 
     /**
-     * 날짜 데이터 포맷 변환
+     * 날짜 데이터 포맷 변환 (유틸리티 호출)
+     * 
      * @param {string|Date} value - 변환할 날짜
-     * @param {string} format - 변환할 포맷
+     * @param {string} format - 변환할 포맷 (예: 'yyyy-MM-dd')
      * @returns {string} 변환된 날짜 문자열
      */
     dateFormat(value, format) {
@@ -210,6 +202,7 @@ export default {
 
     /**
      * 오늘 날짜를 YYYY-MM-DD 형식으로 설정
+     * - today 데이터 속성에 오늘 날짜를 저장
      */
     getToday() {
       this.today = this.dateFormat(null, 'yyyy-MM-dd');
@@ -217,10 +210,11 @@ export default {
 
     /**
      * 새로운 거래처 번호를 서버로부터 조회
+     * 
      * - API 호출을 통해 새로운 거래처 번호를 받아옴
-     * - 조회 실패 시 에러 메시지 표시
+     * - 서버는 다음 번호 시퀀스를 계산하여 반환
+     * - 받아온 번호는 vdrInfo.vdr_no에 설정됨
      */
-
     async getVdrNo() {
       let result = await axios.get(`/api/vdrNo`)
         .catch(err => console.log(err));
@@ -228,48 +222,44 @@ export default {
       this.vdrInfo.vdr_no = result.data[0].addVdrNo;
     },
 
-    // async getVdrNo() {
-    //   try {
-    //     let result = await axios.get('/api/vdrNo');
-    //     this.vdrNo = result.data[0].addVdrNo;
-    //   } catch (err) {
-    //     console.error('거래처번호 조회 실패:', err);
-    //     alert('거래처번호를 가져오는데 실패했습니다.');
-    //   }
-    // },
-
     /**
      * 입력 폼 초기화
+     * 
      * - 모든 입력 필드를 기본값으로 초기화
-     * - 사업장유형, 사업장상태, 사용여부는 기본값으로 설정
+     * - 사업장유형: '판매처(b1)', 사업장상태: '정상(d1)', 사용여부: '사용(f1)'으로 기본값 설정
+     * - 주소 관련 필드 초기화
+     * - 새 거래처 번호 재조회
      */
     resetForm() {
       this.vdrInfo = {
-        vdr_no: '', // 거래처 번호
-        cpy_nm: '',
-        ceo_nm: '',
-        biz_reg_no: '',
-        ofc_tp: 'b1',
-        ofc_sts: 'd1',
-        ofc_ctt: '',
-        ofc_addr: '',
-        mgr_nm: '',
-        mgr_ctt: '',
-        use_yn: 'f1'
+        vdr_no: '',        // 거래처 번호
+        cpy_nm: '',        // 상호명
+        ceo_nm: '',        // 대표자명
+        biz_reg_no: '',    // 사업자등록번호
+        ofc_tp: 'b1',      // 사업장유형 (기본값: 판매처)
+        ofc_sts: 'd1',     // 사업장상태 (기본값: 정상)
+        ofc_ctt: '',       // 사업장연락처
+        ofc_addr: '',      // 사업장소재지
+        mgr_nm: '',        // 담당자
+        mgr_ctt: '',       // 담당자연락처
+        use_yn: 'f1'       // 사용여부 (기본값: 사용)
       };
       this.tempAddrDetail = ''; // 상세주소 초기화
-      this.baseAddress = ''; // 기본 주소 초기화
-      this.getVdrNo(); // 거래처 번호 다시 조회
+      this.baseAddress = '';    // 기본 주소 초기화
+      this.getVdrNo();          // 거래처 번호 다시 조회
     },
 
     /**
      * 거래처 정보 저장
-     * - 입력된 거래처 정보를 서버에 전송하여 저장
-     * - 저장 성공 시 성공 메시지 표시 및 목록 새로고침
-     * - 저장 실패 시 에러 메시지 표시
+     * 
+     * 1. 현재 입력된 모든 필드 데이터를 객체로 구성
+     * 2. API 호출하여 서버에 저장 요청
+     * 3. 성공 시 사용자에게 알림 및 목록 새로고침
+     * 4. 실패 시 오류 메시지 표시
      */
     async saveVdr() {
       try {
+        // 저장할 데이터 객체 구성
         let obj = {
           ofc_tp: this.vdrInfo.ofc_tp,
           ofc_sts: this.vdrInfo.ofc_sts,
@@ -283,11 +273,12 @@ export default {
           use_yn: this.vdrInfo.use_yn
         };
 
+        // 서버에 저장 요청
         let result = await axios.post("/api/vdr", obj);
         if (result.data.isSuccessed) {
           alert('등록되었습니다.');
-          this.$emit('vdr-reload');
-          this.$emit("goToInfo", true);
+          this.$emit('vdr-reload');       // 목록 새로고침 이벤트 발생
+          this.$emit("goToInfo", true);   // 상세정보 화면으로 전환 이벤트 발생
         } else {
           alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
         }
@@ -299,37 +290,61 @@ export default {
 
     /**
      * 카카오맵 주소 검색 팝업 열기
-     * - 카카오맵 주소 검색 API를 사용하여 주소 검색 팝업창 표시
-     * - 사용자가 주소 선택 시 oncomplete 콜백 함수가 실행됨
-     * - 선택된 주소는 vdrInfo.ofc_addr에 자동으로 설정됨
-     * @returns {void}
+     * 
+     * 1. 카카오맵 주소 검색 API를 사용하여 주소 검색 팝업창 표시
+     * 2. 사용자가 주소 선택 시 oncomplete 콜백 함수가 실행됨
+     * 3. 선택된 주소를 우편번호 포함 형식으로 기본주소(baseAddress)에만 설정
+     * 4. 상세주소는 초기화하여 사용자가 직접 입력하도록 함
+     * 5. 내부 데이터(vdrInfo.ofc_addr)는 updateFullAddress()를 통해 업데이트
+     * 
+     * @개선사항 기본주소와 상세주소를 분리하여 표시하면서도 내부적으로는 하나의 전체 주소로 관리
      */
     openDaumPostcode() {
       new window.daum.Postcode({
         oncomplete: (data) => {
+          // 기본 주소만 baseAddress에 설정
           this.baseAddress = `[${data.zonecode}] ${data.address}`;
-          this.vdrInfo.ofc_addr = this.baseAddress;
-          this.tempAddrDetail = ''; // 상세주소 초기화
+          
+          // 상세주소 초기화
+          this.tempAddrDetail = '';
+          
+          // 내부 데이터는 업데이트 (저장용)
+          this.updateFullAddress();
         }
       }).open();
     },
 
     /**
      * 전체 주소 업데이트
-     * - 기본 주소와 상세주소를 합쳐서 저장
+     * 
+     * - 기본 주소(baseAddress)와 상세주소(tempAddrDetail)를 합쳐서 내부 데이터(vdrInfo.ofc_addr)에 저장
+     * - 사용자가 상세주소를 입력/수정할 때마다 호출됨
+     * - 기본주소 입력 필드는 그대로 유지하고 내부 데이터만 갱신
+     * 
+     * @개선사항 사용자 인터페이스에서는 기본주소와 상세주소를 분리해서 보여주되,
+     *          서버 저장/API 호출 시에는 전체 주소를 하나로 합쳐서 사용
      */
     updateFullAddress() {
+      // 기본주소와 상세주소를 결합하여 내부 데이터만 갱신
       if (this.tempAddrDetail) {
         this.vdrInfo.ofc_addr = `${this.baseAddress} ${this.tempAddrDetail}`;
       } else {
         this.vdrInfo.ofc_addr = this.baseAddress;
       }
+      
+      // 입력 필드의 표시는 변경하지 않음 (기본주소 필드는 그대로 유지)
     },
   }
 };
 </script>
 
 <style scoped>
+
+.table-container th {
+  white-space: nowrap;
+}
+
+
 .table-hover:hover {
   cursor: pointer;
 }
@@ -350,6 +365,8 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+
+
 .form-control:focus,
 .form-select:focus {
   border-color: #86b7fe;
@@ -367,6 +384,7 @@ export default {
   font-weight: 500;
   color: #495057;
   margin-bottom: 0;
+  white-space: nowrap;  
 }
 
 /* readonly와 disabled 입력창 스타일 */
