@@ -76,10 +76,7 @@ const selectLineDetail =
       , ln.seq
       , eq.eqp_sts
       , pod.pdn_ord_no
-<<<<<<< HEAD
       , pod.pdn_ord_dtl_no
-=======
->>>>>>> 363957d43a3cec3a951f8ca0ee8bbfa149c5c10a
    FROM ln_opr_dt ln
    LEFT JOIN ln_dtl ld ON ln.ln_dtl_no = ld.ln_dtl_no
    LEFT JOIN proc p ON ld.proc_srl_no = p.proc_srl_no
@@ -87,14 +84,10 @@ const selectLineDetail =
    LEFT JOIN eqp eq ON ld.eqp_no = eq.eqp_no
    LEFT JOIN ln_opr lo ON ln.ln_opr_no = lo.ln_opr_no
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
-<<<<<<< HEAD
   WHERE pod.pdn_ord_dtl_no = ?
-=======
-  WHERE ln_opr_no = ?
->>>>>>> 363957d43a3cec3a951f8ca0ee8bbfa149c5c10a
  ORDER BY ln.seq;`
 
-
+  // WHERE ln_opr_no = ?
 /*
 라인에 등록해야 하는 컬럼
 라인가동번호 | 자제출고요청번호 | 시작시간 | 종료시간 | 담당자 | 비고 | 생산지시 세부번호 | 지시수량 | 생산수량 | 불량수량 | 자재번호
