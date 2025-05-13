@@ -40,7 +40,7 @@
               @click="showStatus(item)">
               공정현황
             </button>
-            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success">
+            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success" @click="confirmReleaseToWarehouse(row)">
               공정완료
             </button>
             <!-- l4: 수리 중 버튼 -->
@@ -165,6 +165,52 @@ export default {
 
     } catch (err) {
       console.error('❌ 라인 정보 갱신 실패:', err);
+    }
+  },
+  async confirmReleaseToWarehouse(row) {
+    const result = await Swal.fire({
+      title: '공정이 완료되었습니다.',
+      html: `
+        <div style="text-align:left; line-height:1.8;">
+          <strong>제품명:</strong> ${row.prd_nm}<br>
+          <strong>지시수량:</strong> ${row.ord_qty}개<br>
+          <strong>완료수량:</strong> ${row.pdn_qty}개<br>
+          <strong>불량수량:</strong> ${row.dft_qty}개
+        </div>
+      `,
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: '출고',
+      cancelButtonText: '취소',
+      reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // ✅ 출고 요청 API 호출
+        await axios.post('/api/warehouse/ship', {
+          prd_no: row.prd_no,
+          qty: row.pdn_qty,
+          from: '공정라인'
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: '출고 완료',
+          text: `${row.prd_nm} 제품이 창고로 출고되었습니다.`
+        });
+
+        // 옵션: 화면 갱신
+        this.fetchLineStatus();
+
+      } catch (err) {
+        console.error('❌ 출고 실패:', err);
+        Swal.fire({
+          icon: 'error',
+          title: '출고 실패',
+          text: '출고 중 문제가 발생했습니다.'
+        });
+      }
     }
   }
   }
