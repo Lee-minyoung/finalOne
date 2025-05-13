@@ -4,7 +4,8 @@
     <div class="bg-light p-3 border mb-3 d-flex align-items-center">
       <label class="form-label fw-bold me-2 mb-0">검사일자 조회</label>
       <input type="date" class="form-control d-inline w-auto me-2" v-model="queryDate" /> 
-      <button class="btn btn-secondary btn-sm" @click="setToday">오늘</button>
+      <button class="btn btn-secondary btn-sm me-2" @click="setToday">오늘</button>
+      <button class="btn btn-secondary btn-sm" @click="allDay">전체</button>
     </div>
 
     <div class="row">
@@ -57,6 +58,9 @@ export default {
       const today = new Date();
       this.queryDate = this.dateFormat(today);
     },
+    allDay() {
+      this.queryDate = '';
+    }
   }
 }
 </script>

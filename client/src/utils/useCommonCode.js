@@ -27,10 +27,12 @@ const lineStatusFormat = function (value) {
   } else if (value == 'l2') {
     result = '대기중' 
   } else if (value == 'l3') {
-    result = '사용중' 
+    result = '공정중' 
   } else if (value == 'l4') {
-    result = '수리중' 
+    result = '공정완료' 
   } else if (value == 'l5') {
+    result = '수리중' 
+  } else if (value == 'l6') {
     result = '점검중' 
   } 
   return result;

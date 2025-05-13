@@ -22,19 +22,19 @@
             <table class="table table-sm table-bordered text-center">
               <thead class="table-light">
                 <tr>
-                  <th>사원번호</th>
-                  <th>이름</th>
-                  <th>부서명</th>
-                  <th>직급명</th>
+                  <th class="w-10">사원번호</th>
+                  <th class="w-10">이름</th>
+                  <th class="w-10">부서명</th>
+                  <th class="w-10">직급명</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in filteredEmp" :key="item.emp_no" @click="toggleEmpSelection(item)"
                   :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
-                  <td>{{ item.emp_no }}</td>
-                  <td>{{ item.nm }}</td>
-                  <td>{{ item.dept_nm }}</td>
-                  <td>{{ item.pst_nm }}</td>
+                  <td class="w-10">{{ item.emp_no }}</td>
+                  <td class="w-10">{{ item.nm }}</td>
+                  <td class="w-10">{{ item.dept_nm }}</td>
+                  <td class="w-10">{{ item.pst_nm }}</td>
                 </tr>
               </tbody>
             </table>
@@ -99,70 +99,5 @@ export default {
 </script>
 
 <style scoped>
-.table-primary {
-  background-color: #cce5ff;
-}
-
-.table-container {
-  height: 550px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-}
-
-.table {
-  margin-bottom: 0;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-tr {
-  border: 0px;
-}
-
-.table td,
-.table th {
-  width: 20%;
-  padding: 8px;
-  /* border-top: 1px solid #dee2e6; */
-  border-right: 1px solid #dee2e6;
-  border-left: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.table thead {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 1;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.table thead tr,
-.table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table tbody {
-  display: block;
-  overflow-y: auto;
-  height: calc(550px - 42px);
-}
-
-.table tbody tr td:first-child,
-.table thead tr th:first-child {
-  border-left: none;
-}
-
-.table tbody tr td:last-child,
-.table thead tr th:last-child {
-  border-right: none;
-}
+@import '@/assets/styles/base-table.css';
 </style>
