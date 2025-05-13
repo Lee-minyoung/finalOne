@@ -10,7 +10,7 @@ const findmatPurToLotList=async()=>{
 const findLastLotNo=async()=>{
     const result=await mariadb.query('selectLastLotNo'); 
     const lotNo= result[0]?.lot_no||null; 
-    return lotNo ?? 'MAT0000000' ; 
+    return lotNo ?? 'MAT00000000000' ; 
 }
 const findLastLothistNo=async()=>{
     const result=await mariadb.query('selectLastLothistNo');

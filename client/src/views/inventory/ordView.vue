@@ -1,104 +1,116 @@
 <template>
+  <div>
+    <h3>발주서조회</h3>
 
-<h3>발주서조회</h3>
-
-<div class="d-flex justify-content-end align-items-center mb-3">  
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      주문 등록
-    </button>
-  </div>
-
-  <!-- 주문 등록 모달 -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">주문등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- 필터/정보 입력 영역 -->
+    <div class="border rounded p-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">발주번호</label>
+          <input type="text" class="form-control" v-model="filter.purOrdNo" />
         </div>
-
-        <div class="modal-body">
-          <!-- 검색 옵션 -->
-          <!-- <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="searchType" id="searchByName" checked />
-              <label class="form-check-label" for="searchByName">업체명</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="searchType" id="searchByCode" />
-              <label class="form-check-label" for="searchByCode">업체코드</label>
-            </div>
-            <input type="text" class="form-control w-50 ms-3" placeholder="Search..." />
-          </div> -->
-
-          <!-- 업체 정보 입력 -->
-          <div class="border rounded p-3 mb-4">
-            <div class="row g-3">
-              <div class="col-md-4"><label class="form-label">업체명</label><input type="text" class="form-control" v-model="vdr" /></div>
-              <div class="col-md-4"><label class="form-label">업체코드</label><input type="text" class="form-control" v-model="vdrCd" /></div>
-              <div class="col-md-4"><label class="form-label">사업자등록번호</label><input type="text" class="form-control" v-model="bizNo" /></div>
-              <div class="col-md-4"><label class="form-label">납기예정일</label><input type="date" class="form-control" v-model="dueDt" /></div>
-              <div class="col-md-4"><label class="form-label">이름</label><input type="text" class="form-control" /></div>
-              <div class="col-md-4"><label class="form-label">연락처</label><input type="text" class="form-control" /></div>
-              <div class="col-md-12"><label class="form-label">주소</label><input type="text" class="form-control" /></div>
-            </div>
-          </div>
-
-          <!-- 제품 리스트 테이블 -->
-          <table class="table table-bordered text-center align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>No</th>
-                <th>제품 ID</th>
-                <th>제품명</th>
-                <th>수량</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td><input type="text" class="form-control" v-model="prdNo" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="number" class="form-control" v-model="prdQty" /></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col-md-4">
+          <label class="form-label">자재ID</label>
+          <input type="text" class="form-control" v-model="filter.matNo" />
         </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary" @click="addOrd">주문등록</button>
+        <div class="col-md-4">
+          <label class="form-label">자재명</label>
+          <input type="text" class="form-control" v-model="filter.matNm" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">발주일자</label>
+          <input type="date" class="form-control" v-model="filter.ordDate" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">단가</label>
+          <input type="text" class="form-control" disabled />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">거래처</label>
+          <input type="text" class="form-control" disabled />
         </div>
       </div>
     </div>
+
+    <!-- 발주 목록 테이블 -->
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>No</th>
+          <th>자재ID</th>
+          <th>자재명</th>
+          <th>수량</th>
+          <th>단가</th>
+          <th>금액</th>
+          <th>거래처</th>
+          <th>발주일자</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="ord in filteredList" :key="ord.pur_ord_no">
+          <td>{{ ord['발주번호'] }}</td>
+          <td>{{ ord.mat_no }}</td>
+          <td>{{ ord['자재명'] }}</td>
+          <td>{{ ord['수량'] }}</td>
+          <td>{{ ord['단가'] }}</td>
+          <td>{{ ord['금액'] }}</td>
+          <td>{{ ord.vdr_no }}</td>
+          <td>{{ ord['발주일자'] }}</td>
+          <td>
+            <span v-if="ord['발주에서재고']>0">
+              <span class="badge text-bg-success">입고완료</span>
+            </span>
+            <span v-else>
+              <span class="badge text-bg-warning">입고대기</span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-
-
 </template>
 
 <script>
-export default{
-data(){
-  return{
-    // ordList: [],
-    // startDate: '',
-    // endDate: '',
-    // tableData: {},
-    // ordListByDate: [],
-    // dateArray: [],
-    // vdr: '',
-    // vdrCd: '',
-    // bizNo: '',
-    // dueDt: '',
-    // prdNo: '',
-    // prdQty: ''
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      filter: {
+        purOrdNo: '',
+        matNo: '',
+        matNm: '',
+        ordDate: ''
+      },
+      putOrdList: []
+    };
+  },
+  computed: {
+    filteredList() {
+      return this.putOrdList.filter((ord) => {
+        const matchPurOrdNo = this.filter.purOrdNo === '' || String(ord['발주번호']).includes(this.filter.purOrdNo);
+        const matchMatNo = this.filter.matNo === '' || String(ord.mat_no).includes(this.filter.matNo);
+        const matchMatNm = this.filter.matNm === '' || String(ord['자재명']).includes(this.filter.matNm);
+        const matchOrdDate = this.filter.ordDate === '' || ord['발주일자'] === this.filter.ordDate;
+
+        return matchPurOrdNo && matchMatNo && matchMatNm && matchOrdDate;
+      });
+    }
+  },
+  async created() {
+    await this.fetchOrdList();
+  },
+  methods: {
+    async fetchOrdList() {
+      try {
+        const response = await axios.get('/api/purOrdView');
+        this.putOrdList = response.data;
+        console.log('Order list fetched successfully:', this.putOrdList);
+      } catch (error) {
+        console.error('Error fetching order list:', error);
+      }
+    }
   }
-}
-
-
-
-
-}
-
-
+};
 </script>
