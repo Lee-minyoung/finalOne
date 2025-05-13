@@ -2,20 +2,20 @@
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex gap-4">
-        <h2 class="mb-4">완제품검사성적서</h2>
+        <h2 class="mb-4">완제품검사성적서 조회</h2>
       </div>
     </div>
     <!-- 조회 조건 -->
     <div class="input">
-       제품검색 <input v-model="searchQuery" class="form-control"  placeholder="" readonly />
+       제품검색 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
       <button class="btn btn-outline-secondary" id="icon-btn" @click="openProductModal" style="margin-right:505px;">🔍</button>
-      성적서번호 <input :value="selectedRsltNo" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
+      성적서번호 <input :value="selectedRsltNo" class="form-control" id="input" readonly style="background-color: #eee;" />
       <hr style="margin-left:-75px;">
 
-      라인번호 <input :value="selectedLineId" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
-      제품명 <input :value="selectedProductName" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
-      작성일자 <input :value="selectedInsDate" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
-      검사자 <input :value="selectedInsDev" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
+      라인번호 <input :value="selectedLineId" class="form-control" id="input" readonly style="background-color: #eee;" />
+      제품명 <input :value="selectedProductName" class="form-control" id="input" readonly style="background-color: #eee;" />
+      작성일자 <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee;" />
+      검사자 <input :value="selectedInsDev" class="form-control" id="input" readonly style="background-color: #eee;" />
     </div>
     <br>
     <div class="middle">
@@ -35,9 +35,9 @@
           <tbody>
             <tr>
               <td>수량</td>
-              <td><input v-model="newItem.mgr_count" class="rslInput" placeholder="검사량" /></td>
-              <td><input v-model="newItem.succ_count" class="rslInput" placeholder="합격량" /></td>
-              <td><input v-model="newItem.dft_count" class="rslInput" placeholder="불량량" /></td>
+              <td>{{ mgr_count }}</td>
+              <td>{{ succ_count }}</td>
+              <td>{{ dft_count }}</td>
             </tr>
           </tbody>
         </table>
@@ -47,20 +47,17 @@
       <div class="rst">
   <div class="hstack gap-3">
     <div style="padding-left:50px;">종합판정</div>
-    <!-- 종합판정 글자 표시 -->
-     <div class="vr"></div>
-<div class="text-center" style="margin: 20px 0;">
-  <span
-    :style="{
-      color: autoOverallJdg === '합격' ? '#4caf50' : autoOverallJdg === '불합격' ? '#e53935' : 'inherit',
-      fontWeight: 'bold',
-      fontSize: '2rem'
-    }"
-  >
-    {{ autoOverallJdg }}
-  </span>
+    <div class="vr"></div>
+    <button
+      :class="['jdg-btn', overallJdg === '합격' ? 'btn-green' : '']"
+      @click="overallJdg = '합격'"
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">합격</button>
+    <button
+      :class="['jdg-btn', overallJdg === '불합격' ? 'btn-red' : '']"
+      @click="overallJdg = '불합격'"
+       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+    >불합격</button>
   </div>
-</div>
 </div>
     </div>
     <h5>검사결과</h5>
@@ -81,22 +78,13 @@
       <tbody>
         <tr v-for="(item, index) in spmInsStdList" :key="item.spm_ins_std_no">
           <td>{{ item.ins_itm }}</td>
-    <td>{{ item.ins_mthd }}</td>
-    <td>
-      <input v-model="newItemList[index].mgr_rslt" class="form-control" placeholder="검사결과" />
-    </td>
-    <td>
-      {{ getJdg(item, newItemList[index].mgr_rslt) }}
-    </td>
-    <td>
-      <input v-model="newItemList[index].rmk" class="form-control" placeholder="결점원인, 결점코드 등"/>
-    </td>
+          <td>{{ item.ins_mthd }}</td>
+          <td>{{ mgr_rslt}}</td>
+          <td>{{ getJdg(item, newItemList[index].mgr_rslt) }}</td>
+          <td>{{rmk}}</td>
         </tr>
       </tbody>
     </table>
-    <div class="center-button">
-  <button class="btn btn-primary" @click="spmInsStdInsert">성적서 반영</button>
-</div>
   </div>
 
   <!-- 제품 검색 모달 -->
@@ -134,21 +122,6 @@ export default {
   created() {
     this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
   },
-  computed: {
-  autoOverallJdg() {
-    // 모든 판정이 '적합'이면 '합격', 하나라도 '부적합'이면 '불합격'
-    if (!this.spmInsStdList.length) return '';
-    for (let i = 0; i < this.spmInsStdList.length; i++) {
-      const 판정 = this.getJdg(this.spmInsStdList[i], this.newItemList[i]?.mgr_rslt);
-      if (판정 === '부적합') return '불합격';
-    }
-    // 모두 '적합'이면
-    if (this.spmInsStdList.every((item, idx) => this.getJdg(item, this.newItemList[idx]?.mgr_rslt) === '적합')) {
-      return '합격';
-    }
-    return '';
-  }
-},
   methods: {
     // 등록
     async spmInsStdInsert() {
@@ -165,7 +138,7 @@ export default {
     mgr_count: this.newItem.mgr_count,
     succ_count: this.newItem.succ_count,
     dft_count: this.newItem.dft_count,
-    ovr_jdg: this.autoOverallJdg, // 자동 판정 사용
+    ovr_jdg: this.overallJdg,
     rmk: this.newItem.rmk || '',
     ln_opr_no: this.selectedLineId,
     prd_no: this.searchQuery
@@ -211,10 +184,10 @@ export default {
   if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
     const min = std - tol;
     const max = std + tol;
-    return (result >= min && result <= max) ? '적합' : '부적합';
+    return (result >= min && result <= max) ? '합격' : '불합격';
   }
-  if (mgr_rslt === '1' || mgr_rslt === 1) return '적합';
-  if (mgr_rslt === '0' || mgr_rslt === 0) return '부적합';
+  if (mgr_rslt === '1' || mgr_rslt === 1) return '합격';
+  if (mgr_rslt === '0' || mgr_rslt === 0) return '불합격';
 
   return '';
 },
@@ -267,7 +240,7 @@ export default {
   const nextNo = String(lastNo + 1).padStart(3, '0');
   this.selectedRsltNo = `SJS-${nextNo}`;
 } catch (err) {
- this.selectedRsltNo = 'SJS-001';
+  this.selectedRsltNo = 'SJS-001'; // 실패 시 기본값
   }
 
   this.getSpmInsStdList(item.prd_no);
@@ -300,6 +273,11 @@ export default {
 .form-control {
   display: inline-block;
   width: 150px;
+}
+
+#input {
+  margin-right: 52px;
+
 }
 
 .btn {

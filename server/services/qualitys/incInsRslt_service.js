@@ -43,7 +43,7 @@ const addRsltDtl = async (dtlList) => {
 
 // 마지막 번호 조회
 const findLastRsltNo = async () => {
-  let [row] = await mariadb.query("selectLastRsltNo").catch(err => console.log(err));
+  let [row] = await mariadb.query("selectLastRsltNo1").catch(err => console.log(err));
   return row?.last_no || 0;
 };
 

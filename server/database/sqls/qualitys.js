@@ -56,13 +56,6 @@ WHERE spm_ins_std_no =  ?`;
                JOIN ln_opr l ON o.pdn_ord_dtl_no = l.pdn_ord_dtl_no
 ORDER BY prd_nm`;
 
-// 검사결과 조회
-// const selectDtlRslt=
-// `SELECT s.ins_itm, r.mgr_date, s.ins_mthd, r.mgr_rslt, r.jdg, r.rmk
-// FROM spm_ins_rslt_dtl r JOIN spm_ins_std s
-// 						ON r.spm_ins_std_no = s.spm_ins_std_no
-// WHERE rslt_no = ?`;
-
 // 성적서 등록
 const insertRslt1=
 `INSERT INTO spm_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, succ_count, dft_count, ovr_jdg, rmk, ln_opr_no, prd_no)
@@ -78,6 +71,13 @@ const selectLastRsltNo =
  FROM spm_ins_rslt
  WHERE rslt_no LIKE 'SJS-%'`;
 
+ 
+ // 성적서 조회
+ const getSpmInsRslt=
+ `SELECT r.mgr_count, r.succ_count, r.dft_count, r.ovr_jdg, d.mgr_rslt, d.jdg, d.rmk, d.prd_no
+FROM spm_ins_rslt r JOIN spm_ins_rslt_dtl d
+WHERE d.rslt_no = ?`
+
 module.exports={
   selectPrd,
   selectSpmInsStd,
@@ -87,5 +87,6 @@ module.exports={
   selectRsltPrd,
   insertRslt1,
   selectLastRsltNo,
-  insertRsltDtl
+  insertRsltDtl,
+  getSpmInsRslt
 };

@@ -117,8 +117,13 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '완제품검사성적서',
+        name: '완제품검사성적서 작성',
         to: '/SpmInsRslt',
+      },
+      {
+        component: 'CNavItem',
+        name: '완제품검사성적서 조회',
+        to: '/SpmInsGetRslt',
       },
       {
         component: 'CNavItem',
@@ -127,8 +132,13 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '입고검사성적서',
+        name: '입고검사성적서 작성',
         to: '/IncInsRslt',
+      },
+      {
+        component: 'CNavItem',
+        name: '입고검사성적서 조회',
+        to: '/IncInsGetRslt',
       },
     ],
   },
