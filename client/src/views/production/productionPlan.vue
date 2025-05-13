@@ -1,16 +1,26 @@
 <template>
+  
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-4">생산 계획 관리</h2>
+      
       <div class="d-flex gap-2">
+        <div class="mb-１ d-flex justify-content">
+  <select v-model="statusFilter" class="form-select w-auto">
+    <option value="전체">전체</option>
+    <option value="미지시">미지시/부분지시</option>
+    <option value="지시완료">지시완료</option>
+    <option value="생산완료">생산완료</option>
+  </select>
+</div>
+
+
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
-        <button class="btn btn-light">재고/지시현황</button>
+        <!-- <button class="btn btn-light">재고/지시현황</button> -->
         <button class="btn btn-success text-white" @click="addPlan">등록</button>
-        <button class="btn btn-light">주문현황</button>
         <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
       </div>
     </div>
-
     <table class="table table-bordered text-center" style="min-width: 1200px;">
       <colgroup>
         <col style="width: 80px" />
@@ -123,32 +133,43 @@ export default {
       showInstructionModal: false, // 계획 지시 모달 표시 여부
       prodList: [], // 모달에 표시할 제품 목록
       empStore: useEmpStore(),
+      statusFilter: '전체', // '전체', '미지시', '지시완료', '생산완료'
     }
   },
-
-  computed: {
-    // Pinia 스토어 연결: instructionStore는 계획 지시 관련 상태를 관리함
-    instructionStore() {
-      return useInstructionStore()
-    },
-    computed: {
-      employeeName() {
-        return this.empStore.loginInfo.nm || '';  //  추가
-      },
-      employeeNo() {
-        return this.empStore.loginInfo.emp_no || '';  //추가
-      }
-    },
-    // 진행률에 따라 완료되지 않은 항목이 먼저 오도록 정렬
-    sortedProdPlanList() {
-      return [...this.prodPlanList].sort((a, b) => {
-        const aDone = Number(a.ord_qty || 0) >= Number(a.qty || 0)
-        const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
-        return aDone - bDone
-      })
-    }
+computed: {
+  // Pinia 스토어 연결: instructionStore는 계획 지시 관련 상태를 관리함
+  instructionStore() {
+    return useInstructionStore()
   },
 
+  employeeName() {
+    return this.empStore.loginInfo.nm || ''
+  },
+
+  employeeNo() {
+    return this.empStore.loginInfo.emp_no || ''
+  },
+
+  sortedProdPlanList() {
+    const filtered = this.prodPlanList.filter(row => {
+      const percent = this.getProgress(row.qty, row.ord_qty)
+      const status = row.status // 's3' 등
+
+      if (this.statusFilter === '전체') return true
+      if (this.statusFilter === '미지시') return percent < 100
+      if (this.statusFilter === '지시완료') return percent >= 100 && status !== 's3'
+      if (this.statusFilter === '생산완료') return percent >= 100 && status === 's3'
+      return true
+    })
+
+    // 완료된 항목을 아래로 정렬
+    return [...filtered].sort((a, b) => {
+      const aDone = Number(a.ord_qty || 0) >= Number(a.qty || 0)
+      const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
+      return aDone - bDone
+    })
+  }
+},
   mounted() {
     // 컴포넌트가 마운트될 때 서버로부터 계획 목록을 가져옴
     this.getProdPlanList()
@@ -166,6 +187,7 @@ export default {
         console.error('계획 목록 불러오기 실패', err)
       }
     },
+    
 
     // 날짜 포맷 유틸 함수
     dateFormat(value, format) {
@@ -191,19 +213,29 @@ export default {
     },
 
     // 상태 표시 텍스트 반환
-    getStatus(planQty, instQty) {
+    getStatus(planQty, instQty, sts) {
       const percent = this.getProgress(planQty, instQty)
+
       if (percent === 0) return '계획완료'
       if (percent < 100) return '부분지시'
-      return '지시완료'
+      if (percent >= 100) {
+        if (sts === 's3') return '생산완료'
+        return '지시완료'
+      }
+      return '오류'
     },
 
     // 진행률에 따른 진행바 색상 클래스 반환
-    getProgressBarClass(planQty, instQty) {
+    getProgressBarClass(planQty, instQty, sts) {
+      if (sts === 's3') return 'bg-primary'
       const percent = this.getProgress(planQty, instQty)
       if (percent === 0) return 'bg-secondary'
       if (percent < 100) return 'bg-warning text-dark'
-      return 'bg-success'
+      if (percent >= 100) {
+        if (sts === 's3') return 'bg-primary'
+        return 'bg-success'
+      }
+      return 'bg-danger'
     },
     // 여기까지..백분률
 

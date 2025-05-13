@@ -61,7 +61,18 @@ const modifyLineOper = async (p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_
     throw err;
   }
 };
-//updateLineOper
+
+const modifyLFinalOper = async (p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no) => {
+  try {
+    console.log('보내는 데이터:', p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no); 
+    const result = await mariadb.query('updateFinalOper', [p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no]);
+    return result;
+  } catch (err) {
+    console.error("❌ findLineDetailByOpNo 오류:", err);
+    throw err;
+  }
+};
+//updateLineOper   updateFinalOper
 /*
   IN p_ln_opr_dtl_no
   IN p_seq 
@@ -77,5 +88,6 @@ module.exports = {
     modifyLinePreparing,
     modifyLineStop,
     addlinestart,
-    modifyLineOper
+    modifyLineOper,
+    modifyLFinalOper
 }

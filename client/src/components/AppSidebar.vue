@@ -16,24 +16,14 @@ const sidebar = useSidebarStore() // unfoldable, visible 등 상태 관리
 
 <template>
   <!-- CoreUI 사이드바 전체 컴포넌트 -->
-  <CSidebar
-    class="border-end"               
-    colorScheme="dark"               
-    position="fixed"                 
-    :unfoldable="sidebar.unfoldable" 
-    :visible="sidebar.visible"       
-    @visible-change="(value) => sidebar.toggleVisible(value)" 
-  >
+  <CSidebar class="border-end" colorScheme="dark" position="fixed" :unfoldable="sidebar.unfoldable"
+    :visible="sidebar.visible" @visible-change="(value) => sidebar.toggleVisible(value)">
     <!-- 사이드바 상단 헤더 (로고 영역) -->
     <CSidebarHeader class="border-bottom">
       <!-- 로고 클릭 시 홈으로 이동 -->
       <RouterLink custom to="/" v-slot="{ href, navigate }">
         <CSidebarBrand v-bind="$attrs" as="a" :href="href" @click="navigate">
-          <!-- 아이콘 대신 텍스트 로고 사용 -->
-          <span class="text-white fw-bold fs-3">밥먹고 하시조</span>
-          <!-- 아래는 CoreUI 아이콘 로고, 현재 주석 처리됨 -->
-          <!-- <CIcon custom-class-name="sidebar-brand-full" :icon="logo" :height="32" /> -->
-          <!-- <CIcon custom-class-name="sidebar-brand-narrow" :icon="sygnet" :height="32" /> -->
+          <img src="@/assets/icons/bab.png" alt="로고" style="height: 80px; object-fit: contain;" />
         </CSidebarBrand>
       </RouterLink>
 

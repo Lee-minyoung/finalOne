@@ -7,7 +7,7 @@ const selectProPlanList =
       d.qty,
       d.st_dt,
       d.end_dt,
-      d.situ,
+      d.sts,
       d.rmk,
       IFNULL(SUM(od.ord_qty), 0) AS ord_qty
  FROM pdn_pln p
@@ -24,9 +24,9 @@ GROUP BY
       d.qty,
       d.st_dt,
       d.end_dt,
-      d.situ,
+      d.sts,
       d.rmk
-ORDER BY p.pdn_pln_no;`
+ORDER BY d.end_dt ASC;`
 
 
   const selectProd =
@@ -55,7 +55,7 @@ const insertProdPlan =
   VALUES (?,CURDATE(),?)`
 
 const insertProdPlanDtl =
-`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, situ, rmk)
+`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, sts, rmk)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
 // //계획 등록은 2가지 동시 등록 필요함

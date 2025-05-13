@@ -20,7 +20,20 @@ LEFT JOIN (
   FROM mat_rls_req
   GROUP BY pdn_ord_no
 ) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
-ORDER BY od.pdn_ord_dtl_no DESC;`;
+
+-- ✅ 정렬 조건 추가!
+ORDER BY
+  CASE od.ord_sts
+    WHEN 'r1' THEN 0
+    WHEN 'r2' THEN 1
+    WHEN 'r3' THEN 2
+    ELSE 3
+  END,
+  CASE mrr.mat_ins_sts
+    WHEN 'q2' THEN 0
+    ELSE 1
+  END,
+  o.pdn_ord_dt ASC;`
 
 const selectLineDropdown =
 `SELECT ln_no, ln_nm, ln_sts
@@ -36,7 +49,7 @@ const selectLineDropdown =
             AND ln_no IS NOT NULL
        )
  ORDER BY ln_no`
-
+//ln_opr_no
 const selectLineList =
 `SELECT l.ln_no
       , l.ln_nm
@@ -50,6 +63,7 @@ const selectLineList =
       , lo.dft_qty
       , pod.pdn_ord_no
       , pod.pdn_ord_dtl_no
+      , lo.ln_opr_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
    RIGHT JOIN ln l ON pod.ln_no = l.ln_no
@@ -131,5 +145,6 @@ module.exports = {
     updateLinePreparing : 'CALL line_preparing(?, ?)',
     updateLineStop : 'CALL line_stop(?, ?)',
     insterLineStart : 'CALL line_start(?, ?)',
-    updateLineOper : `CALL line_operation(?, ?, ?, ?, ?)`
+    updateLineOper : `CALL line_operation(?, ?, ?, ?, ?)`,
+    updateFinalOper : 'CALL finalize_line_operation (?, ?, ?)'
 }

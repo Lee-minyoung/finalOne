@@ -25,199 +25,162 @@
           <td>{{ item.ord_qty }}</td>
           <td>{{ item.dft_qty }}</td>
           <td>{{ item.pdn_qty }}</td>
-          <!-- 라인 상태별 버튼 동적 렌더링 -->
           <td>
-            <!-- l1: 비활성화 상태 -->
-            <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>
-              대기중
-            </button>
-            <!-- l2: 실행 버튼 -->
-            <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">
-              공정실행
-            </button>
-            <!-- l3: 작업현황 버튼 -->
-            <button v-else-if="item.ln_sts === 'l3'" v-bind="item.pdn_opr_dtl_no" class="btn btn-sm btn-warning"
-              @click="showStatus(item)">
-              공정현황
-            </button>
-            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success" @click="confirmReleaseToWarehouse(row)">
-              공정완료
-            </button>
-            <!-- l4: 수리 중 버튼 -->
-            <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-danger" @click="repair(item)">
-              수리중
-            </button>
-            <!-- l5: 점검 중 버튼 -->
-            <button v-else-if="item.ln_sts === 'l6'" class="btn btn-sm btn-info" @click="checkStatus(item)">
-              점검중
-            </button>
+            <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>대기중</button>
+            <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">공정실행</button>
+            <button v-else-if="item.ln_sts === 'l3'" class="btn btn-sm btn-warning" @click="showStatus(item)">공정현황</button>
+            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success" @click="confirmReleaseToWarehouse(item)">공정완료</button>
+            <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-danger">수리중</button>
+            <button v-else-if="item.ln_sts === 'l6'" class="btn btn-sm btn-info">점검중</button>
           </td>
         </tr>
       </tbody>
     </table>
-  </div>
 
-  <LineManagementDtl
-  v-if="showLineModal"
-  :details="processDetailList"
-  :line-no="selectedLineNo"
-  :line-info="selectedLineInfo"
-  @reload="handleReload"
-  @close="showLineModal = false"
-/>
+    <LineManagementDtl
+      v-if="showLineModal"
+      :details="processDetailList"
+      :line-no="selectedLineNo"
+      :line-info="selectedLineInfo"
+      @reload="handleReload"
+      @close="showLineModal = false"
+    />
+  </div>
 </template>
+
 
 <script>
 import axios from 'axios';
-import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
-import { useEmpStore } from '@/stores/empStore.js';  // 추가
+import useDateUtils from '@/utils/useDates.js'
+import { useEmpStore } from '@/stores/empStore.js';
 import LineManagementDtl from './LineManagementDtl.vue'
-// import useDateUtils from '@/composables/useDateUtils';
+import Swal from 'sweetalert2'
 
 export default {
-  components: {
-    LineManagementDtl   // ✅ 등록도 꼭 추가
-  },
+  components: { LineManagementDtl },
+
   data() {
     return {
       LineList: [],
       empStore: useEmpStore(),
-      showLineModal: false,            // ✅ 모달 표시 여부
-      selectedLineNo: '',              // ✅ 선택된 라인
-      selectedLineInfo: {},        // ✅ 선택된 라인 정보 (추가!)
-      processDetailList: []            // ✅ 모달에 넘길 데이터
+      showLineModal: false,
+      selectedLineNo: '',
+      selectedLineInfo: {},
+      processDetailList: []
     }
   },
+
   computed: {
     employeeName() {
-      return this.empStore.loginInfo.nm || '';  //  추가
+      return this.empStore.loginInfo.nm || ''
     },
     employeeNo() {
-      return this.empStore.loginInfo.emp_no || '';  //추가
+      return this.empStore.loginInfo.emp_no || ''
     }
   },
+
   created() {
     this.fetchLineList()
   },
+
   methods: {
     async fetchLineList() {
       const res = await axios.get('/api/lineList');
       this.LineList = res.data;
     },
+
     dateFormat(value, format) {
       return useDateUtils.dateFormat(value, format)
     },
+
     async startLine(item) {
       const payload = {
-        // pdn_ord_dtl_no: item.pdn_ord_dtl_no,  // ✅ 라우터와 프로시저 파라미터에 맞춤
         ln_no: item.ln_no,
-        mgr: this.empStore.loginInfo.emp_no  // 추가
+        mgr: this.empStore.loginInfo.emp_no
       }
 
       try {
         await axios.post('/api/startLine', payload)
-        alert('지시 완료!')
-        this.fetchLineList();
+        await Swal.fire('지시 완료!', `${item.ln_nm} 라인이 시작되었습니다.`, 'success')
+        this.fetchLineList()
       } catch (err) {
         console.error("❌ 지시 실패:", err)
-        alert('지시 중 오류가 발생했습니다.')
+        Swal.fire('오류', '지시 중 오류가 발생했습니다.', 'error')
       }
     },
 
     async showStatus(item) {
-      console.log("🧩 선택된 item:", item);
-      if (item) {
-        this.selectedLineNo = item.ln_no;
-        this.selectedLineInfo = item;
-        this.showLineModal = true;
-      } else {
-      }
+      this.selectedLineNo = item.ln_no
+      this.selectedLineInfo = item
+      this.showLineModal = true
+
       try {
-        // ✅ ln_opr_dtl_no → pdn_ord_dtl_no로 변경
-        const res = await axios.get(`/api/lineDetail/${item.pdn_ord_dtl_no}`);
-        console.log("✅ 상세 데이터:", res.data);
-        this.processDetailList = res.data;
+        const res = await axios.get(`/api/lineDetail/${item.pdn_ord_dtl_no}`)
+        this.processDetailList = res.data
       } catch (err) {
-        console.error("❌ 라인 상세 조회 실패:", err);
-        alert("라인 상세 정보를 불러오지 못했습니다.");
+        console.error("❌ 라인 상세 조회 실패:", err)
+        Swal.fire('오류', '라인 상세 정보를 불러오지 못했습니다.', 'error')
       }
     },
-    async handleReload({ line_no, forceUpdate, pdn_ord_dtl_no }) {
-    try {
-      // ✅ 전체 라인 리스트 갱신
-      const res = await axios.get('/api/lineList');
-      this.LineList = res.data;
 
-      // ✅ 선택된 라인 정보도 갱신
-      const updated = this.LineList.find(l => l.ln_no === line_no);
-      if (updated) {
-        this.selectedLineInfo = updated;
-      }
-
-      // ✅ 상세 공정 정보도 갱신
-      if (pdn_ord_dtl_no) {
-        const detailRes = await axios.get(`/api/lineDetail/${pdn_ord_dtl_no}`);
-        this.processDetailList = detailRes.data;
-      }
-
-      // ✅ 모달 내부에서도 최신화 가능하게 다시 전달
-      // this.showLineModal = false; ← 이미 자식이 닫음
-
-    } catch (err) {
-      console.error('❌ 라인 정보 갱신 실패:', err);
-    }
-  },
-  async confirmReleaseToWarehouse(row) {
-    const result = await Swal.fire({
-      title: '공정이 완료되었습니다.',
-      html: `
-        <div style="text-align:left; line-height:1.8;">
-          <strong>제품명:</strong> ${row.prd_nm}<br>
-          <strong>지시수량:</strong> ${row.ord_qty}개<br>
-          <strong>완료수량:</strong> ${row.pdn_qty}개<br>
-          <strong>불량수량:</strong> ${row.dft_qty}개
-        </div>
-      `,
-      icon: 'success',
-      showCancelButton: true,
-      confirmButtonText: '출고',
-      cancelButtonText: '취  소',
-      reverseButtons: true
-    });
-
-    if (result.isConfirmed) {
+    async handleReload({ line_no, pdn_ord_dtl_no }) {
       try {
-        // ✅ 출고 요청 API 호출
-        await axios.post('/api/warehouse/ship', {
-          prd_no: row.prd_no,
-          qty: row.pdn_qty,
-          from: '공정라인'
-        });
+        const res = await axios.get('/api/lineList');
+        this.LineList = res.data;
 
-        Swal.fire({
-          icon: 'success',
-          title: '출고 완료',
-          text: `${row.prd_nm} 제품이 창고로 출고되었습니다.`
-        });
+        const updated = this.LineList.find(l => l.ln_no === line_no);
+        if (updated) {
+          this.selectedLineInfo = updated;
+        }
 
-        // 옵션: 화면 갱신
-        this.fetchLineStatus();
+        if (pdn_ord_dtl_no) {
+          const detailRes = await axios.get(`/api/lineDetail/${pdn_ord_dtl_no}`);
+          this.processDetailList = detailRes.data;
+        }
 
       } catch (err) {
-        console.error('❌ 출고 실패:', err);
-        Swal.fire({
-          icon: 'error',
-          title: '출고 실패',
-          text: '출고 중 문제가 발생했습니다.'
+        console.error('❌ 라인 정보 갱신 실패:', err);
+      }
+    },
+
+    async confirmReleaseToWarehouse(item) {
+      const result = await Swal.fire({
+        title: '공정이 완료되었습니다.',
+        html: `
+          <div style="text-align:left; line-height:1.8;">
+            <strong>제품명:</strong> ${item.prd_nm}<br>
+            <strong>지시수량:</strong> ${item.ord_qty}개<br>
+            <strong>완료수량:</strong> ${item.pdn_qty}개<br>
+            <strong>불량수량:</strong> ${item.dft_qty}개
+          </div>
+        `,
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonText: '출고',
+        cancelButtonText: '취소',
+        reverseButtons: true
+      });
+
+      if (!result.isConfirmed) return;
+
+      try {
+        await axios.post('/api/finalOper', {
+          p_ln_opr_no: item.ln_opr_no,
+          p_ln_no: item.ln_no,
+          p_pdn_ord_dtl_no: item.pdn_ord_dtl_no
         });
+
+        await Swal.fire('출고 완료!', '창고로 이동 및 상태 초기화 완료', 'success')
+        this.fetchLineList()
+      } catch (err) {
+        console.error('❌ 출고 실패:', err)
+        Swal.fire('처리 실패', '출고 또는 상태 초기화 중 오류 발생', 'error')
       }
     }
   }
-  }
-
 }
-
 </script>
+
 
 <style scoped>
 h2 {
