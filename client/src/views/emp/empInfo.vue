@@ -52,8 +52,18 @@
             <!-- 주소 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="addr" class="form-label fw-bold me-3" style="min-width: 100px;">주소</label>
-                <input id="addr" type="text" class="form-control" v-model="empInfo.addr" />
+                <label for="addr" class="form-label me-3" style="min-width: 100px;">주소</label>
+                <div class="input-group">
+                  <input id="addr" type="text" class="form-control" v-model="empInfo.addr" readonly/>
+                  <button class="btn btn-outline-secondary" @click="openDaumPostcode">주소찾기</button>
+                </div>
+              </div>
+            </div>
+            <!-- 상세주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="addr" class="form-label me-3" style="min-width: 100px;">상세주소</label>
+                <input id="addr" type="text" class="form-control" v-model="addrPlus" placeholder="상세주소는 주소와 함께 저장됩니다."/>
               </div>
             </div>
             <!-- 은행명 -->
@@ -110,7 +120,7 @@
             <div class="col-md-12 mb-3">
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                  style="height: 100px" v-model="empInfo.lv_rsn"></textarea>
+                  style="height: 50px" v-model="empInfo.lv_rsn"></textarea>
                 <label for="floatingTextarea2" class="form-label fw-bold">휴직사유</label>
               </div>
             </div>
@@ -144,10 +154,18 @@ export default {
   data() {
     return {
       empInfo: {},
+
+      addrPlus: null, // 상세주소
     };
   },
   created() {
     this.getDeptInfo();
+  },
+  mounted() {
+    // 카카오맵 주소 검색 API
+    const script = document.createElement('script');
+    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    document.head.appendChild(script);
   },
   watch: { // props로 받은 dept 객체의 변화를 감시(watch)하는 부분
     // watch는 특정 데이터의 변화를 감시
@@ -170,10 +188,21 @@ export default {
     }
   },
   methods: {
+        // 카카오맵 주소 검색 모달
+        openDaumPostcode() {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          let baseAddress = `[${data.zonecode}] ${data.address}`;
+          this.empInfo.addr = baseAddress;
+          this.addrPlus = ''; // 상세주소 초기화
+        }
+      }).open();
+    },
     async getDeptInfo() {
       let result = await axios.get(`/api/deptModal`)
         .catch(err => console.log(err));
       this.deptInfo = result.data;
+      this.addrPlus = null;
     },
     // 날짜 데이터 포멧 정의
     dateFormat(value, format) {
@@ -226,7 +255,7 @@ export default {
         hire_dt: this.dateFormat(this.empInfo.hire_dt, 'yyyy-MM-dd'), // 입사일자
         nm: this.empInfo.nm, // 이름
         ctt: this.empInfo.ctt, // 연락처
-        addr: this.empInfo.addr, // 주소
+        addr: this.empInfo.addr + ' ' + this.addrPlus.trim(), // 주소
         bnk_nm: this.empInfo.bnk_nm, // 은행명
         acct_no: this.empInfo.acct_no, // 계좌번호
         dept_no: this.empInfo.dept_no, // 부서번호
@@ -271,6 +300,7 @@ export default {
             // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
             this.$emit('emp-reload');
             this.empInfo = {}; // 로컬 데이터 초기화
+            this.addrPlus = null // 상세주소 로컬 초기화
             this.$emit('clear-selection'); // 선택 초기화
           } else {
             alert('삭제되지 않았습니다.');
@@ -282,6 +312,7 @@ export default {
     },
     resetForm() { // 초기화 버튼 클릭시 실행할 함수
       this.getEmpInfo(this.empInfo.emp_no);
+      this.addrPlus = null;
     },
     updateHireDate(value) {
       this.empInfo.hire_dt = value;

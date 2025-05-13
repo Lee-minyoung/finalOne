@@ -24,6 +24,7 @@
                   <th class="w-10">자재번호</th>   
                   <th class="w-10">자재명</th>
                   <th class="w-10">단위</th>
+                  <th class="w-30">자재명</th>
                   <th class="w-10">자재유형</th>
                 </tr>
               </thead>
@@ -33,6 +34,7 @@
                   <td class="w-10">{{ mat.mat_no }}</td>
                   <td class="w-10">{{ mat.mat_nm }}</td>
                   <td class="w-10">{{ mat.unit }}</td>
+                  <td class="w-30">{{ mat.mat_nm }}</td>
                   <td class="w-10">{{ matTypeFormat(mat.mat_tp) }}</td>
                 </tr>
               </tbody>

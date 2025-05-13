@@ -11,22 +11,23 @@
             <input type="text" class="form-control w-25" placeholder="자재명 검색" v-model="search" />
             <button class="btn btn-sm btn-primary" @click="$emit('select-mat', selectedMat)">자재 등록</button>
           </div>
-
-          <table class="table table-sm table-bordered text-center">
-            <thead class="table-light">
-              <tr>
-                <th>자재번호</th>
-                <th>자재명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in filteredMats" :key="item.mat_no" @click="toggleMatSelection(item)"
-                :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
-                <td>{{ item.mat_no }}</td>
-                <td>{{ item.mat_nm }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table class="table table-sm table-bordered text-center">
+              <thead class="table-light">
+                <tr>
+                  <th class="w-10">자재번호</th>
+                  <th class="w-30">자재명</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in filteredMats" :key="item.mat_no" @click="toggleMatSelection(item)"
+                  :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
+                  <td class="w-10">{{ item.mat_no }}</td>
+                  <td class="w-30">{{ item.mat_nm }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -71,7 +72,5 @@ export default {
 </script>
 
 <style scoped>
-.table-primary {
-  background-color: #cce5ff;
-}
+@import '@/assets/styles/base-table.css';
 </style>

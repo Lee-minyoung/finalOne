@@ -23,6 +23,7 @@
                   <th class="w-10">제품번호</th>
                   <th class="w-10">제품명</th>
                   <th class="w-10">유통기한</th>
+                  <th class="w-30">제품명</th>
                   <th class="w-10">제품유형</th>
                 </tr>
               </thead>
@@ -32,6 +33,7 @@
                   <td class="w-10">{{ prd.prd_no }}</td>
                   <td class="w-10">{{ prd.prd_nm }}</td>
                   <td class="w-10" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-30">{{ prd.prd_nm }}</td>
                   <td class="w-10">{{ prdTypeFormat(prd.prd_tp) }}</td>
                 </tr>
               </tbody>

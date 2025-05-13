@@ -11,22 +11,23 @@
             <input type="text" class="form-control w-25" placeholder="제품명 검색" v-model="search" />
             <button class="btn btn-sm btn-primary" @click="$emit('select-prd', selectedPrd)">제품 등록</button>
           </div>
-
-          <table class="table table-sm table-bordered text-center">
-            <thead class="table-light">
-              <tr>
-                <th>제품번호</th>
-                <th>제품명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in filteredPrds" :key="item.prd_no" @click="togglePrdSelection(item)"
-                :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
-                <td>{{ item.prd_no }}</td>
-                <td>{{ item.prd_nm }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table class="table table-sm table-bordered text-center">
+              <thead class="table-light">
+                <tr>
+                  <th class="w-10">제품번호</th>
+                  <th class="w-30">제품명</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in filteredPrds" :key="item.prd_no" @click="togglePrdSelection(item)"
+                  :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
+                  <td class="w-10">{{ item.prd_no }}</td>
+                  <td class="w-30">{{ item.prd_nm }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -71,7 +72,5 @@ export default {
 </script>
 
 <style scoped>
-.table-primary {
-  background-color: #cce5ff;
-}
+@import '@/assets/styles/base-table.css';
 </style>
