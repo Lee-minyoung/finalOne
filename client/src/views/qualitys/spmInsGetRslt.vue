@@ -35,9 +35,9 @@
           <tbody>
             <tr>
               <td>수량</td>
-              <td>{{ mgr_count }}</td>
-              <td>{{ succ_count }}</td>
-              <td>{{ dft_count }}</td>
+              <td>{{ rsltMaster?.mgr_count }}</td>
+              <td>{{ rsltMaster?.succ_count }}</td>
+              <td>{{ rsltMaster?.dft_count }}</td>
             </tr>
           </tbody>
         </table>
@@ -49,14 +49,13 @@
     <div style="padding-left:50px;">종합판정</div>
     <div class="vr"></div>
     <button
-      :class="['jdg-btn', overallJdg === '합격' ? 'btn-green' : '']"
-      @click="overallJdg = '합격'"
-       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">합격</button>
-    <button
-      :class="['jdg-btn', overallJdg === '불합격' ? 'btn-red' : '']"
-      @click="overallJdg = '불합격'"
-       style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
-    >불합격</button>
+  :class="['jdg-btn', rsltMaster?.ovr_jdg === 'n1' ? 'btn-green' : '']"
+  style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+>합격</button>
+<button
+  :class="['jdg-btn', rsltMaster?.ovr_jdg === 'n2' ? 'btn-red' : '']"
+  style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+>불합격</button>
   </div>
 </div>
     </div>
@@ -76,26 +75,26 @@
 
       <!-- 테이블 바디 : 검사결과  -->
       <tbody>
-        <tr v-for="(item, index) in spmInsStdList" :key="item.spm_ins_std_no">
-          <td>{{ item.ins_itm }}</td>
-          <td>{{ item.ins_mthd }}</td>
-          <td>{{ mgr_rslt}}</td>
-          <td>{{ getJdg(item, newItemList[index].mgr_rslt) }}</td>
-          <td>{{rmk}}</td>
-        </tr>
+        <tr v-for="(item, index) in rsltDetailList" :key="index">
+    <td>{{ item.ins_itm }}</td>
+    <td>{{ item.ins_mthd }}</td>
+    <td>{{ item.mgr_rslt }}</td>
+    <td>{{ getJdgName(item.jdg) }}</td>
+    <td>{{ item.rmk }}</td>
+  </tr>
       </tbody>
     </table>
   </div>
 
   <!-- 제품 검색 모달 -->
-  <PrdSelModal v-if="showProductModal" :prodList="prodList" @select-product="handleSelectedProduct"
+  <PrdGetSelModal v-if="showProductModal" :prodList="prodList" @select-product="handleSelectedProduct"
     @close="showProductModal = false" />
 </template>
 
 <script>
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
-import PrdSelModal from '@/views/qualitys/PrdRsltSelModal.vue'; // 모달
+import PrdGetSelModal from '@/views/qualitys/PrdGetRsltSelModal.vue'; // 모달
 
 import { ref, onBeforeMount } from 'vue';
 
@@ -103,7 +102,7 @@ import { ref, onBeforeMount } from 'vue';
 const isUpdated = ref(false);
 
 export default {
-  components: { PrdSelModal },
+  components: { PrdGetSelModal },
   data() {
     return {
       searchQuery: '',             // 제품검색
@@ -113,6 +112,8 @@ export default {
       newItemList: [],
       spmInsStdList: [],
       prodList: [],
+       rsltMaster: null,
+    rsltDetailList: [],
       showProductModal: false,
       newItem: [],
       overallJdg: '',
@@ -123,74 +124,12 @@ export default {
     this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
   },
   methods: {
-    // 등록
-    async spmInsStdInsert() {
-  if (!this.selectedRsltNo) {
-    alert('성적서 번호가 없습니다.');
-    return;
-  }
-
-  // 1. 성적서(마스터) 저장
-  let obj = {
-    rslt_no: this.selectedRsltNo,
-    mgr: this.selectedInsDev,
-    ins_dt: this.selectedInsDate,
-    mgr_count: this.newItem.mgr_count,
-    succ_count: this.newItem.succ_count,
-    dft_count: this.newItem.dft_count,
-    ovr_jdg: this.overallJdg,
-    rmk: this.newItem.rmk || '',
-    ln_opr_no: this.selectedLineId,
-    prd_no: this.searchQuery
-  };
-
-  try {
-    let result = await axios.post("/api/spmInsRslt", obj);
-    let addRes = result.data;
-
-    if (addRes.isSuccessed) {
-      // 2. 상세(행별) 저장
-      const dtlList = this.spmInsStdList.map((item, idx) => ({
-        spm_ins_rslt_dtl_no: null, // auto_increment면 null
-        mgr_date: this.selectedInsDate, // 검사일자
-        spm_ins_std_no: item.spm_ins_std_no,
-        mgr_rslt: this.newItemList[idx].mgr_rslt, // ← 검사결과
-        jdg: this.getJdg(item, this.newItemList[idx].mgr_rslt), // ← 판정
-        dft_quy: null, // 필요시 입력
-        rslt_no: this.selectedRsltNo,
-        qrd_no: null, // 필요시 입력
-        rmk: this.newItemList[idx].rmk // ← 비고
-      }));
-
-      await axios.post("/api/spmInsRslt/dtl", dtlList);
-
-      alert('등록되었습니다.');
-      // 필요시 화면 갱신
-    } else {
-      alert('모든 필드를 확인하세요.');
-    }
-  } catch (err) {
-    alert('등록 중 오류가 발생했습니다.');
-  }
-},
-
-    getJdg(item, mgr_rslt) {
-       if (mgr_rslt === '' || mgr_rslt === null || mgr_rslt === undefined) return '';
-
-  const std = Number(item.ins_mthd);
-  const tol = Number(item.ins_spc);
-  const result = Number(mgr_rslt);
-
-  if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
-    const min = std - tol;
-    const max = std + tol;
-    return (result >= min && result <= max) ? '합격' : '불합격';
-  }
-  if (mgr_rslt === '1' || mgr_rslt === 1) return '합격';
-  if (mgr_rslt === '0' || mgr_rslt === 0) return '불합격';
-
-  return '';
-},
+    // 공통코드 변환
+     getJdgName(code) {
+    if (code === 'o1') return '적합';
+    if (code === 'o2') return '부적합';
+    return code || '';
+  },
 
     getToday() {
     const today = new Date();
@@ -202,7 +141,14 @@ export default {
       return useDateUtils.dateFormat(value, format)
     },
 
-
+    async fetchRsltDetail(prd_no, ln_opr_no) {
+      const res = await axios.get('/api/spmInsGetRslt/detail', { params: { prd_no, ln_opr_no } });
+      this.rsltMaster = res.data.master; // rslt_no, mgr_count, succ_count, dft_count, ovr_jdg
+      this.rsltDetailList = res.data.detail; // [{ ins_itm, ins_mthd, mgr_rslt, jdg, rmk }, ...]
+      this.selectedRsltNo = this.rsltMaster?.rslt_no || '';
+      console.log(this.rsltDetailList)
+    },
+    
     // 모달
     showModal() {
       this.showProductModal = true; // 모달 열기
@@ -211,7 +157,7 @@ export default {
       this.showProductModal = false; // 모달 닫기
     },
     openProductModal() {
-      axios.get('/api/spmInsRslt/prdList') // 제품 목록 가져오기
+      axios.get('/api/spmInsGetRsltRouter/prdList') // 제품 목록 가져오기
         .then(res => {
           console.log('제품목록:', res.data);
           this.prodList = Array.isArray(res.data) ? res.data : []; // 배열인지 확인 후 설정
@@ -224,31 +170,20 @@ export default {
     },
 
     // 제품 선택 시
-   async handleSelectedProduct(item) {
+  async handleSelectedProduct(item) {
   this.selectedLineId = item.ln_opr_no;
   this.selectedProductName = item.prd_nm;
   this.searchQuery = item.prd_no;  
   this.selectedInsDate = this.getToday();
-
   this.showProductModal = false;
 
-  // 성적서 번호 자동 할당
-  try {
-    const res = await axios.get('/api/spmInsRslt/lastRsltNo');
-  // lastNo는 '001', '002'처럼 숫자만 반환되어야 함
-  const lastNo = Number(res.data.lastNo) || 0;
-  const nextNo = String(lastNo + 1).padStart(3, '0');
-  this.selectedRsltNo = `SJS-${nextNo}`;
-} catch (err) {
-  this.selectedRsltNo = 'SJS-001'; // 실패 시 기본값
-  }
-
-  this.getSpmInsStdList(item.prd_no);
+  // 성적서 상세정보 불러오기
+  await this.fetchRsltDetail(item.prd_no, item.ln_opr_no);
 },
     // 기준서 목록 가져오기
     async getSpmInsStdList(prd_no) {
   try {
-    const result = await axios.get('/api/spmInsStd', { params: { prd_no } });
+    const result = await axios.get('/api/spmGetInsStd', { params: { prd_no } });
     this.spmInsStdList = result.data;
     // 행 개수만큼 입력값 배열 초기화 (반응형)
     this.newItemList = this.spmInsStdList.map(() => ({

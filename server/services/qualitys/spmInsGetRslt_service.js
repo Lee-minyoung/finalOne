@@ -1,24 +1,24 @@
 const mariadb = require("../../database/mapper.js");
 
 // 검사 제품 불러오기
-const findRsltPrd = async () => {
-  let list = await mariadb.query("selectRsltPrd")
+const findRsltPrd2 = async () => {
+  let list = await mariadb.query("selectRsltPrd2")
                           .catch(err => console.log(err)); 
   return list;
 };
 
 // 성적서 조회
-const findSpmInsRslt = async (rslt_no) => {
-  try {
-    const list = await mariadb.query("getSpmInsRslt", [rslt_no]); // SQL 쿼리에 prd_no 전달
-    return list;
-  } catch (err) {
-    throw err;
-  }
+const getSpmInsRsltMaster = async (prd_no, ln_opr_no) => {
+  return await mariadb.query("getSpmInsRslt2", [prd_no, ln_opr_no]);
 };
 
+// 성적서 상세 조회 (rslt_no로 조회)
+const getSpmInsRsltDetail = async (rslt_no) => {
+  return await mariadb.query("getSpmInsRslt3", [rslt_no]);
+};
 
 module.exports ={
-  findRsltPrd,
-  findSpmInsRslt
+  findRsltPrd2,
+  getSpmInsRsltMaster,
+  getSpmInsRsltDetail
 }

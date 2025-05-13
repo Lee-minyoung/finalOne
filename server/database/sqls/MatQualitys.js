@@ -1,14 +1,23 @@
 // LOT(자재)검색
-const selectLot =
-`SELECT 
-    s.lot_no,
-    s.mat_no,
-    m.mat_nm,
-    s.pur_ord_no,
-    p.vdr_no
-FROM mat_stk s
-JOIN mat m ON s.mat_no = m.mat_no
-LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no`;
+// const selectLot =
+// `SELECT 
+//     s.lot_no,
+//     s.mat_no,
+//     m.mat_nm,
+//     s.pur_ord_no,
+//     p.vdr_no,
+//     v.cpy_nm
+// FROM mat_stk s
+// JOIN mat m ON s.mat_no = m.mat_no
+// LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
+// LEFT JOIN vdr v ON p.vdr_no = v.vdr_no`;
+
+//발주번호, 거래처명, 입고수량(검사량) 불러오기
+const selectOrd =
+`SELECT p.qty, p.pur_ord_no, v.cpy_nm
+FROM pur_ord p JOIN vdr v on p.vdr_no=v.vdr_no
+WHERE pur_ord_no=?`;
+
 
 // 기준서 조회
 const selectIncInsStd =
@@ -55,21 +64,66 @@ const insertRslt=
 VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl=
-`INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, dft_quy, cert_no)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+`INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, cert_no)
+VALUES(?, ?, ?, ?, ?, ?, ?)`;
 
 // 마지막 번호 조회
 const selectLastRsltNo1 =
 `SELECT MAX(CAST(SUBSTRING(rslt_no, 5) AS UNSIGNED)) AS last_no
  FROM inc_ins_rslt
  WHERE rslt_no LIKE 'ISJ-%'`;
+
+
+ // 성적서 조회
+ // 성적서가 작성되지 않은 검사 자재 불러오기(성적서 작성 페이지)
+ const selectLot=
+ `SELECT 
+    s.lot_no,
+    s.mat_no,
+    m.mat_nm,
+    s.pur_ord_no,
+    p.vdr_no,
+    v.cpy_nm
+FROM mat_stk s
+JOIN mat m ON s.mat_no = m.mat_no
+LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
+LEFT JOIN vdr v ON p.vdr_no = v.vdr_no
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM inc_ins_rslt r
+    WHERE r.pur_ord_no = s.pur_ord_no
+)`;
+
+// 성적서가 작성된 검사 제품 불러오기(성적서 조회 페이지)
+const selectRsltPrd3=
+`SELECT 
+    s.lot_no,
+    s.mat_no,
+    m.mat_nm,
+    s.pur_ord_no,
+    p.vdr_no,
+    v.cpy_nm
+FROM mat_stk s
+JOIN mat m ON s.mat_no = m.mat_no
+LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
+LEFT JOIN vdr v ON p.vdr_no = v.vdr_no
+WHERE EXISTS (
+    SELECT 1
+    FROM inc_ins_rslt r
+    WHERE r.pur_ord_no = s.pur_ord_no
+      AND r.lot_no = s.lot_no
+      AND r.mat_no = s.mat_no
+)
+ORDER BY m.mat_nm`;
 module.exports={
   selectLot,
+  selectOrd,
   selectIncInsStd,
   incInsStdInsert,
   updateIncInsStd,
   deleteIncInsStd,
   insertRslt,
   insertRsltDtl,
-  selectLastRsltNo1
+  selectLastRsltNo1,
+  selectRsltPrd3
 };

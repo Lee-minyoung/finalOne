@@ -22,7 +22,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in spmRcdList" :key="item.spm_no" @click="fetchDetail(item)">
+        <tr v-for="item in spmRcdList"
+  :key="item.spm_no"
+  @click="selectRow(item)"
+  :class="{ 'table-active': selectedOrdNo === item.spm_no }">
           <td>{{ item.spm_no }}</td>
           <td>{{ item.vdr_no }}</td>
           <td>{{ item.prd_no }}</td>
@@ -185,6 +188,10 @@ export default {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+  },
+  selectRow(item) {
+    this.selectedOrdNo = item.spm_no;
+    this.fetchDetail(item);
   }
 }
 }
@@ -255,4 +262,5 @@ hr {
   border: none;
   border-top: 1px solid #424242;
 }
+
 </style>
