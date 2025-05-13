@@ -22,21 +22,21 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 25%">상호명</th>
-                  <th class="text-center" style="width: 15%">사업장유형</th>
-                  <th class="text-center" style="width: 20%">사업자등록번호</th>
-                  <th class="text-center" style="width: 15%">담당자</th>
-                  <th class="text-center" style="width: 25%">연락처</th>
+                  <th class="w-10">상호명</th>
+                  <th class="w-10">사업장유형</th>
+                  <th class="w-10">사업자등록번호</th>
+                  <th class="w-10">담당자</th>
+                  <th class="w-10">연락처</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="vdr in filteredVdrList" v-bind:key="vdr.vdr_no" @click="selectVdr(vdr.vdr_no)"
                   :class="{ 'table-primary': selectedVdr && selectedVdr.vdr_no === vdr.vdr_no }" class="table-hover">
-                  <td>{{ vdr.cpy_nm }}</td>
-                  <td class="text-center">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
-                  <td class="text-center">{{ vdr.biz_reg_no }}</td>
-                  <td class="text-center">{{ vdr.mgr_nm }}</td>
-                  <td class="text-center">{{ vdr.mgr_ctt}}</td>
+                  <td class="w-10">{{ vdr.cpy_nm }}</td>
+                  <td class="w-10">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
+                  <td class="w-10">{{ vdr.biz_reg_no }}</td>
+                  <td class="w-10">{{ vdr.mgr_nm }}</td>
+                  <td class="w-10">{{ vdr.mgr_ctt}}</td>
                 </tr>
               </tbody>
             </table>
@@ -187,42 +187,5 @@ export default {
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.table-container {
-  height: 500px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.table-container thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  z-index: 1;
-  padding: 12px 8px;
-  white-space: nowrap;
-}
-
-.table-container tbody td {
-  padding: 10px 8px;
-  vertical-align: middle;
-  line-height: 1.4;
-}
-
-.table-container tbody tr {
-  height: 45px;
-}
-
-.table-primary {
-  background-color: #cce5ff;
-}
+@import '@/assets/styles/base-table.css';
 </style>

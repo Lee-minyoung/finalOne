@@ -21,19 +21,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 25%;">자재번호</th>   
-                  <th class="text-center" style="width: 30%;">자재명</th>
-                  <th class="text-center" style="width: 25%;">자재유형</th>
-                  <th class="text-center" style="width: 20%;">단위</th>
+                  <th class="w-10">자재번호</th>   
+                  <th class="w-10">자재명</th>
+                  <th class="w-10">단위</th>
+                  <th class="w-10">자재유형</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="mat in filteredMatList" :key="mat.mat_no" @click="selectMat(mat.mat_no)"   
                   :class="{ 'table-primary': selectedMat && selectedMat.mat_no === mat.mat_no }" class="table-hover">   
-                  <td class="text-center">{{ mat.mat_no }}</td>
-                  <td>{{ mat.mat_nm }}</td>
-                  <td class="text-center">{{ matTypeFormat(mat.mat_tp) }}</td>
-                  <td class="text-center">{{ mat.unit }}</td>
+                  <td class="w-10">{{ mat.mat_no }}</td>
+                  <td class="w-10">{{ mat.mat_nm }}</td>
+                  <td class="w-10">{{ mat.unit }}</td>
+                  <td class="w-10">{{ matTypeFormat(mat.mat_tp) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -158,47 +158,6 @@ export default {
 };
 </script>
 
-<style scoped>  
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.table-container {
-  height: 500px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.table-container thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  z-index: 1;
-  padding: 12px 8px;
-  /* 헤더 패딩 조정 */
-}
-
-.table-container tbody td {
-  padding: 10px 8px;
-  /* 셀 패딩 조정 */
-  vertical-align: middle;
-  /* 수직 정렬 */
-  line-height: 1.4;
-  /* 줄 간격 조정 */
-}
-
-.table-container tbody tr {
-  height: 45px;
-  /* 행 높이 고정 */
-}
-
-.table-primary {
-  background-color: #cce5ff;
-}
+<style scoped>
+@import '@/assets/styles/base-table.css';
 </style>

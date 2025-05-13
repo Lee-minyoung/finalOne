@@ -20,19 +20,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 20%;">제품번호</th>
-                  <th class="text-center" style="width: 30%;">제품명</th>
-                  <th class="text-center" style="width: 20%;">제품유형</th>
-                  <th class="text-center" style="width: 30%;">유통기한</th>
+                  <th class="w-10">제품번호</th>
+                  <th class="w-10">제품명</th>
+                  <th class="w-10">유통기한</th>
+                  <th class="w-10">제품유형</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="prd in filteredPrdList" :key="prd.prd_no" @click="selectPrd(prd.prd_no)"
                   :class="{ 'table-primary': selectedPrd && selectedPrd.prd_no === prd.prd_no }" class="table-hover">
-                  <td class="text-center">{{ prd.prd_no }}</td>
-                  <td>{{ prd.prd_nm }}</td>
-                  <td class="text-center">{{ prdTypeFormat(prd.prd_tp) }}</td>
-                  <td class="text-center" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-10">{{ prd.prd_no }}</td>
+                  <td class="w-10">{{ prd.prd_nm }}</td>
+                  <td class="w-10" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-10">{{ prdTypeFormat(prd.prd_tp) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -244,59 +244,6 @@ export default {
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.table-container {
-  height: 500px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.table-container thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  z-index: 1;
-  padding: 12px 8px;
-  /* 헤더 패딩 조정 */
-}
-
-.table-container tbody td {
-  padding: 10px 8px;
-  /* 셀 패딩 조정 */
-  vertical-align: middle;
-  /* 수직 정렬 */
-  line-height: 1.4;
-  /* 줄 간격 조정 */
-}
-
-.table-container tbody tr {
-  height: 45px;
-  /* 행 높이 고정 */
-}
-
-.table-primary {
-  background-color: #cce5ff;
-}
-
-.text-danger {
-  color: #dc3545;
-}
-
-.text-warning {
-  color: #ffc107;
-}
-
-.fw-bold {
-  font-weight: bold;
-}
+@import '@/assets/styles/base-table.css';
 </style>
 

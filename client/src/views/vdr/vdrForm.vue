@@ -19,33 +19,33 @@
             <!-- 1행: 거래처번호 + 사업자등록번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
+                <label for="vdrNo" class="form-label me-3" style="min-width: 100px;">거래처번호</label>
                 <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled />
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
+                <label for="bizRegNo" class="form-label me-3" style="min-width: 100px;">사업자등록번호</label>
                 <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
             </div>
             <!-- 2행: 상호명 + 대표자명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="cpyNm" class="form-label fw-bold me-3" style="min-width: 100px;">상호명</label>
+                <label for="cpyNm" class="form-label me-3" style="min-width: 100px;">상호명</label>
                 <input id="cpyNm" type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ceoNm" class="form-label fw-bold me-3" style="min-width: 100px;">대표자명</label>
-                <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm"  />
+                <label for="ceoNm" class="form-label me-3" style="min-width: 100px;">대표자명</label>
+                <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm" />
               </div>
             </div>
             <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcAddr" class="form-label fw-bold me-3" style="min-width: 100px;">사업장주소</label>
+                <label for="ofcAddr" class="form-label me-3" style="min-width: 100px;">사업장주소</label>
                 <div class="flex-grow-1 d-flex gap-2">
                   <!-- 기본주소 입력 필드: 우편번호와 기본 도로명/지번 주소만 표시 -->
                   <input id="ofcAddr" type="text" class="form-control" v-model="baseAddress" readonly />
@@ -60,34 +60,35 @@
               <div class="d-flex align-items-center">
                 <label style="min-width: 100px;" class="me-3"></label>
                 <div class="flex-grow-1">
-                  <input id="ofcAddrDetail" type="text" class="form-control" v-model="tempAddrDetail" @input="updateFullAddress" placeholder="상세주소" />
+                  <input id="ofcAddrDetail" type="text" class="form-control" v-model="tempAddrDetail"
+                    @input="updateFullAddress" placeholder="상세주소" />
                 </div>
               </div>
             </div>
             <!-- 5행: 전화번호 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcCtt" class="form-label fw-bold me-3" style="min-width: 100px;">전화번호</label>
+                <label for="ofcCtt" class="form-label me-3" style="min-width: 100px;">전화번호</label>
                 <input id="ofcCtt" type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
               </div>
             </div>
             <!-- 6행: 담당자 + 담당자연락처 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="mgrNm" class="form-label fw-bold me-3" style="min-width: 100px;">담당자</label>
+                <label for="mgrNm" class="form-label me-3" style="min-width: 100px;">담당자</label>
                 <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="mgrCtt" class="form-label fw-bold me-3" style="min-width: 100px;">담당자연락처</label>
+                <label for="mgrCtt" class="form-label me-3" style="min-width: 100px;">담당자연락처</label>
                 <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
               </div>
             </div>
             <!-- 7행: 사업장유형 + 사업장상태 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcTp" class="form-label fw-bold me-3" style="min-width: 100px;">사업장유형</label>
+                <label for="ofcTp" class="form-label me-3" style="min-width: 100px;">사업장유형</label>
                 <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
                   <option value="">선택</option>
                   <option value="b1">판매처</option>
@@ -99,15 +100,16 @@
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcSts" class="form-label fw-bold me-3" style="min-width: 100px;">사업장상태</label>
-                <input id="mgrCtt" type="text" class="form-control" value="정상" readonly disabled/>
+                <label for="ofcSts" class="form-label me-3" style="min-width: 100px;">사업장상태</label>
+                <input id="mgrCtt" type="text" class="form-control" value="정상" readonly disabled />
               </div>
             </div>
             <!-- 8행: 등록일자 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="rgtDt" class="form-label fw-bold me-3" style="min-width: 100px;">등록일자</label>
-                <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+                <label for="rgtDt" class="form-label me-3" style="min-width: 100px;">등록일자</label>
+                <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')"
+                  readonly disabled />
               </div>
             </div>
           </div>
@@ -258,6 +260,45 @@ export default {
      * 4. 실패 시 오류 메시지 표시
      */
     async saveVdr() {
+
+      // 필수 입력값 검증
+      if (!this.vdrInfo.cpy_nm?.trim()) {
+        alert('상호명을 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.ceo_nm?.trim()) {
+        alert('대표자명을 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.biz_reg_no?.trim()) {
+        alert('사업자등록번호를 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.ofc_addr?.trim()) {
+        alert('사업장주소를 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.ofc_ctt?.trim()) {
+        alert('사업장 연락처를 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.mgr_nm?.trim()) {
+        alert('담당자명을 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.mgr_ctt?.trim()) {
+        alert('담당자 연락처를 입력해주세요.');
+        return;
+      }
+      if (!this.vdrInfo.ofc_tp) {
+        alert('사업자 유형을 선택해주세요.');
+        return;
+      }
+
+      // 선택 사항 (use_yn, ofc_sts)
+      if (!this.vdrInfo.use_yn) this.vdrInfo.use_yn = 'Y'; // 기본값 설정
+      if (!this.vdrInfo.ofc_sts) this.vdrInfo.ofc_sts = 'd1'; // 기본값: 정상
+
       try {
         // 저장할 데이터 객체 구성
         let obj = {
@@ -286,6 +327,8 @@ export default {
         console.error('거래처 등록 실패:', err);
         alert('거래처 등록에 실패했습니다.');
       }
+
+
     },
 
     /**
@@ -304,10 +347,10 @@ export default {
         oncomplete: (data) => {
           // 기본 주소만 baseAddress에 설정
           this.baseAddress = `[${data.zonecode}] ${data.address}`;
-          
+
           // 상세주소 초기화
           this.tempAddrDetail = '';
-          
+
           // 내부 데이터는 업데이트 (저장용)
           this.updateFullAddress();
         }
@@ -331,7 +374,7 @@ export default {
       } else {
         this.vdrInfo.ofc_addr = this.baseAddress;
       }
-      
+
       // 입력 필드의 표시는 변경하지 않음 (기본주소 필드는 그대로 유지)
     },
   }
@@ -339,12 +382,6 @@ export default {
 </script>
 
 <style scoped>
-
-.table-container th {
-  white-space: nowrap;
-}
-
-
 .table-hover:hover {
   cursor: pointer;
 }
@@ -352,68 +389,5 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 입력 필드 스타일 개선 */
-.form-control,
-.form-select {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* 입력 필드 hover 효과 */
-.form-control:hover,
-.form-select:hover {
-  border-color: #86b7fe;
-}
-
-/* 라벨 스타일 */
-.form-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0;
-  white-space: nowrap;  
-}
-
-/* readonly와 disabled 입력창 스타일 */
-input[readonly],
-input[disabled] {
-  background-color: #e9ecef !important;
-  cursor: not-allowed;
-}
-
-input[readonly]:focus,
-input[disabled]:focus {
-  background-color: #e9ecef !important;
-  border-color: #ced4da;
-  box-shadow: none;
-}
-
-/* 버튼 스타일 */
-.btn {
-  font-size: 0.95rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
 }
 </style>

@@ -1,5 +1,5 @@
-<template>  
-  <div class="col-md-6"> 
+<template>
+  <div class="col-md-6">
     <div class="d-flex justify-content-between mb-3">
       <div></div>
       <div>
@@ -9,61 +9,87 @@
     </div>
     <div class="card p-4">
       <h4 class="mb-4">자재 등록</h4>
-      <table class="align-middle" style="border:none;width:100%;">
-        <tbody>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">자재번호</th>
-            <td style="border:none; padding-right:20px; width: 30%;"><input type="text" class="form-control" v-model="matNo" readonly
-                disabled /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">자재유형</th>
-            <td style="border:none; width: 30%;">
+      <div>
+        <div class="row mb-2">
+          <!-- 자재번호 -->
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">자재번호</label>
+              <input type="text" class="form-control" v-model="matNo" readonly disabled />
+            </div>
+          </div>
+          <!-- 자재유형 -->
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">자재유형</label>
               <select class="form-select" v-model="matInfo.mat_tp">
                 <option value="">선택</option>
                 <option value="b1">원재료</option>
                 <option value="b2">부재료</option>
                 <option value="b3">소모품</option>
               </select>
-            </td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">자재명</th>
-            <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="matInfo.mat_nm" />
-            </td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">대표거래처</th>
-            <td colspan="3" style="border:none;">
-              <select class="form-select" v-model="matInfo.mn_vdr">
-                <option value="">선택</option>
-                <option v-for="vdr in vdrList" :key="vdr.vdr_no" :value="vdr.vdr_no">{{ vdr.cpy_nm }}</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">최소주문량</th>
-            <td style="border:none; padding-right:20px;"><input type="number" class="form-control"
-                v-model="matInfo.min_ord_qty" min="0" style="max-width: 300px; width:100%;" /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">최소재고량</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0"
-                style="max-width: 300px; width:100%;" /></td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">단위</th>
-            <td style="border:none; padding-right:20px;"><input type="text" class="form-control" v-model="matInfo.unit"
-                style="max-width: 300px; width:100%;" /></td>
-            <th style="width: 20%; min-width: 120px; border:none;">리드타임(일)</th>
-            <td style="border:none;"><input type="number" class="form-control" v-model="matInfo.ld_tm" min="0"
-                style="max-width: 300px; width:100%;" /></td>
-          </tr>
-          <tr class="mb-4">
-            <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
-            <td style="border:none; padding-right:20px;"><input type="text" class="form-control" :value="today" readonly
-                disabled /></td>
-            <th style="width: 20%; min-width: 120px; border:none;"></th>
-            <td style="border:none;"></td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <!-- 자재명 -->
+          <div class="col-md-12 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">자재명</label>
+              <input type="text" class="form-control" v-model="matInfo.mat_nm" />
+            </div>
+          </div>
+          <!-- 대표거래처 -->
+          <div class="col-md-12 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">대표거래처</label>
+              <div class="flex-grow-1">
+                <div class="input-group">
+                  <input type="text" class="form-control" v-model="selectedVdrName" readonly
+                    placeholder="대표거래처를 선택하세요" />
+                  <button class="btn btn-outline-secondary" type="button" @click="openVdrModal">거래처 선택</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 최소주문량, 최소재고량 -->
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">최소주문량</label>
+              <input type="number" class="form-control" v-model="matInfo.min_ord_qty" min="0"
+                style="max-width: 300px; width:100%;" />
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">최소재고량</label>
+              <input type="number" class="form-control" v-model="matInfo.min_stk_qty" min="0"
+                style="max-width: 300px; width:100%;" />
+            </div>
+          </div>
+          <!-- 단위, 리드타임 -->
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">단위</label>
+              <input type="text" class="form-control" v-model="matInfo.unit" style="max-width: 300px; width:100%;" />
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">리드타임(일)</label>
+              <input type="number" class="form-control" v-model="matInfo.ld_tm" min="0"
+                style="max-width: 300px; width:100%;" />
+            </div>
+          </div>
+          <!-- 등록일자 -->
+          <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-center">
+              <label class="form-label me-3" style="min-width: 100px;">등록일자</label>
+              <input type="text" class="form-control" :value="today" readonly disabled />
+            </div>
+          </div>
+        </div>
+      </div>
+      <matVdrSelectModal v-if="showVdrModal" :vdrList="vdrList" :selected="matInfo.mn_vdr"
+        @select-vdr="handleSelectedVdr" @close="showVdrModal = false" />
     </div>
   </div>
 </template>
@@ -80,8 +106,12 @@
  */
 import axios from 'axios';
 import userDateUtils from '@/utils/useDates.js';
+import matVdrSelectModal from '@/views/modal/matVdrSelectModal.vue';
 
 export default {
+  components: {
+    matVdrSelectModal,
+  },
   data() {
     return {
       matNo: '', // 자동 생성된 자재번호
@@ -95,7 +125,9 @@ export default {
         unit: '', // 단위
         ld_tm: 0 // 리드타임
       },
-      vdrList: [] // 거래처 목록: 대표거래처 선택 드롭다운에 사용
+      vdrList: [], // 거래처 목록
+      showVdrModal: false, // 거래처 선택 모달 표시 여부
+      selectedVdrName: '', // 선택된 거래처명
     };
   },
   created() {
@@ -176,17 +208,39 @@ export default {
      * - 서버 API 호출하여 자재 등록
      * - 등록 성공 시 목록 갱신 및 상세보기 화면으로 전환
      */
+
     async saveMat() {
       try {
-        // 필수 입력값 검증
-        if (!this.matInfo.mat_nm) {
-          alert('자재명을 입력하세요.');
+        // 필수 입력값 검증 (matInfo로 일괄 수정)
+        if (!this.matInfo.mat_nm?.trim()) {
+          alert('자재명을 입력해주세요.');
           return;
         }
         if (!this.matInfo.mat_tp) {
-          alert('자재유형을 선택하세요.');
+          alert('자재유형을 선택해주세요.');
           return;
         }
+        if (!this.matInfo.mn_vdr) {
+          alert('대표거래처를 선택해주세요.');
+          return;
+        }
+        if (!this.matInfo.min_ord_qty) {
+          alert('최소주문량을 입력해주세요.');
+          return;
+        }
+        if (!this.matInfo.min_stk_qty) {
+          alert('최소재고량을 입력해주세요.');
+          return;
+        }
+        if (!this.matInfo.unit) {
+          alert('단위를 선택해주세요.');
+          return;
+        }
+        if (!this.matInfo.ld_tm) {
+          alert('리드타임을 입력해주세요.');
+          return;
+        }
+
 
         // 서버에 전달할 정보를 객체로 구성
         let obj = {
@@ -222,7 +276,19 @@ export default {
           alert('자재 등록 중 오류가 발생했습니다.');
         }
       }
-    }
+    },
+
+    openVdrModal() {
+      this.showVdrModal = true;
+    },
+
+    handleSelectedVdr(selectedVdr) {
+      if (selectedVdr) {
+        this.matInfo.mn_vdr = selectedVdr.vdr_no;
+        this.selectedVdrName = selectedVdr.cpy_nm;
+      }
+      this.showVdrModal = false;
+    },
   }
 };
 </script>
@@ -235,71 +301,5 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 입력 필드 스타일 개선 */
-.form-control,
-.form-select {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* 테이블 행 간격 조정 */
-table tr {
-  margin-bottom: 1rem;
-}
-
-/* 입력 필드 hover 효과 */
-.form-control:hover,
-.form-select:hover {
-  border-color: #86b7fe;
-}
-
-/* 라벨 스타일 */
-th {
-  font-weight: 500;
-  color: #495057;
-  padding: 0.75rem 0;
-}
-
-/* 입력 필드 너비 조정 */
-.form-control,
-.form-select {
-  width: 100%;
-  max-width: none;
-}
-
-/* 카드 내부 여백 조정 */
-.card {
-  padding: 1.5rem;
-}
-
-/* 테이블 셀 패딩 조정 */
-td {
-  padding: 0.5rem 0;
-}
-
-/* readonly와 disabled 입력창 스타일 */
-input[readonly],
-input[disabled] {
-  background-color: #e9ecef !important;
-  cursor: not-allowed;
-}
-
-input[readonly]:focus,
-input[disabled]:focus {
-  background-color: #e9ecef !important;
-  border-color: #ced4da;
-  box-shadow: none;
 }
 </style>

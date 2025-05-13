@@ -21,33 +21,33 @@
             <!-- 1행: 거래처번호 + 사업자등록번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
+                <label for="vdrNo" class="form-label me-3" style="min-width: 100px;">거래처번호</label>
                 <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled />
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
+                <label for="bizRegNo" class="form-label me-3" style="min-width: 100px;">사업자등록번호</label>
                 <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
             </div>
             <!-- 2행: 상호명 + 대표자명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="cpyNm" class="form-label fw-bold me-3" style="min-width: 100px;">상호명</label>
+                <label for="cpyNm" class="form-label me-3" style="min-width: 100px;">상호명</label>
                 <input id="cpyNm" type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ceoNm" class="form-label fw-bold me-3" style="min-width: 100px;">대표자명</label>
+                <label for="ceoNm" class="form-label me-3" style="min-width: 100px;">대표자명</label>
                 <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm" />
               </div>
             </div>
             <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcAddr" class="form-label fw-bold me-3" style="min-width: 100px;">사업장주소</label>
+                <label for="ofcAddr" class="form-label me-3" style="min-width: 100px;">사업장주소</label>
                 <div class="flex-grow-1 d-flex gap-2">
                   <!-- 기본주소 입력 필드: 우편번호와 기본 도로명/지번 주소만 표시 -->
                   <input id="ofcAddr" type="text" class="form-control" v-model="baseAddress" readonly />
@@ -68,65 +68,70 @@
               </div>
             </div>
             <!-- 5행: 전화번호 -->
-            <div class="col-md-6 mb-3">
+            <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcCtt" class="form-label fw-bold me-3" style="min-width: 100px;">전화번호</label>
+                <label for="ofcCtt" class="form-label me-3" style="min-width: 100px;">전화번호</label>
                 <input id="ofcCtt" type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
               </div>
             </div>
             <!-- 6행: 담당자 + 담당자연락처 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="mgrNm" class="form-label fw-bold me-3" style="min-width: 100px;">담당자</label>
-                <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
-              </div>
-            </div>
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="mgrCtt" class="form-label fw-bold me-3" style="min-width: 100px;">담당자연락처</label>
-                <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mgrNm" class="form-label me-3" style="min-width: 100px;">담당자</label>
+                    <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mgrCtt" class="form-label me-3" style="min-width: 100px;">담당자연락처</label>
+                    <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
+                  </div>
+                </div>
               </div>
             </div>
             <!-- 7행: 사업장유형 + 사업장상태 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="ofcTp" class="form-label fw-bold me-3" style="min-width: 100px;">사업장유형</label>
-                <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
-                  <option value="b1">판매처</option>
-                  <option value="b2">구매처</option>
-                  <option value="b3">혼합</option>
-                  <option value="b4">외주처</option>
-                </select>
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="ofcTp" class="form-label me-3" style="min-width: 100px;">사업장유형</label>
+                    <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
+                      <option value="b1">판매처</option>
+                      <option value="b2">구매처</option>
+                      <option value="b3">혼합</option>
+                      <option value="b4">외주처</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="ofcSts" class="form-label me-3" style="min-width: 100px;">사업장상태</label>
+                    <select id="ofcSts" class="form-select" v-model="vdrInfo.ofc_sts">
+                      <option value="d1">정상</option>
+                      <option value="d2">휴업</option>
+                      <option value="d3">폐업</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="ofcSts" class="form-label fw-bold me-3" style="min-width: 100px;">사업장상태</label>
-                <select id="ofcSts" class="form-select" v-model="vdrInfo.ofc_sts">
-                  <option value="d1">정상</option>
-                  <option value="d2">휴업</option>
-                  <option value="d3">폐업</option>
-                </select>
-              </div>
-            </div>
-            <!-- 8행: 사용여부 + 등록일자 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
-                <select id="useYn" class="form-select" v-model="vdrInfo.use_yn">
-                  <option value="f1">여</option>
-                  <option value="f2">부</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="rgtDt" class="form-label fw-bold me-3" style="min-width: 100px;">등록일자</label>
-                <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')"
-                  readonly disabled />
-                <label style="width: 20%; min-width: 120px; border:none;">수정일자</label>
-                <div style="border:none;"><input type="text" class="form-control"
-                    :value="dateFormat(vdrInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></div>
+            <!-- 8행: 등록일자 + 수정일자 -->
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="rgtDt" class="form-label me-3" style="min-width: 100px;">등록일자</label>
+                    <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mdfDt" class="form-label me-3" style="min-width: 100px;">수정일자</label>
+                    <input id="mdfDt" type="text" class="form-control" :value="dateFormat(vdrInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -475,73 +480,8 @@ export default {
   cursor: pointer;
 }
 
-.table-container th {
-  white-space: nowrap;
-}
-
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 입력 필드 스타일 개선 */
-.form-control,
-.form-select {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* 입력 필드 hover 효과 */
-.form-control:hover,
-.form-select:hover {
-  border-color: #86b7fe;
-}
-
-/* 라벨 스타일 */
-.form-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0;
-  white-space: nowrap;
-}
-
-/* readonly와 disabled 입력창 스타일 */
-input[readonly],
-input[disabled] {
-  background-color: #e9ecef !important;
-  cursor: not-allowed;
-}
-
-input[readonly]:focus,
-input[disabled]:focus {
-  background-color: #e9ecef !important;
-  border-color: #ced4da;
-  box-shadow: none;
-}
-
-/* 버튼 스타일 */
-.btn {
-  font-size: 0.95rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
 }
 </style>

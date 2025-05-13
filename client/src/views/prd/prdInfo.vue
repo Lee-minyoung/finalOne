@@ -16,43 +16,60 @@
     <div class="card p-4">
       <h4 class="mb-4">상세 보기</h4>
       <div v-if="prdInfo.prd_no">
-        <table class="align-middle" style="border:none;width:100%;">
-          <tbody>
-            <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">제품번호</th>
-              <td colspan="3" style="border:none;"><input type="text" class="form-control" v-model="prdInfo.prd_no"
-                  readonly disabled /></td>
-            </tr>
-            <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">제품명</th>
-              <td style="border:none; padding-right:20px; width: 30%;"><input type="text" class="form-control" v-model="prdInfo.prd_nm" 
-                  style="max-width: 300px; width:100%;" /></td>
-              <th style="width: 20%; min-width: 120px; border:none;">제품유형</th>
-              <td style="border:none; width: 30%;">
-                <select class="form-select" v-model="prdInfo.prd_tp" style="max-width: 300px; width:100%;">
+        <div>
+          <div class="row mb-2">
+            <!-- 제품번호 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">제품번호</label>
+                <input type="text" class="form-control" v-model="prdInfo.prd_no" readonly disabled />
+              </div>
+            </div>
+            <!-- 제품유형 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">제품유형</label>
+                <select class="form-select" v-model="prdInfo.prd_tp">
                   <option value="j5">제품</option>
                   <option value="j4">반제품</option>
                 </select>
-              </td>
-            </tr>
-            <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">유통기한(개월)</th>
-              <td style="border:none; padding-right:20px; width: 30%;"><input type="number" class="form-control" v-model="prdInfo.exp_dt"
-                  min="0" style="max-width: 300px; width:100%;" /></td>
-              <th style="width: 20%; min-width: 120px; border:none;">적정재고량</th>
-              <td style="border:none; width: 30%;"><input type="number" class="form-control"
-                  v-model="prdInfo.opt_stk_qty" min="0" style="max-width: 300px; width:100%;" /></td>
-            </tr>
-            <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">등록일자</th>
-              <td style="border:none; padding-right:20px; width: 30%;"><input type="text" class="form-control"
-                  :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled /></td>
-              <th style="width: 20%; min-width: 120px; border:none;">수정일자</th>
-              <td style="border:none; width: 30%;"><input type="text" class="form-control"
-                  :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled /></td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+            <!-- 제품명 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">제품명</label>
+                <input type="text" class="form-control" v-model="prdInfo.prd_nm" />
+              </div>
+            </div>
+            <!-- 유통기한, 적정재고량 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">유통기한</label>
+                <input type="number" class="form-control" v-model="prdInfo.exp_dt" min="0" />
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">적정재고량</label>
+                <input type="number" class="form-control" v-model="prdInfo.opt_stk_qty" min="0" />
+              </div>
+            </div>
+            <!-- 등록일자, 수정일자 -->
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">등록일자</label>
+                <input type="text" class="form-control" :value="dateFormat(prdInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">수정일자</label>
+                <input type="text" class="form-control" :value="dateFormat(prdInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-else> <!-- 리스트에서 선택된 데이터가 없을 때 -->
         <p>제품을 선택하세요!</p>
@@ -246,50 +263,5 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.form-control,
-.form-select {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-table tr {
-  margin-bottom: 1rem;
-}
-
-.form-control:hover,
-.form-select:hover {
-  border-color: #86b7fe;
-}
-
-th {
-  font-weight: 500;
-  color: #495057;
-  padding: 0.75rem 0;
-}
-
-.form-control,
-.form-select {
-  width: 100%;
-  max-width: none;
-}
-
-.card {
-  padding: 1.5rem;
-}
-
-td {
-  padding: 0.5rem 0;
 }
 </style>
