@@ -92,8 +92,20 @@ const minusLotCurStk=async (list)=>{
 }
 
 const addPrdStkHist=async (prdStkHistData)=>{
-  const result=await mariadb.query('insertPrdStkHist',prdStkHistData); 
+  const result=await mariadb.query('insertPrdStkdtl',prdStkHistData); 
   return result; 
+}
+
+const findLastPrdHist=async()=>{
+  const result=await mariadb.query('selectMaxPrdHistNo'); 
+  return result[0]?.maxLotNo||0; 
+}
+
+const findPrdLotList=async(prdNo)=>{
+  const [rows] = await mariadb.query('prdMaxLotList', [prdNo]);
+  const list = Array.isArray(rows) ? rows : [rows];
+console.log('[DEBUG] 최종 lot list:', list);
+return list;
 }
 
 
@@ -136,4 +148,6 @@ const addPrdStkHist=async (prdStkHistData)=>{
     addSpmData,
     minusLotCurStk,
     addPrdStkHist, 
+    findLastPrdHist,
+    findPrdLotList
   }

@@ -17,7 +17,7 @@ export default [
       {
          component:'CNavItem' , 
          name:'출하지시',
-         to:'/SpmInst',  
+         to:'/spmInstTest',  
       }, 
     ],
   },

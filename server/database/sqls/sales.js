@@ -98,6 +98,10 @@ GROUP BY d.prd_no`;
 const selectMaxSpmNo=`
  select max(spm_no) as maxSpmNo
  from spm`;
+ //제품lot상세 번호 최댓값 찾기 
+ const selectMaxPrdHistNo=`
+ select max(prd_stk_hist_no) as maxLotNo
+ from prd_stk_hist`;
  const selectMaxSpmDtlNo=`
  select max(spm_dtl_no) as maxSpmDtlNo
  from spm_dtl`;    
@@ -118,9 +122,15 @@ UPDATE prd_stk
 SET cur_stk=cur_stk - ?
 WHERE lot_no= ?
 AND prd_no=?`;
-const insertPrdStkHist=`
+const insertPrdStkdtl=`
 INSERT INTO prd_stk_hist (prd_stk_hist_no,lot_no,io_tp,qty,dt,rel_doc)
- VALUES (?,?,?,?,?,?);` 
+ VALUES (?,?,?,?,?,?)`; 
+
+ const prdMaxLotList=`
+ select lot_no,prd_no,cur_stk
+from prd_stk
+where prd_no=?
+ORDER BY cur_stk desc`; 
 
  module.exports={
   insertOrd,
@@ -139,5 +149,7 @@ INSERT INTO prd_stk_hist (prd_stk_hist_no,lot_no,io_tp,qty,dt,rel_doc)
   insertSpm,  
   insertSpmDtl,
   updatePrdStk,
-  insertPrdStkHist   
+  insertPrdStkdtl,
+  selectMaxPrdHistNo,
+  prdMaxLotList,   
  }

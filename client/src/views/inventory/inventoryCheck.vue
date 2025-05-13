@@ -20,7 +20,7 @@
           <span>
             <b>{{ isExpanded(reqNo) ? '▼' : '▶' }}</b>
             출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건)
-            <button class="btn btn-success rounded-pill px-3" @click="checkMat(reqNo)"type="button">자재확인</button>
+            <button class="btn btn-success rounded-pill px-3" @click="checkMat(reqNo)"type="button">자재출고</button>
           </span>
         </td>
       </tr>

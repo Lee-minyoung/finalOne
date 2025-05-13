@@ -114,7 +114,7 @@ router.get('/ordInfo',async(req,res)=>{
  const info= await salesService.findSpmInfo(ordNo);
  res.json(info);  
 })
-
+// 출하지시 => 제품lot 차감 
 router.post('/updateLot',async(req,res)=>{
 
   const now = new Date();
@@ -122,17 +122,64 @@ router.post('/updateLot',async(req,res)=>{
   const dd = String(now.getDate()).padStart(2, '0');
   const nowStr = now.toISOString().slice(0, 10).replace('T', ' '); //2025-05-12
 
-
   const {lot_no,prd_no,lot_qty,memo}=req.body; 
  const lotInfo=[lot_qty,lot_no,prd_no];
  //prd_stk 상태변경
- console.log('여기까진옴');
- console.log(req.body);   
-  await salesService.updateLot(lotInfo); 
-  console.log('lot차감완료'); 
-  await salesService.addPrdStkHist([8,lot_no,'o1',lot_qty,nowStr,memo]);  // lot_hist 
-  console.log('lot_hist 력등록완료');
+ //console.log('여기까진옴');
+ //console.log(req.body);   
+  await salesService.minusLotCurStk(lotInfo); 
+
+ // console.log('lot차감완료'); 
+  // console.log(typeof lot_qty, lot_qty);
+   const io='o1';
+//prd_lot_hist_no 
+const lastNo=await salesService.findLastPrdHist(); 
+const nextHistNo=findNextCode(lastNo);    
+  const result=await salesService.addPrdStkHist([nextHistNo,lot_no,io,Number(lot_qty),nowStr,memo]);
+    // lot_hist
+   
+  console.log('lot_hist 이이력등록완료');
   res.json(result); 
+})
+
+
+router.post('/addSpms',async(req,res)=>{
+console.log('프론트->서버 여러 수주정보전송중..'); 
+console.log(req.body); // 잘받아옴 
+const infoList=req.body; 
+ const io='o1';
+ const now = new Date();
+  const nowStr = now.toISOString().slice(0, 10).replace('T', ' '); //2025-05-12
+for(const info of infoList){
+  let {ord_no,dlv_addr,spm_dt,vdr_no,lot_no,prd_no,lot_qty,memo,req_qty}=info; 
+  //해당 제품에 맞는 lot 찾기 
+console.log('요청수량',req_qty);
+  const lots=await salesService.findPrdLotList(prd_no);
+  // lot를 찾음 
+     for(const lot of lots){
+              const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
+              await salesService.minusLotCurStk([minusQty,lot.lot_no,lot.prd_no]);
+              req_qty-=minusQty;
+             console.log(req_qty);
+             console.log('lot남은자재',lot.cur_stk);   
+              const lastNo=await salesService.findLastPrdHist(); 
+              const nextHistNo=findNextCode(lastNo);    
+              const result=await salesService.addPrdStkHist([nextHistNo,lot_no,io,Number(req_qty),nowStr,memo]);
+                  }
+console.log('lot에서 모든 재고를 뺌'); 
+
+if(req_qty>0){
+            console.log('제품lot부족');
+            //서버 ->  프론트로 알려야함 바로 자재구매계획 등록?? 일단그건보류... 
+            return res.status(400).json({
+              success:false,
+              message:`제품${prd_no}의 재고가 부족합니다`
+            });           
+          }else if(req_qty<=0){
+            console.log('요청수량 제품충분! ');
+    
+          }
+}
 })
 
 
