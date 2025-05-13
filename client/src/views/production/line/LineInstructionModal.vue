@@ -25,19 +25,21 @@
                 <td>{{ line.ln_nm }}</td>
                 <td>
                   <span class="badge" :class="{
-                    'bg-info': line.ln_sts === 'l1',
-                    'bg-primary': line.ln_sts === 'l2',
-                    'bg-success': line.ln_sts === 'l3',
-                    'bg-warning': line.ln_sts === 'l4',
-                    'bg-secondary': line.ln_sts === 'l5',
-                    'bg-danger': !['l1', 'l2', 'l3', 'l4', 'l5'].includes(line.ln_sts)
+                    'bg-secondary': line.ln_sts === 'l1',
+                    'bg-info': line.ln_sts === 'l2',
+                    'bg-primary': line.ln_sts === 'l3',
+                    'bg-success': line.ln_sts === 'l4',
+                    'bg-danger': line.ln_sts === 'l5',
+                    'bg-warning text-dark': line.ln_sts === 'l6',
+                    'bg-dark': !['l1', 'l2', 'l3', 'l4', 'l5', 'l6'].includes(line.ln_sts)
                   }">
                     {{
                       line.ln_sts === 'l1' ? '비가동' :
                         line.ln_sts === 'l2' ? '대기중' :
-                          line.ln_sts === 'l3' ? '사용중' :
-                            line.ln_sts === 'l4' ? '수리중' :
-                              line.ln_sts === 'l5' ? '점검중' :
+                          line.ln_sts === 'l3' ? '공정중' :
+                          line.ln_sts === 'l4' ? '준비중' :
+                            line.ln_sts === 'l5' ? '수리중' :
+                              line.ln_sts === 'l6' ? '점검중' :
                     '오류'
                     }}
                   </span>

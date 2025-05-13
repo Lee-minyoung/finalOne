@@ -20,33 +20,36 @@
           <td>{{ item.ln_no }}</td>
           <td>{{ item.ln_nm }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ item.st_tm }}</td>
-          <td>{{ item.end_tm }}</td>
+          <td>{{ dateFormat(item.st_tm, 'hh시 mm분') }}</td>
+          <td>{{ dateFormat(item.end_tm, 'hh시 mm분') }}</td>
           <td>{{ item.ord_qty }}</td>
-          <td>{{ item.pdn_qty }}</td>
           <td>{{ item.dft_qty }}</td>
+          <td>{{ item.pdn_qty }}</td>
           <!-- 라인 상태별 버튼 동적 렌더링 -->
           <td>
             <!-- l1: 비활성화 상태 -->
             <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>
-              대기 중
+              대기중
             </button>
             <!-- l2: 실행 버튼 -->
             <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">
-              실행
+              공정실행
             </button>
             <!-- l3: 작업현황 버튼 -->
             <button v-else-if="item.ln_sts === 'l3'" v-bind="item.pdn_opr_dtl_no" class="btn btn-sm btn-warning"
               @click="showStatus(item)">
-              작업현황
+              공정현황
+            </button>
+            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success">
+              공정완료
             </button>
             <!-- l4: 수리 중 버튼 -->
-            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-danger" @click="repair(item)">
-              수리 중
+            <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-danger" @click="repair(item)">
+              수리중
             </button>
             <!-- l5: 점검 중 버튼 -->
-            <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-info" @click="checkStatus(item)">
-              점검 중
+            <button v-else-if="item.ln_sts === 'l6'" class="btn btn-sm btn-info" @click="checkStatus(item)">
+              점검중
             </button>
           </td>
         </tr>
@@ -54,12 +57,19 @@
     </table>
   </div>
 
-  <LineManagementDtl v-if="showLineModal" :details="processDetailList" :line-no="selectedLineNo"
-    @close="showLineModal = false" />
+  <LineManagementDtl
+  v-if="showLineModal"
+  :details="processDetailList"
+  :line-no="selectedLineNo"
+  :line-info="selectedLineInfo"
+  @reload="handleReload"
+  @close="showLineModal = false"
+/>
 </template>
 
 <script>
 import axios from 'axios';
+import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
 import { useEmpStore } from '@/stores/empStore.js';  // 추가
 import LineManagementDtl from './LineManagementDtl.vue'
 // import useDateUtils from '@/composables/useDateUtils';
@@ -74,6 +84,7 @@ export default {
       empStore: useEmpStore(),
       showLineModal: false,            // ✅ 모달 표시 여부
       selectedLineNo: '',              // ✅ 선택된 라인
+      selectedLineInfo: {},        // ✅ 선택된 라인 정보 (추가!)
       processDetailList: []            // ✅ 모달에 넘길 데이터
     }
   },
@@ -92,6 +103,9 @@ export default {
     async fetchLineList() {
       const res = await axios.get('/api/lineList');
       this.LineList = res.data;
+    },
+    dateFormat(value, format) {
+      return useDateUtils.dateFormat(value, format)
     },
     async startLine(item) {
       const payload = {
@@ -112,9 +126,12 @@ export default {
 
     async showStatus(item) {
       console.log("🧩 선택된 item:", item);
-      this.selectedLineNo = item.ln_no;
-      this.showLineModal = true;
-
+      if (item) {
+        this.selectedLineNo = item.ln_no;
+        this.selectedLineInfo = item;
+        this.showLineModal = true;
+      } else {
+      }
       try {
         // ✅ ln_opr_dtl_no → pdn_ord_dtl_no로 변경
         const res = await axios.get(`/api/lineDetail/${item.pdn_ord_dtl_no}`);
@@ -124,7 +141,32 @@ export default {
         console.error("❌ 라인 상세 조회 실패:", err);
         alert("라인 상세 정보를 불러오지 못했습니다.");
       }
+    },
+    async handleReload({ line_no, forceUpdate, pdn_ord_dtl_no }) {
+    try {
+      // ✅ 전체 라인 리스트 갱신
+      const res = await axios.get('/api/lineList');
+      this.LineList = res.data;
+
+      // ✅ 선택된 라인 정보도 갱신
+      const updated = this.LineList.find(l => l.ln_no === line_no);
+      if (updated) {
+        this.selectedLineInfo = updated;
+      }
+
+      // ✅ 상세 공정 정보도 갱신
+      if (pdn_ord_dtl_no) {
+        const detailRes = await axios.get(`/api/lineDetail/${pdn_ord_dtl_no}`);
+        this.processDetailList = detailRes.data;
+      }
+
+      // ✅ 모달 내부에서도 최신화 가능하게 다시 전달
+      // this.showLineModal = false; ← 이미 자식이 닫음
+
+    } catch (err) {
+      console.error('❌ 라인 정보 갱신 실패:', err);
     }
+  }
   }
 
 }

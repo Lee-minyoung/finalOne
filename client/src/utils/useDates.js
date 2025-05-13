@@ -19,11 +19,19 @@ const dateFormat = function (value, format) {
   // 2자리로 표시하는 일
   let day = ("0" + date.getDate()).slice(-2);
 
+  
+  const hours = ('0' + date.getHours()).slice(-2);
+  const minutes = ('0' + date.getMinutes()).slice(-2);
+  const seconds = ('0' + date.getSeconds()).slice(-2);
+
   // 요청한 출력 포맷 중 각 항목(년도, 월, 일)에 해당하는 값들로 대체
   let result = format
     .replace("yyyy", year)
     .replace("MM", month)
-    .replace("dd", day);
+    .replace("dd", day)
+    .replace('hh', hours)
+    .replace('mm', minutes)
+    .replace('ss', seconds);
   return result;
 };
 
