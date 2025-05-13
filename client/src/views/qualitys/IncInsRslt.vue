@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-4">입고검사성적서</h2>
+      <h2 class="mb-4">입고검사성적서 작성</h2>
     </div>
     <!-- 조회 조건 -->
     <div class="input">

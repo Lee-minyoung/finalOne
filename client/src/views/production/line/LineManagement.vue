@@ -181,7 +181,7 @@ export default {
       icon: 'success',
       showCancelButton: true,
       confirmButtonText: '출고',
-      cancelButtonText: '취소',
+      cancelButtonText: '취  소',
       reverseButtons: true
     });
 
