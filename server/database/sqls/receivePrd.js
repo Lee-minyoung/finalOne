@@ -20,7 +20,7 @@ AND s.rslt_no NOT IN (
                         SELECT rel_doc
                         FROM prd_stk_hist
                         WHERE rel_doc = s.rslt_no)
-ORDER BY s.ins_dt`; 
+ORDER BY s.rslt_no DESC`; 
 
 // 입고완료 전체조회 // 입고일자 까지 나오면 좋겠다.
 const selectCompleteSpmInsRsltList =
@@ -41,7 +41,8 @@ WHERE ovr_jdg = 'n1'
 AND s.rslt_no IN (
                     SELECT rel_doc
                     FROM prd_stk_hist
-                    WHERE rel_doc = s.rslt_no)`; 
+                    WHERE rel_doc = s.rslt_no)
+ORDER BY s.rslt_no DESC`; 
 
 // 추가시 적용되는 제품LOT번호
 // 제품 LOT번호 = PRD250510001 = PRD + yyMMdd + 3자리 숫자, 

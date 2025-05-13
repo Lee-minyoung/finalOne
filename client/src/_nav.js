@@ -17,7 +17,7 @@ export default [
       {
          component:'CNavItem' , 
          name:'출하지시',
-         to:'/SpmInst',  
+         to:'/spmInstTest',  
       }, 
     ],
   },
@@ -75,7 +75,12 @@ export default [
         component:'CNavItem', 
         name:'자재입고처리',
         to:'/MatImport',
-      }
+      },
+      {
+        component: 'CNavItem',
+        name: '완제품입고처리',
+        to: '/receive-prd',
+      },
     ],
   },
 
@@ -197,11 +202,6 @@ export default [
         component: 'CNavItem',
         name: '설비관리',
         to: '/eqp',
-      },
-      {
-        component: 'CNavItem',
-        name: '완제품입고처리',
-        to: '/receive-prd',
       },
     ],
   },

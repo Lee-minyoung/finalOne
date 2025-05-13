@@ -18,56 +18,66 @@
             <!-- 사원번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
+                <label for="empNo" class="form-label me-3" style="min-width: 100px;">사원번호</label>
                 <input id="empNo" type="text" class="form-control" v-model="emp_no" readonly disabled />
               </div>
             </div>
             <!-- 입사일자 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="hireDt" class="form-label fw-bold me-3" style="min-width: 100px;">입사일자</label>
+                <label for="hireDt" class="form-label me-3" style="min-width: 100px;">입사일자</label>
                 <input id="hireDt" type="date" class="form-control" v-model="hire_dt" />
               </div>
             </div>
             <!-- 이름 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="nm" class="form-label fw-bold me-3" style="min-width: 100px;">이름</label>
+                <label for="nm" class="form-label me-3" style="min-width: 100px;">이름</label>
                 <input id="nm" type="text" class="form-control" v-model="nm" />
               </div>
             </div>
             <!-- 연락처 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ctt" class="form-label fw-bold me-3" style="min-width: 100px;">연락처</label>
+                <label for="ctt" class="form-label me-3" style="min-width: 100px;">연락처</label>
                 <input id="ctt" type="text" class="form-control" v-model="ctt" />
               </div>
             </div>
             <!-- 주소 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="addr" class="form-label fw-bold me-3" style="min-width: 100px;">주소</label>
-                <input id="addr" type="text" class="form-control" v-model="addr" />
+                <label for="addr" class="form-label me-3" style="min-width: 100px;">주소</label>
+                <div class="input-group">
+                  <input id="addr" type="text" class="form-control" v-model="addr" readonly />
+                  <button class="btn btn-outline-secondary" @click="openDaumPostcode">주소찾기</button>
+                </div>
+              </div>
+            </div>
+            <!-- 상세주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="addr" class="form-label me-3" style="min-width: 100px;">상세주소</label>
+                <input id="addr" type="text" class="form-control" v-model="addrPlus" placeholder="상세주소는 주소와 함께 저장됩니다."/>
               </div>
             </div>
             <!-- 은행명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bnkNm" class="form-label fw-bold me-3" style="min-width: 100px;">은행명</label>
+                <label for="bnkNm" class="form-label me-3" style="min-width: 100px;">은행명</label>
                 <input id="bnkNm" type="text" class="form-control" v-model="bnk_nm" />
               </div>
             </div>
             <!-- 계좌번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="acctNo" class="form-label fw-bold me-3" style="min-width: 100px;">계좌번호</label>
+                <label for="acctNo" class="form-label me-3" style="min-width: 100px;">계좌번호</label>
                 <input id="acctNo" type="text" class="form-control" v-model="acct_no" />
               </div>
             </div>
             <!-- 부서명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="deptNo" class="form-label fw-bold me-3" style="min-width: 100px;">부서명</label>
+                <label for="deptNo" class="form-label me-3" style="min-width: 100px;">부서명</label>
                 <select id="deptNo" class="form-select form-control" v-model="dept_no">
                   <option value=null>선택</option>
                   <option v-for="dept in deptInfo" :key="dept.dept_no" :value="dept.dept_no">{{ dept.dept_nm }}</option>
@@ -77,7 +87,7 @@
             <!-- 직급명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="pstNo" class="form-label fw-bold me-3" style="min-width: 100px;">직급명</label>
+                <label for="pstNo" class="form-label me-3" style="min-width: 100px;">직급명</label>
                 <select id="pstNo" class="form-select form-control" v-model="pst_no">
                   <option value=null>선택</option>
                   <option value="8">사원</option>
@@ -94,7 +104,7 @@
             <!-- 재직상태 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">재직상태</label>
+                <label for="lnNo" class="form-label me-3" style="min-width: 100px;">재직상태</label>
                 <input id="lnNo" type="text" class="form-control" value="재직" readonly disabled />
               </div>
             </div>
@@ -102,8 +112,8 @@
             <div class="col-md-12 mb-3">
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                  style="height: 100px" v-model="lv_rsn" readonly disabled></textarea>
-                <label for="floatingTextarea2" class="form-label fw-bold">휴직사유</label>
+                  style="height: 50px" v-model="lv_rsn" readonly disabled></textarea>
+                <label for="floatingTextarea2" class="form-label">휴직사유</label>
               </div>
             </div>
             <!-- 인사이력 -->
@@ -111,7 +121,7 @@
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
                   style="height: 100px" v-model="hr_hist"></textarea>
-                <label for="floatingTextarea2" class="form-label fw-bold">인사이력</label>
+                <label for="floatingTextarea2" class="form-label">인사이력</label>
               </div>
             </div>
           </div>
@@ -141,6 +151,7 @@ export default {
       dept_no: null, // 부서번호
       dept_nm: null, // 부서명
       pst_no: null, // 직급번호
+      addrPlus: null, // 상세주소
 
       deptInfo: [], // 부서 select option 만드는 데이터
     };
@@ -149,7 +160,23 @@ export default {
     this.getEmpNo();
     this.getDeptInfo();
   },
+  mounted() {
+    // 카카오맵 주소 검색 API
+    const script = document.createElement('script');
+    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    document.head.appendChild(script);
+  },
   methods: {
+    // 카카오맵 주소 검색 모달
+    openDaumPostcode() {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          let baseAddress = `[${data.zonecode}] ${data.address}`;
+          this.addr = baseAddress;
+          this.addrPlus = ''; // 상세주소 초기화
+        }
+      }).open();
+    },
     // emp_no를 받아 데이터 받아오는 함수
     async getEmpNo() {
       let result = await axios.get(`/api/empNo`)
@@ -175,6 +202,7 @@ export default {
       this.dept_no = null; // 부서번호
       this.dept_nm = null; // 부서명
       this.pst_no = null; // 직급번호
+      this.addrPlus = null; // 상세주소
     },
     // 저장 버튼 클릭시 실행할 함수 
     async empInsert() {
@@ -221,7 +249,7 @@ export default {
         ctt: this.ctt, // 연락처
         bnk_nm: this.bnk_nm, // 은행명
         acct_no: this.acct_no, // 계좌번호
-        addr: this.addr, // 주소
+        addr: this.addr + ' ' + this.addrPlus.trim(), // 주소
         hire_dt: this.hire_dt, // 입사일자
         lv_rsn: this.lv_rsn, // 휴직사유
         hr_hist: this.hr_hist, // 인사이력

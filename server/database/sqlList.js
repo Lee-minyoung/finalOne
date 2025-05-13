@@ -12,7 +12,8 @@ const login = require('./sqls/login.js');
 
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const purOrdInst=require('./sqls/purOrdInst.js'); 
-const matImport=require('./sqls/matImport.js'); //자재입고  
+const matImport=require('./sqls/matImport.js'); //자재입고 
+const purOrdView=require('./sqls/purOrdView.js'); //발주서조회 
 
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
@@ -26,6 +27,7 @@ const ln = require('./sqls/ln.js'); // 라인
 const eqp = require('./sqls/eqp.js'); // 설비
 const vdr = require('./sqls/vdr.js'); // 거래처
 const receivePrd = require('./sqls/receivePrd.js'); // 완제품 입고
+const home = require('./sqls/home.js'); // home
 
 module.exports = {
     // 펼침연산자(spread operator, ...)을 활용해 객체의 필드를 다른 객체로 쉽게 복사
@@ -41,6 +43,8 @@ module.exports = {
     ...lineManagement,//라인관리
     ...login,
     ...spm,
+    ...purOrdView, // 발주서조회
+    
 
     ...matImport, 
     ...vdr, 
@@ -57,4 +61,5 @@ module.exports = {
     ...eqp, // 설비
     ...vdr, // 거래처
     ...receivePrd, // 완제품 입고
+    ...home,
 }

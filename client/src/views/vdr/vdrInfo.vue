@@ -1,6 +1,6 @@
 <template>
   <!-- 우측 영역 시작 -->
-  <div class="col-md-7">
+  <div class="col-md-6">
     <!-- 우측 버튼 모음 영역 -->
     <div class="d-flex justify-content-between mb-3">
       <div> <!-- 버튼 왼쪽 정렬 -->
@@ -18,103 +18,120 @@
       <div v-if="vdrInfo.vdr_no"> <!-- 리스트에서 선택된 데이터가 있을 때 -->
         <div>
           <div class="row mb-2">
-            <!-- 거래처번호 -->
+            <!-- 1행: 거래처번호 + 사업자등록번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="vdrNo" class="form-label fw-bold me-3" style="min-width: 100px;">거래처번호</label>
+                <label for="vdrNo" class="form-label me-3" style="min-width: 100px;">거래처번호</label>
                 <input id="vdrNo" type="text" class="form-control" v-model="vdrInfo.vdr_no" readonly disabled />
               </div>
             </div>
-            <!-- 사업자등록번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bizRegNo" class="form-label fw-bold me-3" style="min-width: 100px;">사업자등록번호</label>
+                <label for="bizRegNo" class="form-label me-3" style="min-width: 100px;">사업자등록번호</label>
                 <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
             </div>
-            <!-- 상호명 -->
+            <!-- 2행: 상호명 + 대표자명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="cpyNm" class="form-label fw-bold me-3" style="min-width: 100px;">상호명</label>
+                <label for="cpyNm" class="form-label me-3" style="min-width: 100px;">상호명</label>
                 <input id="cpyNm" type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
               </div>
             </div>
-            <!-- 대표자명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ceoNm" class="form-label fw-bold me-3" style="min-width: 100px;">대표자명</label>
+                <label for="ceoNm" class="form-label me-3" style="min-width: 100px;">대표자명</label>
                 <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm" />
               </div>
             </div>
-            <!-- 사업장주소 -->
+            <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcAddr" class="form-label fw-bold me-3" style="min-width: 100px;">사업장주소</label>
-                <div class="d-flex gap-2" style="width: 100%;">
-                  <input id="ofcAddr" type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly />
-                  <button class="btn btn-primary" @click="openDaumPostcode" style="min-width: 90px;">주소 검색</button>
+                <label for="ofcAddr" class="form-label me-3" style="min-width: 100px;">사업장주소</label>
+                <div class="flex-grow-1 d-flex gap-2">
+                  <!-- 기본주소 입력 필드: 우편번호와 기본 도로명/지번 주소만 표시 -->
+                  <input id="ofcAddr" type="text" class="form-control" v-model="baseAddress" readonly />
+                  <button class="btn btn-outline-secondary" @click="openDaumPostcode" style="min-width: 40px;">
+                    <i class="bi bi-search"></i>
+                  </button>
                 </div>
               </div>
             </div>
-            <!-- 전화번호 -->
-            <div class="col-md-6 mb-3">
+            <!-- 상세주소: 건물명, 동/호수 등 상세 정보 입력 -->
+            <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcCtt" class="form-label fw-bold me-3" style="min-width: 100px;">전화번호</label>
+                <label style="min-width: 100px;" class="me-3"></label>
+                <div class="flex-grow-1">
+                  <input id="ofcAddrDetail" type="text" class="form-control" v-model="tempAddrDetail"
+                    @input="updateFullAddress" placeholder="상세주소" />
+                </div>
+              </div>
+            </div>
+            <!-- 5행: 전화번호 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcCtt" class="form-label me-3" style="min-width: 100px;">전화번호</label>
                 <input id="ofcCtt" type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
               </div>
             </div>
-            <!-- 담당자 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="mgrNm" class="form-label fw-bold me-3" style="min-width: 100px;">담당자</label>
-                <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
+            <!-- 6행: 담당자 + 담당자연락처 -->
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mgrNm" class="form-label me-3" style="min-width: 100px;">담당자</label>
+                    <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mgrCtt" class="form-label me-3" style="min-width: 100px;">담당자연락처</label>
+                    <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- 담당자연락처 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="mgrCtt" class="form-label fw-bold me-3" style="min-width: 100px;">담당자연락처</label>
-                <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
+            <!-- 7행: 사업장유형 + 사업장상태 -->
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="ofcTp" class="form-label me-3" style="min-width: 100px;">사업장유형</label>
+                    <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
+                      <option value="b1">판매처</option>
+                      <option value="b2">구매처</option>
+                      <option value="b3">혼합</option>
+                      <option value="b4">외주처</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="ofcSts" class="form-label me-3" style="min-width: 100px;">사업장상태</label>
+                    <select id="ofcSts" class="form-select" v-model="vdrInfo.ofc_sts">
+                      <option value="d1">정상</option>
+                      <option value="d2">휴업</option>
+                      <option value="d3">폐업</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- 사업장유형 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="ofcTp" class="form-label fw-bold me-3" style="min-width: 100px;">사업장유형</label>
-                <select id="ofcTp" class="form-select" v-model="vdrInfo.ofc_tp">
-                  <option value="b1">판매처</option>
-                  <option value="b2">구매처</option>
-                  <option value="b3">혼합</option>
-                  <option value="b4">외주처</option>
-                </select>
-              </div>
-            </div>
-            <!-- 사업장상태 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="ofcSts" class="form-label fw-bold me-3" style="min-width: 100px;">사업장상태</label>
-                <select id="ofcSts" class="form-select" v-model="vdrInfo.ofc_sts">
-                  <option value="d1">정상</option>
-                  <option value="d2">휴업</option>
-                  <option value="d3">폐업</option>
-                </select>
-              </div>
-            </div>
-            <!-- 사용여부 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
-                <select id="useYn" class="form-select" v-model="vdrInfo.use_yn" style="width: 100px;">
-                  <option value="f1">여</option>
-                  <option value="f2">부</option>
-                </select>
-              </div>
-            </div>
-            <!-- 생성일자 -->
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="rgtDt" class="form-label fw-bold me-3" style="min-width: 100px;">등록일자</label>
-                <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+            <!-- 8행: 등록일자 + 수정일자 -->
+            <div class="col-md-12 mb-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="rgtDt" class="form-label me-3" style="min-width: 100px;">등록일자</label>
+                    <input id="rgtDt" type="text" class="form-control" :value="dateFormat(vdrInfo.rgt_dt, 'yyyy-MM-dd')" readonly disabled />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <label for="mdfDt" class="form-label me-3" style="min-width: 100px;">수정일자</label>
+                    <input id="mdfDt" type="text" class="form-control" :value="dateFormat(vdrInfo.mdf_dt, 'yyyy-MM-dd')" readonly disabled />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -135,24 +152,28 @@ import CommonCodeFormat from '@/utils/useCommonCode.js'
 export default {
   /**
    * 거래처 상세 정보 컴포넌트
+   * 
    * - 선택된 거래처의 상세 정보를 조회하고 수정하는 기능 제공
    * - 사업자등록번호, 상호명, 대표자명 등 기본 정보 표시 및 수정
    * - 카카오맵 API를 통한 사업장 소재지 검색 기능
    * - 수정/삭제/초기화 기능 제공
    */
   props: {
-    vdr: Object, // 부모 컴포넌트로부터 전달받은 거래처 데이터
+    vdr: Object, // 부모 컴포넌트(vdr.vue)로부터 전달받은 거래처 데이터
   },
   data() {
     return {
-      vdrInfo: {}, // 거래처 상세 정보
+      vdrInfo: {},       // 거래처 상세 정보를 저장할 객체
+      tempAddrDetail: '', // 임시 상세주소 저장 (주소 분리 처리용)
+      baseAddress: '',    // 기본 주소 저장 (주소 분리 처리용)
     };
   },
   watch: {
     /**
      * 부모 컴포넌트로부터 전달받은 거래처 데이터 변경 감지
      * - 거래처 데이터가 변경되면 해당 거래처의 상세 정보를 조회
-     * @param {Object} vdr - 변경된 거래처 데이터
+     * 
+     * @param {Object} vdr - 변경된 거래처 데이터 객체
      */
     vdr() {
       let searchNo = this.vdr;
@@ -160,23 +181,26 @@ export default {
       this.getVdrInfo(searchNo.vdr_no);
     }
   },
-  created() {
-    // ... existing code ...
-  },
   mounted() {
     /**
      * 카카오맵 주소 검색 API 초기화
      * - 페이지 마운트 시 카카오 주소 검색 API 스크립트를 동적으로 로드
-     * - 스크립트 URL: //t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js
      * - API 로드 후 openDaumPostcode 메서드를 통해 주소 검색 기능 사용 가능
      */
     const script = document.createElement('script');
     script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     document.head.appendChild(script);
+
+    // Bootstrap Icons 추가 (주소 검색 버튼 아이콘용)
+    const link = document.createElement('link');
+    link.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
   },
   methods: {
     /**
-     * 공통 코드 포맷 변환
+     * 공통 코드 포맷 변환 (유틸리티 호출)
+     * 
      * @param {string} value - 변환할 코드 값
      * @returns {string} 변환된 코드 값
      */
@@ -185,9 +209,10 @@ export default {
     },
 
     /**
-     * 날짜 데이터 포맷 변환
+     * 날짜 데이터 포맷 변환 (유틸리티 호출)
+     * 
      * @param {string|Date} value - 변환할 날짜
-     * @param {string} format - 변환할 포맷
+     * @param {string} format - 변환할 포맷 (예: 'yyyy-MM-dd')
      * @returns {string} 변환된 날짜 문자열
      */
     dateFormat(value, format) {
@@ -195,9 +220,10 @@ export default {
     },
 
     /**
-     * 날짜를 YYYY-MM-DD 형식으로 변환
+     * 날짜를 YYYY-MM-DD 형식으로 변환 (간편 호출용)
+     * 
      * @param {string|Date} date - 변환할 날짜
-     * @returns {string} 변환된 날짜 문자열
+     * @returns {string} 'yyyy-MM-dd' 형식의 날짜 문자열
      */
     getDate(date) {
       return this.dateFormat(date, 'yyyy-MM-dd');
@@ -205,6 +231,15 @@ export default {
 
     /**
      * 선택된 거래처의 상세 정보를 서버로부터 조회
+     * 
+     * 1. 거래처 번호로 API 호출하여 상세 정보 조회
+     * 2. 사업장상태 기본값 설정 (없을 경우 '정상'으로 설정)
+     * 3. 주소 정보 파싱 (기본주소와 상세주소로 분리)
+     * 4. 내부 데이터는 원본 형식 유지
+     * 
+     * @개선사항 주소 정보를 화면에 표시할 때는 기본주소와 상세주소로 분리하되,
+     *          내부 데이터 구조는 원본을 유지하여 API 호출 시 일관성 확보
+     * 
      * @param {string} selected - 조회할 거래처 번호
      */
     async getVdrInfo(selected) {
@@ -212,13 +247,96 @@ export default {
         .catch(err => console.log(err));
       console.log(result);
       this.vdrInfo = result.data;
+
+      // 사업장상태가 없는 경우 기본값으로 '정상(d1)'으로 설정
+      if (!this.vdrInfo.ofc_sts) {
+        this.vdrInfo.ofc_sts = 'd1';
+      }
+
       console.log(this.vdrInfo);
+
+      // 주소 정보 파싱 (기본주소와 상세주소 분리)
+      if (this.vdrInfo.ofc_addr) {
+        // 원본 주소는 저장
+        const originalAddress = this.vdrInfo.ofc_addr;
+
+        // 주소 분리 처리
+        this.parseAddress();
+
+        // 내부 저장용 데이터는 원본 주소로 유지
+        this.vdrInfo.ofc_addr = originalAddress;
+      }
+    },
+
+    /**
+     * 주소 정보를 기본주소와 상세주소로 분리
+     * 
+     * 주소 처리 로직:
+     * 1. 주소가 공백으로 구분된 여러 부분으로 나누기
+     * 2. 마지막 부분이 숫자로 시작하는지 확인 (예: "203")
+     * 3. 도로명 주소 여부 확인 (예: "가련산로 5"는 도로명이므로 분리하지 않음)
+     * 4. 적절히 기본주소와 상세주소로 분리하여 화면 표시용 변수에 설정
+     * 
+     * @개선사항 이 메서드는 원본 주소를 기본주소와 상세주소로 분리만 하고
+     *          vdrInfo.ofc_addr는 수정하지 않아 원본 데이터 구조 보존
+     * 
+     * 예시:
+     * - "[12345] 서울 용산구 가련산로 5" -> 기본주소만 유지
+     * - "[12345] 서울 용산구 가련산로 5 203" -> "203"을 상세주소로 분리
+     */
+    parseAddress() {
+      const addrText = this.vdrInfo.ofc_addr || '';
+
+      // 도로명 주소와 상세주소를 적절히 분리
+      // 기본주소: 우편번호 + 도로명/지번 (ex: [12345] 서울 용산구 가련산로 5)
+      // 상세주소: 그 이후의 상세 정보 (ex: 203)
+
+      // 수정된 접근법: 기본주소는 그대로 유지하고, 숫자로 끝나는 부분만 있으면 상세주소로 분리
+      let baseAddr = addrText;
+      let detailAddr = '';
+
+      // 주소가 공백으로 구분된 여러 부분으로 이루어져 있는지 확인
+      const parts = addrText.split(' ');
+
+      if (parts.length > 1) {
+        // 마지막 부분이 숫자만으로 이루어져 있는지 확인 (ex: "203" 또는 "939")
+        const lastPart = parts[parts.length - 1];
+
+        // 마지막 부분이 숫자만 있거나 숫자로 시작하는 부분인 경우만 상세주소로 분리
+        if (/^\d+/.test(lastPart) && parts.length > 3) {
+          // 도로명 주소의 마지막 부분이 숫자인 경우 (ex: "가련산로 5")와 구분하기 위해
+          // 이전 부분이 도로명인지 확인 (로, 길 등으로 끝나는지)
+          const prevPart = parts[parts.length - 2];
+
+          if (prevPart.endsWith('로') || prevPart.endsWith('길') || prevPart.endsWith('대로')) {
+            // 도로명 주소의 일부이므로 기본주소에 포함
+            baseAddr = addrText;
+            detailAddr = '';
+          } else {
+            // 상세주소로 분리
+            baseAddr = parts.slice(0, parts.length - 1).join(' ');
+            detailAddr = lastPart;
+          }
+        } else {
+          // 이미 주소가 적절히 분리되어 있거나 분리할 필요가 없는 경우
+          baseAddr = addrText;
+          detailAddr = '';
+        }
+      }
+
+      // 화면 표시용 변수에 설정 (vdrInfo.ofc_addr은 변경하지 않음)
+      this.baseAddress = baseAddr;
+      this.tempAddrDetail = detailAddr;
     },
 
     /**
      * 수정된 거래처 정보를 서버에 전송하여 업데이트
-     * - 수정 성공 시 성공 메시지 표시 및 목록 새로고침
-     * - 수정 실패 시 에러 메시지 표시
+     * 
+     * 1. 현재 입력된 모든 필드 데이터를 객체로 구성
+     * 2. API 호출하여 서버에 업데이트 요청
+     * 3. 성공/실패에 따른 사용자 피드백 제공
+     * 
+     * @returns {Promise<void>}
      */
     async vdrUpdate() {
       let obj = {
@@ -238,8 +356,8 @@ export default {
         let result = await axios.put(`/api/vdr/${this.vdrInfo.vdr_no}`, obj);
         if (result.data.isUpdated) {
           alert('수정되었습니다.');
-          this.$emit('vdr-reload');
-          this.getVdrInfo(this.vdrInfo.vdr_no);
+          this.$emit('vdr-reload'); // 목록 새로고침 이벤트 발생
+          this.getVdrInfo(this.vdrInfo.vdr_no); // 최신 정보로 다시 조회
         } else {
           alert('수정되지 않았습니다.\n데이터를 확인해보세요.');
         }
@@ -270,10 +388,11 @@ export default {
 
     /**
      * 선택된 거래처 삭제
-     * - 사용자에게 삭제 확인 메시지 표시
-     * - 확인 시 서버에 삭제 요청 전송
-     * - 삭제 성공 시 성공 메시지 표시 및 목록 새로고침
-     * - 삭제 실패 시 에러 메시지 표시
+     * 
+     * 1. 사용자에게 삭제 확인 메시지 표시
+     * 2. 확인 시 서버에 삭제 요청 전송
+     * 3. 성공/실패에 따른 사용자 피드백 제공
+     * 
      * @param {string} vdrNo - 삭제할 거래처 번호
      */
     async deleteVdr(vdrNo) {
@@ -283,8 +402,8 @@ export default {
             let result = await axios.delete(`/api/vdr/${vdrNo}`);
             if (result.data.affectedRows > 0) {
               alert('정상적으로 삭제되었습니다.');
-              this.$emit('vdr-reload');
-              this.vdrInfo = {};
+              this.$emit('vdr-reload'); // 목록 새로고침 이벤트 발생
+              this.vdrInfo = {}; // 현재 표시 데이터 초기화
             } else {
               alert('삭제되지 않았습니다.');
             }
@@ -308,17 +427,49 @@ export default {
 
     /**
      * 카카오맵 주소 검색 팝업 열기
-     * - 카카오맵 주소 검색 API를 사용하여 주소 검색 팝업창 표시
-     * - 사용자가 주소 선택 시 oncomplete 콜백 함수가 실행됨
-     * - 선택된 주소는 vdrInfo.ofc_addr에 자동으로 설정됨
-     * @returns {void}
+     * 
+     * 1. 카카오맵 주소 검색 API를 사용하여 주소 검색 팝업창 표시
+     * 2. 사용자가 주소 선택 시 oncomplete 콜백 함수가 실행됨
+     * 3. 선택된 주소를 우편번호 포함 형식으로 기본주소(baseAddress)에만 설정
+     * 4. 상세주소는 초기화하여 사용자가 직접 입력하도록 함
+     * 5. 내부 데이터(vdrInfo.ofc_addr)는 updateFullAddress()를 통해 업데이트
+     * 
+     * @개선사항 주소 입력과 표시를 분리하여 사용자 경험 개선
      */
     openDaumPostcode() {
       new window.daum.Postcode({
         oncomplete: (data) => {
-          this.vdrInfo.ofc_addr = data.address;
+          // 기본 주소만 baseAddress에 설정
+          this.baseAddress = `[${data.zonecode}] ${data.address}`;
+
+          // 상세주소 초기화
+          this.tempAddrDetail = '';
+
+          // 내부 데이터는 업데이트 (저장용)
+          this.updateFullAddress();
         }
       }).open();
+    },
+
+    /**
+     * 전체 주소 업데이트
+     * 
+     * - 기본 주소(baseAddress)와 상세주소(tempAddrDetail)를 합쳐서 내부 데이터(vdrInfo.ofc_addr)에 저장
+     * - 사용자가 상세주소를 입력/수정할 때마다 호출됨
+     * - 기본주소 입력 필드는 그대로 유지하고 내부 데이터만 갱신
+     * 
+     * @개선사항 사용자 인터페이스에서는 기본주소와 상세주소를 분리해서 보여주되,
+     *          서버 저장/API 호출 시에는 전체 주소를 하나로 합쳐서 사용
+     */
+    updateFullAddress() {
+      // 기본주소와 상세주소를 결합하여 내부 데이터만 갱신
+      if (this.tempAddrDetail) {
+        this.vdrInfo.ofc_addr = `${this.baseAddress} ${this.tempAddrDetail}`;
+      } else {
+        this.vdrInfo.ofc_addr = this.baseAddress;
+      }
+
+      // 입력 필드의 표시는 변경하지 않음 (기본주소 필드는 그대로 유지)
     },
   }
 };
@@ -332,65 +483,5 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 입력 필드 스타일 개선 */
-.form-control,
-.form-select {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* 입력 필드 hover 효과 */
-.form-control:hover,
-.form-select:hover {
-  border-color: #86b7fe;
-}
-
-/* 라벨 스타일 */
-.form-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0;
-}
-
-/* readonly와 disabled 입력창 스타일 */
-input[readonly],
-input[disabled] {
-  background-color: #e9ecef !important;
-  cursor: not-allowed;
-}
-
-input[readonly]:focus,
-input[disabled]:focus {
-  background-color: #e9ecef !important;
-  border-color: #ced4da;
-  box-shadow: none;
-}
-
-/* 버튼 스타일 */
-.btn {
-  font-size: 0.95rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
 }
 </style>

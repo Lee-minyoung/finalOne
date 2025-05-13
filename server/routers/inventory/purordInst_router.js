@@ -74,6 +74,12 @@ router.get('/PlnToOrd',async(req,res)=>{
       res.json(plnToOrd); 
 })
 
+//발주서보기 
+router.get('/purOrdView',async(req,res)=>{
+  const purOrdView=await purOrdInstService.findPurOrdView()
+                        .catch(err=>console.log(err))
+      res.json(purOrdView); 
+})
 
 
 

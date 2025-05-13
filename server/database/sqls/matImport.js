@@ -13,20 +13,32 @@ const selectMatImportList=
 // left join mat m on mpp.mat_no=m.mat_no 
 // WHERE iir.ovr_jdg='n1'
 // GROUP BY po.pur_ord_no`;
-`SELECT po.pur_ord_no,po.mat_no,m.mat_nm as 자재명 ,po.qty ,po.unt_prc,po.vdr_no,DATE_FORMAT(DATE_ADD(iir.ins_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,v.cpy_nm AS 거래처명 
- from pur_ord po join  inc_ins_rslt iir on po.pur_ord_no=iir.pur_ord_no
+// `SELECT po.pur_ord_no,po.mat_no,m.mat_nm as 자재명 ,po.qty ,po.unt_prc,po.vdr_no,DATE_FORMAT(DATE_ADD(iir.ins_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,v.cpy_nm AS 거래처명 
+//  from pur_ord po join  inc_ins_rslt iir on po.pur_ord_no=iir.pur_ord_no
+//  join mat_pur_pln mpp on po.mat_no=mpp.mat_no
+//  left join mat m on mpp.mat_no=m.mat_no
+//  left JOIN vdr v ON po.vdr_no=v.vdr_no
+//  WHERE iir.ovr_jdg='n1'
+//  GROUP BY po.pur_ord_no`;
+`SELECT po.pur_ord_no,po.mat_no,m.mat_nm as 자재명 ,po.qty ,po.unt_prc,po.vdr_no,DATE_FORMAT(DATE_ADD(mpp.crt_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,v.cpy_nm AS 거래처명 
+ from pur_ord po 
  join mat_pur_pln mpp on po.mat_no=mpp.mat_no
  left join mat m on mpp.mat_no=m.mat_no
  left JOIN vdr v ON po.vdr_no=v.vdr_no
- WHERE iir.ovr_jdg='n1'
- GROUP BY po.pur_ord_no`;
+ GROUP BY po.pur_ord_no`; 
 
-const selectLastLotNo=`
-SELECT lot_no 
-    FROM mat_stk 
-    WHERE lot_no LIKE CONCAT('MAT', DATE_FORMAT(NOW(),'%m%d'),'%') 
-    ORDER BY lot_no DESC 
-    LIMIT 1`;
+const selectLastLotNo=
+// `
+// SELECT lot_no 
+//     FROM mat_stk 
+//     WHERE lot_no LIKE CONCAT('MAT', DATE_FORMAT(NOW(),'%m%d'),'%') 
+//     ORDER BY lot_no DESC 
+//     LIMIT 1`;
+`SELECT lot_no 
+FROM mat_stk 
+WHERE lot_no LIKE CONCAT('MAT', DATE_FORMAT(NOW(), '%Y%m%d'), '%') 
+ORDER BY lot_no DESC 
+LIMIT 1`;
     
 const selectLastLothistNo=`
 SELECT MAX(mat_stk_hist_no) AS maxMatHist FROM mat_stk_hist`;    

@@ -30,6 +30,12 @@ const findMatPurPlanChecked=async () => {
     return orderedNo; 
   }   
 
+  //발주서 보기 
+  const findPurOrdView=async()=>{
+    const result=await mariadb.query('selectPurOrdList');
+    return result; 
+  }
+
 
 module.exports={
     addPurOrdNoByPlnNo,
@@ -38,4 +44,5 @@ module.exports={
     findMatPurPlanChecked, // 
     chkMatStsq1q2,
     findPlnToOrd,
+    findPurOrdView,
 }

@@ -169,11 +169,13 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
         //   continue;  
         // }
         
+        //자재번호에 해당하는 모든 자재를 조회후 차감하기 
         for(const lot of lots){
             const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
             await inventoryService.minusCurStkByLot(lot.lot_no,minusQty);
             req_qty-=minusQty;      
-          } 
+          }
+          //lot에서 차감할 만큼  다 차감한 후   
           if(req_qty>0){
             console.log('자재lot부족');
             //서버 ->  프론트로 알려야함 바로 자재구매계획 등록?? 일단그건보류... 
@@ -193,6 +195,7 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
     res.json({message:'lot차감실패',error:err.message});  
   }
 })
+
 // 자재요청버튼클릭 -> 자재구매계획 insert 
 router.post('/inventory/purOrdByClickButton', async (req, res) => {
   const info = req.body;

@@ -48,11 +48,8 @@ const selectLineList =
       , lo.ord_qty
       , lo.pdn_qty
       , lo.dft_qty
-<<<<<<< HEAD
-      , pod.pdn_ord_dtl_no
-=======
       , pod.pdn_ord_no
->>>>>>> 363957d43a3cec3a951f8ca0ee8bbfa149c5c10a
+      , pod.pdn_ord_dtl_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
    RIGHT JOIN ln l ON pod.ln_no = l.ln_no
