@@ -48,7 +48,7 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+import userDateUtils from '@/utils/useDates2.js';
 import empSelectModal from '@/views/modal/empSelectModal.vue';
 
 export default {
@@ -75,12 +75,12 @@ export default {
     this.getToday();
   },
   methods: {
-    // 날짜 데이터 포멧 정의
-    dateFormat(value, format) {
-      return userDateUtils.dateFormat(value, format);
-    },
+    // // 날짜 데이터 포멧 정의
+    // dateFormat(value, format) {
+    //   return userDateUtils.dateFormat(value, format);
+    // },
     getToday() {
-      this.today = this.dateFormat(null, 'yyyy-MM-dd');
+      this.today = userDateUtils.dateFormat(null, 'yyyy-MM-dd');
     },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptNo() {
@@ -146,7 +146,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }

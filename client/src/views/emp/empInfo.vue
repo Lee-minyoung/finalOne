@@ -21,14 +21,14 @@
             <!-- 사원번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="empNo" class="form-label fw-bold me-3" style="min-width: 100px;">사원번호</label>
+                <label for="empNo" class="form-label me-3" style="min-width: 100px;">사원번호</label>
                 <input id="empNo" type="text" class="form-control" v-model="empInfo.emp_no" readonly disabled />
               </div>
             </div>
             <!-- 입사일자 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="hireDt" class="form-label fw-bold me-3" style="min-width: 100px;">입사일자</label>
+                <label for="hireDt" class="form-label me-3" style="min-width: 100px;">입사일자</label>
                 <input id="hireDt" type="date" class="form-control" :value="formatHireDate"
                   @input="updateHireDate($event.target.value)" />
                 <!--@input => HTML 입력 요소의 값이 변경될 때마다 발생-->
@@ -38,14 +38,14 @@
             <!-- 이름 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="nm" class="form-label fw-bold me-3" style="min-width: 100px;">이름</label>
+                <label for="nm" class="form-label me-3" style="min-width: 100px;">이름</label>
                 <input id="nm" type="text" class="form-control" v-model="empInfo.nm" />
               </div>
             </div>
             <!-- 연락처 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ctt" class="form-label fw-bold me-3" style="min-width: 100px;">연락처</label>
+                <label for="ctt" class="form-label me-3" style="min-width: 100px;">연락처</label>
                 <input id="ctt" type="text" class="form-control" v-model="empInfo.ctt" />
               </div>
             </div>
@@ -54,7 +54,7 @@
               <div class="d-flex align-items-center">
                 <label for="addr" class="form-label me-3" style="min-width: 100px;">주소</label>
                 <div class="input-group">
-                  <input id="addr" type="text" class="form-control" v-model="empInfo.addr" readonly/>
+                  <input id="addr" type="text" class="form-control" v-model="empInfo.addr" readonly />
                   <button class="btn btn-outline-secondary" @click="openDaumPostcode">주소찾기</button>
                 </div>
               </div>
@@ -63,27 +63,28 @@
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="addr" class="form-label me-3" style="min-width: 100px;">상세주소</label>
-                <input id="addr" type="text" class="form-control" v-model="addrPlus" placeholder="상세주소는 주소와 함께 저장됩니다."/>
+                <input id="addr" type="text" class="form-control" v-model="addrPlus"
+                  placeholder="상세주소는 주소와 함께 저장됩니다." />
               </div>
             </div>
             <!-- 은행명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bnkNm" class="form-label fw-bold me-3" style="min-width: 100px;">은행명</label>
+                <label for="bnkNm" class="form-label me-3" style="min-width: 100px;">은행명</label>
                 <input id="bnkNm" type="text" class="form-control" v-model="empInfo.bnk_nm" />
               </div>
             </div>
             <!-- 계좌번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="acctNo" class="form-label fw-bold me-3" style="min-width: 100px;">계좌번호</label>
+                <label for="acctNo" class="form-label me-3" style="min-width: 100px;">계좌번호</label>
                 <input id="acctNo" type="text" class="form-control" v-model="empInfo.acct_no" />
               </div>
             </div>
             <!-- 부서명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="deptNo" class="form-label fw-bold me-3" style="min-width: 100px;">부서명</label>
+                <label for="deptNo" class="form-label me-3" style="min-width: 100px;">부서명</label>
                 <select id="deptNo" class="form-select form-control" v-model="empInfo.dept_no">
                   <option v-for="dept in deptInfo" :key="dept.dept_no" :value="dept.dept_no">{{ dept.dept_nm }}</option>
                 </select>
@@ -92,7 +93,7 @@
             <!-- 직급명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="pstNo" class="form-label fw-bold me-3" style="min-width: 100px;">직급명</label>
+                <label for="pstNo" class="form-label me-3" style="min-width: 100px;">직급명</label>
                 <select id="pstNo" class="form-select form-control" v-model="empInfo.pst_no">
                   <option value="8">사원</option>
                   <option value="7">주임</option>
@@ -108,7 +109,7 @@
             <!-- 재직상태 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">재직상태</label>
+                <label for="lnNo" class="form-label me-3" style="min-width: 100px;">재직상태</label>
                 <select id="pstNo" class="form-select form-control" v-model="empInfo.emp_sts">
                   <option value="a1">재직</option>
                   <option value="a2">휴직</option>
@@ -121,7 +122,7 @@
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
                   style="height: 50px" v-model="empInfo.lv_rsn"></textarea>
-                <label for="floatingTextarea2" class="form-label fw-bold">휴직사유</label>
+                <label for="floatingTextarea2" class="form-label">휴직사유</label>
               </div>
             </div>
             <!-- 인사이력 -->
@@ -129,7 +130,7 @@
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
                   style="height: 100px" v-model="empInfo.hr_hist"></textarea>
-                <label for="floatingTextarea2" class="form-label fw-bold">인사이력</label>
+                <label for="floatingTextarea2" class="form-label">인사이력</label>
               </div>
             </div>
           </div>
@@ -188,8 +189,8 @@ export default {
     }
   },
   methods: {
-        // 카카오맵 주소 검색 모달
-        openDaumPostcode() {
+    // 카카오맵 주소 검색 모달
+    openDaumPostcode() {
       new window.daum.Postcode({
         oncomplete: (data) => {
           let baseAddress = `[${data.zonecode}] ${data.address}`;
@@ -202,7 +203,6 @@ export default {
       let result = await axios.get(`/api/deptModal`)
         .catch(err => console.log(err));
       this.deptInfo = result.data;
-      this.addrPlus = null;
     },
     // 날짜 데이터 포멧 정의
     dateFormat(value, format) {
@@ -213,6 +213,7 @@ export default {
       let result = await axios.get(`/api/emp/${selected}`)
         .catch(err => console.log(err));
       this.empInfo = result.data;
+      this.addrPlus = '';
     },
     // 수정된 내용을 DB에 저장
     async empUpdate() {
@@ -321,7 +322,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }

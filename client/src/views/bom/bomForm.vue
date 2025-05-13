@@ -20,21 +20,21 @@
             <!-- BOM번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bomNo" class="form-label fw-bold me-3" style="min-width: 100px;">BOM번호</label>
+                <label for="bomNo" class="form-label me-3" style="min-width: 100px;">BOM번호</label>
                 <input id="bomNo" type="text" class="form-control" v-model="bom_No" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
+                <label for="useYn" class="form-label me-3" style="min-width: 100px;">사용여부</label>
                 <input id="useYn" type="text" class="form-control" value="여" readonly disabled />
               </div>
             </div>
             <!-- 제품명 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
+                <label for="prdNm" class="form-label me-3" style="min-width: 100px;">제품명</label>
                 <div class="input-group">
                   <input id="prdNm" type="text" class="form-control" v-model="prd_nm" placeholder="제품을 선택해주세요."
                     readonly />
@@ -50,12 +50,12 @@
           <table class="table table-bordered text-center">
             <thead class="table-light">
               <tr>
-                <th>자재번호</th>
-                <th>자재명</th>
-                <th>용량</th>
-                <th>단위</th>
-                <th>비고</th>
-                <th>X</th>
+                <th style="font-weight: normal;">자재번호</th>
+                <th style="font-weight: normal;">자재명</th>
+                <th style="font-weight: normal;">용량</th>
+                <th style="font-weight: normal;">단위</th>
+                <th style="font-weight: normal;">비고</th>
+                <th style="font-weight: normal;">X</th>
               </tr>
             </thead>
             <tbody>
@@ -279,7 +279,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
