@@ -20,17 +20,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 30%;">제품번호</th>
-                  <th class="text-center" style="width: 40%;">제품명</th>
-                  <th class="text-center" style="width: 30%;">제품유형</th>
+                  <th class="w-10">제품번호</th>
+                  <th class="w-10">제품명</th>
+                  <th class="w-10">유통기한</th>
+                  <th class="w-10">제품유형</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="prd in filteredPrdList" :key="prd.prd_no" @click="selectPrd(prd.prd_no)"
                   :class="{ 'table-primary': selectedPrd && selectedPrd.prd_no === prd.prd_no }" class="table-hover">
-                  <td class="text-center">{{ prd.prd_no }}</td>
-                  <td>{{ prd.prd_nm }}</td>
-                  <td class="text-center">{{ prdTypeFormat(prd.prd_tp) }}</td>
+                  <td class="w-10">{{ prd.prd_no }}</td>
+                  <td class="w-10">{{ prd.prd_nm }}</td>
+                  <td class="w-10" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-10">{{ prdTypeFormat(prd.prd_tp) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -45,116 +47,203 @@
 </template>
 
 <script>
-// 제품 관리 컴포넌트
-import prdInfo from './prdInfo.vue'; // 제품 상세 정보 컴포넌트
-import prdForm from './prdForm.vue'; // 제품 등록/수정 폼 컴포넌트
-import axios from 'axios'; // AJAX 모듈
+/**
+ * 제품 관리 메인 컴포넌트
+ * 
+ * 이 컴포넌트는 제품 목록 조회, 검색, 필터링 및 상세정보 표시를 담당합니다.
+ * 좌측에는 제품 목록이 표시되고, 우측에는 선택한 제품의 상세 정보 또는 제품 등록 폼이 표시됩니다.
+ */
+import prdInfo from './prdInfo.vue';    // 제품 상세 정보 컴포넌트
+import prdForm from './prdForm.vue';    // 제품 등록/수정 폼 컴포넌트
+import axios from 'axios';              // HTTP 요청을 위한 AJAX 모듈
 import CommonCodeFormat from '@/utils/useCommonCode.js' // 공통 코드 포맷팅 유틸리티
 
 export default {
   components: { prdInfo, prdForm }, // 자식 컴포넌트 등록
+  
+  /**
+   * 컴포넌트 데이터 정의
+   * @returns {Object} 컴포넌트에서 사용하는 반응형 데이터 객체
+   */
   data() {
     return {
-      searchQuery: '', // 검색어
-      selectedType: '', // 제품유형 필터
-      selectedPrd: null, // 선택된 제품
-      prdList: [], // 제품 목록
-      InfoView: true, // 상세보기 여부
+      searchQuery: '',     // 제품명 검색어 - 사용자가 입력한 검색어로 제품 목록 필터링
+      selectedType: '',    // 제품유형 필터 - 특정 유형(반제품/제품)으로 목록 필터링
+      selectedPrd: null,   // 현재 선택된 제품 객체 - 상세정보 표시에 사용
+      prdList: [],         // 전체 제품 목록 데이터 배열 - API에서 로드
+      InfoView: true,      // 화면 모드 제어 (true: 상세보기, false: 등록폼)
     };
   },
+  
+  /**
+   * 계산된 속성 정의
+   * 원본 데이터를 변환하거나 필터링해서 새로운 데이터를 생성
+   */
   computed: {
-    filteredPrdList() { // 제품 목록 필터링
+    /**
+     * 필터링된 제품 목록
+     * 검색어와 선택된 제품유형에 따라 목록을 필터링하여 반환
+     * @returns {Array} 필터링된 제품 데이터 배열
+     */
+    filteredPrdList() {
       return this.prdList.filter(prd =>
-        prd.prd_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) && // 제품명 검색
-        (this.selectedType === '' || prd.prd_tp === this.selectedType) // 제품유형 필터링
+        // 검색어가 제품명에 포함되어 있고 (대소문자 구분 없음)
+        prd.prd_nm.toLowerCase().includes(this.searchQuery.toLowerCase()) && 
+        // 제품유형이 선택되지 않았거나(전체) 선택된 유형과 일치
+        (this.selectedType === '' || prd.prd_tp === this.selectedType)
       );
     },
   },
-  created() { // 컴포넌트 생성 시 실행
-    this.getPrdList(); // 제품 목록 조회
+  
+  /**
+   * 컴포넌트 생성 시 실행되는 라이프사이클 훅
+   * 컴포넌트가 DOM에 마운트되기 전에 데이터를 초기화
+   */
+  created() {
+    this.getPrdList();  // 컴포넌트 생성 시 제품 목록 데이터 로드
   },
+  
+  /**
+   * 컴포넌트 메서드 정의
+   * 사용자 이벤트 처리 및 비즈니스 로직 구현
+   */
   methods: {
-    prdTypeFormat(value) { // 제품유형 코드를 한글로 변환
+    /**
+     * 제품유형 코드를 사용자가 이해하기 쉬운 한글 텍스트로 변환
+     * @param {string} value - 제품유형 코드 (j4, j5 등)
+     * @returns {string} 변환된 한글 텍스트
+     */
+    prdTypeFormat(value) {
       switch (value) {
         case 'j4': return '반제품';
         case 'j5': return '제품';
         default: return value;
       }
     },
-    async getPrdList() { // 제품 목록 조회
+    
+    /**
+     * 남은 유통기한 계산 (개월 수)
+     * 제품의 등록일자와 유통기한(개월)을 기준으로 현재 남은 기간을 계산
+     * @param {Object} prd - 제품 객체
+     * @returns {string} 남은 유통기한 텍스트 (예: '12개월', '만료됨')
+     */
+    calculateRemainingMonths(prd) {
+      // 등록일자나 유통기한 정보가 없으면 '-' 반환
+      if (!prd.rgt_dt || !prd.exp_dt) return '-';
+      
+      // 등록일자를 Date 객체로 변환
+      const regDate = new Date(prd.rgt_dt);
+      
+      // 유통기한 만료일 계산 (등록일 + 유통기한 개월 수)
+      const expiryDate = new Date(regDate);
+      expiryDate.setMonth(expiryDate.getMonth() + prd.exp_dt);
+      
+      // 현재 날짜
+      const today = new Date();
+      
+      // 남은 개월 수 계산
+      const remainingTime = expiryDate - today;
+      const remainingMonths = Math.floor(remainingTime / (1000 * 60 * 60 * 24 * 30.5));
+      
+      // 남은 개월 수가 음수이면 이미 만료됨
+      if (remainingMonths < 0) {
+        return '만료됨';
+      }
+      
+      // 남은 개월 수 텍스트 반환
+      return remainingMonths + '개월';
+    },
+    
+    /**
+     * 남은 유통기한에 따른 시각적 스타일 클래스 반환
+     * - 만료됨: 빨간색 굵게
+     * - 3개월 미만: 노란색 굵게
+     * - 그 외: 기본 스타일
+     * @param {Object} prd - 제품 객체
+     * @returns {string} CSS 클래스명
+     */
+    getRemainingClass(prd) {
+      // 등록일자나 유통기한 정보가 없으면 빈 문자열 반환
+      if (!prd.rgt_dt || !prd.exp_dt) return '';
+      
+      // 만료일 계산
+      const regDate = new Date(prd.rgt_dt);
+      const expiryDate = new Date(regDate);
+      expiryDate.setMonth(expiryDate.getMonth() + prd.exp_dt);
+      
+      // 현재 날짜
+      const today = new Date();
+      
+      // 남은 개월 수 계산
+      const remainingTime = expiryDate - today;
+      const remainingMonths = Math.floor(remainingTime / (1000 * 60 * 60 * 24 * 30.5));
+      
+      // 유통기한에 따른 스타일 클래스 반환
+      if (remainingMonths < 0) {
+        return 'text-danger fw-bold';  // 만료됨: 빨간색 굵게
+      } else if (remainingMonths < 3) {
+        return 'text-warning fw-bold';  // 3개월 미만: 노란색 굵게
+      }
+      
+      // 그 외: 기본 스타일
+      return '';
+    },
+    
+    /**
+     * 제품 목록 조회
+     * 서버 API를 호출하여 전체 제품 목록을 가져옴
+     */
+    async getPrdList() {
       try {
         const result = await axios.get('/api/prd'); // 제품 목록 API 호출
-        this.prdList = result.data; // 제품 목록 저장
+        this.prdList = result.data;                 // 결과 데이터를 컴포넌트 데이터에 저장
       } catch (err) {
+        // 오류 처리
         console.error('제품 목록 조회 실패:', err);
         alert('제품 목록을 불러오는데 실패했습니다.');
       }
     },
-    async selectPrd(prdNo) { // 제품 선택 시 상세 정보 조회
+    
+    /**
+     * 제품 선택 시 상세 정보 조회
+     * 선택한 제품의 상세 정보를 서버에서 가져와서 표시
+     * @param {string} prdNo - 조회할 제품번호
+     */
+    async selectPrd(prdNo) {
       this.InfoView = true; // 상세보기 모드로 전환
+      
       try {
-        const result = await axios.get(`/api/prd/${prdNo}`); // 제품 상세 정보 API 호출
+        // 선택한 제품번호로 상세 정보 API 호출
+        const result = await axios.get(`/api/prd/${prdNo}`);
+        
         if (result.data) {
-          this.selectedPrd = result.data; // 선택된 제품 정보 저장
-        } else { // 제품 정보가 없을 경우
+          // 결과가 있으면 선택된 제품 정보 저장
+          this.selectedPrd = result.data;
+        } else {
+          // 제품 정보가 없을 경우 오류 처리
           console.error('제품을 찾을 수 없습니다:', prdNo);
           alert('제품 정보를 찾을 수 없습니다.');
         }
-      } catch (err) { // 제품 상세 정보 조회 실패
+      } catch (err) {
+        // API 호출 실패 시 오류 처리
         console.error('제품 상세 정보 조회 실패:', err);
         alert('제품 상세 정보를 불러오는데 실패했습니다.');
       }
     },
-    msg(data) { // 상세보기/등록폼 전환
-      this.InfoView = data; // 상세보기 여부 설정
+    
+    /**
+     * 상세보기/등록폼 모드 전환
+     * 자식 컴포넌트에서 이벤트를 통해 호출됨
+     * @param {boolean} data - 상세보기 여부 (true: 상세보기, false: 등록폼)
+     */
+    msg(data) {
+      this.InfoView = data;
     },
   },
 };
 </script>
 
 <style scoped>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.table-container {
-  height: 500px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.table-container thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  z-index: 1;
-  padding: 12px 8px;
-  /* 헤더 패딩 조정 */
-}
-
-.table-container tbody td {
-  padding: 10px 8px;
-  /* 셀 패딩 조정 */
-  vertical-align: middle;
-  /* 수직 정렬 */
-  line-height: 1.4;
-  /* 줄 간격 조정 */
-}
-
-.table-container tbody tr {
-  height: 45px;
-  /* 행 높이 고정 */
-}
-
-.table-primary {
-  background-color: #cce5ff;
-}
-
+@import '@/assets/styles/base-table.css';
 </style>
 

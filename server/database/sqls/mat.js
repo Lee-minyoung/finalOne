@@ -44,9 +44,10 @@ VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, sysdate() )`;
 // 자재 정보 수정
 // - 특정 자재번호에 해당하는 자재의 정보를 수정
 // - 수정할 필드와 값을 동적으로 설정 가능
+// - 수정일자는 현재 시스템 날짜로 자동 설정
 const updateMat =
   `UPDATE mat
-SET ?
+SET ?, mdf_dt = sysdate()
 WHERE mat_no = ?`;
 
 // 자재 정보 삭제
