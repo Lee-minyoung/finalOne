@@ -53,8 +53,9 @@ const addRsltDtl = async (dtlList) => {
 // 마지막 번호 조회
 const findLastRsltNo = async () => {
   let [row] = await mariadb.query("selectLastRsltNo").catch(err => console.log(err));
-   console.log('lastNo row:', row); // 로그 추가
-   return (row && row.last_no !== null) ? row.last_no : 0;
+  console.log('lastNo row:', row); // 로그로 실제 값 확인
+  // row.last_no가 null이면 0, 아니면 숫자
+  return (row && row.last_no !== null) ? row.last_no : 0;
 };
 
 module.exports ={

@@ -59,7 +59,7 @@ const insertRsltDtl=
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 // 마지막 번호 조회
-const selectLastRsltNo =
+const selectLastRsltNo1 =
 `SELECT MAX(CAST(SUBSTRING(rslt_no, 5) AS UNSIGNED)) AS last_no
  FROM inc_ins_rslt
  WHERE rslt_no LIKE 'ISJ-%'`;
@@ -71,5 +71,5 @@ module.exports={
   deleteIncInsStd,
   insertRslt,
   insertRsltDtl,
-  selectLastRsltNo
+  selectLastRsltNo1
 };
