@@ -56,9 +56,10 @@
                 <select id="lnSts" class="form-select form-control" v-model="ln_sts">
                   <option value="l1">비가동</option>
                   <option value="l2">대기중</option>
-                  <option value="l3">사용중</option>
-                  <option value="l4">수리중</option>
-                  <option value="l5">점검중</option>
+                  <option value="l3">공정중</option>
+                  <option value="l4">공정완료</option>
+                  <option value="l5">수리중</option>
+                  <option value="l6">점검중</option>
                 </select>
               </div>
             </div>

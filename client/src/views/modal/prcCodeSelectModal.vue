@@ -11,24 +11,25 @@
             <input type="text" class="form-control w-25" placeholder="공정코드명 검색" v-model="search" />
             <button class="btn btn-sm btn-primary" @click="$emit('select-prcCode', selectedPrcCode)">공정코드 등록</button>
           </div>
-
+          <div class="table-container">
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
               <tr>
-                <th>공정코드번호</th>
-                <th>공정코드명</th>
-                <th>공정기준</th>
+                <th class="w-10">공정코드번호</th>
+                <th class="w-20">공정코드명</th>
+                <th class="w-20">공정기준</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in filteredPrcCodes" :key="item.proc_code_no" @click="togglePrcCodeSelection(item)"
                 :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
-                <td>{{ item.proc_code_no }}</td>
-                <td>{{ item.proc_code_nm }}</td>
-                <td>{{ item.proc_std }}</td>
+                <td class="w-10">{{ item.proc_code_no }}</td>
+                <td class="w-20">{{ item.proc_code_nm }}</td>
+                <td class="w-20">{{ item.proc_std }}</td>
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +74,5 @@ export default {
 </script>
 
 <style scoped>
-.table-primary {
-  background-color: #cce5ff;
-}
+@import '@/assets/styles/base-table.css';
 </style>

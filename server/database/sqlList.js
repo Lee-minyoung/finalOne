@@ -27,6 +27,7 @@ const ln = require('./sqls/ln.js'); // 라인
 const eqp = require('./sqls/eqp.js'); // 설비
 const vdr = require('./sqls/vdr.js'); // 거래처
 const receivePrd = require('./sqls/receivePrd.js'); // 완제품 입고
+const home = require('./sqls/home.js'); // home
 
 module.exports = {
     // 펼침연산자(spread operator, ...)을 활용해 객체의 필드를 다른 객체로 쉽게 복사
@@ -59,4 +60,5 @@ module.exports = {
     ...eqp, // 설비
     ...vdr, // 거래처
     ...receivePrd, // 완제품 입고
+    ...home,
 }
