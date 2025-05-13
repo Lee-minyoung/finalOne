@@ -14,36 +14,36 @@
       </div>
 
     
-       <div  class="col-md-3">
+       <!-- <div  class="col-md-3">
         <label class="form-label">거래처</label>
         <input v-model="selectCpyNm.cpy_nm" type="text" class="form-control" readonly >
-      </div>
+      </div> -->
 
       <!-- <div v-else class="col-md-3">
             <label class="form-label">거래처</label>
             <input  v-model="checkOrd[0].cpy_nm" type="text" class="form-control">
 </div> -->
       <!--거래처변경  -->
-      <div v-if="selectVdr.vdr_no > 0" class="col-md-3">
+      <!-- <div v-if="selectVdr.vdr_no > 0" class="col-md-3">
         <label class="form-label">거래처코드</label>
         <input v-model="selectVdr.vdr_no" type="number" class="form-control" readonly>
       </div>
       <div v-else class="col-md-3">
         <label class="form-label">거래처코드</label>
         <input v-model="selectVdr" type="number" class="form-control" readonly>
-      </div>
-      <div class="col-md-3">
+      </div> -->
+      <!-- <div class="col-md-3">
         <label class="form-label">수주번호</label>
         <input v-model="ordNo" type="number" class="form-control">
       </div>
       <div class="col-md-3">
         <label class="form-label">배송지</label>
         <input v-model="deliver" type="text" class="form-control">
-      </div>
-      <div class="col-md-3">
+      </div> -->
+      <!-- <div class="col-md-3">
         <label class="form-label">비고</label>
         <input v-model="memo" type="text" class="form-control">
-      </div>
+      </div> -->
     </div>
     <!-- <div class="col-md-4 d-flex align-items-end">
       <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처변경</button>
@@ -83,7 +83,7 @@
            <span class="badge text-bg-primary">출하가능</span>
           </td>
           <td v-else>
-           <span class="badge text-bg-danger">출하불가</span>
+           <span class="badge text-bg-danger">출하대기</span>
           </td>
         </tr>
 
@@ -91,9 +91,9 @@
     </table>
 
     <!-- 출하지시 버튼 -->
-    <div class="d-flex justify-content-end mt-3">
+    <!-- <div class="d-flex justify-content-end mt-3">
       <button class="btn btn-primary" @click="saveSpm">출하지시</button>
-    </div>
+    </div> -->
 
      <div class="d-flex justify-content-end mt-3">
       <button class="btn btn-primary" @click="manySpms">여러건 출하지시</button>
@@ -210,6 +210,13 @@ async manySpms() {
     return this.checkOrd.includes(order.ord_no);
   });
   console.log('선택된 주문건', selectedOrds); 
+  for (const item of selectedOrds) {
+    if (item['요청수량'] > item['lot수량']) {
+      alert('재고가 부족한 상품이 있습니다');
+      return;
+    }
+  }  
+
   try{
     const payloads=selectedOrds.map(item=>({
     ord_no:item.ord_no ,            //수주번호  
@@ -243,7 +250,7 @@ async manySpms() {
 //       memo:this.memo, //비고
 //       }; 
 
-
+    alert('출하지시 완료!');
 
   }catch(err){
     console.log(err); 

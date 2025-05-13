@@ -13,7 +13,8 @@ const login = require('./sqls/login.js');
 const lineManagement = require('./sqls/lineManagement.js'); // 라인관리
 const lineProgress = require('./sqls/LineProgress.js') // 라인 진행 상태
 const purOrdInst=require('./sqls/purOrdInst.js'); 
-const matImport=require('./sqls/matImport.js'); //자재입고  
+const matImport=require('./sqls/matImport.js'); //자재입고 
+const purOrdView=require('./sqls/purOrdView.js'); //발주서조회 
 
 //기초정보입력
 const dept = require('./sqls/dept.js'); // 부서
@@ -43,6 +44,8 @@ module.exports = {
     ...lineProgress,//라인진행상태
     ...login,
     ...spm,
+    ...purOrdView, // 발주서조회
+    
 
     ...matImport, 
     ...vdr, 

@@ -8,14 +8,39 @@
           <label class="form-label">유통기한</label>
           <input v-model="expDt"  type="date" class="form-control">
         </div> -->
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <label class="form-label">숫자임!수령자</label>
           <input v-model="rcvr" type="number" class="form-control">
-        </div>
-        <div class="col-md-3">
+        </div> -->
+        <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">수령자</th>
+              <td colspan="3" style="border:none;">
+                <select  v-model="rcvr" class="form-select" >
+                  <option value=1>수령자1</option>
+                  <option value=2>수령자2</option>
+                  <option value=3>수령자3</option>
+                </select>
+              </td>
+            </tr>
+
+
+        <!-- <div class="col-md-3">
           <label class="form-label">숫자임!처리자</label>
           <input v-model="prcsr" type="number" class="form-control">
-        </div>
+        </div> -->
+
+        <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">처리자</th>
+              <td colspan="3" style="border:none;">
+                <select  v-model="prcsr" class="form-select" >
+                  <option value=1>처리자1</option>
+                  <option value=2>처리자2</option>
+                  <option value=3>처리자3</option>
+                </select>
+              </td>
+            </tr>
+
+
         <!--거래처변경  -->
         <!-- <div v-if="selectVdr.vdr_no>0" class="col-md-3">
           <label class="form-label">거래처코드</label>
@@ -25,14 +50,40 @@
           <label class="form-label">거래처코드</label>
            <input v-model="selectVdr"type="number" class="form-control" >
         </div>               -->
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <label class="form-label">숫자임 !창고번호</label>
           <input type="number" v-model="wareNo" class="form-control" >
-        </div>
-        <div class="col-md-3">
+        </div> -->
+        <!-- <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
+              <td colspan="3" style="border:none;">
+                <select class="form-select" v-model="wareNo">
+                  <input value=1 readonly>대구창고</input>
+                </select>
+              </td>
+            </tr> -->
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
+              <td colspan="3" style="border:none;">
+            <input class="form-control" type="text" placeholder="예담창고" aria-label="Disabled input example" disabled>
+</td></tr>
+
+            <tr class="mb-4">
+              <th style="width: 20%; min-width: 120px; border:none;">수령방법</th>
+              <td colspan="3" style="border:none;">
+                <select class="form-select" v-model="rcvrMth">
+                  <option value=1>수령방법1</option>
+                  <option value=2>수령방법2</option>
+                  <option value=3>수령방법3</option>
+                </select>
+              </td>
+            </tr>
+  
+
+        <!-- <div class="col-md-3">
           <label class="form-label">숫자임! 수령방법</label>
           <input v-model="rcvrMth" type="number" class="form-control">
-        </div>
+        </div> -->
       </div>
 <!-- <div class="col-md-4 d-flex align-items-end">
           <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처변경</button>
@@ -44,8 +95,6 @@
       @select-vdr="handleVdrSelect"
       @close="showVdrModal = false"
     /> -->
-<p>{{ checkPur }}</p>
-
       <!-- 제품 목록 테이블 -->
       <table class="table table-bordered text-center mt-4">
         <thead class="table-light">
@@ -88,10 +137,14 @@
         </tbody>
       </table>
       <!-- 자재입고 버튼 -->
-      <div class="d-flex justify-content-end mt-3">
+      <!-- <div class="d-flex justify-content-end mt-3">
         <button class="btn btn-primary" @click="saveImport">자재입고</button>
-        <!-- @click="saveLot"  --> 
+      </div> -->
+      <!--자재여러개입고-->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" @click="manyImports">자재입고</button>
       </div>
+
     </div>
 
 
@@ -121,6 +174,7 @@ export default {
    this.purToLotStatus=result.data;  
   }, 
   methods:{
+    //자재하나만 입고 
     async saveImport(){
         const payLoad={
             mat_no:this.checkPur[0]?.mat_no,//자재번호
@@ -152,10 +206,41 @@ export default {
             this.expDt=item['유통기한']; 
         }else{
             this.mode='basic'  
-            alert('하나의 발주건만 선택해주세요');
-            return;  
+           // alert('하나의 발주건만 선택해주세요');
+           // return;  
         }
 
+    }, 
+    //여러개입고하기 
+ async  manyImports(){
+       
+         console.log('전체발주건',this.purToLotStatus); 
+         console.log('체크된 발주건',this.checkPur);
+
+         const selectedOrds = this.purToLotStatus.filter(order => {
+        return this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no);
+          });
+
+          const payloads=selectedOrds.map(item=>({
+            mat_no:item.mat_no,//자재번호
+            //현재재고....  cur_stk,prc_qty,qty 모두 공통 
+            qty:item.qty,
+            //입고일자,처리일시,일자,  
+            warehouse_no:this.wareNo, //창고번호 
+            cnsm_lmt_dt:this.expDt, //유통기한
+            unt_prc:item.unt_prc,//단가
+            pur_ord_no:item.pur_ord_no, //발주번호,비고(입고시발주번호) 
+            prcsr:this.prcsr, //처리자 
+            vdr_no:item.vdr_no, //거래처번호
+            rcvr:this.rcvr, //수령자
+            rcv_mthd:this.rcvrMth //수령방법
+        }))
+          try{
+              await axios.post('/api/addMatImports',payloads);
+              alert('자재입고 여러건  완료');}
+          catch(err){
+              alert('자재입고실패'); 
+          }
     }
 
   },
