@@ -68,10 +68,11 @@ router.post('/startLine', async (req, res) => {
   }
 });
 
+
+// 라인 가동 번호로 세부정보 조회 pdn_opr_dtl_no 전달달
 router.get('/lineDetail/:pdn_opr_dtl_no', async (req, res) => {
   const { pdn_opr_dtl_no } = req.params;
   console.log('라인 가동 번호1:', pdn_opr_dtl_no);  // 🔍 구체적인 로그 찍기
-
   try {
     const data = await lineManagementServices.findLineListOne(pdn_opr_dtl_no);
     res.json(data);
@@ -81,6 +82,20 @@ router.get('/lineDetail/:pdn_opr_dtl_no', async (req, res) => {
   }
 });
 
+// 라인 정보 업데이트 / 반자동!
+router.post('/lineOperation', async (req, res) => {
+  const { p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty } = req.body;
+  console.log("💡 받은 데이터:", req.body);  // 🔍 구체적인 로그 찍기
+
+  try {
+    const data = await lineManagementServices.modifyLineOper(p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty);
+    res.json(data);
+  } catch (err) {
+    console.error("❌ lineDetail 오류:", err.message);  // 🔍 구체적인 로그 찍기
+    res.status(500).json({ error: err.message });
+  }
+});
+//p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty
 
 
 module.exports = router;

@@ -48,6 +48,7 @@ const selectLineList =
       , lo.ord_qty
       , lo.pdn_qty
       , lo.dft_qty
+      , pod.pdn_ord_no
       , pod.pdn_ord_dtl_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
@@ -72,6 +73,7 @@ const selectLineDetail =
       , ln.seq
       , eq.eqp_sts
       , pod.pdn_ord_no
+      , pod.pdn_ord_dtl_no
    FROM ln_opr_dt ln
    LEFT JOIN ln_dtl ld ON ln.ln_dtl_no = ld.ln_dtl_no
    LEFT JOIN proc p ON ld.proc_srl_no = p.proc_srl_no
@@ -128,5 +130,6 @@ module.exports = {
     selectLineDetail,
     updateLinePreparing : 'CALL line_preparing(?, ?)',
     updateLineStop : 'CALL line_stop(?, ?)',
-    insterLineStart : 'CALL line_start(?, ?)'
-} 
+    insterLineStart : 'CALL line_start(?, ?)',
+    updateLineOper : `CALL line_operation(?, ?, ?, ?, ?)`
+}
