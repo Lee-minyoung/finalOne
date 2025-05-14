@@ -18,21 +18,21 @@
             <!-- Proc번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="procNo" class="form-label fw-bold me-3" style="min-width: 100px;">공정번호</label>
+                <label for="procNo" class="form-label me-3" style="min-width: 100px;">공정번호</label>
                 <input id="procNo" type="text" class="form-control" v-model="proc_no" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="procNm" class="form-label fw-bold me-3" style="min-width: 100px;">공정명</label>
+                <label for="procNm" class="form-label me-3" style="min-width: 100px;">공정명</label>
                 <input id="procNm" type="text" class="form-control" v-model="proc_nm" placeholder="공정명을 입력해주세요." />
               </div>
             </div>
             <!-- 제품명 -->
             <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
-                <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
+                <label for="prdNm" class="form-label me-3" style="min-width: 100px;">제품명</label>
                 <div class="input-group">
                   <input id="prdNm" type="text" class="form-control" v-model="prd_nm" placeholder="제품을 선택해주세요."
                     readonly />
@@ -48,14 +48,14 @@
           <table class="table table-bordered text-center">
             <thead class="table-light">
               <tr class="small-text">
-                <th style="white-space: nowrap">순서</th> <!-- style="white-space: nowrap" => 줄바꿈없음 -->
-                <th>공정코드명</th>
-                <th>공정기준</th>
-                <th>기준값</th>
-                <th>ST</th>
+                <th style="white-space: nowrap; font-weight: normal;">순서</th> <!-- style="white-space: nowrap" => 줄바꿈없음 -->
+                <th style="font-weight: normal;">공정코드명</th>
+                <th style="font-weight: normal;">공정기준</th>
+                <th style="font-weight: normal;">기준값</th>
+                <th style="font-weight: normal;">ST</th>
                 <!-- <th>외주거래처</th>
                 <th>외주여부</th> -->
-                <th>X</th>
+                <th style="font-weight: normal;">X</th>
               </tr>
             </thead>
             <tbody v-if="procRows.length === 0" class="small-text">
@@ -303,7 +303,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
