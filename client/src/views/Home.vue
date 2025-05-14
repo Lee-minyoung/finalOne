@@ -38,52 +38,105 @@
     </div>
     <!-- 메인 컨텐츠 영역 -->
     <div class="row g-3">
-      <!-- 금일 작업 현황: 왼쪽 그리드 (8칸) -->
       <div class="col-md-8 mb-4">
-        <!-- <div class="card h-100">
-          <div class="card-header">
-            금일 작업 현황
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            자재 및 제품 재고 부족 현황
+            <button class="btn btn-outline-secondary btn-sm float-end" @click="goToOrderPage">발주서 이동</button>
           </div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item" v-for="(item, index) in productionList" :key="index">
-                <div class="row">
-                  <div class="col">
-                    <h6>{{ item.order }}</h6>
-                    <p class="mb-1">품목: {{ item.product }}</p>
-                    <small class="text-muted">담당자: {{ item.manager }}</small>
+          <div class="card-body" style="min-height: 365px; max-height: 365px;">
+            <div class="row">
+              <!-- 자재 부족 현황 -->
+              <div class="col-md-6">
+                <h6 class="fw-bold" style="font-size: 1rem;">자재 부족</h6>
+                <div class="table-container"
+                  style="max-height: 308px; overflow-y: auto; border: 1px solid #dee2e6; width: 100%;">
+                  <!-- 헤더 -->
+                  <div class="table-header bg-light" style="position: sticky; top: 0; z-index: 10002; 
+                border-bottom: 1px solid #dee2e6; display: grid; grid-template-columns: 40% 20% 20% 20%; width: 100%;">
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">자재명</div>
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">현재고</div>
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">필요량</div>
+                    <div class="p-1 text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">부족량</div>
                   </div>
-                  <div class="col-auto text-end">
-                    <p class="mb-1">진행률: {{ item.progress }}%</p>
-                    <div class="progress" style="width: 120px;">
-                      <div class="progress-bar" :class="item.progress === 100 ? 'bg-kpi-completed' : 'bg-kpi-work'"
-                        role="progressbar" :style="{ width: item.progress + '%' }"></div>
+                  <!-- 본문 -->
+                  <div class="table-body">
+                    <div v-for="(item, index) in materialStockList" :key="item.mat_no"
+                      :style="index === materialStockList.length - 1 ? 'border-bottom: none;' : 'border-bottom: 1px solid #dee2e6;'"
+                      style="display: grid; grid-template-columns: 40% 20% 20% 20%; width: 100%;">
+                      <div class="p-1 border-end text-nowrap overflow-hidden" style="font-size: 0.90rem;">{{ item.mat_nm
+                      }}
+                      </div>
+                      <div class="p-1 border-end text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.total_cur_stk }} {{ item.unit }}</div>
+                      <div class="p-1 border-end text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.min_stk_qty }} {{ item.unit }}</div>
+                      <div class="p-1 text-danger text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.부족량 }} {{ item.unit }}</div>
+
                     </div>
-                    <span class="badge" :class="statusBadge(item.status)">
-                      {{ item.status }}
-                    </span>
                   </div>
                 </div>
-              </li>
-            </ul>
+              </div>
+              <!-- 제품 부족 현황 -->
+              <div class="col-md-6">
+                <h6 class="fw-bold" style="font-size: 1rem;">제품 부족</h6>
+                <div class="table-container"
+                  style="max-height: 308px; overflow-y: auto; border: 1px solid #dee2e6; width: 100%;">
+                  <!-- 헤더 -->
+                  <div class="table-header bg-light" style="position: sticky; top: 0; z-index: 10002; 
+                border-bottom: 1px solid #dee2e6; display: grid; grid-template-columns: 40% 20% 20% 20%; width: 100%;">
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">제품명</div>
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">현재고</div>
+                    <div class="p-1 border-end text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">필요량</div>
+                    <div class="p-1 text-nowrap d-flex justify-content-center align-items-center"
+                      style="font-size: 0.95rem;">부족량</div>
+                  </div>
+                  <!-- 본문 -->
+                  <div class="table-body">
+                    <div v-for="(item, index) in productStockList" :key="item.prd_no"
+                      :style="index === productStockList.length - 1 ? 'border-bottom: none;' : 'border-bottom: 1px solid #dee2e6;'"
+                      style="display: grid; grid-template-columns: 40% 20% 20% 20%; width: 100%;">
+                      <div class="p-1 border-end text-nowrap overflow-hidden" style="font-size: 0.90rem;">{{ item.prd_nm
+                        }}</div>
+                      <div class="p-1 border-end text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.total_cur_stk }}개</div>
+                      <div class="p-1 border-end text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.opt_stk_qty }}개</div>
+                      <div class="p-1 text-danger text-nowrap overflow-hidden text-end" style="font-size: 0.90rem;">{{
+                        item.부족량 }}개
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div> -->
+        </div>
       </div>
       <!-- 최근 제품입고 현황: 오른쪽 그리드 (4칸) -->
       <div class="col-md-4 mb-4">
         <div class="card h-100">
-          <div class="card-header">
+          <div class="card-header d-flex justify-content-between align-items-center">
             최근 제품입고 현황
+            <button class="btn btn-outline-secondary btn-sm float-end" @click="goToReceivePrd">입고현황 이동</button>
           </div>
-          <div class="card-body">
+          <div class="card-body" style="min-height: 365px; max-height: 365px;">
             <ul class="list-group">
-              <li class="list-group-item" v-for="(item, index) in receivePrdList" :key="index">
+              <li class="list-group-item p-2" v-for="(item, index) in receivePrdList" :key="index">
                 <div class="d-flex justify-content-between">
-                  <h6 class="mb-1">{{ item.prd_nm }}</h6>
-                  <small>{{ formatReceiveDate(item.dt) }}</small>
+                  <p class="mb-0" style="font-size: 0.85rem;">{{ item.prd_nm }}</p>
+                  <small class="mb-0">{{ formatReceiveDate(item.dt) }}</small>
                 </div>
-                <p class="mb-1">입고수량: {{ item.qty }}개</p>
-                <small class="text-muted">LOT번호: {{ item.lot_no }}</small>
+                <p class="mb-0" style="font-size: 0.85rem;">입고수량: {{ item.qty }}개</p>
+                <small class="text-muted mb-0" style="font-size: 0.85rem;">LOT번호: {{ item.lot_no }}</small>
               </li>
             </ul>
           </div>
@@ -94,7 +147,7 @@
     <!-- 빠른 메뉴 섹션 -->
     <div class="row g-4">
       <div class="col-md-3" v-for="(menu, index) in quickMenus" :key="index">
-        <div class="card h-100 text-center" @click="navigate(menu.route)">
+        <div class="card h-100 text-center quick-menu-card" @click="navigate(menu.route)">
           <div class="card-body d-flex flex-column justify-content-center">
             <i :class="menu.icon + ' fs-1'"></i> <!-- fs-1은 글자크기 부트스트랩 -->
             <h5 class="card-title mt-2">{{ menu.title }}</h5> <!-- mt-2 윗마진(margin top)을 Bootstrap 기준으로 2단계-->
@@ -119,30 +172,8 @@ export default {
       // 금일 진행중건수
       todayWorking: 0,
 
-      // productionList: [
-      //   {
-      //     order: "작업지시: WO-2023001",
-      //     product: "제품A",
-      //     manager: "김철수",
-      //     progress: 65,
-      //     status: "진행중",
-      //   },
-      //   {
-      //     order: "작업지시: WO-2023002",
-      //     product: "제품B",
-      //     manager: "이영희",
-      //     progress: 0,
-      //     status: "대기",
-      //   },
-      //   {
-      //     order: "작업지시: WO-2023003",
-      //     product: "제품C",
-      //     manager: "박지훈",
-      //     progress: 100,
-      //     status: "완료",
-      //   },
-      // ],
-
+      materialStockList: [], // 자재부족현황
+      productStockList: [], // 제품부족현황
       receivePrdList: [], // 최근 제품입고 현황
 
       quickMenus: [ // 빠른메뉴 섹션
@@ -154,6 +185,9 @@ export default {
     };
   },
   created() {
+    // 재고 부족분 조회
+    this.getMatWarning();
+    this.getPrdWarning();
     // 최근 제품입고 현황
     this.getPrdStkList();
     // 오늘 완료된 작업 수 가져오기
@@ -166,6 +200,31 @@ export default {
     });
   },
   methods: {
+    // 발주서 페이지로 이동
+    goToOrderPage() {
+      this.$router.push("/orderForm");
+    },
+    // 완제품 입고처리 페이지로 이동
+    goToReceivePrd() {
+      this.$router.push({
+        path: "/receive-prd",
+        query: { waitView: false }
+      });
+    },
+    // 자재 재고 부족분 계산
+    async getMatWarning() {
+      let result = await axios.get('/api/homeMatWarning')
+        .catch(err => console.log(err));
+      this.materialStockList = result.data;
+      console.log(this.materialStockList);
+    },
+    // 제품 재고 부족분 계산
+    async getPrdWarning() {
+      let result = await axios.get('/api/homePrdWarning')
+        .catch(err => console.log(err));
+      this.productStockList = result.data;
+      console.log(this.productStockList);
+    },
     // 금일 완료건수(종료시간이 오늘인 것)
     async getCompletedCount() {
       let result = await axios.get('/api/homeCompleted')
@@ -183,7 +242,6 @@ export default {
       let result = await axios.get('/api/homePrdStk')
         .catch(err => console.log(err));
       this.receivePrdList = result.data;
-      console.log(this.receivePrdList);
     },
     // 최근 제품입고 현황 날짜 포맷
     formatReceiveDate(dateStr) {
@@ -235,14 +293,14 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
+.quick-menu-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  cursor: pointer;
+  /* transition: transform 0.2s, box-shadow 0.2s; */
 }
 
 .bg-kpi-work {

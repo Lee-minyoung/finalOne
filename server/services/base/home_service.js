@@ -16,8 +16,22 @@ const findCompleted = async () => {
   return await mariadb.query("completed");
 }
 
+// 자재 재고 부족분 계산
+// 자재번호, 자재명, 현재고, 적정재고량, 부족량, 단위
+const findMatWarning = async () => {
+  return await mariadb.query("matWarning");
+}
+
+// 제품 재고 부족분 계산
+// 제품번호, 제품명, 현재고, 적정재고량, 부족량
+const findPrdWarning = async () => {
+  return await mariadb.query("prdWarning");
+}
+
 module.exports = {
   findPrdStkList,
   findWorking,
   findCompleted,
+  findMatWarning,
+  findPrdWarning,
 };
