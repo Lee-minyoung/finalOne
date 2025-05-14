@@ -1,19 +1,26 @@
-// ✅ ProductSelectModal.vue (최종 완성 버전)
 <template>
+  <!-- ✅ 외부 클릭 시 닫히는 반투명 모달 -->
   <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index: 1051;" @click.self="$emit('close')">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
+        <!-- ✅ 모달 헤더 -->
         <div class="modal-header">
-          <h5 class="modal-title">제품 선택</h5>
+          <h5 class="modal-title mb-0 fw-bold">제품 선택</h5>
           <button type="button" class="btn-close" @click="$emit('close')"></button>
         </div>
+
+        <!-- ✅ 모달 바디 -->
         <div class="modal-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
+          <!-- ✅ 검색창 및 등록버튼 -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
             <input type="text" class="form-control w-25" placeholder="제품명 검색" v-model="search" />
-            <button class="btn btn-sm btn-primary" @click="$emit('select-product', selectedProd)">제품 등록</button>
+            <button class="btn btn-outline-secondary text-dark" @click="$emit('select-product', selectedProd)">
+              제품 등록
+            </button>
           </div>
 
-          <table class="table table-sm table-bordered text-center">
+          <!-- ✅ 제품 목록 테이블 -->
+          <table class="table table-sm table-bordered text-center" style="min-width: 600px;">
             <thead class="table-light">
               <tr>
                 <th>제품ID</th>
@@ -21,8 +28,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in filteredProducts" :key="item.prd_no" @click="toggleProdSelection(item)"
-                :class="{ 'table-primary': isSelected(item) }" style="cursor: pointer;">
+              <tr
+                v-for="item in filteredProducts"
+                :key="item.prd_no"
+                @click="toggleProdSelection(item)"
+                :class="{ 'table-primary': isSelected(item) }"
+                style="cursor: pointer;"
+              >
                 <td>{{ item.prd_no }}</td>
                 <td>{{ item.prd_nm }}</td>
               </tr>
@@ -69,13 +81,10 @@ export default {
   methods: {
     // 제품 선택/해제를 토글 (클릭 시 동작)
     toggleProdSelection(item) {
-      // 이미 선택된 제품인지 확인
       const index = this.selectedProd.findIndex(p => p.prd_no === item.prd_no)
       if (index >= 0) {
-        // 이미 선택됨 → 제거
         this.selectedProd.splice(index, 1)
       } else {
-        // 선택 안됨 → 추가
         this.selectedProd.push(item)
       }
     },
@@ -90,6 +99,6 @@ export default {
 
 <style scoped>
 .table-primary {
-  background-color: #cce5ff;
+  background-color: #cce5ff !important;
 }
 </style>
