@@ -8,12 +8,7 @@
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <input
-              type="text"
-              class="form-control w-25"
-              placeholder="자재명 검색"
-              v-model="search"
-            />
+            <input type="text" class="form-control w-25" placeholder="자재명 검색" v-model="search" />
           </div>
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
@@ -24,10 +19,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="item in filteredLots"
-                :key="item.lot_no + '-' + item.mat_no"
-                @click="selectLot(item)"
+              <tr v-for="item in filteredLots" :key="item.lot_no + '-' + item.mat_no" @click="selectLot(item)"
                 style="cursor: pointer;">
                 <td>{{ item.lot_no }}</td>
                 <td>{{ item.mat_no }}</td>
