@@ -144,9 +144,6 @@ router.post('/inventory/lotMinus',async(req,res)=>{
                  
                 await inventoryService.changeMatStsToq2(pln_id); //자재출고처리 q2로변함 
                 inventory/lotMinusList
-    
-   //
-                      
     res.json(result); 
    // 
   }catch(err){
@@ -157,11 +154,12 @@ router.post('/inventory/lotMinus',async(req,res)=>{
 router.post('/inventory/lotMinusList',async (req,res)=>{
   try{
       const matList=req.body; //배열로 우선받음 [{mat_no,req_qty,pln_id}]
-      console.log('matList',matList); 
+      console.log('프론트 ->서버matList',matList); 
       console.log(req.body);
       for(const mat of matList){
         let {mat_no,req_qty,pln_id}=mat;
         const lots=await inventoryService.findMatLotList(mat_no);
+ 
         
         //자재번호에 해당하는 모든 자재를 조회후 차감하기 
         for(const lot of lots){
@@ -180,7 +178,6 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
           }else if(req_qty<=0){
             console.log('요청수량 자재충분! ');
             await inventoryService.changeMatStsToq2ByMatNo(pln_id,mat_no); //q2로 업데이트 처리됨
-
           }
       }
 
@@ -190,7 +187,7 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
   }
 })
 
-// 자재요청버튼클릭 -> 자재구매계획 insert 
+// 자재요청버튼클릭 -> 자재구매계획 insert , 자재출고요청서에 q2로 업데이트 
 router.post('/inventory/purOrdByClickButton', async (req, res) => {
   const info = req.body;
   console.log('info', info); 
@@ -207,11 +204,9 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
     console.log('포맷된자재구매계획번호',formattedMatNo); //  
     //자재출고요청서에 가장최근 자재처리결과 c3()으로 업데이트
     const info=[formattedMatNo,formattedDate,matId,vdrNo,qty,prc,check];            
-    await  purordInstService.addPurPlnByBtnClick(info);    //
-    await  purordInstService.updateMatPrcToC3(reqId,matId); //자재출고요청서에 c3으로 업데이트
-    // q2로 바꾸기...,   
-    //await purordInstService.changeMatStsToq2(reqId,matId); //자재출고요청서에 q2로 업데이트
-
+    await  purordInstService.addPurPlnByBtnClick(info);            // 
+    await  purordInstService.updateMatPrcToC3(reqId,matId);        // 
+    await  inventoryService.changeMatStsToq2ByMatNo(reqId,matId);  //자재출고요청서에 c3으로 업데이트,자재출고요청서에 q2로 업데이트      
 
    res.status(200).json({message:'자재요청후 구매계획 등록완료'}); 
   }catch(err){

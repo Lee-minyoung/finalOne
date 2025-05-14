@@ -263,6 +263,15 @@ methods:{
   try {
     await axios.post('/api/addPurOrd', payload);
     alert('발주 저장 완료!');
+   // this.matPurPlanChecked=await axios.get('/api/getPurPlnChecked'); 
+   const Nos=await axios.get('/api/PlnToOrd') //
+   console.log('Nos',Nos.data); // 발주서 저장후 체크된 애들 삭제
+   const plnToOrdNo=Nos.data.map(p => p['계획ID']);
+   console.log('plnToOrdNo',plnToOrdNo); 
+   this.matPurPlanChecked=this.matPurPlanChecked.filter(item => !plnToOrdNo.includes(item['계획ID']));    
+    console.log('발주버튼누른후자재구매계획',this.matPurPlanChecked);
+  console.log('matPurPlanChecked 샘플', this.matPurPlanChecked[0]);
+
   } catch (err) {
     console.error('저장 실패:', err);
     alert('에러발생');

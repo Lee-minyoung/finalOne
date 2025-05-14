@@ -19,7 +19,7 @@ const findMatPurPlanChecked=async () => {
     const result = await mariadb.query('selectMatPurPlanChecked');
     return result;
   }
-//출고상태 확인 q1 출고요청 q2 출고완료 
+//출고상태 확인 : q1 출고요청 q2 출고완료 
   const chkMatStsq1q2=async(reqId,matId)=>{
     const q=await mariadb.query('selectMatStsChkq1q2',[reqId,matId]); 
     return q; 

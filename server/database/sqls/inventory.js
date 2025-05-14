@@ -75,7 +75,23 @@ WHERE mat_req_no = (
 
 //자재구매계획 조회 
 const selectMatPurPlan=
-` SELECT mpp.mat_pur_pln_no as 계획ID,
+// ` SELECT mpp.mat_pur_pln_no as 계획ID,
+// 	   mpp.mat_no as 자재ID,
+//        m.mat_nm as 자재명, 
+//        m.prc as 단가, 
+//        m.prc * mpp.qty as 총가격, 
+//       DATE_FORMAT( DATE_ADD(mpp.crt_dt,INTERVAL m.ld_tm DAY), "%Y-%m-%d") AS 자재구매작성후도착예정일,
+//      DATE_FORMAT(DATE_ADD(sysdate(),INTERVAL m.ld_tm DAY)," %Y-%m-%d") AS 실시간도착예정일,
+//        m.mn_vdr as 대표거래처번호,
+// 	   v.cpy_nm as 대표거래처,
+//       SUM( mpp.qty) as 수량,
+//        m.min_ord_qty as 최소주문량
+// FROM mat_pur_pln mpp 
+// 	   LEFT JOIN  mat m ON(mpp.mat_no=m.mat_no)
+//        LEFT JOIN vdr v ON(m.mn_vdr=v.vdr_no)
+//        GROUP BY m.mat_no,DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")
+//        ORDER BY DATE_FORMAT(DATE_ADD(sysdate(),INTERVAL m.ld_tm DAY)," %Y-%m-%d") DESC`;
+`SELECT mpp.mat_pur_pln_no as 계획ID,
 	   mpp.mat_no as 자재ID,
        m.mat_nm as 자재명, 
        m.prc as 단가, 
@@ -84,13 +100,12 @@ const selectMatPurPlan=
      DATE_FORMAT(DATE_ADD(sysdate(),INTERVAL m.ld_tm DAY)," %Y-%m-%d") AS 실시간도착예정일,
        m.mn_vdr as 대표거래처번호,
 	   v.cpy_nm as 대표거래처,
-      SUM( mpp.qty) as 수량,
+       mpp.qty as 수량,
        m.min_ord_qty as 최소주문량
 FROM mat_pur_pln mpp 
 	   LEFT JOIN  mat m ON(mpp.mat_no=m.mat_no)
        LEFT JOIN vdr v ON(m.mn_vdr=v.vdr_no)
-       GROUP BY m.mat_no,DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")
-       ORDER BY DATE_FORMAT(DATE_ADD(sysdate(),INTERVAL m.ld_tm DAY)," %Y-%m-%d") DESC`;
+       ORDER BY mpp.mat_pur_pln_no  DESC`;
  //자재구매계획을 세웠을때 수량이 최소인 경우 
  const selectMinqty=
  `SELECT  min_ord_qty 

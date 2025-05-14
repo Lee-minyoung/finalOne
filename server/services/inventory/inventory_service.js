@@ -127,8 +127,6 @@ const [rows] = await mariadb.query('matMaxLotList', [matNo]);
 const list = Array.isArray(rows) ? rows : [rows];
 console.log('[DEBUG] 최종 lot list:', list);
 return list;
-
-
 } 
 //자재차감 
 const minusCurStkByLot=async(lotNo,minus)=>{

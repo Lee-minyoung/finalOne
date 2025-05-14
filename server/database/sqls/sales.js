@@ -130,7 +130,12 @@ INSERT INTO prd_stk_hist (prd_stk_hist_no,lot_no,io_tp,qty,dt,rel_doc)
  select lot_no,prd_no,cur_stk
 from prd_stk
 where prd_no=?
-ORDER BY cur_stk desc`; 
+ORDER BY cur_stk desc`;
+
+const ordToSpmNo=`
+select s.ord_no as 수주에서출하
+from ord o  JOIN spm s on o.ord_no=s.ord_no
+group by s.ord_no`; 
 
  module.exports={
   insertOrd,
@@ -151,5 +156,6 @@ ORDER BY cur_stk desc`;
   updatePrdStk,
   insertPrdStkdtl,
   selectMaxPrdHistNo,
-  prdMaxLotList,   
+  prdMaxLotList,
+  ordToSpmNo,   
  }

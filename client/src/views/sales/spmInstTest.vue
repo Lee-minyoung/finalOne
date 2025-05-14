@@ -12,44 +12,7 @@
         <label class="form-label">담당자</label>
         <input type="text" class="form-control">
       </div>
-
-    
-       <!-- <div  class="col-md-3">
-        <label class="form-label">거래처</label>
-        <input v-model="selectCpyNm.cpy_nm" type="text" class="form-control" readonly >
-      </div> -->
-
-      <!-- <div v-else class="col-md-3">
-            <label class="form-label">거래처</label>
-            <input  v-model="checkOrd[0].cpy_nm" type="text" class="form-control">
-</div> -->
-      <!--거래처변경  -->
-      <!-- <div v-if="selectVdr.vdr_no > 0" class="col-md-3">
-        <label class="form-label">거래처코드</label>
-        <input v-model="selectVdr.vdr_no" type="number" class="form-control" readonly>
-      </div>
-      <div v-else class="col-md-3">
-        <label class="form-label">거래처코드</label>
-        <input v-model="selectVdr" type="number" class="form-control" readonly>
-      </div> -->
-      <!-- <div class="col-md-3">
-        <label class="form-label">수주번호</label>
-        <input v-model="ordNo" type="number" class="form-control">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">배송지</label>
-        <input v-model="deliver" type="text" class="form-control">
-      </div> -->
-      <!-- <div class="col-md-3">
-        <label class="form-label">비고</label>
-        <input v-model="memo" type="text" class="form-control">
-      </div> -->
-    </div>
-    <!-- <div class="col-md-4 d-flex align-items-end">
-      <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처변경</button>
-    </div>
-    <vdr-select-modal v-if="showVdrModal" :vdr-list="vdr" :selected="selectVdr" @select-vdr="handleVdrSelect"
-      @close="showVdrModal = false" /> -->
+   
 
     <!-- 제품 목록 테이블 -->
     <table class="table table-bordered text-center mt-4">
@@ -68,7 +31,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in ords" :key="item.ord_no">
+        <tr v-for="(item, index) in filteredOrders" :key="item.ord_no">
           <td><input type="checkbox" :value="item.ord_no" v-model="checkOrd"  /></td>
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
@@ -88,7 +51,8 @@
         </tr>
 
       </tbody>
-    </table>
+      </table>
+  
 
     <!-- 출하지시 버튼 -->
     <!-- <div class="d-flex justify-content-end mt-3">
@@ -98,19 +62,22 @@
      <div class="d-flex justify-content-end mt-3">
       <button class="btn btn-primary" @click="manySpms">여러건 출하지시</button>
     </div>
+   
+    <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-primary" @click="fetchOrdToSpmNo">주문->출하</button>
+    </div>
   </div>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
-import vdrSelectModal from '@/views/modal/vdrSelectModal.vue';
-
 
 export default {
   name: 'SpmInst',
-  components: {
-    vdrSelectModal,
-  },
+  // components: {
+  //   vdrSelectModal,
+  // },
   data() {
     return {
       mode: 'basic',
@@ -128,30 +95,39 @@ export default {
       checkOrd: [], //체크한 수주번호 건에 대해서   
       lotQty:0,
       memo: '', //비고 
-     // selectedOrds:[], 
+     // selectedOrds:[],
+     ordToSpmNo:[] 
 
     };
   },
   async created() {
-    const vdrs = await axios.get('/api/vdrList');
+    //const vdrs = await axios.get('/api/vdrList');
     const ords = await axios.get('/api/ord');
     this.ords = ords.data;
     console.log(this.ords);
-    this.vdr = vdrs.data;
+    // const ordToSpmNo= await axios.get('/api/ordToSpmNo');
+    // this.ordToSpmNo=ordToSpmNo.data;
+    // this.vdr = vdrs.data;
   },
   computed: {
   selectedOrder() {
     return this.checkOrd.length > 0 ? this.checkOrd[0] : null;
-  }
+  },
+  filteredOrders() {
+    // 출하리스트에 있는 ord_no 배열 추출
+    const spmOrdNos = this.ordToSpmNo.map(o => o.ord_no);
+    // 수주 리스트에서 출하된 건 제외
+    return this.ords.filter(o => !spmOrdNos.includes(o.ord_no));
+  },
 },
 
 
   methods: {
     //모달에서 vdr 다루기 
-    handleVdrSelect(selectedVdr) {
-      this.selectVdr = selectedVdr;
-      this.showVdrModal = false;
-    },
+    // handleVdrSelect(selectedVdr) {
+    //   this.selectVdr = selectedVdr;
+    //   this.showVdrModal = false;
+    // },
 
     //발주메소드 가져온건데 출하지시도 비슷하게하기 
     async saveSpm() {
@@ -209,10 +185,14 @@ async manySpms() {
   const selectedOrds = this.ords.filter(order => {
     return this.checkOrd.includes(order.ord_no);
   });
+  
   console.log('선택된 주문건', selectedOrds); 
   for (const item of selectedOrds) {
     if (item['요청수량'] > item['lot수량']) {
       alert('재고가 부족한 상품이 있습니다');
+      return;
+    }else if (item['lot수량'] <= 0) {
+      alert('재고가 없습니다');
       return;
     }
   }  
@@ -231,35 +211,32 @@ async manySpms() {
     req_qty:Number(item['요청수량'])   
     }))   
 
-
     await axios.post('/api/addSpms',payloads); 
-
-
-    // const lotInfos=selectedOrds.map(item=>({
-    //   lot_no:item.lot_no,
-    //   prd_no:item.prd_no,
-    //   lot_qty:item['lot수량'],
-    //   memo: item.ord_no     //여러건을 보낼경우  
-    // }))
-
-
-//  const lotInfo={
-//       lot_no: this.checkOrd[0].lot_no, //lot번호 
-//       prd_no: this.checkOrd[0].prd_no,// 제품번호
-//       lot_qty: this.lotQty,   //lot재고량 
-//       memo:this.memo, //비고
-//       }; 
-
+    console.log('정보', payloads); 
+    //삭제하기 출고 할수있는건은 삭제하기
+    console.log('체크된 출하지시건', this.checkOrd); 
+    //await axios.post('/api/deleteOrd',selectedOrds); 
+    const ords = await axios.get('/api/ord');
+    console.log(this.ords);
+    this.ords = ords.data;
+    
+    this.checkOrd = []; // 체크박스 초기화
     alert('출하지시 완료!');
-
+   
   }catch(err){
     console.log(err); 
   }
-}
+},
 
-
-
-  },
-};
+async fetchOrdToSpmNo() {
+  try {
+    const result = await axios.get('/api/ordToSpmNo');
+    this.ordToSpmNo = result.data;
+    console.log('주문-> 출하 리스트:', this.ordToSpmNo);
+    console.log(this.filteredOrders); 
+  } catch (err) {
+    console.log('주문리스트 불러오기 실패', err);
+  }
+}}}
 
 </script>
