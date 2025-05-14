@@ -1,10 +1,12 @@
 <template>
+
   <!--
     AppHeader.vue
     - 상단 헤더 컴포넌트
     - 로그인/로그아웃, 현재 위치, 설정, 사이드바 토글 등 주요 네비게이션 기능 제공
     - 로그인 상태에 따라 환영 메시지 또는 로그인 안내 메시지 표시
   -->
+
   <header class="bg-body border-bottom shadow-sm sticky-top z-3">
     <div class="navbar px-3 py-2 d-flex justify-content-between align-items-start flex-wrap">
       <!-- 좌측: 사원명 + 현재 위치 -->
@@ -16,6 +18,7 @@
           <!-- 로그인 상태: 사원명/직급명 환영 메시지, 비로그인: 안내 메시지 -->
           <span class="fw-bold fs-4" v-if="employeeName">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
           <span class="fw-bold fs-4" v-else>안전한 이용을 위해 로그인이 필요합니다.</span>
+          <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
         </div>
         <div class="mt-3 ms-5 text-secondary" style="font-size: 1rem;">
           현재 위치: {{ currentPathLabel }}
