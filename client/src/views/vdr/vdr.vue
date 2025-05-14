@@ -22,21 +22,21 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="w-10">상호명</th>
-                  <th class="w-10">사업장유형</th>
-                  <th class="w-10">사업자등록번호</th>
-                  <th class="w-10">담당자</th>
-                  <th class="w-10">연락처</th>
+                  <th style="width: 25%">상호명</th>
+                  <th style="width: 15%">사업장유형</th>
+                  <th style="width: 25%">사업자등록번호</th>
+                  <th style="width: 10%">담당자</th>
+                  <th style="width: 25%">연락처</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="vdr in filteredVdrList" v-bind:key="vdr.vdr_no" @click="selectVdr(vdr.vdr_no)"
                   :class="{ 'table-primary': selectedVdr && selectedVdr.vdr_no === vdr.vdr_no }" class="table-hover">
-                  <td class="w-10">{{ vdr.cpy_nm }}</td>
-                  <td class="w-10">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
-                  <td class="w-10">{{ vdr.biz_reg_no }}</td>
-                  <td class="w-10">{{ vdr.mgr_nm }}</td>
-                  <td class="w-10">{{ vdr.mgr_ctt}}</td>
+                  <td style="width: 25%">{{ vdr.cpy_nm }}</td>
+                  <td style="width: 15%">{{ officeTypeFormat(vdr.ofc_tp) }}</td>
+                  <td style="width: 25%">{{ vdr.biz_reg_no }}</td>
+                  <td style="width: 10%">{{ vdr.mgr_nm }}</td>
+                  <td style="width: 25%">{{ vdr.mgr_ctt }}</td>
                 </tr>
               </tbody>
             </table>

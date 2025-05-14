@@ -20,21 +20,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="w-10">제품번호</th>
-                  <th class="w-10">제품명</th>
-                  <th class="w-10">유통기한</th>
+                  <th class="w-25">제품번호</th>
                   <th class="w-30">제품명</th>
-                  <th class="w-10">제품유형</th>
+                  <th class="w-20">유통기한</th>
+                  <th class="w-25">제품유형</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="prd in filteredPrdList" :key="prd.prd_no" @click="selectPrd(prd.prd_no)"
                   :class="{ 'table-primary': selectedPrd && selectedPrd.prd_no === prd.prd_no }" class="table-hover">
-                  <td class="w-10">{{ prd.prd_no }}</td>
-                  <td class="w-10">{{ prd.prd_nm }}</td>
-                  <td class="w-10" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-25">{{ prd.prd_no }}</td>
                   <td class="w-30">{{ prd.prd_nm }}</td>
-                  <td class="w-10">{{ prdTypeFormat(prd.prd_tp) }}</td>
+                  <td class="w-20" :class="getRemainingClass(prd)">{{ calculateRemainingMonths(prd) }}</td>
+                  <td class="w-25">{{ prdTypeFormat(prd.prd_tp) }}</td>
                 </tr>
               </tbody>
             </table>

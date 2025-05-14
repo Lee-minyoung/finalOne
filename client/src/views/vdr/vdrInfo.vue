@@ -83,7 +83,7 @@
               <div class="d-flex align-items-center">
                 <label for="addr" class="form-label me-3" style="min-width: 100px;">상세주소</label>
                 <input id="addr" type="text" class="form-control" v-model="addrPlus"
-                  placeholder="상세주소는 사업장주소와 함께 저장됩니다." />
+                  placeholder="상세주소" />
               </div>
             </div>
             <!-- 5행: 전화번호 -->
