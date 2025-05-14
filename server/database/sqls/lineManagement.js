@@ -9,7 +9,9 @@ const selectProdInstList =
   od.ord_qty,
   od.ord_sts,
   o.pdn_ord_dt,
-  o.crt_by,
+  (SELECT nm
+     FROM emp
+    WHERE emp_no = o.crt_by) as crt_by,
   od.ln_no,
   mrr.mat_ins_sts,
   lo.ord_qty as lo_ord_qty,

@@ -25,7 +25,7 @@
       </colgroup>
       <thead class="table-light">
         <tr>
-          <th>지시ID</th>
+          <th>지시번호</th>
           <th>제품명</th>
           <th>지시수량</th>
           <th>지시일자</th>
@@ -41,7 +41,7 @@
           :class="{ 'opacity-50': item.ord_sts === 'r2' || item.ord_sts === 'r3' }">
           <td>{{ item.pdn_ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ item.ord_qty }}</td>
+          <td>{{ formatNumber(item.ord_qty) }}</td>
           <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ item.crt_by }}</td>
 
@@ -64,7 +64,7 @@
                 <span v-if="item.selected_line">{{ item.selected_line }}</span>
                 <span v-else class="text-muted">미지정</span>
                 <button class="btn btn-outline-secondary" @click="openModal(item)">
-                  <i class="bi bi-search fs-5"></i>
+                  🔍
                 </button>
               </div>
             </td>
@@ -73,22 +73,24 @@
             </td>
           </template>
 
-          <!-- ✅ r2 상태: 재료입고+라인 병합, 현황 칸은 취소 버튼 -->
+          <!-- ✅ r2 상태: 생산지시완료 -->
           <template v-else-if="item.ord_sts === 'r2'">
             <td colspan="2">
-              <span class="badge bg-info text-dark" style="font-size: 0.95rem; padding: 0.5rem 1.2rem;">
+              <router-link to="/LineMang" class="badge text-dark text-decoration-none"
+                style="background-color: #aee2f8; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px; text-align: center;">
                 생산지시완료
-              </span>
+              </router-link>
             </td>
             <td>
               <button class="btn btn-sm btn-danger" @click="stopLine(item)">취소</button>
             </td>
           </template>
 
-          <!-- ✅ r3 상태: 모두 병합 -->
+          <!-- ✅ r3 상태: 생산공정완료 -->
           <template v-else-if="item.ord_sts === 'r3'">
             <td colspan="2">
-              <span class="badge bg-secondary" style="font-size: 0.95rem; padding: 0.5rem 1.2rem;">
+              <span class="badge text-white"
+                style="background-color: #6c757d; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px; text-align: center;">
                 생산공정완료
               </span>
             </td>
@@ -241,10 +243,10 @@ export default {
         Swal.fire('오류', '취소 중 문제가 발생했습니다.', 'error')
       }
     },
-      viewCompleteStatus(item) {
-    Swal.fire({
-      title: '✅ 완료현황',
-      html: `
+    viewCompleteStatus(item) {
+      Swal.fire({
+        title: '✅ 완료현황',
+        html: `
         <div style="text-align:left; line-height:1.7">
           <strong>지시ID:</strong> ${item.pdn_ord_no}<br>
           <strong>제품명:</strong> ${item.prd_nm}<br>
@@ -255,9 +257,13 @@ export default {
           <strong>완료일자:</strong> ${this.dateFormat(item.end_tm, 'hh시 mm분')}
         </div>
       `,
-      icon: 'info'
-    })
-  }
+        icon: 'info'
+      })
+    },
+    formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
   }
 }
 /*

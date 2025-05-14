@@ -37,7 +37,7 @@
 
       <thead class="table-light">
         <tr>
-          <th>NO</th>
+          <th>계획번호</th>
           <th>제품명</th>
           <th>계획수량</th>
           <th>누적지시량</th>
@@ -58,7 +58,8 @@
               <button class="btn btn-outline-secondary" @click="openProductModal">🔍</button>
             </div>
           </td>
-          <td><input v-model.number="row.qty" type="number" min="0" class="form-control" placeholder="수량" /></td>
+          <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
+              @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
           <td></td>
           <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
           <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
@@ -80,8 +81,8 @@
           :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
           <td>{{ row.pdn_pln_no }}</td>
           <td>{{ row.prd_nm }}</td>
-          <td>{{ row.qty }}</td>
-          <td>{{ row.ord_qty }}</td>
+          <td>{{ formatNumber(row.qty) }}</td>
+          <td>{{ formatNumber(row.ord_qty) }}</td>
           <td>{{ dateFormat(row.st_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
@@ -339,7 +340,7 @@ export default {
           })
         }
         const itemList = rows.map(item =>
-          `<li>${item.prd_nm} (${item.instruction_qty}개)</li>`).join('')
+          `<li>${item.prd_nm} : ${item.instruction_qty}개</li>`).join('')
         await Swal.fire({
           title: '🎉 지시 등록 완료!',
           html: `<ul style="text-align:left; padding-left:1.2rem; margin:0;">${itemList}</ul>`,
@@ -353,7 +354,21 @@ export default {
         console.error("지시 등록 실패", err.response?.data || err.message)
         await Swal.fire('❌ 실패', '지시 등록 중 오류 발생', 'error')
       }
-    }
+    },
+    formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
+    onFormattedQtyInput(event, row) {
+      const raw = event.target.value.replace(/[^\d]/g, '') // 숫자만 추출
+      const num = Number(raw)
+      row.qty = Math.max(0, num) // 최소 0 보장
+    },
+    // preventMinusInput(event) {
+    //   if (event.key === '-' || event.key === '+' || event.key === 'e') {
+    //     event.preventDefault()
+    //   }
+    // }
   }
 }
 </script>

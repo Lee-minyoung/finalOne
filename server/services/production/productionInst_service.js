@@ -83,7 +83,7 @@ const findLastOrdCode = async () => {
 //   } finally {
 //     conn.release();
 //   }
-const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
+const addProdInstData = async (ordDataList, ordDataDetailList, details, crt_by) => {
   const conn = await mariadb.getConnection();
 
   try {
@@ -144,7 +144,7 @@ const addProdInstData = async (ordDataList, ordDataDetailList, details) => {
         pdn_ord_no, // pdn_ord_no (생산 지시 번호)
         mat_no,      // mat_no (자재 번호)
         qty,         // qty (요청량)
-        1000,        // emp_no (직원 번호, 나중에 세션으로 처리)
+        crt_by,        // emp_no (직원 번호, 나중에 세션으로 처리)
         'g1',         // 상태
         'c2',         // 처리 결과
         'q1'          // 출고 상태
