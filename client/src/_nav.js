@@ -19,6 +19,16 @@ export default [
          name:'출하지시',
          to:'/spmInstTest',  
       }, 
+            {
+        component: 'CNavItem',
+        name: '출하표지',
+        to: '/SpmMrk',
+      },
+      {
+        component: 'CNavItem',
+        name: '출고조회',
+        to: '/SpmFns',
+      },
     ],
   },
   {
@@ -42,11 +52,11 @@ export default [
         name: '라인관리',
         to: '/LineMang',
       },
-      {
-        component: 'CNavItem',
-        name: '라인관리상세',
-        to: '/LineMangDtl',
-      }          ,
+      // {
+      //   component: 'CNavItem',
+      //   name: '라인관리상세',
+      //   to: '/LineMangDtl',
+      // }          ,
     ],
   },
 
@@ -56,11 +66,11 @@ export default [
     icon: 'cil-layers',
     visible: true,
     items: [
-      {
-        component: 'CNavItem',
-        name: '재고현황',
-        to: '/stock',
-      },
+      // {
+      //   component: 'CNavItem',
+      //   name: '재고현황',
+      //   to: '/stock',
+      // },
       {
         component: 'CNavItem',
         name: '자재구매현황',
@@ -83,27 +93,6 @@ export default [
       },
     ],
   },
-
-  {
-    component: 'CNavGroup',
-    name: '출하',
-    icon: 'cil-layers',
-    visible: true,
-    items: [
-      {
-        component: 'CNavItem',
-        name: '출하표지',
-        to: '/SpmMrk',
-      },
-      {
-        component: 'CNavItem',
-        name: '출고조회',
-        to: '/SpmFns',
-      },
-    ],
-  },
-
-
   {
     component: 'CNavGroup',
     name: '품질',
@@ -143,23 +132,23 @@ export default [
     ],
   },
 
-  {
-    component: 'CNavGroup',
-    name: '설비',
-    icon: 'cil-settings',
-    visible: true,
-    items: [
-      {
-        component: 'CNavItem',
-        name: '설비점검',
-        to: '/eqp-check',
-      },
-    ],
-  },
+  // {
+  //   component: 'CNavGroup',
+  //   name: '설비',
+  //   icon: 'cil-settings',
+  //   visible: true,
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: '설비점검',
+  //       to: '/eqp-check',
+  //     },
+  //   ],
+  // },
 
   {
     component: 'CNavGroup',
-    name: '기초정보입력',
+    name: '기초정보',
     icon: 'cil-file',
     visible: true,
     items: [

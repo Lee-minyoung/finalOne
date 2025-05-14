@@ -95,7 +95,21 @@ router.post('/lineOperation', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-//p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty
 
+router.post('/finalOper', async (req, res) => {
+  const { p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no } = req.body;
+  console.log("💡 받은 데이터:", req.body);  // 🔍 구체적인 로그 찍기
+
+  try {
+    const data = await lineManagementServices.modifyLFinalOper(p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no);
+      console.log("💡 해체!:", p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no);  // 🔍 구체적인 로그 찍기
+    res.json(data);
+  } catch (err) {
+    console.error("❌ lineDetail 오류:", err.message);  // 🔍 구체적인 로그 찍기
+    res.status(500).json({ error: err.message });
+  }
+});
+//p_ln_opr_dtl_no, p_seq, p_dft_qty, p_pdn_qty
+// p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no
 
 module.exports = router;

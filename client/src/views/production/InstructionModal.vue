@@ -1,18 +1,17 @@
 <template>
-  <!-- 배경 클릭 시 닫힘 -->
+  <!-- ✅ 배경 클릭 시 닫힘 -->
   <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index: 1051;" @click.self="$emit('close')">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
 
-        <!-- 모달 헤더 -->
+        <!-- ✅ 모달 헤더 -->
         <div class="modal-header">
-          <h5 class="modal-title">계획 지시</h5>
+          <h5 class="modal-title mb-0 fw-bold">계획 지시</h5>
           <button type="button" class="btn-close" @click="$emit('close')"></button>
         </div>
 
-        <!-- 모달 바디 -->
+        <!-- ✅ 모달 바디 -->
         <div class="modal-body">
-
 
           <!-- ✅ 지시 상세 입력 테이블 -->
           <h6 class="fw-bold mb-2">지시 상세 입력</h6>
@@ -21,7 +20,7 @@
               <tr>
                 <th>제품명</th>
                 <th>계획수량</th>
-                <th>누적적지시수량</th>
+                <th>누적지시수량</th>
                 <th>미지시수량</th>
                 <th>지시수량</th>
                 <th>완료수량</th>
@@ -36,8 +35,14 @@
                 <td>{{ row.qty - row.ord_qty - row.instruction_qty || 0 }}</td>
                 <td style="width: 100px;">
                   <!-- <input type="number" class="form-control" v-model.number="row.instruction_qty" /> -->
-                  <input type="number" class="form-control" v-model.number="row.instruction_qty" min="0"
-                    :max="row.qty - row.ord_qty" @input="handleInput(index)" />
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model.number="row.instruction_qty"
+                    min="0"
+                    :max="row.qty - row.ord_qty"
+                    @input="handleInput(index)"
+                  />
                 </td>
                 <td></td>
                 <td>
@@ -46,14 +51,14 @@
               </tr>
             </tbody>
           </table>
-
         </div>
 
-        <!-- 모달 푸터 -->
+        <!-- ✅ 모달 푸터 -->
         <div class="modal-footer">
           <button class="btn btn-primary" @click="submit">지시 등록</button>
-          <button class="btn btn-secondary" @click="$emit('close')">취소</button>
+          <button class="btn btn-outline-secondary text-dark" @click="$emit('close')">취소</button>
         </div>
+
       </div>
     </div>
   </div>
@@ -97,3 +102,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.table td,
+.table th {
+  vertical-align: middle;
+}
+</style>
