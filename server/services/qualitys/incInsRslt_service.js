@@ -39,7 +39,7 @@ const addRslt = async (incInsRsltInfo) => {
 const addRsltDtl = async (dtlList) => {
   for (const dtl of dtlList) {
     let insertColumns = [
-      'inc_ins_rslt_dtl_no', 'mgr_date', 'inc_ins_std_no', 'mgr_rslt', 'jdg', 'rmk', 'dft_quy', 'cert_no'
+      'inc_ins_rslt_dtl_no', 'mgr_date', 'inc_ins_std_no', 'mgr_rslt', 'jdg', 'rmk', 'cert_no'
     ];
     let data = insertColumns.map(col => dtl[col]);
     await mariadb.query("insertRsltDtl", data).catch(err => console.log('상세 insert 오류:', err));

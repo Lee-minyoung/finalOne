@@ -8,31 +8,21 @@
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <input
-              type="text"
-              class="form-control w-25"
-              placeholder="납품업체 검색"
-              v-model="search"
-            />
+            <input type="text" class="form-control w-25" placeholder="납품업체 검색" v-model="search" />
           </div>
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
               <tr>
                 <th>수주번호</th>
-                <th>납품업체</th>
-                <th>등록일자</th>
-                <th>제품명</th>
-                <th>수량</th>
+                <th>납품처</th>
+                <th>출하일자</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="item in filteredMats"
-                :key="item.lot_no"
-                @click="selectMat(item)"
-                style="cursor: pointer;">
-                <td>{{ item.lot_no }}</td>
-                <td>{{ item.mat_nm }}</td>
+              <tr v-for="item in filteredOrds" :key="item.ord_no" @click="selectOrd(item)" style="cursor: pointer;">
+                <td>{{ item.ord_no }}</td>
+                <td>{{ item.cpy_nm }}</td>
+                <td>{{ formatDate(item.spm_dt) }}</td>
               </tr>
             </tbody>
           </table>
@@ -45,7 +35,7 @@
 <script>
 export default {
   props: {
-    matList: {
+    ordList: {
       type: Array,
       default: () => []
     }
@@ -56,15 +46,23 @@ export default {
     };
   },
   computed: {
-    filteredMats() {
-      if (!this.matList) return [];
-      return this.matList.filter(m => m.mat_nm?.includes(this.search));
+    filteredOrds() {
+      if (!this.ordList) return [];
+      return this.ordList.filter(m => m.cpy_nm?.includes(this.search));
     }
   },
   methods: {
-    selectMat(item) {
-      this.$emit('select-mat', item);
+    selectOrd(item) {
+      this.$emit('select-ord', item);
       this.$emit('close');
+    },
+    formatDate(dt) {
+      if (!dt) return '';
+      const date = new Date(dt);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
     }
   }
 }
