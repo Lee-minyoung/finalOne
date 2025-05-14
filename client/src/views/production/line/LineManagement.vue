@@ -20,8 +20,8 @@
           <td>{{ item.ln_no }}</td>
           <td>{{ item.ln_nm }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ dateFormat(item.st_tm, 'hh시 mm분') }}</td>
-          <td>{{ dateFormat(item.end_tm, 'hh시 mm분') }}</td>
+          <td>{{ dateFormat(item.st_tm, 'hh시 mm분 ss초') }}</td>
+          <td>{{ dateFormat(item.end_tm, 'hh시 mm분 ss초') }}</td>
           <td>{{ item.ord_qty }}</td>
           <td>{{ item.dft_qty }}</td>
           <td>{{ item.pdn_qty }}</td>

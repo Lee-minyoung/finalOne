@@ -11,9 +11,15 @@ const selectProdInstList =
   o.pdn_ord_dt,
   o.crt_by,
   od.ln_no,
-  mrr.mat_ins_sts
+  mrr.mat_ins_sts,
+  lo.ord_qty as lo_ord_qty,
+  lo.pdn_qty,
+  lo.dft_qty,
+  lo.mgr,
+  lo.end_tm
 FROM pdn_ord o
 LEFT JOIN pdn_ord_dtl od ON o.pdn_ord_no = od.pdn_ord_no
+LEFT JOIN ln_opr lo ON od.pdn_ord_dtl_no = lo.pdn_ord_dtl_no
 LEFT JOIN prd p ON od.prd_no = p.prd_no
 LEFT JOIN (
   SELECT pdn_ord_no, MAX(mat_ins_sts) AS mat_ins_sts
@@ -33,7 +39,8 @@ ORDER BY
     WHEN 'q2' THEN 0
     ELSE 1
   END,
-  o.pdn_ord_dt ASC;`
+STR_TO_DATE(end_tm, '%H:%i:%s') DESC`;
+
 
 const selectLineDropdown =
 `SELECT ln_no, ln_nm, ln_sts
@@ -68,7 +75,7 @@ const selectLineList =
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
    RIGHT JOIN ln l ON pod.ln_no = l.ln_no
    LEFT JOIN prd p ON pod.prd_no = p.prd_no
-   ORDER BY l.ln_no;`
+   ORDER BY l.ln_sts DESC, l.ln_no;`
 
 const selectLineDetail =  
 `SELECT ln.ln_opr_dtl_no

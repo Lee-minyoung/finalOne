@@ -79,8 +79,8 @@
                   <td>{{ lineNo }}</td>
                   <td>{{ lineInfo.ln_nm }}</td>
                   <td>{{ lineInfo.prd_nm }}</td>
-                  <td>{{ dateFormat(lineInfo.st_tm, 'hh시 mm분') }}</td>
-                  <td>{{ dateFormat(lineInfo.end_tm, 'hh시 mm분') }}</td>
+                  <td>{{ dateFormat(lineInfo.st_tm, 'hh시 mm분 ss초') }}</td>
+                  <td>{{ dateFormat(lineInfo.end_tm, 'hh시 mm분 ss초') }}</td>
                   <td>{{ lineInfo.ord_qty }}</td>
                   <td>{{ lineInfo.dft_qty }}</td>
                   <td>{{ lineInfo.pdn_qty }}</td>
