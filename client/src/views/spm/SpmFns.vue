@@ -94,14 +94,14 @@
       </tr>
     </thead>
     <tbody>
-      <!-- <tr v-for="item in spmRcdList" :key="item.spm_no" @click="fetchDetail(item)">
-          <td>{{ item.spm_no }}</td>
-          <td>{{ item.vdr_no }}</td>
+      <tr v-for="item in productList" :key="item.prd_no">
           <td>{{ item.prd_no }}</td>
+          <td>{{ item.prd_nm }}</td>
+          <td>{{ item.qty }}</td>
         </tr>
-        <tr v-if="spmRcdList.length === 0">
+        <tr v-if="productList.length === 0">
           <td colspan="5">데이터가 없습니다.</td>
-        </tr> -->
+        </tr>
     </tbody>
   </table>
   <OrdSelModal v-if="showOrdModal" :ordList="ordList" @select-mat="handleSelectedOrd" @close="showOrdModal = false" />
@@ -117,6 +117,7 @@ export default {
     return {
       showOrdModal: false,
       ordList: [],
+      productList: [],
       searchQuery: '',
       selectedMatNo: '',
       selectedMatNm: '',
@@ -133,7 +134,7 @@ export default {
   methods: {
     // 모달
     openOrdModal() {
-      axios.get('/api/spmMrk/complete/product')
+      axios.get('/api/spmFns/complete/product')
         .then(res => {
           this.ordList = Array.isArray(res.data) ? res.data : [];
           this.showOrdModal = true;
@@ -144,9 +145,41 @@ export default {
         });
     },
     // 자재 선택 시
-    async handleSelectedOrd(item) {
+   async handleSelectedOrd(item) {
+  try {
+    // 거래처/납품처 정보
+    const res = await axios.get('/api/spmFns/complete/product/detail', { params: { ord_no: item.ord_no } });
+    if (res.data && res.data.length > 0) {
+      const info = res.data[0];
+      this.detailInfo = {
+        cpy_nm: info.cpy_nm || '',
+        ceo_nm: info.ceo_nm || '',
+        mgr_ctt: info.mgr_ctt || '',
+        mgr: info.mgr || '',
+        ofc_addr: info.ofc_addr || '',
+        spm_dt: info.spm_dt || ''
+      };
+    } else {
+      this.detailInfo = {
+        cpy_nm: '', ceo_nm: '', mgr_ctt: '', mgr: '', ofc_addr: '', spm_dt: ''
+      };
+    }
+    // ★ 제품상세정보 받아오기
+    const res2 = await axios.get('/api/spmFns/complete/product/detail/product', { params: { ord_no: item.ord_no } });
+    this.productList = Array.isArray(res2.data) ? res2.data : [];
+    this.searchQuery = item.ord_no;
+  } catch (err) {
+    alert('상세정보 조회 실패');
+    this.detailInfo = {
+      cpy_nm: '', ceo_nm: '', mgr_ctt: '', mgr: '', ofc_addr: '', spm_dt: ''
+    };
+    this.productList = [];
+  }
+  this.showOrdModal = false;
+},
+    async fetchDetail(item) {
       try {
-        const res = await axios.get('/api/spmMrk/complete/product/detail', { params: { ord_no: item.ord_no } });
+        const res = await axios.get('/api/spmFns/complete/product/detail', { params: { ord_no: item.ord_no } });
         if (res.data && res.data.length > 0) {
           const info = res.data[0];
           this.detailInfo = {
@@ -168,10 +201,7 @@ export default {
           cpy_nm: '', ceo_nm: '', mgr_ctt: '', mgr: '', ofc_addr: '', spm_dt: ''
         };
       }
-      this.showOrdModal = false;
     },
-    // 필요하다면 제품목록 등도 추가로 불러오기
-
     formatDateTime(dt) {
       if (!dt) return '';
       const date = new Date(dt);

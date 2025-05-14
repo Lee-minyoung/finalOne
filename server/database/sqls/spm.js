@@ -53,8 +53,9 @@ FROM vdr v JOIN spm s ON v.vdr_no = s.vdr_no
 WHERE s.ord_no = ?`;
 
 const selFnsProdInDt =
-`SELECT prd_no, prd_nm, qty
+`SELECT d.prd_no, d.qty, p.prd_nm
 FROM spm s JOIN spm_dtl d ON s.spm_no = d.spm_no
+			JOIN prd p ON d.prd_no = p.prd_no 
 WHERE s.ord_no = ?`;
 
 module.exports={

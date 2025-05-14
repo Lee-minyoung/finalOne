@@ -10,11 +10,13 @@ router.get('/incInsGetRslt/matList', async (req, res) => {
 });
 
 // 성적서가 작성된 검사 자재 불러오기(성적서 작성 페이지)
-router.get('/incInsGetRslt/rsltPrd', async (req, res) => {
-  const { lot_no } = req.query;
-  let list = await incInsGetRsltService.findRsltPrd(lot_no)
-    .catch(err => console.log(err));
-  res.send(list);
+router.get('/incInsGetRslt/rsltMat', async (req, res) => {
+  try {
+    const list = await incInsGetRsltService.getRsltMatList();
+    res.send(list);
+  } catch (err) {
+    res.status(500).send('제품 목록 조회 실패');
+  }
 });
 
 // 상세조회

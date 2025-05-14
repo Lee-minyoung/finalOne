@@ -12,10 +12,11 @@
       성적서번호 <input :value="selectedRsltNo" class="form-control" readonly style="background-color: #eee;" />
       <hr style="margin-left:-75px;">
       LOTNo <input :value="selectedLotNo" class="form-control" readonly
-        style="background-color: #eee; margin-right: 180px;" />
+        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
+      
       발주번호 <input v-model="searchPurOrdNo" class="form-control" readonly
-        style="background-color: #eee; margin-right: 180px;" />
-      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee;" />
+        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
+      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee; margin-bottom: 10px;" />
       <br>
       자재명 <input :value="selectedMatNm" class="form-control" readonly
         style="background-color: #eee; margin-right: 180px;" />
@@ -89,8 +90,11 @@
   </div>
 
   <!-- 제품 검색 모달 -->
-  <MatGetRsltSelModal v-if="showMatModal" :matList="prodList" @select-lot="handleSelectedProduct"
-    @close="showMatModal = false" />
+  <MatGetRsltSelModal
+  v-if="showMatModal"
+  :matList="prodList"
+  @select-lot="handleSelectedProduct"
+  @close="showMatModal = false" />
 </template>
 
 <script>
@@ -111,7 +115,7 @@ export default {
       searchQuery: '',             // 제품검색
       selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
-      selectedInsDate: this.getToday(),     // 날짜
+      selectedInsDate: '',     // 날짜
       newItemList: [],
       spmInsStdList: [],
       prodList: [],
@@ -165,51 +169,65 @@ export default {
     hideModal() {
       this.showMatModal = false; // 모달 닫기
     },
-    openMatModal() {
-      axios.get('/api/incInsGetRslt/rsltPrd', { params: { lot_no: this.selectedLotNo } })
-        .then(res => {
-          this.prodList = Array.isArray(res.data) ? res.data : [];
-          this.showMatModal = true;
-        })
-        .catch(err => {
-          this.prodList = [];
-          alert('리스트 불러오기 실패');
-        });
-    },
-
+      openMatModal() {
+    axios.get('/api/incInsGetRslt/rsltMat')
+      .then(res => {
+        this.prodList = Array.isArray(res.data) ? res.data : [];
+        this.showMatModal = true;
+      })
+      .catch(() => {
+        this.prodList = [];
+        alert('제품 목록 불러오기 실패');
+      });
+  },
     // 제품 선택 시
-    async handleSelectedProduct(item) {
-      this.selectedLineId = item.ln_opr_no;
-      this.selectedProductName = item.prd_nm;
-      this.searchQuery = item.prd_no;
-      this.selectedInsDate = this.getToday();
-      this.showMatModal = false;
+async handleSelectedProduct(item) {
+  // 1. LOT 상세정보 조회 (selRsltPrdDtl 쿼리 활용)
+  try {
+    const res = await axios.get('/api/incInsGetRslt/rsltPrdDtl', { params: { lot_no: item.lot_no } });
+    if (res.data && res.data.length > 0) {
+      const info = res.data[0];
 
-      // 성적서 상세정보 불러오기
-      await this.fetchRsltDetail(item.prd_no, item.ln_opr_no);
-    },
-    // 기준서 목록 가져오기
-    async getSpmInsStdList(prd_no) {
-      try {
-        const res = await axios.get('/api/incInsGetRslt/rsltPrdDtl', { params: { lot_no: item.lot_no } });
-        if (res.data && res.data.length > 0) {
-          const info = res.data[0];
-          this.selectedLotNo = info.lot_no || '';
-          this.selectedMatNo = info.mat_no || '';
-          this.selectedMatNm = info.mat_nm || '';
-          this.searchPurOrdNo = info.pur_ord_no || '';
-          this.selectedVdrNm = info.cpy_nm || '';
-        }
-      } catch (err) {
-        alert('LOT 상세정보 조회 실패');
-      }
-      this.showMatModal = false;
-
-      // 성적서 상세정보 불러오기 등 기존 코드...
-      await this.fetchRsltDetail(item.prd_no, item.ln_opr_no);
-    }
+      // 2. input칸에 값 자동 세팅
+      this.searchQuery = item.mat_no || '';
+      this.selectedMatNm = item.mat_nm || '';
+      this.selectedLotNo = info.lot_no || '';
+      this.searchPurOrdNo = info.pur_ord_no || '';
+      this.selectedVdrNm = info.vdr_nm || '';
+      this.selectedInsDate = info.ins_dt ? info.ins_dt.slice(0, 10) : '';
+      this.selectedInsDev = info.mgr_nm || '';
+      this.rsltMaster = {
+        mgr_count: info.mgr_count,
+        succ_count: info.acpt_qty,
+        dft_count: info.rjct_qty,
+        ovr_jdg: info.ovr_jdg,
+        rslt_no: info.rslt_no
+    };
+    this.selectedRsltNo = info.rslt_no || '';
+    this.rsltDetailList = res.data.map(row => ({
+      ins_itm: row.ins_itm,
+      ins_mthd: row.ins_mthd,
+      mgr_rslt: row.mgr_rslt,
+      jdg: row.jdg,
+      rmk: row.rmk
+    }));
+  }}
+  catch (err) {
+    alert('상세정보 조회 실패');
+    this.searchQuery = '';
+    this.selectedMatNm = '';
+    this.selectedLotNo = '';
+    this.searchPurOrdNo = '';
+    this.selectedVdrNm = '';
+    this.selectedInsDate = '';
+    this.selectedInsDev = '';
+    this.rsltMaster = null;
+    this.rsltDetailList = [];
   }
-};
+  }
+},
+
+  };
 
 
 </script>
