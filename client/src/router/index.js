@@ -65,7 +65,7 @@ const routes = [
         component: () => import('@/views/qualitys/incInsRslt.vue'),
       },
       // 입고검사성적서 조회
-    {
+      {
         path: '/IncInsGetRslt',
         name: 'IncInsGetRslt',
         component: () => import('@/views/qualitys/incInsGetRslt.vue'),
@@ -83,9 +83,9 @@ const routes = [
         component: () => import('@/views/spm/SpmFns.vue'),
       },
       { // 주문조회, 총주문수량
-        path:'/SaleList',
-        name:'SaleList',
-        component:()=> import('@/views/sales/saleList.vue'),
+        path: '/SaleList',
+        name: 'SaleList',
+        component: () => import('@/views/sales/saleList.vue'),
       },
       { // bom
         path: 'bom',
@@ -128,19 +128,19 @@ const routes = [
         component: () => import('@/views/receivePrd/receivePrd.vue'),
       },
       { // 자재현황파악, 자재구매계획
-        path:'/inventoryCheck',
-        name:'InventoryCheck',
-        component:()=> import('@/views/inventory/inventoryCheck.vue'),
+        path: '/inventoryCheck',
+        name: 'InventoryCheck',
+        component: () => import('@/views/inventory/inventoryCheck.vue'),
       },
       { // 발주서입력, 자재구매계획
-        path:'/orderForm',
-        name:'orderForm',
-        component:()=> import('@/views/inventory/orderForm.vue'),
+        path: '/orderForm',
+        name: 'orderForm',
+        component: () => import('@/views/inventory/orderForm.vue'),
       },
       { // 발주서조회
-        path:'/ordview',
-        name:'OrdView',
-        component:()=> import('@/views/inventory/ordView.vue'),
+        path: '/ordview',
+        name: 'OrdView',
+        component: () => import('@/views/inventory/ordView.vue'),
       },
       { // 생산지시현황
         path: '/ProdMeng',
@@ -158,24 +158,24 @@ const routes = [
         component: () => import('@/views/production/line/LineManagementDtl'),
       },
       { // 자재요청페이지
-         path:'/MatReq',
-        name:'MatReq', 
-        component:()=>import('@/views/inventory/matReq.vue')
+        path: '/MatReq',
+        name: 'MatReq',
+        component: () => import('@/views/inventory/matReq.vue')
       },
       {
-        path:'/SpmInst',
-        name:'SpmInst', 
-        component:()=>import('@/views/sales/spmInst.vue') 
+        path: '/SpmInst',
+        name: 'SpmInst',
+        component: () => import('@/views/sales/spmInst.vue')
       },
       {
-        path:'/MatImport',
-        name:'MatImport', 
-        component:()=>import('@/views/inventory/matImport.vue')
+        path: '/MatImport',
+        name: 'MatImport',
+        component: () => import('@/views/inventory/matImport.vue')
       },
       {
-        path:'/spmInstTest',
-        name:'spmInstTest',
-        component:()=>import('@/views/sales/spmInstTest.vue')
+        path: '/spmInstTest',
+        name: 'spmInstTest',
+        component: () => import('@/views/sales/spmInstTest.vue')
       }
       //상단 {}를 복사하여 사용하시면 됩니다.   
     ],
@@ -184,6 +184,16 @@ const routes = [
     path: '/login', //실제주소 
     name: 'login', // 부르는 이름
     component: () => import('@/views/login/login.vue'),
+  },
+  // {
+  //   path: '/findPwd',
+  //   name: 'findPwd',
+  //   component: () => import('@/views/login/FindPwd.vue')
+  // },
+  {
+    path: '/find2pwd',
+    name: 'find2pwd',
+    component: () => import('@/views/login/Find2PWD.vue')
   },
   {
     path: '/',
@@ -220,7 +230,7 @@ const routes = [
           { path: 'list-groups', name: 'List Groups', component: () => import('@/views/Etc/base/ListGroups.vue') },
           { path: 'navs', name: 'Navs', component: () => import('@/views/Etc/base/Navs.vue') },
           { path: 'paginations', name: 'Paginations', component: () => import('@/views/Etc/base/Paginations.vue') },
-          { path: 'placeholders', name: 'Placeholders', component: () => import('@/views/Etc/base/Placeholders.vue') },  
+          { path: 'placeholders', name: 'Placeholders', component: () => import('@/views/Etc/base/Placeholders.vue') },
           { path: 'popovers', name: 'Popovers', component: () => import('@/views/Etc/base/Popovers.vue') },
           { path: 'progress', name: 'Progress', component: () => import('@/views/Etc/base/Progress.vue') },
           { path: 'spinners', name: 'Spinners', component: () => import('@/views/Etc/base/Spinners.vue') },
@@ -353,6 +363,7 @@ const routes = [
         name: 'Login',
         component: () => import('@/views/Etc/pages/Login.vue'),
       },
+
       {
         path: 'register',
         name: 'Register',

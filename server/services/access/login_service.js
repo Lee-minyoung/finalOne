@@ -1,6 +1,9 @@
 // 로그인 관련 서비스 모듈
 const mariadb = require("../../database/mapper.js");
 const { createHashedPassword } = require('../../utils/crypto.js');
+const { sendEmail } = require('../../config/emailConfig.js');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 // 로그인 서비스 객체 생성
 const loginService = {
@@ -74,6 +77,77 @@ const loginService = {
             // 문제가 생겼을 때 오류 처리
             console.error("비밀번호 업데이트 오류:", err);
             return false;
+        }
+    },
+
+    // 비밀번호 찾기
+    async findPassword(empNo, email) {
+        try {
+            // 1. 사원 정보 조회
+            const empInfo = await mariadb.query("findEmpInfoByEmpNo", empNo);
+            
+            if (!empInfo || empInfo.length === 0) {
+                return {
+                    result: false,
+                    message: '존재하지 않는 사원번호입니다.'
+                };
+            }
+
+            // 2. 이메일 일치 여부 확인
+            if (empInfo[0].email !== email) {
+                return {
+                    result: false,
+                    message: '이메일이 일치하지 않습니다.'
+                };
+            }
+
+            // 3. 임시 비밀번호 생성
+            const tempPassword = crypto.randomBytes(4).toString('hex');
+            
+            // 4. 비밀번호 업데이트
+            const updateResult = await mariadb.query("updatePwd", [tempPassword, empNo]);
+            
+            if (updateResult.affectedRows === 0) {
+                return {
+                    result: false,
+                    message: '비밀번호 업데이트에 실패했습니다.'
+                };
+            }
+
+            // 5. 이메일 전송
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: '[인사관리시스템] 임시 비밀번호 발급',
+                html: `
+                    <h2>임시 비밀번호가 발급되었습니다.</h2>
+                    <p>사원번호: ${empNo}</p>
+                    <p>임시 비밀번호: ${tempPassword}</p>
+                    <p>로그인 후 반드시 비밀번호를 변경해주세요.</p>
+                `
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            return {
+                result: true,
+                message: '임시 비밀번호가 이메일로 발송되었습니다.'
+            };
+
+        } catch (err) {
+            console.error('비밀번호 찾기 오류:', err);
+            return {
+                result: false,
+                message: '서버 오류가 발생했습니다.'
+            };
         }
     }
 };

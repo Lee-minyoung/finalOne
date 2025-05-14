@@ -5,10 +5,10 @@
         <div class="col-md-6 col-lg-5">
           <div class="login-card">
             <div class="card-body px-4 py-5">
-              <form @submit.prevent="userLogin">
+              <form @submit.prevent="findPwd">
                 <div class="text-center mb-4">
                   <img src="@/assets/icons/login_bobe.png" alt="밥먹고하시조" class="login-logo" />
-                  <p class="welcome-text">오늘도 당신 덕분에 따뜻한 밥이 완성됩니다!</p>
+                  <p class="welcome-text">비밀번호를 잊으셨나요?<br>사원번호와 이메일을 입력해 주세요.</p>
                 </div>
 
                 <div class="form-section">
@@ -20,39 +20,36 @@
                       <input 
                         type="text" 
                         class="form-control" 
-                        v-model="loginInfo.emp_no" 
+                        v-model="findInfo.empNo" 
                         placeholder="사원번호"
                         :disabled="isLoading"
                       />
                     </div>
-                    <div class="invalid-feedback" v-if="errors.emp_no">{{ errors.emp_no }}</div>
                   </div>
 
                   <div class="input-wrapper">
                     <div class="input-group">
                       <span class="input-group-text">
-                        <i class="bi bi-lock-fill"></i>
+                        <i class="bi bi-envelope"></i>
                       </span>
                       <input 
-                        type="password" 
+                        type="email" 
                         class="form-control" 
-                        v-model="loginInfo.pwd" 
-                        placeholder="비밀번호"
-                        @keyup.enter="userLogin"
+                        v-model="findInfo.email" 
+                        placeholder="이메일"
                         :disabled="isLoading"
                       />
                     </div>
-                    <div class="invalid-feedback" v-if="errors.pwd">{{ errors.pwd }}</div>
                   </div>
 
                   <div class="text-end mb-3">
                     <button 
                       type="button" 
                       class="btn-forgot"
-                      @click="$router.push({ name: 'find2pwd' })"
+                      @click="goToLogin"
                       :disabled="isLoading"
                     >
-                      비밀번호 찾기
+                      로그인으로 돌아가기
                     </button>
                   </div>
 
@@ -62,7 +59,7 @@
                     :disabled="isLoading"
                   >
                     <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                    {{ isLoading ? '로그인 중...' : '로그인' }}
+                    {{ isLoading ? '처리 중...' : '비밀번호 찾기' }}
                   </button>
                 </div>
               </form>
@@ -76,102 +73,49 @@
 
 <script>
 import axios from "axios";
-import { useEmpStore } from "../../stores/empStore";
-import { mapActions } from "pinia";
-import 'bootstrap-icons/font/bootstrap-icons.css';  // Bootstrap Icons 추가
 
 export default {
   data() {
     return {
-      loginInfo: {
-        emp_no: "",
-        pwd: "",
+      findInfo: {
+        empNo: "",
+        email: "",
       },
       isLoading: false,
-      errors: {
-        emp_no: '',
-        pwd: ''
-      }
     };
   },
   methods: {
-    ...mapActions(useEmpStore, ["setLoginInfo"]),
-
-    validateForm() {
-      let isValid = true;
-      this.errors = {
-        emp_no: '',
-        pwd: ''
-      };
-
-      if (!this.loginInfo.emp_no?.trim()) {
-        this.errors.emp_no = '사원번호를 입력해주세요';
-        isValid = false;
-      }
-
-      if (!this.loginInfo.pwd?.trim()) {
-        this.errors.pwd = '비밀번호를 입력해주세요';
-        isValid = false;
-      }
-
-      return isValid;
-    },
-
-    async userLogin() {
-      // 폼 검증
-      if (!this.validateForm()) {
+    async findPwd() {
+      if (!this.findInfo.empNo.trim() || !this.findInfo.email.trim()) {
+        alert("사원번호와 이메일을 모두 입력해 주세요.");
         return;
       }
-
       this.isLoading = true;
-
       try {
-        const result = await axios.post(`/api/login`, this.loginInfo);
-        const loginRes = result.data;
+        const result = await axios.post(`/api/find-password`, this.findInfo);
+        const findPwdRes = result.data;
 
-        if (loginRes.result) {
-          this.setLoginInfo({
-            emp_no: loginRes.emp_no,
-            nm: loginRes.nm,
-            pst_nm: loginRes.pst_nm,
-            pst_no: loginRes.pst_no,
-            dept_no: loginRes.dept_no,
-          });
-          
-          alert("사랑합니다!");
-          this.$router.push({ name: "Home" });
+        if (findPwdRes.result) {
+          alert(findPwdRes.message || "임시 비밀번호가 발급되었습니다.");
+          this.$router.push({ name: "login" });
         } else {
-          this.errors.pwd = loginRes.message || "사원번호 혹은 비밀번호가 일치하지 않습니다.";
+          alert(findPwdRes.message || "사원 정보를 찾을 수 없습니다.");
         }
       } catch (err) {
-        console.error("Login error:", err);
-        
-        if (err.response) {
-          switch (err.response.status) {
-            case 401:
-              this.errors.pwd = "사원번호 혹은 비밀번호가 일치하지 않습니다.";
-              break;
-            case 429:
-              this.errors.pwd = "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.";
-              break;
-            case 500:
-              alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-              break;
-            default:
-              alert("로그인 중 오류가 발생했습니다.");
-          }
-        } else if (err.request) {
-          alert("서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.");
-        }
+        console.error("비밀번호 찾기 오류:", err);
+        alert("서버 오류가 발생했습니다.");
       } finally {
         this.isLoading = false;
       }
     },
+    goToLogin() {
+      this.$router.push({ name: "login" });
+    }
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/style";
 
 .login-container {
@@ -297,31 +241,4 @@ export default {
     cursor: not-allowed;
   }
 }
-
-.invalid-feedback {
-  display: block;
-  font-size: 0.85rem;
-  margin: 0.35rem 0 0 0.75rem;
-  color: #dc3545;
-}
-
-@media (max-width: 768px) {
-  .login-card {
-    margin: 1rem;
-    min-height: 450px;
-  }
-  
-  .login-logo {
-    width: 180px;
-  }
-
-  .card-body {
-    padding: 2rem !important;
-  }
-
-  .form-section {
-    max-width: 100%;
-  }
-}
-</style>
-
+</style> 

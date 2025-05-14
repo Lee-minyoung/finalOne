@@ -5,6 +5,7 @@ const findEmpInfoByEmpNo =
         , e.pwd
         , e.nm
         , e.ctt
+        , e.email
         , e.dept_no
         , e.pst_no
         , p.pst_nm
