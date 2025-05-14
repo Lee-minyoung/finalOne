@@ -18,7 +18,7 @@
           <!-- 로그인 상태: 사원명/직급명 환영 메시지, 비로그인: 안내 메시지 -->
           <span class="fw-bold fs-4" v-if="employeeName">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
           <span class="fw-bold fs-4" v-else>안전한 이용을 위해 로그인이 필요합니다.</span>
-          <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
+          <!-- <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span> -->
         </div>
         <div class="mt-3 ms-5 text-secondary" style="font-size: 1rem;">
           현재 위치: {{ currentPathLabel }}
