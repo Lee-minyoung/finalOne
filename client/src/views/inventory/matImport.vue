@@ -152,6 +152,8 @@
 </template>
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
+
 export default {
   data() {
     return {
@@ -237,7 +239,9 @@ export default {
         }))
           try{
               await axios.post('/api/addMatImports',payloads);
-              alert('자재입고 여러건  완료');}
+              alert('자재입고완료');
+
+            }
           catch(err){
               alert('자재입고실패'); 
           }

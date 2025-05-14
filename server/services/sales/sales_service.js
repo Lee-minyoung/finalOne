@@ -21,6 +21,15 @@ const sqlList = require('../../database/sqlList.js');
       conn.release();
     }
   }; 
+
+const addOrdData2=async (ordData) => {
+    const result = await mariadb.query('insertOrd', ordData);
+    return result; 
+}
+const addOrdDtlData2=async (detailData) => {
+    const result = await mariadb.query('insertOrdDtl', detailData);
+    return result;
+  }
  
   // 수주번호 마지막조회 
  const findLastOrdNo = async () => {
@@ -86,6 +95,7 @@ const addSpmDtlData=async(dtlData)=>{
 }
 
 const minusLotCurStk=async (list)=>{
+  console.log('minusLotCurStk',list);
   //요청량 , lot번호, 제품번호
   const result=await mariadb.query('updatePrdStk',list); 
   return result; 
@@ -101,11 +111,17 @@ const findLastPrdHist=async()=>{
   return result[0]?.maxLotNo||0; 
 }
 
-const findPrdLotList=async(prdNo)=>{
-  const [rows] = await mariadb.query('prdMaxLotList', [prdNo]);
+const findPrdLotList=async(prd_no)=>{
+  const [rows] = await mariadb.query('prdMaxLotList', [prd_no]);
+  console.log('[DEBUG] rows:', rows);
   const list = Array.isArray(rows) ? rows : [rows];
 console.log('[DEBUG] 최종 lot list:', list);
 return list;
+}
+
+const findOrdToSpmNo=async()=>{
+  const result=await mariadb.query('ordToSpmNo'); 
+  return result; 
 }
 
 
@@ -149,5 +165,8 @@ return list;
     minusLotCurStk,
     addPrdStkHist, 
     findLastPrdHist,
-    findPrdLotList
+    findPrdLotList,
+    addOrdData2, 
+    addOrdDtlData2, 
+    findOrdToSpmNo
   }

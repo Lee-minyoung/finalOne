@@ -86,11 +86,8 @@
       <th scope="col">자재ID</th>
       <th scope="col">자재명</th>
       <th scope="col">수량</th>
-     
       <th scope="col">총가격</th>
-     
       <th scope="col">거래처</th>
-     
       <th scope="col">발주</th>            
     </tr>
   </thead>
@@ -251,6 +248,8 @@ import axios from 'axios';
       console.log('발주버튼클릭'); 
       console.log(purPlnNo);
       console.log('add',add);
+      //fetchInventoryPurPlan()
+      await this.fetchInventoryPurPlan();
        return add;
         
      }catch(error){
@@ -422,10 +421,20 @@ import axios from 'axios';
     console.log('자재요청성공', result); 
     this.reqClickedList.push(item['계획ID'] + item['자재명']); //한페이지 안에서 머무르는건 가능.... 
     alert('자재요청이 완료 되었습니다');
+
+      const Nos=await axios.get('/api/PlnToOrd') //
+      this.plnToOrdNo=Nos.data.map(p => p['계획ID']);
+      console.log('allpurPlan',this.allPurPlan);
+      console.log(this.plnToOrdNo); 
+      this.inventoryPurPlan = this.allPurPlan.filter(p => !this.plnToOrdNo.includes(p['계획ID']));  
+
+
   } catch (error) {
     console.log('자재요청실패', error); 
   }
 }
+
+//this.pur
 
 }
 }

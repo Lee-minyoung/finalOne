@@ -45,13 +45,7 @@
         <input v-model="memo" type="text" class="form-control">
       </div>
     </div>
-    <!-- <div class="col-md-4 d-flex align-items-end">
-      <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처변경</button>
-    </div>
-    <vdr-select-modal v-if="showVdrModal" :vdr-list="vdr" :selected="selectVdr" @select-vdr="handleVdrSelect"
-      @close="showVdrModal = false" /> -->
-
-    <!-- 제품 목록 테이블 -->
+  
     <table class="table table-bordered text-center mt-4">
       <thead class="table-light">
         <tr>

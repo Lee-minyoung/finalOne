@@ -59,6 +59,7 @@ INSERT INTO mat_stk (
   ?, ?, ?, ?, ?,
   ?, ?
 )`
+
 const insertmatStkHist=`
  INSERT INTO mat_stk_hist (
   mat_stk_hist_no, lot_no, io_tp, qty, dt,

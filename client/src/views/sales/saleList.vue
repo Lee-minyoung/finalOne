@@ -103,7 +103,8 @@
         <td>{{ item.cpy_nm }}</td>
         <td>{{ item.prd_nm }}</td>
         <td>{{item['요청수량'] }}</td>
-        <td>{{ item['lot수량'] }}</td>
+        <td v-if="item['lot수량']>0" >{{ item['lot수량'] }}</td>
+        <td v-else>0</td>
         <!-- <td>{{ item.prd_qty }}</td>
         <td>{{ item.rgt_dt.substring(0,10) }}</td>
         <td>{{ item.due_dt.substring(0,10) }}</td> -->
@@ -209,6 +210,7 @@ export default {
         })
         console.log(result.data)
         this.getOrdList()
+        alert('주문등록 완료')
       } catch (err) {
         console.log('주문등록 실패', err)
       }
