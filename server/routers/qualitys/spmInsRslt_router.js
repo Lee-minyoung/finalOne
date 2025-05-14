@@ -5,7 +5,7 @@ const spmInsRsltService = require('../../services/qualitys/spmInsRslt_service.js
 
 // 검사 제품 불러오기
 router.get('/spmInsRslt/prdList', async (req, res) => {
-  let list = await spmInsRsltService.findRsltPrd()
+  let list = await spmInsRsltService.findRsltPrd1()
                           .catch(err => console.log(err));
     res.send(list);
 });
@@ -53,6 +53,29 @@ router.post('/spmInsRslt', async (req, res) => {
     res.send(result);
   } catch (err) {
     res.status(500).send({ isSuccessed: false, message: '등록 실패' });
+  }
+});
+
+// 검사량 불러오기
+router.get('/spmInsRslt/insCount', async (req, res) => {
+  const { ln_opr_no, prd_no } = req.query;
+  if (!ln_opr_no || !prd_no) return res.status(400).send({});
+  try {
+    const [row] = await spmInsRsltService.findInsCount(ln_opr_no, prd_no);
+    res.send(row || {});
+  } catch (err) {
+    res.status(500).send({});
+  }
+});
+
+
+// 성적세부 PK키 마지막번호 조회
+router.get('/spmInsRslt/lastDtlNo', async (req, res) => {
+  try {
+    const lastNo = await spmInsRsltService.findLastDtlNo();
+    res.send({ lastNo });
+  } catch (err) {
+    res.status(500).send({ lastNo: 0 });
   }
 });
 

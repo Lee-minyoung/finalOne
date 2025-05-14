@@ -10,8 +10,8 @@
       성적서번호 <input :value="selectedRsltNo" class="form-control" readonly style="background-color: #eee;" />
       <hr style="margin-left:-75px;">
       LOTNo <input :value="selectedLotNo" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
-      발주번호 <input :value="searchPurOrdNo" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
-      납입업체 <input :value="selectedVdrNo" class="form-control" readonly style="background-color: #eee;" />
+      발주번호 <input v-model="searchPurOrdNo" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
+      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee;" />
       <br>
       자재명 <input :value="selectedMatNm" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
       작성일자 <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 197px;" />
@@ -32,7 +32,7 @@
       <tbody>
         <tr>
           <td>수량</td>
-          <td><input v-model="newItem.mgr_count" class="form-control" placeholder="검사량" /></td>
+          <td><input v-model="newItem.mgr_count" class="form-control" placeholder="검사량" style="background-color: #eee;" readonly /></td>
           <td><input v-model="newItem.succ_count" class="form-control" placeholder="합격량" /></td>
           <td><input v-model="newItem.acpt_count" class="form-control" placeholder="불량량" /></td>
         </tr>
@@ -44,15 +44,15 @@
         <div style="padding-left:50px;">종합판정</div>
         <div class="vr"></div>
         <button
-          :class="['jdg-btn', overallJdg === '합격' ? 'btn-green' : '']"
-          @click="overallJdg = '합격'"
-          style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
-        >합격</button>
-        <button
-          :class="['jdg-btn', overallJdg === '불합격' ? 'btn-red' : '']"
-          @click="overallJdg = '불합격'"
-          style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
-        >불합격</button>
+  :class="['jdg-btn', overallJdg === 'n1' ? 'btn-green' : '']"
+  disabled
+  style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+>합격</button>
+<button
+  :class="['jdg-btn', overallJdg === 'n2' ? 'btn-red' : '']"
+  disabled
+  style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+>불합격</button>
       </div>
     </div>
     </div>
@@ -72,10 +72,10 @@
           <td>{{ item.ins_itm }}</td>
           <td>{{ item.ins_mthd }}</td>
           <td>
-            <input v-model="newItemList[index].mgr_rslt" class="form-control" placeholder="검사결과" />
+            <input v-model="newItemList[index].mgr_rslt" class="form-control" placeholder="검사결과" @input="updateOverallJdg" />
           </td>
           <td>
-            {{ getJdg(item, newItemList[index].mgr_rslt) }}
+             {{ getJdgName(getJdg(item, newItemList[index].mgr_rslt)) }}
           </td>
           <td>
             <input v-model="newItemList[index].rmk" class="form-control" placeholder="비고"/>
@@ -102,6 +102,8 @@ export default {
       searchQuery: '',
       selectedLotNo: '',
       selectedMatNm: '',
+      searchPurOrdNo: '',
+      selectedVdrNm: '',
       selectedInsDate: this.getToday(),
       newItemList: [],
       incInsStdList: [],
@@ -115,32 +117,69 @@ export default {
   created() {
     this.selectedInsDev = localStorage.getItem('username') || '';
   },
+  watch: {
+  newItemList: {
+    handler() {
+      this.updateOverallJdg();
+    },
+    deep: true
+  }
+},
   methods: {
     async incInsRsltInsert() {
       if (!this.selectedRsltNo) {
         alert('성적서 번호가 없습니다.');
         return;
       }
-      let obj = {
-        rslt_no: this.selectedRsltNo,
+      // 마스터(inc_ins_rslt) 저장
+  let obj = {
+    rslt_no: this.selectedRsltNo,
     mgr_count: this.newItem.mgr_count,
-    acpt_qty: this.newItem.acpt_qty,    // 합격량
-    rjct_qty: this.newItem.rjct_qty,    // 불량량
-    ovr_jdg: this.overallJdg,           // 종합판정
+    acpt_qty: this.newItem.succ_count,   // 합격량
+    rjct_qty: this.newItem.acpt_count,   // 불량량
+    ovr_jdg: this.overallJdg,            // 종합판정(n1/n2)
     rmk: this.newItem.rmk,
-    pur_ord_no: this.selectedLotNo      // 발주번호
+    pur_ord_no: this.searchPurOrdNo
   };
   try {
     let result = await axios.post("/api/incInsRslt", obj);
     if (result.data.isSuccessed) {
+      // 상세(inc_ins_rslt_dtl) 저장
+      const res = await axios.get('/api/incInsRslt/lastRsltNo');
+      let lastNo = Number(res.data.lastNo) || 0;
+      const dtlList = this.incInsStdList.map((item, idx) => {
+        lastNo += 1;
+        return {
+          inc_ins_rslt_dtl_no: `ISD-${String(lastNo).padStart(3, '0')}`,
+          mgr_date: this.selectedInsDate,
+          inc_ins_std_no: item.inc_ins_std_no,
+          mgr_rslt: this.newItemList[idx].mgr_rslt,
+          jdg: this.getJdg(item, this.newItemList[idx].mgr_rslt),
+          rmk: this.newItemList[idx].rmk || '',
+          cert_no: this.selectedRsltNo
+        };
+      });
+      await axios.post("/api/incInsRslt/dtl", dtlList);
+
       alert('등록되었습니다.');
-      // 추가 작업
     } else {
       alert('등록 실패: ' + (result.data.message || ''));
     }
   } catch (err) {
     alert('등록 중 오류가 발생했습니다.');
   }
+},
+
+ updateOverallJdg() {
+  const allJdg = this.incInsStdList.map((item, idx) =>
+    this.getJdg(item, this.newItemList[idx]?.mgr_rslt)
+  );
+  if (allJdg.every(jdg => !jdg)) {
+    this.overallJdg = '';
+    return;
+  }
+  // 모두 o1(적합)이면 n1(합격), 하나라도 o2(부적합)이면 n2(불합격)
+  this.overallJdg = allJdg.every(jdg => jdg === 'o1') ? 'n1' : 'n2';
 },
     
      parseNumber(str) {
@@ -154,15 +193,20 @@ export default {
       const tol = this.parseNumber(item.ins_spc);
       const result = this.parseNumber(mgr_rslt);
 
-      if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
-        const min = std - tol;
-        const max = std + tol;
-        return (result >= min && result <= max) ? '적합' : '부적합';
-      }
-      if (mgr_rslt === '1' || mgr_rslt === 1) return '적합';
-      if (mgr_rslt === '0' || mgr_rslt === 0) return '부적합';
-      return '';
-    },
+       if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
+      const min = std - tol;
+      const max = std + tol;
+      return (result >= min && result <= max) ? 'o1' : 'o2'; // 적합=o1, 부적합=o2
+    }
+    if (mgr_rslt === '1' || mgr_rslt === 1) return 'o1';
+    if (mgr_rslt === '0' || mgr_rslt === 0) return 'o2';
+    return '';
+  },
+  getJdgName(code) {
+    if (code === 'o1') return '적합';
+    if (code === 'o2') return '부적합';
+    return '';
+  },
     getToday() {
       const today = new Date();
       return today.toISOString().slice(0, 10);
@@ -178,13 +222,32 @@ export default {
         });
     },
     async handleSelectedLot(item) {
-      this.selectedLotNo = item.lot_no;
-      this.selectedMatNm = item.mat_nm;
-      this.searchQuery = item.mat_no; // 자재번호
-        this.searchPurOrdNo = item.pur_ord_no;      // 발주번호
-  this.selectedVdrNo = item.vdr_no;     // 납입업체
-      this.selectedInsDate = this.getToday();
-      this.showLotModal = false;
+  this.selectedLotNo = item.lot_no;
+  this.selectedMatNm = item.mat_nm;
+  this.searchQuery = item.mat_no;
+  this.searchPurOrdNo = item.pur_ord_no;
+  console.log('선택 LOT:', item);
+console.log('전달 pur_ord_no:', item.pur_ord_no);
+  
+
+  // 발주번호로 납입업체명, 검사량 조회
+  if (item.pur_ord_no) {
+    try {
+      const res = await axios.get('/api/incInsRslt/ord', { params: { pur_ord_no: item.pur_ord_no } });
+      console.log('ord 응답:', res.data);
+      this.selectedVdrNm = res.data?.cpy_nm || '';
+      this.newItem.mgr_count = res.data?.qty || '';
+    } catch (err) {
+      this.selectedVdrNm = '';
+      this.newItem.mgr_count = '';
+    }
+  } else {
+    this.selectedVdrNm = '';
+    this.newItem.mgr_count = '';
+  }
+
+  this.selectedInsDate = this.getToday();
+  this.showLotModal = false;
       // 성적서 번호 자동 할당
       try {
         const res = await axios.get('/api/incInsRslt/lastRsltNo');
@@ -207,7 +270,24 @@ export default {
   } catch (err) {
     alert('기준서 목록을 가져오는 중 오류가 발생했습니다.');
   }
+},
+async getNextRsltNo() {
+  let lastNo = 0;
+  let nextNo = '';
+  let exists = true;
+  while (exists) {
+    // 마지막 번호 조회
+    const res = await axios.get('/api/incInsRslt/lastRsltNo');
+    lastNo = Number(res.data.lastNo) || lastNo + 1;
+    nextNo = `ISJ-${String(lastNo + 1).padStart(3, '0')}`;
+    // 중복 체크
+    const check = await axios.get('/api/incInsRslt/exists', { params: { rslt_no: nextNo } });
+    exists = check.data.exists;
+    lastNo++; // 다음 번호로 증가
+  }
+  return nextNo;
 }
+
   }
 }
 </script>

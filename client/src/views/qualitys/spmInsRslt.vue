@@ -35,7 +35,7 @@
           <tbody>
             <tr>
               <td>수량</td>
-              <td><input v-model="newItem.mgr_count" class="rslInput" placeholder="검사량" /></td>
+              <td><input v-model="newItem.mgr_count" class="rslInput" placeholder="검사량" style="background-color: #eee;" readonly/></td>
               <td><input v-model="newItem.succ_count" class="rslInput" placeholder="합격량" /></td>
               <td><input v-model="newItem.dft_count" class="rslInput" placeholder="불량량" /></td>
             </tr>
@@ -44,23 +44,21 @@
       </div>
 
       <!-- 종합판정 -->
-      <div class="rst">
+      <!-- 종합판정 -->
+<div class="rst">
   <div class="hstack gap-3">
     <div style="padding-left:50px;">종합판정</div>
-    <!-- 종합판정 글자 표시 -->
-     <div class="vr"></div>
-<div class="text-center" style="margin: 20px 0;">
-  <span
-    :style="{
-      color: autoOverallJdg === '합격' ? '#4caf50' : autoOverallJdg === '불합격' ? '#e53935' : 'inherit',
-      fontWeight: 'bold',
-      fontSize: '2rem'
-    }"
-  >
-    {{ autoOverallJdg }}
-  </span>
+    <div class="vr"></div>
+    <button
+
+      :class="['jdg-btn', autoOverallJdg === '합격' ? 'btn-green' : '']"
+      style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+    >합격</button>
+    <button
+      :class="['jdg-btn', autoOverallJdg === '불합격' ? 'btn-red' : '']"
+      style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;"
+    >불합격</button>
   </div>
-</div>
 </div>
     </div>
     <h5>검사결과</h5>
@@ -165,7 +163,7 @@ export default {
     mgr_count: this.newItem.mgr_count,
     succ_count: this.newItem.succ_count,
     dft_count: this.newItem.dft_count,
-    ovr_jdg: this.autoOverallJdg, // 자동 판정 사용
+    ovr_jdg: this.getOvrJdgCode(this.autoOverallJdg), // 자동 판정 사용
     rmk: this.newItem.rmk || '',
     ln_opr_no: this.selectedLineId,
     prd_no: this.searchQuery
@@ -175,21 +173,27 @@ export default {
     let result = await axios.post("/api/spmInsRslt", obj);
     let addRes = result.data;
 
-    if (addRes.isSuccessed) {
-      // 2. 상세(행별) 저장
-      const dtlList = this.spmInsStdList.map((item, idx) => ({
-        spm_ins_rslt_dtl_no: null, // auto_increment면 null
-        mgr_date: this.selectedInsDate, // 검사일자
-        spm_ins_std_no: item.spm_ins_std_no,
-        mgr_rslt: this.newItemList[idx].mgr_rslt, // ← 검사결과
-        jdg: this.getJdg(item, this.newItemList[idx].mgr_rslt), // ← 판정
-        dft_quy: null, // 필요시 입력
-        rslt_no: this.selectedRsltNo,
-        qrd_no: null, // 필요시 입력
-        rmk: this.newItemList[idx].rmk // ← 비고
-      }));
+if (addRes.isSuccessed) {
+      // 1) 서버에서 마지막 상세번호 조회
+      const res = await axios.get('/api/spmInsRslt/lastDtlNo');
+      let lastNo = Number(res.data.lastNo) || 0;
 
-      await axios.post("/api/spmInsRslt/dtl", dtlList);
+        // 2) 상세(행별) 저장
+      const dtlList = this.spmInsStdList.map((item, idx) => {
+        lastNo += 1;
+        return {
+          spm_ins_rslt_dtl_no: `YGS-${String(lastNo).padStart(3, '0')}`,
+          mgr_date: this.selectedInsDate,
+          spm_ins_std_no: item.spm_ins_std_no,
+          mgr_rslt: this.newItemList[idx].mgr_rslt,
+          jdg: this.getJdgCode(this.getJdg(item, this.newItemList[idx].mgr_rslt)),
+          dft_qty: 0,
+          rslt_no: this.selectedRsltNo,
+          rmk: this.newItemList[idx].rmk || ''
+      };
+});
+
+       await axios.post("/api/spmInsRslt/dtl", dtlList);
 
       alert('등록되었습니다.');
       // 필요시 화면 갱신
@@ -251,7 +255,7 @@ export default {
     },
 
     // 제품 선택 시
-   async handleSelectedProduct(item) {
+  async handleSelectedProduct(item) {
   this.selectedLineId = item.ln_opr_no;
   this.selectedProductName = item.prd_nm;
   this.searchQuery = item.prd_no;  
@@ -262,15 +266,25 @@ export default {
   // 성적서 번호 자동 할당
   try {
     const res = await axios.get('/api/spmInsRslt/lastRsltNo');
-  // lastNo는 '001', '002'처럼 숫자만 반환되어야 함
-  const lastNo = Number(res.data.lastNo) || 0;
-  const nextNo = String(lastNo + 1).padStart(3, '0');
-  this.selectedRsltNo = `SJS-${nextNo}`;
-} catch (err) {
- this.selectedRsltNo = 'SJS-001';
+    const lastNo = Number(res.data.lastNo) || 0;
+    const nextNo = String(lastNo + 1).padStart(3, '0');
+    this.selectedRsltNo = `SJS-${nextNo}`;
+  } catch (err) {
+    this.selectedRsltNo = 'SJS-001';
   }
 
-  this.getSpmInsStdList(item.prd_no);
+  await this.getSpmInsStdList(item.prd_no);
+
+   // selectInsCount로 검사량(pdn_qty) 조회
+  try {
+    const res = await axios.get('/api/spmInsRslt/insCount', {
+      params: { ln_opr_no: item.ln_opr_no, prd_no: item.prd_no }
+    });
+    console.log('insCount 응답:', res.data);
+    this.newItem.mgr_count = res.data?.pdn_qty ?? '';
+  } catch (err) {
+    this.newItem.mgr_count = '';
+  }
 },
     // 기준서 목록 가져오기
     async getSpmInsStdList(prd_no) {
@@ -285,7 +299,17 @@ export default {
   } catch (err) {
     alert('기준서 목록을 가져오는 중 오류가 발생했습니다.');
   }
-}
+},
+  getOvrJdgCode(jdg) {
+    if (jdg === '합격') return 'n1';
+    if (jdg === '불합격') return 'n2';
+    return '';
+  },
+   getJdgCode(jdg) {
+    if (jdg === '적합') return 'o1';
+    if (jdg === '부적합') return 'o2';
+    return '';
+  },
   }
 }
 
