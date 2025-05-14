@@ -1,24 +1,24 @@
 <template>
-  
   <div class="col-md-10 p-4">
-    <h4 class="mb-4">출하지시 여러건  테스트</h4>
+    <h4 class="mb-4">출하지시</h4>
+
     <!-- 출하지시 입력 폼 -->
     <div class="row mb-3 g-3">
       <div class="col-md-3">
         <label class="form-label">출하일자</label>
-        <input v-model="spmDate" type="date" class="form-control">
+        <input v-model="spmDate" type="date" class="form-control" />
       </div>
+
       <div class="col-md-3">
         <label class="form-label">담당자</label>
-        <input type="text" class="form-control">
+        <input type="text" v-model="manager" class="form-control" />
       </div>
-   
+    </div>
 
-    <!-- 제품 목록 테이블 -->
+    <!-- 수주 목록 테이블 -->
     <table class="table table-bordered text-center mt-4">
       <thead class="table-light">
         <tr>
-          <th><input type="checkbox" /></th>
           <th>주문ID</th>
           <th>거래처ID</th>
           <th>거래처명</th>
@@ -31,43 +31,38 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in filteredOrders" :key="item.ord_no">
-          <td><input type="checkbox" :value="item.ord_no" v-model="checkOrd"  /></td>
+        <tr
+          v-for="item in ords"
+          :key="item.ord_no"
+          @click="toggleOrder(item)"
+          :class="{ 'table-primary': isSelected(item) }"
+          style="cursor: pointer"
+        >
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
           <td>{{ item.cpy_nm }}</td>
           <td>{{ item.prd_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item['요청수량'] }}</td>
-          <td v-if="item['lot수량']<=0" >0</td>
-           <td v-else-if="item['lot수량']>0" >{{ item['lot수량'] }}</td>
+          <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
           <td>{{ item['납기예정'] }}</td>
-          <td v-if="item['요청수량'] < item['lot수량']">
-           <span class="badge text-bg-primary">출하가능</span>
-          </td>
-          <td v-else>
-           <span class="badge text-bg-danger">출하대기</span>
+          <td>
+            <span
+              class="badge"
+              :class="item['요청수량'] < item['lot수량'] ? 'text-bg-primary' : 'text-bg-danger'"
+            >
+              {{ item['요청수량'] < item['lot수량'] ? '출하가능' : '출하대기' }}
+            </span>
           </td>
         </tr>
-
       </tbody>
-      </table>
-  
+    </table>
 
     <!-- 출하지시 버튼 -->
-    <!-- <div class="d-flex justify-content-end mt-3">
-      <button class="btn btn-primary" @click="saveSpm">출하지시</button>
-    </div> -->
-
-     <div class="d-flex justify-content-end mt-3">
-      <button class="btn btn-primary" @click="manySpms">여러건 출하지시</button>
-    </div>
-   
     <div class="d-flex justify-content-end mt-3">
-      <button class="btn btn-primary" @click="fetchOrdToSpmNo">주문->출하</button>
+      <button class="btn btn-primary" @click="saveSpm">출하지시</button>
     </div>
   </div>
-    </div>
 </template>
 
 <script>
@@ -75,168 +70,74 @@ import axios from 'axios';
 
 export default {
   name: 'SpmInst',
-  // components: {
-  //   vdrSelectModal,
-  // },
   data() {
     return {
-      mode: 'basic',
-      spmDate: '', //출하일자
-      ordNo: 0,    //수주번호
-      vdr: [], //거래처목록
-      selectVdr: {},  //선택한 거래처  
-      selectCpyNm: {},                 
-      showVdrModal: false, // 
-      deliver: '',
-      qty: 0,  //수량
-      unitPrc: 0, //단가
-      prdNo: '', //제품번호 
-      ords: [], //전체주문건 
-      checkOrd: [], //체크한 수주번호 건에 대해서   
-      lotQty:0,
-      memo: '', //비고 
-     // selectedOrds:[],
-     ordToSpmNo:[] 
-
+      spmDate: '',
+      manager: '',
+      selectedOrders: [],
+      ords: []
     };
   },
   async created() {
-    //const vdrs = await axios.get('/api/vdrList');
     const ords = await axios.get('/api/ord');
     this.ords = ords.data;
-    console.log(this.ords);
-    // const ordToSpmNo= await axios.get('/api/ordToSpmNo');
-    // this.ordToSpmNo=ordToSpmNo.data;
-    // this.vdr = vdrs.data;
   },
-  computed: {
-  selectedOrder() {
-    return this.checkOrd.length > 0 ? this.checkOrd[0] : null;
-  },
-  filteredOrders() {
-    // 출하리스트에 있는 ord_no 배열 추출
-    const spmOrdNos = this.ordToSpmNo.map(o => o.ord_no);
-    // 수주 리스트에서 출하된 건 제외
-    return this.ords.filter(o => !spmOrdNos.includes(o.ord_no));
-  },
-},
-
-
   methods: {
-    //모달에서 vdr 다루기 
-    // handleVdrSelect(selectedVdr) {
-    //   this.selectVdr = selectedVdr;
-    //   this.showVdrModal = false;
-    // },
-
-    //발주메소드 가져온건데 출하지시도 비슷하게하기 
-    async saveSpm() {
-      const payload = {
-        //vdr_no: this.selectVdr?.vdr_no??1000, 수주번호알면 알아서 받음 
-        //       // 거래처번호 하나?? 일단보류..
-        ord_no: this.ordNo,                     //수주번호  
-        dlv_addr: this.deliver,                 //배송지 
-        spm_dt: this.spmDate,
-        vdr_no: this.selectVdr //거래처번호        //출하일자                                             
-      };
-     // const lotInfo
-      const lotInfo={
-      lot_no: this.checkOrd[0].lot_no, //lot번호 
-      prd_no: this.checkOrd[0].prd_no,// 제품번호
-      lot_qty: this.lotQty,   //lot재고량 
-      memo:this.memo, //비고
-      }; 
-      if(this.checkOrd[0]['요청수량']>this.checkOrd[0]['lot수량']){
-        alert('출하할수 없습니다'); 
-        return; 
-      }  
-
-      try {
-        await axios.post('/api/addSpm', payload);
-        console.log('초기화전', this.selectVdr);
-        this.selectVdr = null;
-        alert('수주 저장 완료!');
-        console.log('초기화후', this.selectVdr);
-
-       await axios.post('/api/updateLot', lotInfo);
-        //수주저장 완료시킨후 거래처변경값 다시초기화 시킴   
-      } catch (err) {
-        console.error('저장 실패:', err);
-        alert('에러발생');
-        console.log('payLoad', payload);
+    isSelected(item) {
+      return this.selectedOrders.includes(item);
+    },
+    toggleOrder(item) {
+      const index = this.selectedOrders.indexOf(item);
+      if (index > -1) {
+        this.selectedOrders.splice(index, 1);
+      } else {
+        this.selectedOrders.push(item);
       }
     },
-    handleCheckChange() {
-      if (this.checkOrd.length === 1) {
-        const item = this.checkOrd[0];
-        this.mode = 'checked';
-        this.ordNo = item.ord_no;
-        this.selectVdr = item.vdr_no; // 거래처번호
-        this.selectCpyNm = item.cpy_nm; // 거래처명
-        this.lotQty=item['요청수량']; 
-        this.deliver=item.ofc_addr; //배송지     
-      } else {
-        this.mode = 'basic';
-        // alert('하나의 수주만 선택하세요');
+
+    async saveSpm() {
+      if (!this.selectedOrders.length) {
+        alert('수주를 선택하세요');
         return;
       }
-    }, 
-async manySpms() {
-  const selectedOrds = this.ords.filter(order => {
-    return this.checkOrd.includes(order.ord_no);
-  });
-  
-  console.log('선택된 주문건', selectedOrds); 
-  for (const item of selectedOrds) {
-    if (item['요청수량'] > item['lot수량']) {
-      alert('재고가 부족한 상품이 있습니다');
-      return;
-    }else if (item['lot수량'] <= 0) {
-      alert('재고가 없습니다');
-      return;
+
+      for (const item of this.selectedOrders) {
+        if (item['요청수량'] > item['lot수량'] || item['lot수량'] <= 0) {
+          alert(`수주번호 ${item.ord_no}는 출하할 수 없습니다.`);
+          return;
+        }
+      }
+
+      try {
+        const payloads = this.selectedOrders.map(item => ({
+          ord_no: item.ord_no,
+          dlv_addr: item.ofc_addr,
+          spm_dt: item['납기예정'],
+          vdr_no: item.vdr_no,
+          lot_no: item.lot_no,
+          prd_no: item.prd_no,
+          lot_qty: item['lot수량'],
+          memo: item.ord_no,
+          req_qty: Number(item['요청수량'])
+        }));
+
+        await axios.post('/api/addSpms', payloads);
+        alert('출하지시 완료!');
+        this.selectedOrders = [];
+
+        const ords = await axios.get('/api/ord');
+        this.ords = ords.data;
+      } catch (err) {
+        console.error(err);
+        alert('출하지시 중 오류 발생');
+      }
     }
-  }  
-
-  try{
-    const payloads=selectedOrds.map(item=>({
-    ord_no:item.ord_no ,            //수주번호  
-    dlv_addr:item.ofc_addr,       //배송지 
-    spm_dt: item['납기예정'],      // 출하일자인데 우선 납기예정으로 하기로함 
-    vdr_no: item.vdr_no,          //거래처번호 
-        //lot 상세보내기
-    lot_no:item.lot_no,
-    prd_no:item.prd_no,
-    lot_qty:item['lot수량'],
-    memo: item.ord_no,  //비고,
-    req_qty:Number(item['요청수량'])   
-    }))   
-
-    await axios.post('/api/addSpms',payloads); 
-    console.log('정보', payloads); 
-    //삭제하기 출고 할수있는건은 삭제하기
-    console.log('체크된 출하지시건', this.checkOrd); 
-    //await axios.post('/api/deleteOrd',selectedOrds); 
-    const ords = await axios.get('/api/ord');
-    console.log(this.ords);
-    this.ords = ords.data;
-    
-    this.checkOrd = []; // 체크박스 초기화
-    alert('출하지시 완료!');
-   
-  }catch(err){
-    console.log(err); 
   }
-},
-
-async fetchOrdToSpmNo() {
-  try {
-    const result = await axios.get('/api/ordToSpmNo');
-    this.ordToSpmNo = result.data;
-    console.log('주문-> 출하 리스트:', this.ordToSpmNo);
-    console.log(this.filteredOrders); 
-  } catch (err) {
-    console.log('주문리스트 불러오기 실패', err);
-  }
-}}}
-
+};
 </script>
+
+<style scoped>
+.table-primary {
+  background-color: #cce5ff;
+}
+</style>

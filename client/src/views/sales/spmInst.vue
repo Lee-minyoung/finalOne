@@ -62,7 +62,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in ords">
+        <tr v-for="item in ords" :key="item.ord_no">
           <td><input type="checkbox" :value="item" v-model="checkOrd" @change="handleCheckChange" /></td>
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
@@ -99,7 +99,7 @@ import vdrSelectModal from '@/views/modal/vdrSelectModal.vue';
 export default {
   name: 'SpmInst',
   components: {
-    vdrSelectModal,
+    vdrSelectModal
   },
   data() {
     return {
