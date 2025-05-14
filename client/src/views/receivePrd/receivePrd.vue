@@ -3,7 +3,7 @@
     <!-- 날짜 조회 -->
     <div class="bg-light p-3 border mb-3 d-flex align-items-center">
       <label class="form-label fw-bold me-2 mb-0">검사일자 조회</label>
-      <input type="date" class="form-control d-inline w-auto me-2" v-model="queryDate" /> 
+      <input type="date" class="form-control d-inline w-auto me-2" v-model="queryDate" />
       <button class="btn btn-secondary btn-sm me-2" @click="setToday">오늘</button>
       <button class="btn btn-secondary btn-sm" @click="allDay">전체</button>
     </div>
@@ -12,15 +12,15 @@
       <div class="col-md-12">
         <ul class="nav nav-tabs mb-2">
           <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" @click="showWaitView">입고대기</button>
+            <button class="nav-link" :class="{ active: waitView }" data-bs-toggle="tab" @click="showWaitView">입고대기</button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" @click="showCompleteView">입고완료</button>
+            <button class="nav-link" :class="{ active: !waitView }" data-bs-toggle="tab" @click="showCompleteView">입고완료</button>
           </li>
         </ul>
         <!-- 테이블 영역 -->
         <wait v-if="waitView" :searchDate="queryDate" />
-        <complete v-if="!waitView" :searchDate="queryDate"/>
+        <complete v-if="!waitView" :searchDate="queryDate" />
       </div>
     </div>
   </div>
@@ -41,6 +41,12 @@ export default {
       queryDate: '',
 
       waitView: true,
+    }
+  },
+  created() {
+    if (this.$route.query.waitView !== undefined) {
+      // query는 문자열로 전달되므로 Boolean 처리 필요
+      this.waitView = this.$route.query.waitView === 'true' ? true : false;
     }
   },
   methods: {
