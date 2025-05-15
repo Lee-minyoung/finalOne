@@ -74,7 +74,7 @@
  * 입력된 정보는 저장 버튼 클릭 시 서버에 전송되어 새로운 제품으로 등록됩니다.
  */
 import axios from 'axios';              // HTTP 요청을 위한 AJAX 모듈
-import userDateUtils from '@/utils/useDates.js';   // 날짜 포맷 유틸리티
+import userDateUtils from '@/utils/useDates2.js';   // 날짜 포맷 유틸리티
 import CommonCodeFormat from '@/utils/useCommonCode.js'  // 공통 코드 포맷팅 유틸리티
 
 export default {
