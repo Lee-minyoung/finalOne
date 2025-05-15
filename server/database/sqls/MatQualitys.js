@@ -12,11 +12,13 @@
 // LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
 // LEFT JOIN vdr v ON p.vdr_no = v.vdr_no`;
 
-//발주번호, 거래처명, 입고수량(검사량) 불러오기
+//발주번호, 거래처명 불러오기
 const selectOrd =
-`SELECT p.qty, p.pur_ord_no, v.cpy_nm
-FROM pur_ord p JOIN vdr v on p.vdr_no=v.vdr_no
-WHERE pur_ord_no=?`;
+`SELECT m.pur_ord_no, v.cpy_nm
+FROM mat_stk m 
+JOIN pur_ord p ON m.pur_ord_no = p.pur_ord_no
+JOIN vdr v ON p.vdr_no = v.vdr_no
+WHERE m.lot_no = ?`;
 
 
 // 기준서 조회
@@ -60,8 +62,8 @@ WHERE inc_ins_std_no =  ?`;
 
 // 성적서 등록
 const insertRslt=
-`INSERT INTO inc_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, acpt_qty, rjct_qty, ovr_jdg, rmk, pur_ord_no)
-VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?)`;
+`INSERT INTO inc_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, acpt_qty, rjct_qty, ovr_jdg, rmk, pur_ord_no, lot_no)
+VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl=
 `INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, cert_no)
@@ -77,31 +79,16 @@ const selectLastRsltNo1 =
  // 성적서 조회
  // 성적서가 작성되지 않은 검사 자재 불러오기(성적서 작성 페이지)
  const selectLot=
- `SELECT 
-    s.lot_no,
-    s.mat_no,
-    m.mat_nm,
-    s.pur_ord_no,
-    p.vdr_no,
-    v.cpy_nm
-FROM mat_stk s
-JOIN mat m ON s.mat_no = m.mat_no
-LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
-LEFT JOIN vdr v ON p.vdr_no = v.vdr_no
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM inc_ins_rslt r
-    WHERE r.pur_ord_no = s.pur_ord_no
-)`;
+ `SELECT s.lot_no, m.mat_no, m.mat_nm, s.prc_qty, s.pur_ord_no
+FROM mat_stk s JOIN mat m ON s.mat_no=m.mat_no
+WHERE lot_no IN(SELECT lot_no FROM inc_ins_rslt) IS NULL`;
 
 // 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
 const selRsltMat=
-`SELECT i.lot_no, m.mat_no, t.mat_nm
-FROM inc_ins_rslt i JOIN mat_stk m ON i.lot_no = m.lot_no
-					JOIN mat t ON m.mat_no = t.mat_no
-WHERE EXISTS ( SELECT rslt_no
-				FROM inc_ins_rslt
-)`;
+`SELECT s.lot_no, m.mat_no, m.mat_nm
+FROM mat_stk s JOIN mat m 
+WHERE lot_no IN (SELECT lot_no
+			FROM inc_ins_rslt)`;
 
 // 상세조회
 const selRsltPrdDtl=

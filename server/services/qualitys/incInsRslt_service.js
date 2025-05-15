@@ -6,9 +6,9 @@ const findLot = async () => {
   return list;
 };
 
-//발주번호, 거래처명, 입고수량(검사량) 불러오기
-const findOrd = async (pur_ord_no) => {
-  return await mariadb.query("selectOrd", [pur_ord_no]);
+//발주번호, 거래처명 불러오기
+const findOrd = async (lot_no) => {
+  return await mariadb.query("selectOrd", [lot_no]);
 };
 
 // 기준서 목록 조회
@@ -18,15 +18,16 @@ const findIncInsStdList = async (mat_no) => {
 
 // 성적서 등록(마스터)
 const addRslt = async (incInsRsltInfo) => {
-  let insertColumns = ['rslt_no', 'mgr_count', 'acpt_qty', 'acpt_count', 'rjct_qty', 'ovr_jdg', 'rmk', 'pur_ord_no'];
-   let data = [
+  let data = [
     incInsRsltInfo.rslt_no,
     incInsRsltInfo.mgr_count,
     incInsRsltInfo.acpt_qty,
     incInsRsltInfo.rjct_qty,
     incInsRsltInfo.ovr_jdg,
     incInsRsltInfo.rmk,
-    incInsRsltInfo.pur_ord_no
+    incInsRsltInfo.pur_ord_no,
+    incInsRsltInfo.lot_no,
+    incInsRsltInfo.prc_qty
   ];
   let resInfo = await mariadb.query("insertRslt", data)
     .catch(err => console.log('쿼리 실행 오류:', err));

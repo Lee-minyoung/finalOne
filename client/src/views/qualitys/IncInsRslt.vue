@@ -11,11 +11,11 @@
       <hr style="margin-left:-75px;">
       LOTNo <input :value="selectedLotNo" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
       발주번호 <input v-model="searchPurOrdNo" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
-      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee;" />
+      거래처명 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee;" />
       <br>
       자재명 <input :value="selectedMatNm" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
       작성일자 <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 197px;" />
-      검사자 <input :value="selectedInsDev" class="form-control" id="input" readonly style="background-color: #eee;" />
+      검사자 <input :value="employeeName" class="form-control" id="input" readonly style="background-color: #eee;" />
     </div>
     <br>
     <div class="middle">
@@ -94,6 +94,7 @@
 <script>
 import axios from 'axios';
 import MatRsltSelModal from '@/views/qualitys/MatRsltSelModal.vue';
+import { useEmpStore } from '@/stores/empStore.js';
 
 export default {
   components: { MatRsltSelModal },
@@ -117,7 +118,13 @@ export default {
       },
       overallJdg: '',
       selectedRsltNo: '',
+      empStore: useEmpStore(),
     };
+  },
+  computed:{
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
   },
   created() {
     this.selectedInsDev = localStorage.getItem('username') || '';
@@ -158,7 +165,9 @@ export default {
   rjct_qty: this.newItem.rjct_qty,   // ← 불량량
   ovr_jdg: this.overallJdg,
   rmk: this.newItem.rmk,
-  pur_ord_no: this.searchPurOrdNo
+  pur_ord_no: this.searchPurOrdNo,
+  lot_no: this.selectedLotNo,
+
   };
   try {
     let result = await axios.post("/api/incInsRslt", obj);
@@ -244,29 +253,22 @@ export default {
   this.selectedLotNo = item.lot_no;
   this.selectedMatNm = item.mat_nm;
   this.searchQuery = item.mat_no;
-  this.searchPurOrdNo = item.pur_ord_no;
-  console.log('선택 LOT:', item);
-console.log('전달 pur_ord_no:', item.pur_ord_no);
-  
+  this.searchPurOrdNo = item.pur_ord_no || '';
+  this.newItem.mgr_count = item.prc_qty || '';
 
-  // 발주번호로 납입업체명, 검사량 조회
-  if (item.pur_ord_no) {
+  // selectOrd 쿼리로 거래처명 조회
+  if (item.lot_no) {
     try {
-      const res = await axios.get('/api/incInsRslt/ord', { params: { pur_ord_no: item.pur_ord_no } });
-      console.log('ord 응답:', res.data);
+      const res = await axios.get('/api/incInsRslt/ord', { params: { lot_no: item.lot_no } });
       this.selectedVdrNm = res.data?.cpy_nm || '';
-      this.newItem.mgr_count = res.data?.qty || '';
+      this.searchPurOrdNo = item.pur_ord_no || '';
+      
     } catch (err) {
       this.selectedVdrNm = '';
-      this.newItem.mgr_count = '';
     }
   } else {
     this.selectedVdrNm = '';
-    this.newItem.mgr_count = '';
   }
-
-  this.selectedInsDate = this.getToday();
-  this.showLotModal = false;
       // 성적서 번호 자동 할당
       try {
         const res = await axios.get('/api/incInsRslt/lastRsltNo');
