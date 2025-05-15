@@ -94,8 +94,8 @@ WHERE NOT EXISTS (
     WHERE r.pur_ord_no = s.pur_ord_no
 )`;
 
-// 성적서가 작성된 검사 제품 불러오기(성적서 조회 페이지)
-const selRsltPrd=
+// 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
+const selRsltMat=
 `SELECT i.lot_no, m.mat_no, t.mat_nm
 FROM inc_ins_rslt i JOIN mat_stk m ON i.lot_no = m.lot_no
 					JOIN mat t ON m.mat_no = t.mat_no
@@ -106,24 +106,24 @@ WHERE EXISTS ( SELECT rslt_no
 // 상세조회
 const selRsltPrdDtl=
 `SELECT 
-  i.rslt_no AS 성적서번호,
-  i.lot_no AS LOT번호,
-  i.pur_ord_no AS 발주번호,
-  p.vdr_no AS 거래처번호,
-  v.cpy_nm AS 거래처명,
-  i.ins_dt AS 작성일자,
-  i.mgr AS 검사자번호,
-  e.nm AS 검사자명,
-  i.mgr_count AS 검사량,
-  i.acpt_qty AS 합격량,
-  i.rjct_qty AS 불량량,
-  i.ovr_jdg AS 종합판정,
-  ii.inc_ins_std_no AS 입고검사기준번호,
-  std.ins_itm AS 검사항목,
-  std.ins_mthd AS 검사기준,
-  ii.mgr_rslt AS 검사결과,
-  ii.jdg AS 판정,
-  ii.rmk AS 비고
+  i.rslt_no AS rslt_no,
+  i.lot_no AS lot_no,
+  i.pur_ord_no AS pur_ord_no,
+  p.vdr_no AS vdr_no,
+  v.cpy_nm AS vdr_nm,
+  i.ins_dt AS ins_dt,
+  i.mgr AS mgr,
+  e.nm AS mgr_nm,
+  i.mgr_count AS mgr_count,
+  i.acpt_qty AS acpt_qty,
+  i.rjct_qty AS rjct_qty,
+  i.ovr_jdg AS ovr_jdg,
+  ii.inc_ins_std_no AS inc_ins_std_no,
+  std.ins_itm AS ins_itm,
+  std.ins_mthd AS ins_mthd,
+  ii.mgr_rslt AS mgr_rslt,
+  ii.jdg AS jdg,
+  ii.rmk AS rmk
 FROM inc_ins_rslt i LEFT OUTER JOIN pur_ord p
                       ON i.pur_ord_no = p.pur_ord_no
                     LEFT OUTER JOIN vdr v
@@ -134,7 +134,7 @@ FROM inc_ins_rslt i LEFT OUTER JOIN pur_ord p
                       ON i.rslt_no = ii.cert_no
                     LEFT OUTER JOIN inc_ins_std std
                       ON ii.inc_ins_std_no = std.inc_ins_std_no
-WHERE lot_no ='MAT250513002';`;
+WHERE lot_no = ?`;
 
 
 module.exports={
@@ -147,6 +147,6 @@ module.exports={
   insertRslt,
   insertRsltDtl,
   selectLastRsltNo1,
-  selRsltPrd,
+  selRsltMat,
   selRsltPrdDtl
 };

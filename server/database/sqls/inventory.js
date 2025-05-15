@@ -23,8 +23,8 @@ const selectMaterialStatusByRequest =
   m.mn_vdr AS 대표거래처번호,
   v.cpy_nm AS  거래처명,
   m.prc AS 단가,
-        m.prc * mrq.qty AS 총가격,
-        mrq.prc_rslt AS 자재처리결과
+  m.prc * mrq.qty AS 총가격,
+  mrq.prc_rslt AS 자재처리결과
 FROM mat_rls_req mrq
 LEFT JOIN mat m ON mrq.mat_no = m.mat_no
 LEFT JOIN vdr v ON m.mn_vdr=v.vdr_no

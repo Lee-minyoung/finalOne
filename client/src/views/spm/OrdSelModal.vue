@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     selectOrd(item) {
-      this.$emit('select-ord', item);
+      this.$emit('select-mat', item);
       this.$emit('close');
     },
     formatDate(dt) {

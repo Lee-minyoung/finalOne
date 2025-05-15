@@ -21,8 +21,19 @@ const selSpmFnsProdDt = async (ord_no) => {
   }
 };
 
+// 출하완료 제품 상세조회 - 제품목록
+const selSpmFnsProdDtList = async (ord_no) => {
+  try {
+    const list = await mariadb.query("selFnsProdInDt", [ord_no]);
+    return list;
+  } catch (err) {
+    throw err;
+  }
+};
+
 
 module.exports ={
   selSpmFnsProd,
-  selSpmFnsProdDt
+  selSpmFnsProdDt,
+  selSpmFnsProdDtList
 }

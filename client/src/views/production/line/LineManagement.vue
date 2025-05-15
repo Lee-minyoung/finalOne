@@ -22,9 +22,9 @@
           <td>{{ item.prd_nm }}</td>
           <td>{{ dateFormat(item.st_tm, 'hh시 mm분 ss초') }}</td>
           <td>{{ dateFormat(item.end_tm, 'hh시 mm분 ss초') }}</td>
-          <td>{{ item.ord_qty }}</td>
-          <td>{{ item.dft_qty }}</td>
-          <td>{{ item.pdn_qty }}</td>
+          <td>{{ formatNumber(item.ord_qty) }}</td>
+          <td>{{ formatNumber(item.pdn_qty) }}</td>
+          <td>{{ formatNumber(item.dft_qty) }}</td>
           <td>
             <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>대기중</button>
             <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">공정실행</button>
@@ -151,7 +151,7 @@ export default {
             <strong>제품명:</strong> ${item.prd_nm}<br>
             <strong>지시수량:</strong> ${item.ord_qty}개<br>
             <strong>완료수량:</strong> ${item.pdn_qty}개<br>
-            <strong>불량수량:</strong> ${item.dft_qty}개
+            <strong>불량수량:</strong> formatNumber(${item.dft_qty})개
           </div>
         `,
         icon: 'success',
@@ -176,7 +176,11 @@ export default {
         console.error('❌ 출고 실패:', err)
         Swal.fire('처리 실패', '출고 또는 상태 초기화 중 오류 발생', 'error')
       }
-    }
+    },
+        formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
   }
 }
 </script>

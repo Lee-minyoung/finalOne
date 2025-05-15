@@ -69,7 +69,11 @@ const eqpStatusFormat = function (value) {
   } else if (value == 'h3') {
     result = '점검중' 
   } else if (value == 'h4') {
-    result = '사용중' 
+    result = '대기' 
+  } else if (value == 'h5') {
+    result = '공정중' 
+  } else if (value == 'h6') {
+    result = '완료' 
   } 
   return result;
 }
