@@ -25,14 +25,20 @@ const selectOrdList=
 
 // `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
 // from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
-`select o.ord_no,o.vdr_no,v.cpy_nm,od.prd_no,p.prd_nm,SUM(od.prd_qty) as 요청수량,ps.cur_stk as lot수량,DATE_FORMAT(DATE_ADD(o.rgt_dt,INTERVAL 14 DAY)," %Y-%m-%d") as 납기예정,ps.lot_no,v.ofc_addr 
-from ord o join ord_dtl od on o.ord_no=od.ord_no
-join prd p on od.prd_no=p.prd_no
-right join  prd_stk ps on od.prd_no=ps.prd_no
-join vdr v on o.vdr_no=v.vdr_no
-where o.ord_no is not null
-GROUP BY o.vdr_no , od.prd_no
-order by DATE_FORMAT(DATE_ADD(o.rgt_dt,INTERVAL 14 DAY)," %Y-%m-%d")`;
+`SELECT o.ord_no 
+     , o.vdr_no 
+     , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no)  
+     , od.prd_no 
+     , p.prd_nm 
+     , od.prd_qty 
+     , IFNULL((SELECT SUM(cur_stk) FROM prd_stk WHERE prd_no = od.prd_no), 0) as 현재고량
+  FROM ord o
+  LEFT JOIN ord_dtl od ON o.ord_no = od.ord_no
+  LEFT JOIN prd p ON od.prd_no = p.prd_no
+	WHERE NOT EXISTS (
+    SELECT 1 FROM spm s WHERE s.ord_no = o.ord_no
+  )  ORDER BY ord_no
+`;
 
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
@@ -49,10 +55,10 @@ FROM ord o JOIN vdr v ON(o.vdr_no=v.vdr_no)
 const selectOrdDate=
 `SELECT 
       DATE(o.due_dt),
-       p.prd_nm,
-	   ps.cur_stk, 
-       p.prd_no,  
-       SUM(od.prd_qty)
+      p.prd_nm,
+	    ps.cur_stk, 
+      p.prd_no,  
+      SUM(od.prd_qty)
 FROM ord o JOIN  ord_dtl od on(o.ord_no=od.ord_no)
 	     JOIN prd  p ON(od.prd_no=p.prd_no)
            JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)

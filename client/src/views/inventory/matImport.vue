@@ -1,17 +1,10 @@
+
 <template>
 
   <div class="col-md-10 p-4">
     <h4 class="mb-4">입고처리</h4>
     <!-- 출하지시 입력 폼 -->
-    <div class="row mb-3 g-3">
-      <!-- <div class="col-md-3">
-          <label class="form-label">유통기한</label>
-          <input v-model="expDt"  type="date" class="form-control">
-        </div> -->
-      <!-- <div class="col-md-3">
-          <label class="form-label">숫자임!수령자</label>
-          <input v-model="rcvr" type="number" class="form-control">
-        </div> -->
+    <div class="row mb-3 g-3"> 
       <tr class="mb-4">
         <th style="width: 20%; min-width: 120px; border:none;">수령자</th>
         <td colspan="3" style="border:none;">
@@ -22,13 +15,6 @@
           </select>
         </td>
       </tr>
-
-
-      <!-- <div class="col-md-3">
-          <label class="form-label">숫자임!처리자</label>
-          <input v-model="prcsr" type="number" class="form-control">
-        </div> -->
-
       <tr class="mb-4">
         <th style="width: 20%; min-width: 120px; border:none;">처리자</th>
         <td colspan="3" style="border:none;">
@@ -41,27 +27,7 @@
       </tr>
 
 
-      <!--거래처변경  -->
-      <!-- <div v-if="selectVdr.vdr_no>0" class="col-md-3">
-          <label class="form-label">거래처코드</label>
-           <input v-model="selectVdr.vdr_no"type="number" class="form-control" >
-        </div>
-          <div v-else class="col-md-3">
-          <label class="form-label">거래처코드</label>
-           <input v-model="selectVdr"type="number" class="form-control" >
-        </div>               -->
-      <!-- <div class="col-md-3">
-          <label class="form-label">숫자임 !창고번호</label>
-          <input type="number" v-model="wareNo" class="form-control" >
-        </div> -->
-      <!-- <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
-              <td colspan="3" style="border:none;">
-                <select class="form-select" v-model="wareNo">
-                  <input value=1 readonly>대구창고</input>
-                </select>
-              </td>
-            </tr> -->
+     
       <tr class="mb-4">
         <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
         <td colspan="3" style="border:none;">

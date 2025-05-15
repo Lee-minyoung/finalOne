@@ -108,6 +108,7 @@ router.post('/addMatImports',async(req,res)=>{
             const matStkHist=[nexLotHistNo,newLotNo,'o2',qty,nowStr,pur_ord_no,vdr_no,rcvr,rcv_mthd]; 
           await matImportService.addmatStkHist(matStkHist);
             console.log('for문 돌려서 자재lot 이력 입고 처리중...');
+            res.status(200).json({message:'발주 -> lot 데이터 입고 처리'});
         }
     
     }catch(err){

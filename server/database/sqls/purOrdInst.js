@@ -21,7 +21,7 @@ const selectMatPurPlanChecked=
 //  WHERE mpp.ord_check='check'
 //  GROUP BY mpp.mat_no, DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")
 //  ORDER BY DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d")`;
-` SELECT 
+`SELECT 
   mpp.mat_pur_pln_no AS 계획ID,
   mpp.qty AS 총합,
   m.mat_no AS 자재번호,
@@ -29,7 +29,8 @@ const selectMatPurPlanChecked=
   m.mat_nm AS 자재명,
   v.vdr_no AS 거래처코드,
   v.cpy_nm AS 거래처명,
-  m.prc*mpp.qty AS 총가격 
+  m.prc*mpp.qty AS 총가격, 
+  m.unit AS 단위
 FROM mat_pur_pln mpp
 LEFT JOIN mat m ON mpp.mat_no = m.mat_no
 LEFT JOIN vdr v ON m.mn_vdr = v.vdr_no

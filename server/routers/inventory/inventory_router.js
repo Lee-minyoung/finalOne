@@ -160,6 +160,8 @@ router.post('/inventory/lotMinusList',async (req,res)=>{
         let {mat_no,req_qty,pln_id}=mat;
         const lots=await inventoryService.findMatLotList(mat_no);
  
+        
+        //자재번호에 해당하는 모든 자재를 조회후 차감하기 
         for(const lot of lots){
             const minusQty=Math.min(req_qty,lot.cur_stk); //이번lot에서 차감할양
             await inventoryService.minusCurStkByLot(lot.lot_no,minusQty);
@@ -205,6 +207,7 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
     await  purordInstService.addPurPlnByBtnClick(info);            // 
     await  purordInstService.updateMatPrcToC3(reqId,matId);        // 
     await  inventoryService.changeMatStsToq2ByMatNo(reqId,matId);  //자재출고요청서에 c3으로 업데이트,자재출고요청서에 q2로 업데이트  
+    await  inventoryService.changeMatStsToq2ByMatNo(reqId,matId);  //자재출고요청서에 c3으로 업데이트,자재출고요청서에 q2로 업데이트      
 
    res.status(200).json({message:'자재요청후 구매계획 등록완료'}); 
   }catch(err){
