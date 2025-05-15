@@ -116,7 +116,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/style";
+@use "@/styles/style" as *;
 
 .login-container {
   background-color: #f8f9fa;

@@ -10,8 +10,8 @@
         <button class="btn btn-success" @click="saveMat">저장</button>
       </div>
     </div>
-    <div class="card p-4">
-      <h4 class="mb-4">상세 보기</h4>
+    <div class="card p-3">
+      <h4>상세 보기</h4>
       <div v-if="matInfo.mat_no">
         <div>
           <div class="row mb-2">

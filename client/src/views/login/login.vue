@@ -17,13 +17,8 @@
                       <span class="input-group-text">
                         <i class="bi bi-person-fill"></i>
                       </span>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        v-model="loginInfo.emp_no" 
-                        placeholder="사원번호"
-                        :disabled="isLoading"
-                      />
+                      <input type="text" class="form-control" v-model="loginInfo.emp_no" placeholder="사원번호"
+                        :disabled="isLoading" />
                     </div>
                     <div class="invalid-feedback" v-if="errors.emp_no">{{ errors.emp_no }}</div>
                   </div>
@@ -33,34 +28,20 @@
                       <span class="input-group-text">
                         <i class="bi bi-lock-fill"></i>
                       </span>
-                      <input 
-                        type="password" 
-                        class="form-control" 
-                        v-model="loginInfo.pwd" 
-                        placeholder="비밀번호"
-                        @keyup.enter="userLogin"
-                        :disabled="isLoading"
-                      />
+                      <input type="password" class="form-control" v-model="loginInfo.pwd" placeholder="비밀번호"
+                        @keyup.enter="userLogin" :disabled="isLoading" />
                     </div>
                     <div class="invalid-feedback" v-if="errors.pwd">{{ errors.pwd }}</div>
                   </div>
 
                   <div class="text-end mb-3">
-                    <button 
-                      type="button" 
-                      class="btn-forgot"
-                      @click="$router.push({ name: 'find2pwd' })"
-                      :disabled="isLoading"
-                    >
+                    <button type="button" class="btn-forgot" @click="$router.push({ name: 'find2pwd' })"
+                      :disabled="isLoading">
                       비밀번호 찾기
                     </button>
                   </div>
 
-                  <button 
-                    type="submit" 
-                    class="btn-login"
-                    :disabled="isLoading"
-                  >
+                  <button type="submit" class="btn-login" :disabled="isLoading">
                     <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
                     {{ isLoading ? '로그인 중...' : '로그인' }}
                   </button>
@@ -137,7 +118,7 @@ export default {
             pst_no: loginRes.pst_no,
             dept_no: loginRes.dept_no,
           });
-          
+
           alert("사랑합니다!");
           this.$router.push({ name: "Home" });
         } else {
@@ -145,7 +126,7 @@ export default {
         }
       } catch (err) {
         console.error("Login error:", err);
-        
+
         if (err.response) {
           switch (err.response.status) {
             case 401:
@@ -172,7 +153,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/styles/style";
+@use "@/styles/style" as *;
 
 .login-container {
   background-color: #f8f9fa;
@@ -228,13 +209,13 @@ export default {
     border-color: #0d6efd;
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
   }
-  
+
   .input-group-text {
     background-color: white;
     border: none;
     color: #6c757d;
     padding: 0.75rem 1rem;
-    
+
     i {
       font-size: 1.1rem;
     }
@@ -310,7 +291,7 @@ export default {
     margin: 1rem;
     min-height: 450px;
   }
-  
+
   .login-logo {
     width: 180px;
   }
@@ -324,4 +305,3 @@ export default {
   }
 }
 </style>
-
