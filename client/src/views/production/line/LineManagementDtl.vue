@@ -43,8 +43,9 @@
                       class="form-control form-control-sm text-end"
                       v-model.number="row.dft_qty"
                       @input="updatePdnQty(row)"
-                      max="row.ord_qty"
-                      min="0"
+                      :max="row.ord_qty"
+                      :min="0"
+                      @keyup.enter="startLine(row, index)"
                     />
                     <span v-else>{{ formatNumber(row.dft_qty) }}</span>
                   </td>
@@ -60,8 +61,7 @@
                       <button
                         class="btn btn-sm btn-primary"
                         @click="startLine(row, index)"
-                        :disabled="row.dft_qty === null || row.dft_qty === undefined || row.dft_qty === ''"
-                      >
+                        :disabled="row.dft_qty === null || row.dft_qty === undefined || row.dft_qty === ''">
                         공정진행
                       </button>
                     </span>
@@ -82,7 +82,7 @@
                   <td>{{ dateFormat(lineInfo.st_tm, 'hh시 mm분 ss초') }}</td>
                   <td>{{ dateFormat(lineInfo.end_tm, 'hh시 mm분 ss초') }}</td>
                   <td>{{ lineInfo.ord_qty }}</td>
-                  <td>{{ lineInfo.dft_qty }}</td>
+                  <td >{{ lineInfo.dft_qty }}</td>
                   <td>{{ lineInfo.pdn_qty }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" @click="handleConfirm">확인</button>

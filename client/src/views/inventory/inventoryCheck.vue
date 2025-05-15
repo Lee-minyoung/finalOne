@@ -44,22 +44,22 @@
             <!-- <td></td> -->
             <td>{{ item['자재명'] }}</td>
 
-            <td v-if="item['단위'] == 'g'">{{ item['총필요량'] / 1000 }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ item['총필요량'] }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ item['총필요량'] / 1000 }}L</td>
-            <td v-else>{{ item['총필요량'] }}</td>
+            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['총필요량'] / 1000) }}kg</td>
+            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['총필요량']) }}EA</td>
+            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['총필요량'] / 1000) }}L</td>
+            <td v-else>{{ formatNumber(item['총필요량']) }}</td>
 
-            <td v-if="item['단위'] == 'g'">{{ item['현재재고'] / 1000 }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ item['현재재고'] }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ item['현재재고'] / 1000 }}L</td>
-            <td v-else>{{ item['현재재고'] }}</td>
+            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['현재재고'] / 1000) }}kg</td>
+            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['현재재고']) }}EA</td>
+            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['현재재고'] / 1000) }}L</td>
+            <td v-else>{{ formatNumber(item['현재재고']) }}</td>
 
 
 
-            <td v-if="item['단위'] == 'g'">{{ item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0 }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0 }}L</td>
-            <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
+            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}kg</td>
+            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}EA</td>
+            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}L</td>
+            <td v-else>{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}</td>
             <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
             <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
   <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
@@ -96,7 +96,16 @@
   </table>
 
   <h3>자재구매계획 </h3>
-  <table class="table">
+  <table class="table table-bordered text-center" style="max-width: 1150px;">
+    <colgroup>
+      <col style="width: 100px" />
+      <col style="width: 190px" />
+      <col style="width: 150px" />
+      <col style="width: 180px" />
+      <col style="width: 200px" />
+      <col style="width: 100px" />
+    </colgroup>
+
     <thead>
       <tr>
 
@@ -114,8 +123,8 @@
 
         <td>{{ item['자재번호'] }}</td>
         <td>{{ item['자재명'] }}</td>
-        <td>{{ item['총합'] }}</td>
-        <td>{{ item['총가격'] }}</td>
+        <td>{{ formatNumber(item['총합']) }}</td>
+        <td>{{ formatNumber(item['총가격']) }}원</td>
         <td>{{ item['거래처명'] }}</td>
         <!--생산계획 버튼-->
 
@@ -452,7 +461,11 @@ export default {
       } catch (error) {
         console.log('자재요청실패', error);
       }
-    }
+    },
+    formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
 
     //this.pu
   }

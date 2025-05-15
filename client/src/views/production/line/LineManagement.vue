@@ -151,7 +151,7 @@ export default {
             <strong>제품명:</strong> ${item.prd_nm}<br>
             <strong>지시수량:</strong> ${item.ord_qty}개<br>
             <strong>완료수량:</strong> ${item.pdn_qty}개<br>
-            <strong>불량수량:</strong> ${item.dft_qty}개
+            <strong>불량수량:</strong> formatNumber(${item.dft_qty})개
           </div>
         `,
         icon: 'success',
