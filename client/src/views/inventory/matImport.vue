@@ -237,9 +237,15 @@ export default {
             rcvr:this.rcvr, //수령자
             rcv_mthd:this.rcvrMth //수령방법
         }))
-          try{
-              await axios.post('/api/addMatImports',payloads);
-              alert('자재입고완료');
+    try{
+        await axios.post('/api/addMatImports',payloads);
+        alert('자재입고완료');
+      Swal.fire({
+            icon: 'success',
+            title: '자재입고 완료!',
+            showConfirmButton: false,
+            timer: 1500
+       });
 
             }
           catch(err){
