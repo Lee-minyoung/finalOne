@@ -36,7 +36,9 @@ const prd =
     ELSE p.opt_stk_qty - COALESCE(stk_summary.total_stk, 0) 
   END AS 부족량,
   ps.lot_no,
-  ps.cur_stk AS lot_재고
+  ps.cur_stk AS lot_재고,
+  ps.pdn_dt AS 생산일자,
+  ps.exp_dt AS 유통기한
 FROM prd p
 LEFT OUTER JOIN (
   SELECT prd_no, SUM(cur_stk) AS total_stk

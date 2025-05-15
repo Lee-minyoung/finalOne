@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="accordion" id="materialAccordion">
+  <div style="max-height: 680px; overflow-y: auto;" class="border">
+    <div class="accordion accordion-flush" id="materialAccordion">
       <div class="accordion-item" v-for="(item, index) in groupedData" :key="index">
         <!-- 아코디언 헤더 -->
         <h2 class="accordion-header" :id="'heading' + index">
@@ -25,19 +25,23 @@
           <div class="accordion-body p-0">
             <div class="table-responsive">
               <!-- 데이터 헤더 -->
-              <div class="d-flex bg-light fw-bold text-center border-bottom">
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">LOT번호</div>
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">현재고</div>
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">입고일자</div>
-                <div class="flex-grow-1 py-2" style="width: 30%">유통기한</div>
+              <div v-if="item.lots && item.lots.length > 0">
+                <div class="d-flex bg-light fw-bold text-center border-bottom">
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">LOT번호</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">현재고</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">입고일자</div>
+                  <div class="flex-grow-1 py-2" style="width: 30%">유통기한</div>
+                </div>
+                <div v-for="(lot, i) in item.lots" :key="i"
+                  :class="['d-flex text-center', { 'border-bottom': i !== item.lots.length - 1 }]">
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_no }}</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_재고 }}</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.입고일자) }}</div>
+                  <div class="flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.유통기한) }}</div>
+                </div>
               </div>
-              <!-- 데이터 바디 -->
-              <div v-for="(lot, i) in item.lots" :key="i"
-                :class="['d-flex text-center', { 'border-bottom': i !== item.lots.length - 1 }]">
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_no }}</div>
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_재고 }}</div>
-                <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.입고일자) }}</div>
-                <div class="flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.유통기한) }}</div>
+              <div v-else class="text-center py-3 text-muted fw-bold">
+                ---------- ❕ 재고가 없습니다. ❕ ----------
               </div>
             </div>
           </div>
@@ -58,20 +62,7 @@ export default {
   data() {
     return {
       openIndex: null,
-      rawData: [
-        // {
-        //   mat_no: 'M-001',
-        //   mat_nm: '쌀',
-        //   현재총재고: 100,
-        //   필요량: 150,
-        //   부족량: 50,
-        //   unit: 'kg',
-        //   lot_no: 'L-1001',
-        //   lot_재고: 60,
-        //   입고일자: '2025-05-01',
-        //   유통기한: '2025-12-31'
-        // },
-      ]
+      rawData: [],
     }
   },
   computed: {
@@ -87,16 +78,19 @@ export default {
             필요량: row.필요량,
             부족량: row.부족량,
             unit: row.unit,
-            lots: []
+            lots: [] // 항상 빈 배열로 초기화
           })
         }
 
-        map.get(row.mat_no).lots.push({
-          lot_no: row.lot_no,
-          lot_재고: row.lot_재고,
-          입고일자: row.입고일자,
-          유통기한: row.유통기한
-        })
+        // lot 정보가 있는 경우에만 push
+        if (row.lot_no) {
+          map.get(row.mat_no).lots.push({
+            lot_no: row.lot_no,
+            lot_재고: row.lot_재고,
+            입고일자: row.입고일자,
+            유통기한: row.유통기한
+          })
+        }
       }
 
       return Array.from(map.values())
@@ -115,7 +109,6 @@ export default {
     toggle(index) {
       this.openIndex = this.openIndex === index ? null : index
     }
-    
   }
 }
 </script>
