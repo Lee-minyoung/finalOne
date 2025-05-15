@@ -102,7 +102,7 @@ export default {
       }
 
       for (const item of this.selectedOrders) {
-        if (item['요청수량'] > item['lot수량'] || item['lot수량'] <= 0) {
+        if (Number(item['요청수량']) > Number(item['lot수량']) || Number(item['lot수량']) <= 0) {
           alert(`수주번호 ${item.ord_no}는 출하할 수 없습니다.`);
           return;
         }
@@ -122,6 +122,7 @@ export default {
         }));
 
         await axios.post('/api/addSpms', payloads);
+        this.ords=await axios.get('/api/ord');
         alert('출하지시 완료!');
         this.selectedOrders = [];
 

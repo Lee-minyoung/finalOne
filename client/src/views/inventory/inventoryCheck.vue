@@ -43,23 +43,10 @@
           <tr v-for="item in items" :key="item.mat_req_no">
             <!-- <td></td> -->
             <td>{{ item['자재명'] }}</td>
-
-            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['총필요량'] / 1000) }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['총필요량']) }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['총필요량'] / 1000) }}L</td>
-            <td v-else>{{ formatNumber(item['총필요량']) }}</td>
-
-            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['현재재고'] / 1000) }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['현재재고']) }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['현재재고'] / 1000) }}L</td>
-            <td v-else>{{ formatNumber(item['현재재고']) }}</td>
-
-
-
-            <td v-if="item['단위'] == 'g'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}kg</td>
-            <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}EA</td>
-            <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}L</td>
-            <td v-else>{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}</td>
+            <td> {{converterUnit(item['총필요량'], item['단위'])}}</td> 
+            <td>{{ converterUnit(item['현재재고'],item['단위']) }}</td>
+            <td v-if="item['부족수량']>0">{{ converterUnit(item['부족수량'],item['단위']) }}</td>
+            <td v-if="item['부족수량']<=0">0</td>
             <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
             <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
   <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
@@ -123,8 +110,11 @@
 
         <td>{{ item['자재번호'] }}</td>
         <td>{{ item['자재명'] }}</td>
-        <td>{{ formatNumber(item['총합']) }}</td>
-        <td>{{ formatNumber(item['총가격']) }}원</td>
+        <!--  -->
+
+        <td>{{ converterUnit(item['총합'],item['단위']) }}</td>
+
+        <td align="right">{{ formatNumber(item['총가격']) }}원</td>
         <td>{{ item['거래처명'] }}</td>
         <!--생산계획 버튼-->
 
@@ -194,8 +184,6 @@ export default {
       return filterGrouped
     }
   },
-
-
 
   methods: {
     async fetchInventoryStatus() {
@@ -466,7 +454,17 @@ export default {
       if (n == null || isNaN(n)) return '-'
       return new Intl.NumberFormat().format(n)
     },
-
+    
+    converterUnit(value, unit) {
+      let convertedValue = value;
+      if (unit === 'g') {
+        convertedValue = value / 1000 ; // Convert grams to kilograms
+      } else if (unit === 'L') {
+        convertedValue = value / 1000; // Convert liters to kiloliters
+      }
+      convertedValue = this.formatNumber(convertedValue) + ' ' + unit; // Return the original value for other units
+      return convertedValue
+    },
     //this.pu
   }
 }
