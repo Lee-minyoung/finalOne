@@ -149,6 +149,60 @@ const loginService = {
                 message: '서버 오류가 발생했습니다.'
             };
         }
+    },
+
+    // 비밀번호 재설정
+    async resetPassword(empNo, tempPassword, newPassword) {
+        try {
+            // 1. 현재 저장된 임시 비밀번호 확인
+            const empInfo = await mariadb.query("findEmpInfoByEmpNo", empNo);
+            
+            if (!empInfo || empInfo.length === 0) {
+                return {
+                    result: false,
+                    message: '존재하지 않는 사원번호입니다.'
+                };
+            }
+
+            // 2. 임시 비밀번호 일치 여부 확인
+            if (empInfo[0].pwd !== tempPassword) {
+                return {
+                    result: false,
+                    message: '임시 비밀번호가 일치하지 않습니다.'
+                };
+            }
+
+            // 3. 새 비밀번호 유효성 검사
+            if (newPassword.length < 8) {
+                return {
+                    result: false,
+                    message: '비밀번호는 8자 이상이어야 합니다.'
+                };
+            }
+
+            // 4. 새 비밀번호로 업데이트
+            const hashedPassword = createHashedPassword(newPassword);
+            const updateResult = await mariadb.query("updatePwd", [hashedPassword, empNo]);
+
+            if (updateResult.affectedRows === 0) {
+                return {
+                    result: false,
+                    message: '비밀번호 변경에 실패했습니다.'
+                };
+            }
+
+            return {
+                result: true,
+                message: '비밀번호가 성공적으로 변경되었습니다.'
+            };
+
+        } catch (err) {
+            console.error('비밀번호 재설정 오류:', err);
+            return {
+                result: false,
+                message: '서버 오류가 발생했습니다.'
+            };
+        }
     }
 };
 

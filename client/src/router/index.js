@@ -196,6 +196,11 @@ const routes = [
     component: () => import('@/views/login/Find2PWD.vue')
   },
   {
+    path: '/resetPwd/:empNo?',
+    name: 'resetPwd',
+    component: () => import('@/views/login/ResetPassword.vue')
+  },
+  {
     path: '/',
     name: 'Dummy data',
     component: DefaultLayout,
