@@ -22,7 +22,7 @@ MES프로젝트 입니다.
 ## 😉 팀원
 - 김희정 (팀장) - 메인, 기초정보(사원, 부서, BOM, 공정코드, 제품공정흐름도, 라인, 설비), 완제품입고처리
 - 이병찬 (부팀장) -
-- 석지욱 -
+- 석지욱 - 기초정보(거래처, 자재, 제품), 로그인, 임시 비밀번호 발급
 - 이민영 -
 - 정은애 -
 
@@ -46,7 +46,7 @@ MES프로젝트 입니다.
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | Vue 3, Vite, CoreUI, Bootstrap 5, vuedraggable, axios, sweetalert2 |
+| Frontend | Vue 3, Vite, CoreUI, Bootstrap 5, vuedraggable, axios, sweetalert2, 카카오맵 주소 검색 API |
 | Backend | Node.js, Express, nodemailer, dotenv |
 | DB | MariaDB (Naver Cloud), Sequelize ORM |
 | 상태 관리 | Pinia |
