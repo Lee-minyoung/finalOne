@@ -1,6 +1,17 @@
 <template>
   <div class="container mt-4">
     <h2 class="mb-4">라인 관리</h2>
+    <div class="mb-１ d-flex justify-content-end">
+      <select v-model="statusFilter" class="form-select w-auto">
+          <option value="전체">전체</option>
+          <option value="진행중">공정실행 / 공정현황 / 공정완료</option>
+          <option value="대기중">대기중</option>
+          <option value="공정지시">공정지시</option>
+          <option value="공정현황">공정현황</option>
+          <option value="공정완료">공정완료</option>
+          <option value="설비점검중">설비점검중</option>
+      </select>
+    </div>
     <table class="table table-bordered text-center">
       <thead class="table-light">
         <tr>
@@ -16,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in LineList" :key="item.ln_no">
+        <tr v-for="item in filteredLineList" :key="item.ln_no">
           <td>{{ item.ln_no }}</td>
           <td>{{ item.ln_nm }}</td>
           <td>{{ item.prd_nm }}</td>
@@ -27,9 +38,12 @@
           <td>{{ formatNumber(item.dft_qty) }}</td>
           <td>
             <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>대기중</button>
-            <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary" @click="startLine(item)">공정실행</button>
-            <button v-else-if="item.ln_sts === 'l3'" class="btn btn-sm btn-warning" @click="showStatus(item)">공정현황</button>
-            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success" @click="confirmReleaseToWarehouse(item)">공정완료</button>
+            <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary"
+              @click="startLine(item)">공정실행</button>
+            <button v-else-if="item.ln_sts === 'l3'" class="btn btn-sm btn-warning"
+              @click="showStatus(item)">공정현황</button>
+            <button v-else-if="item.ln_sts === 'l4'" class="btn btn-sm btn-success"
+              @click="confirmReleaseToWarehouse(item)">공정완료</button>
             <button v-else-if="item.ln_sts === 'l5'" class="btn btn-sm btn-danger">수리중</button>
             <button v-else-if="item.ln_sts === 'l6'" class="btn btn-sm btn-info">점검중</button>
           </td>
@@ -37,14 +51,8 @@
       </tbody>
     </table>
 
-    <LineManagementDtl
-      v-if="showLineModal"
-      :details="processDetailList"
-      :line-no="selectedLineNo"
-      :line-info="selectedLineInfo"
-      @reload="handleReload"
-      @close="showLineModal = false"
-    />
+    <LineManagementDtl v-if="showLineModal" :details="processDetailList" :line-no="selectedLineNo"
+      :line-info="selectedLineInfo" @reload="handleReload" @close="showLineModal = false" />
   </div>
 </template>
 
@@ -66,7 +74,8 @@ export default {
       showLineModal: false,
       selectedLineNo: '',
       selectedLineInfo: {},
-      processDetailList: []
+      processDetailList: [],
+      statusFilter: '진행중',  // 초기값은 진행중 상태만 보기
     }
   },
 
@@ -76,6 +85,20 @@ export default {
     },
     employeeNo() {
       return this.empStore.loginInfo.emp_no || ''
+    },
+    filteredLineList() {
+      const filterConditions = {
+        '전체': () => true,
+        '진행중': item => ['l2', 'l3', 'l4'].includes(item.ln_sts),
+        '대기중': item => item.ln_sts === 'l1',
+        '공정지시': item => item.ln_sts === 'l2',
+        '공정현황': item => item.ln_sts === 'l3',
+        '공정완료': item => item.ln_sts === 'l4',
+        '설비점검중': item => ['l5', 'l6'].includes(item.ln_sts),
+      };
+
+      const condition = filterConditions[this.statusFilter] || (() => true);
+      return this.LineList.filter(condition);
     }
   },
 
@@ -151,7 +174,7 @@ export default {
             <strong>제품명:</strong> ${item.prd_nm}<br>
             <strong>지시수량:</strong> ${item.ord_qty}개<br>
             <strong>완료수량:</strong> ${item.pdn_qty}개<br>
-            <strong>불량수량:</strong> ${item.dft_qty}')개
+            <strong>불량수량:</strong> ${item.dft_qty}개
           </div>
         `,
         icon: 'success',
@@ -177,7 +200,7 @@ export default {
         Swal.fire('처리 실패', '출고 또는 상태 초기화 중 오류 발생', 'error')
       }
     },
-        formatNumber(n) {
+    formatNumber(n) {
       if (n == null || isNaN(n)) return '-'
       return new Intl.NumberFormat().format(n)
     },

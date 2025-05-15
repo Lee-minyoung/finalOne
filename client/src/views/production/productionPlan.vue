@@ -8,14 +8,15 @@
         <div class="mb-１ d-flex justify-content">
           <select v-model="statusFilter" class="form-select w-auto">
             <option value="전체">전체</option>
-            <option value="미지시">미지시/부분지시</option>
+            <option value="미지시/부분지시">미지시/부분지시</option>
             <option value="지시완료">지시완료</option>
             <option value="생산완료">생산완료</option>
           </select>
         </div>
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
         <!-- <button class="btn btn-light">재고/지시현황</button> -->
-        <button class="btn btn-success text-white" @click="addPlan">등록</button>
+        <button class="btn btn-success text-white" @click="openProductModal">제품등록</button>
+        <button class="btn btn-success text-white" @click="addPlan">계획등록</button>
         <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
       </div>
     </div>
@@ -53,7 +54,6 @@
           <td>
             <div class="input-group">
               <input v-model="row.prd_nm" class="form-control" placeholder="제품 선택" readonly />
-              <button class="btn btn-outline-secondary" @click="openProductModal">🔍</button>
             </div>
           </td>
           <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
@@ -65,7 +65,7 @@
           <td></td>
           <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
           <td>
-            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1">
+            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 0">
               - </button>
           </td>
         </tr>
@@ -123,7 +123,7 @@ export default {
     return {
       prodPlanList: [],
       planRows: [
-        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+        // { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
       showProductModal: false,
       showInstructionModal: false,
@@ -148,7 +148,7 @@ export default {
         const percent = this.getProgress(row.qty, row.ord_qty, row.sts)
         const status = row.sts
         if (this.statusFilter === '전체') return true
-        if (this.statusFilter === '미지시') return percent < 100
+        if (this.statusFilter === '미지시/부분지시') return percent < 100
         if (this.statusFilter === '지시완료') return percent >= 100 && status !== 's3'
         if (this.statusFilter === '생산완료') return percent >= 100 && status === 's3'
         return true

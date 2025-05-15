@@ -84,6 +84,16 @@
 </template>
 
 <script>
+const filterConditions = {
+  '전체': () => true,
+  '진행중': item => ['l2', 'l3', 'l4'].includes(item.ln_sts),
+  '대기중': item => item.ln_sts === 'l1',
+  '공정지시': item => item.ln_sts === 'l2',
+  '공정현황': item => item.ln_sts === 'l3',
+  '공정완료': item => item.ln_sts === 'l4',
+  '설비점검중': item => ['l5', 'l6'].includes(item.ln_sts),
+};
+
 export default {
   props: {
     item: Object,       // 선택된 지시 항목 객체 (lineList, selected_line 포함 예상)
@@ -105,9 +115,8 @@ export default {
      * → 겹치지 않는 라인만 보여주기 위함
      */
     filteredLineList() {
-      return (this.item.lineList || []).filter(
-        line => !this.usedLines.includes(line.ln_no)
-      )
+      const condition = filterConditions[this.statusFilter] || (() => true);
+      return this.LineList.filter(condition);
     }
   }
 }
