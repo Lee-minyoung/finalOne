@@ -31,7 +31,9 @@
             <option value="h1">정상</option>
             <option value="h2">수리중</option>
             <option value="h3">점검중</option>
-            <option value="h4">사용중</option>
+            <option value="h4">대기</option>
+            <option value="h5">공정중</option>
+            <option value="h6">완료</option>
           </select>
           <label class="form-label">등록된라인</label>
           <input type="text" class="form-control" v-model="useLine" readonly disabled />
@@ -215,7 +217,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }

@@ -25,12 +25,13 @@
             </div>
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="bizRegNo" class="form-label me-3" style="min-width: 100px;">사업자등록번호</label>
+                <!-- <label for="bizRegNo" class="form-label me-3" style="min-width: 100px;">사업자등록번호</label> -->
+                <label for="bizRegNo" class="form-label nowrap-label" style="min-width: 120px;">사업자등록번호</label>
                 <input id="bizRegNo" type="text" class="form-control" v-model="vdrInfo.biz_reg_no" />
               </div>
             </div>
             <!-- 2행: 상호명 + 대표자명 -->
-            <div class="col-md-6 mb-3">
+            <div class="col-md-12 mb-3">
               <div class="d-flex align-items-center">
                 <label for="cpyNm" class="form-label me-3" style="min-width: 100px;">상호명</label>
                 <input id="cpyNm" type="text" class="form-control" v-model="vdrInfo.cpy_nm" />
@@ -42,40 +43,15 @@
                 <input id="ceoNm" type="text" class="form-control" v-model="vdrInfo.ceo_nm" />
               </div>
             </div>
-            <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
-            <div class="col-md-12 mb-3">
+            <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="ofcAddr" class="form-label me-3" style="min-width: 100px;">사업장주소</label>
-                <div class="flex-grow-1 d-flex gap-2">
-                  <!-- 기본주소 입력 필드: 우편번호와 기본 도로명/지번 주소만 표시 -->
-                  <input id="ofcAddr" type="text" class="form-control" v-model="baseAddress" readonly />
-                  <button class="btn btn-outline-secondary" @click="openDaumPostcode" style="min-width: 40px;">
-                    <i class="bi bi-search"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <!-- 상세주소: 건물명, 동/호수 등 상세 정보 입력 -->
-            <div class="col-md-12 mb-3">
-              <div class="d-flex align-items-center">
-                <label style="min-width: 100px;" class="me-3"></label>
-                <div class="flex-grow-1">
-                  <input id="ofcAddrDetail" type="text" class="form-control" v-model="tempAddrDetail"
-                    @input="updateFullAddress" placeholder="상세주소" />
-                </div>
-              </div>
-            </div>
-            <!-- 5행: 전화번호 -->
-            <div class="col-md-12 mb-3">
-              <div class="d-flex align-items-center">
-                <label for="ofcCtt" class="form-label me-3" style="min-width: 100px;">전화번호</label>
+                <label for="ofcCtt" class="form-label me-3" style="min-width: 100px;">사업장연락처</label>
                 <input id="ofcCtt" type="text" class="form-control" v-model="vdrInfo.ofc_ctt" />
               </div>
             </div>
-            <!-- 6행: 담당자 + 담당자연락처 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="mgrNm" class="form-label me-3" style="min-width: 100px;">담당자</label>
+                <label for="mgrNm" class="form-label me-3" style="min-width: 100px;">담당자명</label>
                 <input id="mgrNm" type="text" class="form-control" v-model="vdrInfo.mgr_nm" />
               </div>
             </div>
@@ -85,6 +61,28 @@
                 <input id="mgrCtt" type="text" class="form-control" v-model="vdrInfo.mgr_ctt" />
               </div>
             </div>
+            <!-- 3행: 사업장주소 - 기본주소와 상세주소로 분리 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="ofcAddr" class="form-label me-3" style="min-width: 100px;">사업장주소</label>
+                <div class="input-group">
+                  <input id="ofcAddr" type="text" class="form-control" v-model="vdrInfo.ofc_addr" readonly />
+                  <button class="btn btn-outline-secondary" @click="openDaumPostcode">주소찾기</button>
+                </div>
+              </div>
+            </div>
+            <!-- 상세주소 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="addr" class="form-label me-3" style="min-width: 100px;">상세주소</label>
+                <input id="addr" type="text" class="form-control" v-model="addrPlus"
+                  placeholder="상세주소" />
+              </div>
+            </div>
+            <!-- 5행: 전화번호 -->
+            
+            <!-- 6행: 담당자 + 담당자연락처 -->
+            
             <!-- 7행: 사업장유형 + 사업장상태 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
@@ -122,7 +120,7 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+import userDateUtils from '@/utils/useDates2.js';
 import CommonCodeFormat from '@/utils/useCommonCode.js'
 
 export default {
@@ -138,8 +136,7 @@ export default {
     return {
       vdrNo: '',           // 거래처 번호 (임시 저장용)
       today: '',           // 오늘 날짜 (등록일자 표시용)
-      tempAddrDetail: '',  // 임시 상세주소 (주소 분리 처리용)
-      baseAddress: '',     // 기본 주소 저장 (주소 분리 처리용)
+      addrPlus: '',  // 임시 상세주소 (주소 분리 처리용)
       vdrInfo: {
         vdr_no: '',        // 거래처 번호
         cpy_nm: '',        // 상호명
@@ -246,8 +243,7 @@ export default {
         mgr_ctt: '',       // 담당자연락처
         use_yn: 'f1'       // 사용여부 (기본값: 사용)
       };
-      this.tempAddrDetail = ''; // 상세주소 초기화
-      this.baseAddress = '';    // 기본 주소 초기화
+      this.addrPlus = ''; // 상세주소 초기화
       this.getVdrNo();          // 거래처 번호 다시 조회
     },
 
@@ -305,7 +301,7 @@ export default {
           ofc_tp: this.vdrInfo.ofc_tp,
           ofc_sts: this.vdrInfo.ofc_sts,
           ofc_ctt: this.vdrInfo.ofc_ctt,
-          ofc_addr: this.vdrInfo.ofc_addr,
+          ofc_addr: this.vdrInfo.ofc_addr + ' ' + this.addrPlus.trim(), // 주소
           mgr_nm: this.vdrInfo.mgr_nm,
           mgr_ctt: this.vdrInfo.mgr_ctt,
           cpy_nm: this.vdrInfo.cpy_nm,
@@ -346,36 +342,12 @@ export default {
       new window.daum.Postcode({
         oncomplete: (data) => {
           // 기본 주소만 baseAddress에 설정
-          this.baseAddress = `[${data.zonecode}] ${data.address}`;
-
+          let baseAddress = `[${data.zonecode}] ${data.address}`;
+          this.vdrInfo.ofc_addr = baseAddress;
           // 상세주소 초기화
-          this.tempAddrDetail = '';
-
-          // 내부 데이터는 업데이트 (저장용)
-          this.updateFullAddress();
+          this.addrPlus = '';
         }
       }).open();
-    },
-
-    /**
-     * 전체 주소 업데이트
-     * 
-     * - 기본 주소(baseAddress)와 상세주소(tempAddrDetail)를 합쳐서 내부 데이터(vdrInfo.ofc_addr)에 저장
-     * - 사용자가 상세주소를 입력/수정할 때마다 호출됨
-     * - 기본주소 입력 필드는 그대로 유지하고 내부 데이터만 갱신
-     * 
-     * @개선사항 사용자 인터페이스에서는 기본주소와 상세주소를 분리해서 보여주되,
-     *          서버 저장/API 호출 시에는 전체 주소를 하나로 합쳐서 사용
-     */
-    updateFullAddress() {
-      // 기본주소와 상세주소를 결합하여 내부 데이터만 갱신
-      if (this.tempAddrDetail) {
-        this.vdrInfo.ofc_addr = `${this.baseAddress} ${this.tempAddrDetail}`;
-      } else {
-        this.vdrInfo.ofc_addr = this.baseAddress;
-      }
-
-      // 입력 필드의 표시는 변경하지 않음 (기본주소 필드는 그대로 유지)
     },
   }
 };

@@ -13,6 +13,9 @@
             <option value="h1">정상</option>
             <option value="h2">수리중</option>
             <option value="h3">점검중</option>
+            <option value="h4">대기</option>
+            <option value="h5">공정중</option>
+            <option value="h6">완료</option>
           </select>
         </div> <!-- 좌측 검색 및 필터 영역 끝 -->
         <!-- 좌측 리스트 영역 시작 -->

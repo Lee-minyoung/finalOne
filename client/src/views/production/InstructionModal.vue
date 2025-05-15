@@ -30,9 +30,9 @@
             <tbody>
               <tr v-for="(row, index) in instructionStore.instructionRows" :key="row.pdn_pln_dtl_no">
                 <td>{{ row.prd_nm }}</td>
-                <td>{{ row.qty }}</td>
-                <td>{{ row.ord_qty }}</td>
-                <td>{{ row.qty - row.ord_qty - row.instruction_qty || 0 }}</td>
+                <td>{{ formatNumber(row.qty) }}</td>
+                <td>{{ formatNumber(row.ord_qty) }}</td>
+                <td>{{ formatNumber(row.qty - row.ord_qty - row.instruction_qty || 0) }}</td>
                 <td style="width: 100px;">
                   <!-- <input type="number" class="form-control" v-model.number="row.instruction_qty" /> -->
                   <input
@@ -97,8 +97,13 @@ export default {
       console.log("🔥 지시 등록 emit 실행됨!")
       console.log("전송할 rows:", rows)
 
-      this.$emit('submit') // 부모에서 처리함
-    }
+      this.$emit('submit') // 부모에서     처리함
+    },
+          formatNumber(n) {
+    if (n == null || isNaN(n)) return '-'
+    return new Intl.NumberFormat().format(n)
+  },
+
   }
 }
 </script>

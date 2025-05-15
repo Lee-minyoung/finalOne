@@ -1,18 +1,18 @@
 <template>
-  
+
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-4">생산 계획 관리</h2>
-      
+
       <div class="d-flex gap-2">
         <div class="mb-１ d-flex justify-content">
-  <select v-model="statusFilter" class="form-select w-auto">
-    <option value="전체">전체</option>
-    <option value="미지시">미지시/부분지시</option>
-    <option value="지시완료">지시완료</option>
-    <option value="생산완료">생산완료</option>
-  </select>
-</div>
+          <select v-model="statusFilter" class="form-select w-auto">
+            <option value="전체">전체</option>
+            <option value="미지시">미지시/부분지시</option>
+            <option value="지시완료">지시완료</option>
+            <option value="생산완료">생산완료</option>
+          </select>
+        </div>
 
 
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
@@ -37,7 +37,7 @@
 
       <thead class="table-light">
         <tr>
-          <th>NO</th>
+          <th>계획번호</th>
           <th>제품명</th>
           <th>계획수량</th>
           <th>누적지시량</th>
@@ -58,7 +58,8 @@
               <button class="btn btn-outline-secondary" @click="openProductModal">🔍</button>
             </div>
           </td>
-          <td><input v-model.number="row.qty" type="number" min="0" class="form-control" placeholder="수량" /></td>
+          <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
+              @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
           <td></td>
           <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
           <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
@@ -80,8 +81,8 @@
           :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
           <td>{{ row.pdn_pln_no }}</td>
           <td>{{ row.prd_nm }}</td>
-          <td>{{ row.qty }}</td>
-          <td>{{ row.ord_qty }}</td>
+          <td>{{ formatNumber(row.qty) }}</td>
+          <td>{{ formatNumber(row.ord_qty) }}</td>
           <td>{{ dateFormat(row.st_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
           <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
@@ -89,9 +90,9 @@
             <!-- :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" 
              여기가 퍼센트에 따라 진행률 바 체워짐-->
             <div class="progress" style="height: 22px;">
-              <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty)"
+              <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty, row.sts)"
                 :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
-                {{ getStatus(row.qty, row.ord_qty) }}
+                {{ getStatus(row.qty, row.ord_qty, row.sts) }}
               </div>
             </div>
           </td>
@@ -109,76 +110,61 @@
 </template>
 
 <script>
-// 📦 외부 라이브러리 및 컴포넌트 불러오기
-import axios from 'axios' // HTTP 요청 라이브러리
-import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
-import ProductSelectModal from '@/views/production/ProductSelectModal.vue' // 제품 선택 모달
-import InstructionModal from '@/views/production/InstructionModal.vue' // 생산 지시 등록 모달
-import { useInstructionStore } from '@/stores/instructionStore' // 상태관리 스토어 (Pinia 기반)
-import { useEmpStore } from "@/stores/empStore.js"; // Pinia 저장소 가져오기
+import axios from 'axios'
+import useDateUtils from '@/utils/useDates.js'
+import ProductSelectModal from '@/views/production/ProductSelectModal.vue'
+import InstructionModal from '@/views/production/InstructionModal.vue'
+import { useInstructionStore } from '@/stores/instructionStore'
+import { useEmpStore } from "@/stores/empStore.js"
+import Swal from 'sweetalert2'
 
 export default {
   name: 'ProductionPlan',
-
-  // 💡 등록한 컴포넌트를 이 컴포넌트에서 사용할 수 있게 설정
   components: { ProductSelectModal, InstructionModal },
-
   data() {
     return {
-      prodPlanList: [], // 서버에서 불러온 전체 생산계획 리스트
-      planRows: [ // 사용자가 입력하는 계획 행 (최소 1줄 필요)
+      prodPlanList: [],
+      planRows: [
         { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
-      showProductModal: false, // 제품 선택 모달 표시 여부
-      showInstructionModal: false, // 계획 지시 모달 표시 여부
-      prodList: [], // 모달에 표시할 제품 목록
+      showProductModal: false,
+      showInstructionModal: false,
+      prodList: [],
       empStore: useEmpStore(),
-      statusFilter: '전체', // '전체', '미지시', '지시완료', '생산완료'
+      statusFilter: '전체'
     }
   },
-computed: {
-  // Pinia 스토어 연결: instructionStore는 계획 지시 관련 상태를 관리함
-  instructionStore() {
-    return useInstructionStore()
+  computed: {
+    instructionStore() {
+      return useInstructionStore()
+    },
+    employeeName() {
+      return this.empStore.loginInfo.nm || ''
+    },
+    employeeNo() {
+      return this.empStore.loginInfo.emp_no || ''
+    },
+    sortedProdPlanList() {
+      const filtered = this.prodPlanList.filter(row => {
+        const percent = this.getProgress(row.qty, row.ord_qty, row.sts)
+        const status = row.sts
+        if (this.statusFilter === '전체') return true
+        if (this.statusFilter === '미지시') return percent < 100
+        if (this.statusFilter === '지시완료') return percent >= 100 && status !== 's3'
+        if (this.statusFilter === '생산완료') return percent >= 100 && status === 's3'
+        return true
+      })
+      return [...filtered].sort((a, b) => {
+        const aDone = Number(a.ord_qty || 0) >= Number(a.qty || 0)
+        const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
+        return aDone - bDone
+      })
+    }
   },
-
-  employeeName() {
-    return this.empStore.loginInfo.nm || ''
-  },
-
-  employeeNo() {
-    return this.empStore.loginInfo.emp_no || ''
-  },
-
-  sortedProdPlanList() {
-    const filtered = this.prodPlanList.filter(row => {
-      const percent = this.getProgress(row.qty, row.ord_qty)
-      const status = row.status // 's3' 등
-
-      if (this.statusFilter === '전체') return true
-      if (this.statusFilter === '미지시') return percent < 100
-      if (this.statusFilter === '지시완료') return percent >= 100 && status !== 's3'
-      if (this.statusFilter === '생산완료') return percent >= 100 && status === 's3'
-      return true
-    })
-
-    // 완료된 항목을 아래로 정렬
-    return [...filtered].sort((a, b) => {
-      const aDone = Number(a.ord_qty || 0) >= Number(a.qty || 0)
-      const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
-      return aDone - bDone
-    })
-  }
-},
   mounted() {
-    // 컴포넌트가 마운트될 때 서버로부터 계획 목록을 가져옴
     this.getProdPlanList()
   },
-
   methods: {
-    // 📝 리스트 출력 관련 --------------------------
-
-    // 전체 생산계획 목록 불러오기
     async getProdPlanList() {
       try {
         const result = await axios.get('/api/prodpln')
@@ -187,101 +173,78 @@ computed: {
         console.error('계획 목록 불러오기 실패', err)
       }
     },
-    
-
-    // 날짜 포맷 유틸 함수
     dateFormat(value, format) {
       return useDateUtils.dateFormat(value, format)
     },
-
-    // 계획 수량 대비 지시 수량이 모두 채워졌는지 여부
     isFullyInstructed(row) {
       return Number(row.ord_qty || 0) >= Number(row.qty || 0)
     },
-
-    // 지시 선택 여부 판단 (배경색 적용용)
     isSelected(row) {
       return this.instructionStore.selectedPlans.some(p => p.pdn_pln_dtl_no === row.pdn_pln_dtl_no)
     },
-    // 백분률 계산 함수.
-    // 백분율 계산 (계획 대비 누적지시)
     getProgress(planQty, instQty) {
       const qty = Number(planQty || 0)
       const instructed = Number(instQty || 0)
       if (qty === 0) return 0
       return Math.round((instructed / qty) * 100)
     },
-
-    // 상태 표시 텍스트 반환
     getStatus(planQty, instQty, sts) {
       const percent = this.getProgress(planQty, instQty)
-
       if (percent === 0) return '계획완료'
       if (percent < 100) return '부분지시'
-      if (percent >= 100) {
-        if (sts === 's3') return '생산완료'
-        return '지시완료'
-      }
+      if (percent >= 100) return sts === 's3' ? '생산완료' : '지시완료'
       return '오류'
     },
-
-    // 진행률에 따른 진행바 색상 클래스 반환
     getProgressBarClass(planQty, instQty, sts) {
-      if (sts === 's3') return 'bg-primary'
       const percent = this.getProgress(planQty, instQty)
       if (percent === 0) return 'bg-secondary'
       if (percent < 100) return 'bg-warning text-dark'
-      if (percent >= 100) {
-        if (sts === 's3') return 'bg-primary'
-        return 'bg-success'
-      }
-      return 'bg-danger'
+      return sts === 's3' ? 'bg-primary' : 'bg-success'
     },
-    // 여기까지..백분률
-
-
-    // 🧾 계획 등록 관련 --------------------------
-
-    // 입력 행 삭제
     removePlanRow(index) {
       this.planRows.splice(index, 1)
     },
-
-    // 전체 입력 초기화
     resetAll() {
       if (!confirm('정말 초기화 하시겠습니까? 입력값이 모두 사라집니다.')) return
       this.planRows = [
-        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: '계획완료' }
       ]
       this.instructionStore.selectedPlans = []
       this.instructionStore.generateInstructionRows()
       this.showInstructionModal = false
     },
-
-    // 생산계획 등록 (여러 건 등록 가능)
     async addPlan() {
       try {
+        const submittedList = []
         for (let row of this.planRows) {
           if (!row.prd_no || row.qty <= 0 || !row.st_dt || !row.end_dt) {
-            alert('모든 항목을 올바르게 입력하세요. (수량은 0보다 커야 함)')
+            alert('모든 항목을 올바르게 입력하세요.')
             return
           }
-          await axios.post('/api/prodpln', row, {
+          await axios.post('/api/prodpln', {
+            ...row,
+            crt_by: this.empStore.loginInfo.emp_no
+          }, {
             headers: { 'Content-Type': 'application/json' }
           })
+          submittedList.push(row)
         }
-        alert('등록 완료!')
+        const itemList = submittedList.map(item => `<li>${item.prd_nm} (${item.qty}개)</li>`).join('')
+        await Swal.fire({
+          title: '✅ 계획 등록 완료!',
+          html: `<ul style="text-align:left; padding-left:1.2rem; margin:0;">${itemList}</ul>`,
+          icon: 'success',
+          confirmButtonText: '확인'
+        })
         this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: 'r1', crt_by: this.empStore.loginInfo.emp_no }
+          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: 's1' }
         ]
         this.getProdPlanList()
       } catch (err) {
         console.error('등록 실패', err)
-        alert('등록 실패 ㅠㅠ')
+        await Swal.fire('❌ 실패', '계획 등록 실패', 'error')
       }
     },
-
-    // 제품 모달 열기
     openProductModal() {
       axios.get('/api/prodpln/prdList')
         .then(res => {
@@ -292,65 +255,40 @@ computed: {
           console.error('제품 목록 불러오기 실패', err)
         })
     },
-
-    //  모달에서 선택한 제품 목록을 기존 입력 행(planRows)에 병합하는 함수
     handleSelectedProducts(selectedList) {
-      //  기존 입력 행을 복사 (불변성 유지 위해 spread 사용)
       let updatedRows = [...this.planRows]
-
-      //  이미 등록된 제품 번호를 추적하기 위한 Set 생성
       const existingPrdNos = new Set(updatedRows.map(r => r.prd_no))
-
-      // 1. 빈 행이 존재하면, 거기에 선택된 제품을 순서대로 채워 넣음
-      let productIndex = 0 // 선택된 제품 리스트에서 몇 번째 제품을 처리 중인지 추적
+      let productIndex = 0
       for (let i = 0; i < updatedRows.length && productIndex < selectedList.length; i++) {
-        const row = updatedRows[i]              // 현재 입력 행
-        const product = selectedList[productIndex] // 현재 선택된 제품
-
-        // 빈 행이고 중복 제품이 아닐 경우 채운다
-        // has 메소드는 Set에 해당 값이 있는지 확인하는 메소드
+        const row = updatedRows[i]
+        const product = selectedList[productIndex]
         if (!row.prd_no && !existingPrdNos.has(product.prd_no)) {
           row.prd_no = product.prd_no
           row.prd_nm = product.prd_nm
-          existingPrdNos.add(product.prd_no) // 중복 방지를 위해 Set에 등록
+          existingPrdNos.add(product.prd_no)
           productIndex++
         }
       }
-
-      // 2️ 아직 채워지지 못한 제품이 있다면, 새로운 행으로 추가
       for (const product of selectedList) {
         if (!existingPrdNos.has(product.prd_no)) {
           updatedRows.push({
-            prd_no: product.prd_no,    // 제품 코드
-            prd_nm: product.prd_nm,    // 제품 이름
-            qty: '',                   // 수량은 비워둠 (사용자 입력 대상)
-            st_dt: '',                 // 시작일 (입력 필요)
-            end_dt: '',                // 종료일 (입력 필요)
-            rmk: '',                   // 비고
-            crt_by: this.empStore.loginInfo.emp_no, // 생성자 (로그인한 사용자)
-            status: '계획완료'          // 초기 상태 값
+            prd_no: product.prd_no,
+            prd_nm: product.prd_nm,
+            qty: '',
+            st_dt: '',
+            end_dt: '',
+            rmk: '',
+            crt_by: this.empStore.loginInfo.emp_no,
+            status: '계획완료'
           })
-          existingPrdNos.add(product.prd_no) // 추가한 제품은 Set에도 반영
+          existingPrdNos.add(product.prd_no)
         }
       }
-
-      // 3️⃣ 선택된 제품 외의 행은 삭제 (최종적으로 선택된 제품만 반영)
-      // some 배열안에 조건을 만족하는 요소가 하나이상 있는지 찾는 메소드드
       this.planRows = updatedRows.filter(row =>
         row.prd_no && selectedList.some(sel => sel.prd_no === row.prd_no)
       )
-
-      // 모달 닫기
       this.showProductModal = false
     },
-
-    // ✅ 테이블 선택 관련 --------------------------
-
-    // 계획 row 클릭 시 선택 토글
-    // (지시 완료된 항목은 선택 불가)
-    // (지시 완료된 항목은 회색으로 표시)
-    // (지시 완료된 항목은 마우스 커서가 포인터가 아닌 손가락 모양으로 표시)
-    // (지시 완료된 항목은 클릭 시 아무 동작도 하지 않음)
     togglePlanSelection(row) {
       const index = this.instructionStore.selectedPlans.findIndex(p => p.pdn_pln_no === row.pdn_pln_no)
       if (index >= 0) {
@@ -359,18 +297,11 @@ computed: {
         this.instructionStore.selectedPlans.push(row)
       }
     },
-
-    // ---------------------여기부터 리뷰 -------------------------
-    // ✅ 계획 지시 관련 --------------------------
-
-    // 계획지시 모달 열기
     openInstructionModal() {
       if (this.instructionStore.selectedPlans.length === 0) {
         alert("지시할 계획을 선택해주세요.")
         return
       }
-      // 선택된 계획을 복사하여 지시할 데이터로 사용
-      // (prd_no, pdn_pln_dtl_no 필드만 남김) 오류 방지용용
       this.instructionStore.selectedPlans = this.instructionStore.selectedPlans.map(plan => ({
         ...plan,
         prd_no: plan.prd_no || plan.prd.prd_no || '',
@@ -379,74 +310,69 @@ computed: {
       this.instructionStore.generateInstructionRows()
       this.showInstructionModal = true
     },
-    // 
-    // 지시 등록 (여러 계획번호별로 나눠서 등록)
     async submitInstructions() {
-      // 📦 1. Pinia 상태에서 지시할 데이터(instructionRows)를 가져옴
       const rows = this.instructionStore.instructionRows
-
-      // 📦 2. plan 번호(pdn_pln_no)를 기준으로 지시 데이터를 묶기 위한 객체
       const grouped = {}
-
-      // 🔁 3. 각 지시 행(row)을 순회하면서 유효성 검사 및 그룹화
       for (const row of rows) {
-        // 🚨 유효성 검사: 지시 수량이 0보다 작거나, 계획 수량보다 많은 경우는 오류
         if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
           alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
-          return // 유효하지 않으면 함수 종료
+          return
         }
-
-        // 🗃️ 그룹화 키: 계획번호(pdn_pln_no) 기준
         const key = row.pdn_pln_no
-
-        // 📌 해당 계획번호에 대한 배열이 없으면 초기화
         if (!grouped[key]) grouped[key] = []
-
-        // 🧩 상세 지시 정보를 해당 그룹에 추가
         grouped[key].push({
-          pdn_pln_dtl_no: row.pdn_pln_dtl_no,  // 세부 계획 번호
-          prd_no: row.prd_no,                  // 제품 코드
-          instruction_qty: row.instruction_qty, // 지시 수량
-          ord_sts: 'r1',                        // 상태값 고정
-          rmk: row.rmk                         // 비고
+          pdn_pln_dtl_no: row.pdn_pln_dtl_no,
+          prd_no: row.prd_no,
+          instruction_qty: row.instruction_qty,
+          ord_sts: 's1',
+          crt_by: this.empStore.loginInfo.emp_no,
+          rmk: row.rmk
         })
       }
-
-      // 📤 4. 그룹화된 데이터를 하나씩 서버에 POST 요청 (계획번호별로 여러 건 전송)
       try {
-        //구조 분해 할당 (Destructuring)
-        // Object.entries(grouped): { 'PLN001': [...], 'PLN002': [...] } → [[key1, val1], [key2, val2], ...]
-        /*
-          "pdn_pln_no": "PLN001",
-          "details": [
-            { "prd_no": "A", "instruction_qty": 10, ... },
-            { "prd_no": "B", "instruction_qty": 20, ... }
-        */
         for (const [pdn_pln_no, details] of Object.entries(grouped)) {
-          // 전송 payload 생성
           const payload = { pdn_pln_no, details }
-
-          // 💬 axios POST 요청 (비동기 통신)
-          await axios.post('/api/prodinst', payload, {
+          await axios.post('/api/prodinst', {
+            ...payload,
+            crt_by: this.empStore.loginInfo.emp_no
+          }, {
             headers: { 'Content-Type': 'application/json' }
           })
         }
-
-        // ✅ 등록 성공 시 처리
-        alert("지시 등록 완료!")
-        this.showInstructionModal = false // 모달 닫기
-        this.instructionStore.reset()     // 스토어 내부 상태 초기화 (선택/지시 모두)
-        this.getProdPlanList()            // 다시 리스트 조회해서 반영
-
+        const itemList = rows.map(item =>
+          `<li>${item.prd_nm} : ${item.instruction_qty}개</li>`).join('')
+        await Swal.fire({
+          title: '🎉 지시 등록 완료!',
+          html: `<ul style="text-align:left; padding-left:1.2rem; margin:0;">${itemList}</ul>`,
+          icon: 'success',
+          confirmButtonText: '확인'
+        })
+        this.showInstructionModal = false
+        this.instructionStore.reset()
+        this.getProdPlanList()
       } catch (err) {
-        // ❌ 에러 발생 시 콘솔 출력 및 사용자 알림
         console.error("지시 등록 실패", err.response?.data || err.message)
-        alert("지시 등록 실패")
+        await Swal.fire('❌ 실패', '지시 등록 중 오류 발생', 'error')
       }
-    }
+    },
+    formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
+    onFormattedQtyInput(event, row) {
+      const raw = event.target.value.replace(/[^\d]/g, '') // 숫자만 추출
+      const num = Number(raw)
+      row.qty = Math.max(0, num) // 최소 0 보장
+    },
+    // preventMinusInput(event) {
+    //   if (event.key === '-' || event.key === '+' || event.key === 'e') {
+    //     event.preventDefault()
+    //   }
+    // }
   }
 }
 </script>
+
 
 
 

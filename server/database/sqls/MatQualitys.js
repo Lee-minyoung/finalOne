@@ -1,14 +1,23 @@
 // LOT(자재)검색
-const selectLot =
-`SELECT 
-    s.lot_no,
-    s.mat_no,
-    m.mat_nm,
-    s.pur_ord_no,
-    p.vdr_no
-FROM mat_stk s
-JOIN mat m ON s.mat_no = m.mat_no
-LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no`;
+// const selectLot =
+// `SELECT 
+//     s.lot_no,
+//     s.mat_no,
+//     m.mat_nm,
+//     s.pur_ord_no,
+//     p.vdr_no,
+//     v.cpy_nm
+// FROM mat_stk s
+// JOIN mat m ON s.mat_no = m.mat_no
+// LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
+// LEFT JOIN vdr v ON p.vdr_no = v.vdr_no`;
+
+//발주번호, 거래처명, 입고수량(검사량) 불러오기
+const selectOrd =
+`SELECT p.qty, p.pur_ord_no, v.cpy_nm
+FROM pur_ord p JOIN vdr v on p.vdr_no=v.vdr_no
+WHERE pur_ord_no=?`;
+
 
 // 기준서 조회
 const selectIncInsStd =
@@ -55,21 +64,89 @@ const insertRslt=
 VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl=
-`INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, dft_quy, cert_no)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+`INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, cert_no)
+VALUES(?, ?, ?, ?, ?, ?, ?)`;
 
 // 마지막 번호 조회
 const selectLastRsltNo1 =
 `SELECT MAX(CAST(SUBSTRING(rslt_no, 5) AS UNSIGNED)) AS last_no
  FROM inc_ins_rslt
  WHERE rslt_no LIKE 'ISJ-%'`;
+
+
+ // 성적서 조회
+ // 성적서가 작성되지 않은 검사 자재 불러오기(성적서 작성 페이지)
+ const selectLot=
+ `SELECT 
+    s.lot_no,
+    s.mat_no,
+    m.mat_nm,
+    s.pur_ord_no,
+    p.vdr_no,
+    v.cpy_nm
+FROM mat_stk s
+JOIN mat m ON s.mat_no = m.mat_no
+LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
+LEFT JOIN vdr v ON p.vdr_no = v.vdr_no
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM inc_ins_rslt r
+    WHERE r.pur_ord_no = s.pur_ord_no
+)`;
+
+// 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
+const selRsltMat=
+`SELECT i.lot_no, m.mat_no, t.mat_nm
+FROM inc_ins_rslt i JOIN mat_stk m ON i.lot_no = m.lot_no
+					JOIN mat t ON m.mat_no = t.mat_no
+WHERE EXISTS ( SELECT rslt_no
+				FROM inc_ins_rslt
+)`;
+
+// 상세조회
+const selRsltPrdDtl=
+`SELECT 
+  i.rslt_no AS rslt_no,
+  i.lot_no AS lot_no,
+  i.pur_ord_no AS pur_ord_no,
+  p.vdr_no AS vdr_no,
+  v.cpy_nm AS vdr_nm,
+  i.ins_dt AS ins_dt,
+  i.mgr AS mgr,
+  e.nm AS mgr_nm,
+  i.mgr_count AS mgr_count,
+  i.acpt_qty AS acpt_qty,
+  i.rjct_qty AS rjct_qty,
+  i.ovr_jdg AS ovr_jdg,
+  ii.inc_ins_std_no AS inc_ins_std_no,
+  std.ins_itm AS ins_itm,
+  std.ins_mthd AS ins_mthd,
+  ii.mgr_rslt AS mgr_rslt,
+  ii.jdg AS jdg,
+  ii.rmk AS rmk
+FROM inc_ins_rslt i LEFT OUTER JOIN pur_ord p
+                      ON i.pur_ord_no = p.pur_ord_no
+                    LEFT OUTER JOIN vdr v
+                      ON p.vdr_no = v.vdr_no
+                    LEFT OUTER JOIN emp e
+                      ON i.mgr = e.emp_no
+                    LEFT OUTER JOIN inc_ins_rslt_dtl ii
+                      ON i.rslt_no = ii.cert_no
+                    LEFT OUTER JOIN inc_ins_std std
+                      ON ii.inc_ins_std_no = std.inc_ins_std_no
+WHERE lot_no = ?`;
+
+
 module.exports={
   selectLot,
+  selectOrd,
   selectIncInsStd,
   incInsStdInsert,
   updateIncInsStd,
   deleteIncInsStd,
   insertRslt,
   insertRsltDtl,
-  selectLastRsltNo1
+  selectLastRsltNo1,
+  selRsltMat,
+  selRsltPrdDtl
 };

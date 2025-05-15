@@ -41,8 +41,10 @@ const prodPlanRouter = require('./routers/production/productPlan_router.js');
 const prodInstRouter = require('./routers/production/productionInst_router.js');
 const spmInsStd = require('./routers/qualitys/spmInsStd_router.js');
 const spmInsRsltRouter = require('./routers/qualitys/spmInsRslt_router.js');
+const spmInsGetRsltRouter = require('./routers/qualitys/spmInsGetRslt_router.js');
 const incInsStd = require('./routers/qualitys/incInsStd_router.js');
 const incInsRsltRouter = require('./routers/qualitys/incInsRslt_router.js');
+const incInsGetRsltRouter = require('./routers/qualitys/incInsGetRslt_router.js');
 const spmMrkRouter = require('./routers/spm/spmMrk_router.js');
 const spmFnsRouter = require('./routers/spm/spmFns_router.js');
 const salesRouter = require('./routers/sales/sales_router.js');
@@ -100,9 +102,10 @@ app.use('/', vdrRouter);
 //품질 모듈
 app.use('/', spmInsStd);
 app.use('/', spmInsRsltRouter);
+app.use('/', spmInsGetRsltRouter);
 app.use('/', incInsStd);
 app.use('/', incInsRsltRouter);
-
+app.use('/', incInsGetRsltRouter);
 //출하
 app.use('/', spmMrkRouter);
 app.use('/', spmFnsRouter);

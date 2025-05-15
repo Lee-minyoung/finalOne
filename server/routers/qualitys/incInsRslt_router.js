@@ -8,6 +8,18 @@ router.get('/incInsRslt/lotList', async (req, res) => {
   res.send(list);
 });
 
+//발주번호, 거래처명, 입고수량(검사량) 불러오기
+router.get('/incInsRslt/ord', async (req, res) => {
+  const { pur_ord_no } = req.query;
+  if (!pur_ord_no) return res.status(400).send({});
+  try {
+    const [row] = await incInsRsltService.findOrd(pur_ord_no);
+    res.send(row || {});
+  } catch (err) {
+    res.status(500).send({});
+  }
+});
+
 // 기준서 조회
 router.get('/incInsStd', async (req, res) => {
  const { mat_no } = req.query;
@@ -46,6 +58,17 @@ router.get('/incInsRslt/lastRsltNo', async (req, res) => {
     res.send({ lastNo });
   } catch (err) {
     res.status(500).send({ lastNo: 0 });
+  }
+});
+
+// 성적서번호 존재 여부 확인 API
+router.get('/exists', async (req, res) => {
+  const { rslt_no } = req.query;
+  try {
+    const exists = await incInsRsltService.existsRsltNo(rslt_no);
+    res.send({ exists });
+  } catch (err) {
+    res.status(500).send({ exists: false, error: err.message });
   }
 });
 

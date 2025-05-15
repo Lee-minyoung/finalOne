@@ -27,13 +27,14 @@ router.post('/prodpln', async (req, res) => {
     const nextDetailCode = utils.findNextCode(lastDetailCodeRow?.lastCode, 'PLD-');
 
     // 2. 파라미터 준비
-    const planData = [nextPlanCode, req.crt_by]; //관리자로 임시 1000 으로 등록함.
-    const detailData = [nextDetailCode, nextPlanCode, req.body.prd_no, req.body.qty, req.body.st_dt, req.body.end_dt, 'r1', req.body.rmk];
+    const planData = [nextPlanCode, req.body.crt_by]; //관리자로 임시 1000 으로 등록함.
+    const detailData = [nextDetailCode, nextPlanCode, req.body.prd_no, req.body.qty, req.body.st_dt, req.body.end_dt, 's1', req.body.rmk];
 
     // 3. 트랜잭션 insert
     await productionPlanServices.addProdPlanData(planData, detailData); 
 
     res.status(200).json({ message: '등록 완료', code: nextPlanCode });
+    
   } catch (err) {
       console.error("등록 중 에러:", err);
       res.status(500).json({ message: '등록 실패', error: err.message });

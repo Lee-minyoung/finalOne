@@ -102,38 +102,37 @@ export default {
   cursor: pointer;
 }
 
+.card {
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .table-primary {
   background-color: #cce5ff;
 }
 
 .table-container {
-  height: 588px;
-  position: relative;
-  border: 0px solid #dee2e6;
-  border-radius: 4px;
-  overflow: hidden;
+  max-height: 588px;
+  overflow-y: auto; /* 컨텐츠가 많을 때만 스크롤 */
 }
 
 .table {
-  margin: 0;
-  border-collapse: collapse;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border: 0px solid #dee2e6;
-  border-top: 0px solid #dee2e6;
+  width: 100%;
+  table-layout: fixed;
 }
 
 /* thead 설정 */
 .table thead {
-  flex: 0 0 auto;
-  width: 100%;
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 2;
 }
 
 .table thead tr {
   display: flex;
   width: 100%;
-  border-top: 0px solid #dee2e6;
+  border-top: 1px solid #dee2e6;
 }
 
 .table thead th {
@@ -150,12 +149,12 @@ export default {
 
 .table tbody tr td:last-child,
 .table thead tr th:last-child {
-  border-right: none;
+  border-right: 1px solid #dee2e6;
 }
 
 .table tbody tr td:first-child,
 .table thead tr th:first-child {
-  border-left: none;
+  border-left: 1px solid #dee2e6;
 }
 
 /* 테두리 설정 */
@@ -167,15 +166,9 @@ export default {
   border-top: 0px solid #dee2e6;
 }
 
-.table tbody tr:last-child td {
-  border-bottom: 1px solid #dee2e6;
-}
-
 /* tbody 설정 */
 .table tbody {
-  flex: 1 1 auto;
   display: block;
-  overflow-y: scroll;
 }
 
 .table tbody tr {

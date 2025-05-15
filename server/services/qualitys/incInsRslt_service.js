@@ -6,6 +6,11 @@ const findLot = async () => {
   return list;
 };
 
+//발주번호, 거래처명, 입고수량(검사량) 불러오기
+const findOrd = async (pur_ord_no) => {
+  return await mariadb.query("selectOrd", [pur_ord_no]);
+};
+
 // 기준서 목록 조회
 const findIncInsStdList = async (mat_no) => {
     return await mariadb.query("selectIncInsStd", [mat_no]);
@@ -34,7 +39,7 @@ const addRslt = async (incInsRsltInfo) => {
 const addRsltDtl = async (dtlList) => {
   for (const dtl of dtlList) {
     let insertColumns = [
-      'inc_ins_rslt_dtl_no', 'mgr_date', 'inc_ins_std_no', 'mgr_rslt', 'jdg', 'rmk', 'dft_quy', 'cert_no'
+      'inc_ins_rslt_dtl_no', 'mgr_date', 'inc_ins_std_no', 'mgr_rslt', 'jdg', 'rmk', 'cert_no'
     ];
     let data = insertColumns.map(col => dtl[col]);
     await mariadb.query("insertRsltDtl", data).catch(err => console.log('상세 insert 오류:', err));
@@ -47,10 +52,19 @@ const findLastRsltNo = async () => {
   return row?.last_no || 0;
 };
 
+async function existsRsltNo(rslt_no) {
+  const rows = await mariadb.query(
+    "SELECT 1 FROM inc_ins_rslt WHERE rslt_no = ? LIMIT 1", [rslt_no]
+  );
+  return rows && rows.length > 0;
+}
+
 module.exports = {
   findLot,
+  findOrd,
   findIncInsStdList,
   addRslt,
   addRsltDtl,
-  findLastRsltNo
+  findLastRsltNo,
+  existsRsltNo
 };

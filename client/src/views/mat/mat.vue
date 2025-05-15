@@ -21,21 +21,19 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th class="w-10">자재번호</th>   
-                  <th class="w-10">자재명</th>
-                  <th class="w-10">단위</th>
-                  <th class="w-30">자재명</th>
-                  <th class="w-10">자재유형</th>
+                  <th class="w-25">자재번호</th>   
+                  <th class="w-35">자재명</th>
+                  <th class="w-15">단위</th>
+                  <th class="w-25">자재유형</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="mat in filteredMatList" :key="mat.mat_no" @click="selectMat(mat.mat_no)"   
                   :class="{ 'table-primary': selectedMat && selectedMat.mat_no === mat.mat_no }" class="table-hover">   
-                  <td class="w-10">{{ mat.mat_no }}</td>
-                  <td class="w-10">{{ mat.mat_nm }}</td>
-                  <td class="w-10">{{ mat.unit }}</td>
-                  <td class="w-30">{{ mat.mat_nm }}</td>
-                  <td class="w-10">{{ matTypeFormat(mat.mat_tp) }}</td>
+                  <td class="w-25">{{ mat.mat_no }}</td>
+                  <td class="w-35">{{ mat.mat_nm }}</td>
+                  <td class="w-15">{{ mat.unit }}</td>
+                  <td class="w-25">{{ matTypeFormat(mat.mat_tp) }}</td>
                 </tr>
               </tbody>
             </table>

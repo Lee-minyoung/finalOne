@@ -35,7 +35,7 @@
                   <td>{{ row.proc_nm }}</td>
                   <td>{{ dateFormat(row.st_tm, 'hh시 mm분') }}</td>
                   <td>{{ dateFormat(row.end_tm, 'hh시 mm분') }}</td>
-                  <td>{{ row.ord_qty }}</td>
+                  <td>{{ formatNumber(row.ord_qty) }}</td>
                   <td>
                     <input
                       v-if="row.eqp_sts === 'h5'"
@@ -44,11 +44,12 @@
                       v-model.number="row.dft_qty"
                       @input="updatePdnQty(row)"
                       :max="row.ord_qty"
-                      min="0"
+                      :min="0"
+                      @keyup.enter="startLine(row, index)"
                     />
-                    <span v-else>{{ row.dft_qty }}</span>
+                    <span v-else>{{ formatNumber(row.dft_qty) }}</span>
                   </td>
-                  <td>{{ row.pdn_qty }}</td>
+                  <td>{{ formatNumber(row.pdn_qty) }}</td>
                   <td>
                     <span v-if="row.eqp_sts === 'h1'">정상</span>
                     <span v-else-if="row.eqp_sts === 'h2'">수리중</span>
@@ -60,8 +61,7 @@
                       <button
                         class="btn btn-sm btn-primary"
                         @click="startLine(row, index)"
-                        :disabled="row.dft_qty === null || row.dft_qty === undefined || row.dft_qty === ''"
-                      >
+                        :disabled="row.dft_qty === null || row.dft_qty === undefined || row.dft_qty === ''">
                         공정진행
                       </button>
                     </span>
@@ -79,10 +79,10 @@
                   <td>{{ lineNo }}</td>
                   <td>{{ lineInfo.ln_nm }}</td>
                   <td>{{ lineInfo.prd_nm }}</td>
-                  <td>{{ dateFormat(lineInfo.st_tm, 'hh시 mm분') }}</td>
-                  <td>{{ dateFormat(lineInfo.end_tm, 'hh시 mm분') }}</td>
+                  <td>{{ dateFormat(lineInfo.st_tm, 'hh시 mm분 ss초') }}</td>
+                  <td>{{ dateFormat(lineInfo.end_tm, 'hh시 mm분 ss초') }}</td>
                   <td>{{ lineInfo.ord_qty }}</td>
-                  <td>{{ lineInfo.dft_qty }}</td>
+                  <td >{{ lineInfo.dft_qty }}</td>
                   <td>{{ lineInfo.pdn_qty }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" @click="handleConfirm">확인</button>
@@ -177,7 +177,19 @@ export default {
         line_no: this.lineNo,
         forceUpdate: true
       });
-    }
+    },
+              formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
+        handleInput(index) {
+      const row = this.instructionStore.instructionRows[index]
+      if (row.instruction_qty > row.qty) {
+        row.instruction_qty = row.qty
+      } else if (row.instruction_qty < 0 || isNaN(row.instruction_qty)) {
+        row.instruction_qty = 0
+      }
+    },
   }
 }
 </script>

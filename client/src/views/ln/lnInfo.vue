@@ -21,28 +21,28 @@
             <!-- 라인번호 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="lnNo" class="form-label fw-bold me-3" style="min-width: 100px;">라인번호</label>
+                <label for="lnNo" class="form-label me-3" style="min-width: 100px;">라인번호</label>
                 <input id="lnNo" type="text" class="form-control" v-model="ln_no" readonly disabled />
               </div>
             </div>
             <!-- 라인명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="lnNm" class="form-label fw-bold me-3" style="min-width: 100px;">라인명</label>
+                <label for="lnNm" class="form-label me-3" style="min-width: 100px;">라인명</label>
                 <input id="lnNm" type="text" class="form-control" v-model="ln_nm" />
               </div>
             </div>
             <!-- 제품명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="prdNm" class="form-label fw-bold me-3" style="min-width: 100px;">제품명</label>
+                <label for="prdNm" class="form-label me-3" style="min-width: 100px;">제품명</label>
                 <input id="prdNm" type="text" class="form-control" v-model="prd_nm" readonly disabled />
               </div>
             </div>
             <!-- 사용여부 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="useYn" class="form-label fw-bold me-3" style="min-width: 100px;">사용여부</label>
+                <label for="useYn" class="form-label me-3" style="min-width: 100px;">사용여부</label>
                 <select id="useYn" class="form-select form-control" v-model="use_yn">
                   <option value="f1">여</option>
                   <option value="f2">부</option>
@@ -52,7 +52,7 @@
             <!-- 라인상태 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="lnSts" class="form-label fw-bold me-3" style="min-width: 100px;">라인상태</label>
+                <label for="lnSts" class="form-label me-3" style="min-width: 100px;">라인상태</label>
                 <select id="lnSts" class="form-select form-control" v-model="ln_sts">
                   <option value="l1">비가동</option>
                   <option value="l2">대기중</option>
@@ -66,7 +66,7 @@
             <!-- 일평균생산량 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
-                <label for="dlyQty" class="form-label fw-bold me-3" style="min-width: 100px;">일평균생산량</label>
+                <label for="dlyQty" class="form-label me-3" style="min-width: 100px;">일평균생산량</label>
                 <input id="dlyQty" type="text" class="form-control" v-model="dly_avg_pdn_qty" />
               </div>
             </div>
@@ -74,11 +74,11 @@
           <table class="table table-bordered text-center">
             <thead class="table-light">
               <tr class="small-text">
-                <th style="width: 10%;">순서</th>
-                <th style="width: 15%;">공정코드</th>
-                <th>공정코드명</th>
-                <th style="width: 20%;">설비번호</th>
-                <th>설비명</th>
+                <th style="font-weight: normal; width: 10%;">순서</th>
+                <th style="font-weight: normal; width: 15%;">공정코드</th>
+                <th style="font-weight: normal;">공정코드명</th>
+                <th style="font-weight: normal; width: 20%;">설비번호</th>
+                <th style="font-weight: normal;">설비명</th>
               </tr>
             </thead>
             <tbody>
@@ -297,7 +297,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }
@@ -305,5 +305,10 @@ export default {
 .card {
   border: 1px solid #ddd;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.small-text {
+  font-size: 0.875rem;
+  /* 글씨 크기를 줄임 (14px) */
 }
 </style>

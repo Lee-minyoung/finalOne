@@ -26,7 +26,8 @@ GROUP BY
       d.end_dt,
       d.sts,
       d.rmk
-ORDER BY d.end_dt ASC;`
+ORDER BY d.end_dt ASC,
+         d.sts ASC;`
 
 
   const selectProd =
@@ -80,4 +81,3 @@ module.exports = {
     insertProdPlanDtl,
     selectProd
 }
-
