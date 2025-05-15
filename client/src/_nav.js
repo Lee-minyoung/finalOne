@@ -66,11 +66,11 @@ export default [
     icon: 'cil-layers',
     visible: true,
     items: [
-      // {
-      //   component: 'CNavItem',
-      //   name: '재고현황',
-      //   to: '/stock',
-      // },
+      {
+        component: 'CNavItem',
+        name: '재고현황',
+        to: '/stock-shortage',
+      },
       {
         component: 'CNavItem',
         name: '자재구매현황',

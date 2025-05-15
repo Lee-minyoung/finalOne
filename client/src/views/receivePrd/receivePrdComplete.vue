@@ -33,7 +33,8 @@ import axios from 'axios';
 import useDates from '@/utils/useDates.js'
 export default {
   props: {
-    searchDate: Date,
+    searchStartDate: Date,
+    searchEndDate : Date,
   },
   data() {
     return {
@@ -47,7 +48,9 @@ export default {
   computed: {
     filteredCompleteList() { // 필터된 bomList 보여줌
       return this.CompleteList.filter(complete =>
-        (this.searchDate === "" || this.dateFormat(complete.ins_dt) === this.dateFormat(this.searchDate)) // === 값과 타입이 일치, 필터조건 <option value="">의 값이 ""(전체)이거나, 필터조건의 value값이 dept_nm과 같으면 True
+      (this.searchStartDate === "" || this.searchEndDate === "" ||
+        (this.dateFormat(complete.ins_dt) >= this.dateFormat(this.searchStartDate) &&
+          this.dateFormat(complete.ins_dt) <= this.dateFormat(this.searchEndDate)))
       );
     },
   },
@@ -81,7 +84,8 @@ export default {
 
 .table-container {
   max-height: 550px;
-  overflow-y: auto; /* 컨텐츠가 많을 때만 스크롤 */
+  overflow-y: auto;
+  /* 컨텐츠가 많을 때만 스크롤 */
 }
 
 .table {
@@ -162,15 +166,31 @@ export default {
   display: flex;
   align-items: center;
   width: inherit;
-  justify-content: center; /* 가로 중앙 정렬 */
-  text-align: center; /* 텍스트 중앙 정렬 */
+  justify-content: center;
+  /* 가로 중앙 정렬 */
+  text-align: center;
+  /* 텍스트 중앙 정렬 */
 }
 
 
 /* 테이블 열 너비 설정 */
-.w-10 { width: 10% !important; }
-.w-15 { width: 15% !important; }
-.w-20 { width: 20% !important; }
-.w-25 { width: 25% !important; }
-.w-30 { width: 30% !important; }
+.w-10 {
+  width: 10% !important;
+}
+
+.w-15 {
+  width: 15% !important;
+}
+
+.w-20 {
+  width: 20% !important;
+}
+
+.w-25 {
+  width: 25% !important;
+}
+
+.w-30 {
+  width: 30% !important;
+}
 </style>

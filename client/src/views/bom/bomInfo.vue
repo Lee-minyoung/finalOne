@@ -61,9 +61,9 @@
             <tbody>
               <template v-if="bomMatInfo.length > 0">
                 <tr v-for="(row, index) in bomMatInfo" :key="'new-' + index">
-                  <td><input v-model="row.mat_no" type="text" class="form-control" readonly disabled /></td>
+                  <td><input v-model="row.mat_no" type="text" class="form-control text-center" readonly disabled /></td>
                   <td><input v-model="row.mat_nm" type="text" class="form-control" readonly disabled /></td>
-                  <td><input v-model.number="row.cap" type="number" class="form-control" /></td>
+                  <td><input v-model.number="row.cap" type="number" class="form-control text-end" /></td>
                   <td><input v-model="row.unit" type="text" class="form-control" readonly disabled /></td>
                   <td><input v-model="row.rmk" type="text" class="form-control" /></td>
                   <td>

@@ -2,11 +2,14 @@
   <div class="container-fluid mt-4">
     <!-- 날짜 조회 -->
     <div class="bg-light p-3 border mb-3 d-flex align-items-center">
-      <label class="form-label fw-bold me-2 mb-0">검사일자 조회</label>
-      <input type="date" class="form-control d-inline w-auto me-2" v-model="queryDate" />
-      <button class="btn btn-secondary btn-sm me-2" @click="setToday">오늘</button>
-      <button class="btn btn-secondary btn-sm" @click="allDay">전체</button>
-    </div>
+    <label class="form-label fw-bold me-2 mb-0">검사일자 조회</label>
+    <input type="date" class="form-control d-inline w-auto me-2" v-model="startDate" />
+    <span class="me-2 fw-bold">부터</span>
+    <input type="date" class="form-control d-inline w-auto me-2" v-model="endDate" />
+    <span class="me-2 fw-bold">까지</span>
+    <button class="btn btn-secondary btn-sm me-2" @click="setToday">오늘</button>
+    <!-- <button class="btn btn-secondary btn-sm" @click="allDay">전체</button> -->
+</div>
 
     <div class="row">
       <div class="col-md-12">
@@ -19,8 +22,8 @@
           </li>
         </ul>
         <!-- 테이블 영역 -->
-        <wait v-if="waitView" :searchDate="queryDate" />
-        <complete v-if="!waitView" :searchDate="queryDate" />
+        <wait v-if="waitView" :searchStartDate="startDate" :searchEndDate="endDate"/>
+        <complete v-if="!waitView" :searchStartDate="startDate" :searchEndDate="endDate" />
       </div>
     </div>
   </div>
@@ -38,8 +41,9 @@ export default {
   },
   data() {
     return {
-      queryDate: '',
-
+      // queryDate: '',
+      startDate: this.dateFormat(new Date()),
+      endDate: this.dateFormat(new Date()),
       waitView: true,
     }
   },
@@ -62,11 +66,12 @@ export default {
     },
     setToday() {
       const today = new Date();
-      this.queryDate = this.dateFormat(today);
+      this.startDate = this.dateFormat(today);
+      this.endDate = this.dateFormat(today);
     },
-    allDay() {
-      this.queryDate = '';
-    }
+    // allDay() {
+    //   this.queryDate = '';
+    // }
   }
 }
 </script>

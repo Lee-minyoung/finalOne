@@ -51,8 +51,8 @@ From emp`;
 
 // 추가
 const insertEmp =
-`INSERT INTO emp (emp_no, pwd, nm, ctt, email, bnk_nm, acct_no, addr, hire_dt, emp_sts, lv_rsn, hr_hist, dept_no, pst_no)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?)`;
+`INSERT INTO emp (emp_no, pwd, nm, ctt, bnk_nm, acct_no, addr, hire_dt, emp_sts, lv_rsn, hr_hist, dept_no, pst_no, email)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?, ?)`;
 
 // 수정
 const updateEmp =
