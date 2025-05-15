@@ -6,8 +6,9 @@
     <div class="d-flex justify-content-end mb-3">
       <select v-model="statusFilter" class="form-select w-auto">
         <option value="전체">전체</option>
-        <option value="r1">지시 가능</option>
-        <option value="r2">라인 대기</option>
+        <option value="r1+q2">지시 가능</option>
+        <option value="r1+q1">지시 대기</option>
+        <option value="r2">지시 완료</option>
         <option value="r3">생산 완료</option>
       </select>
     </div>
@@ -37,8 +38,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="item in filteredList" :key="item.pdn_ord_dtl_no"
-          :class="{ 'opacity-50': item.ord_sts === 'r2' || item.ord_sts === 'r3' }">
+        <tr v-for="item in filteredList" :key="item.pdn_ord_dtl_no">
           <td>{{ item.pdn_ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ formatNumber(item.ord_qty) }}</td>
@@ -133,7 +133,7 @@ export default {
       instructionList: [],
       selectedItem: null,
       showLineModal: false,
-      statusFilter: '전체'
+      statusFilter: 'r1+q2'
     }
   },
 
@@ -149,23 +149,17 @@ export default {
     },
 
     filteredList() {
-      const filtered = this.statusFilter === '전체'
-        ? this.instructionList
-        : this.instructionList.filter(i => i.ord_sts === this.statusFilter)
+  return this.instructionList.filter(item => {
+    if (this.statusFilter === '전체') return true
 
-      return [...filtered].sort((a, b) => {
-        const statusOrder = { r1: 0, r2: 1, r3: 2 }
-        const s1 = statusOrder[a.ord_sts] ?? 99
-        const s2 = statusOrder[b.ord_sts] ?? 99
-        if (s1 !== s2) return s1 - s2
+    const [ord, mat] = this.statusFilter.split('+')
 
-        const m1 = a.mat_ins_sts === 'q2' ? 0 : 1
-        const m2 = b.mat_ins_sts === 'q2' ? 0 : 1
-        if (m1 !== m2) return m1 - m2
+    if (ord && item.ord_sts !== ord) return false
+    if (mat && item.mat_ins_sts !== mat) return false
 
-        return new Date(a.pdn_ord_dt) - new Date(b.pdn_ord_dt)
-      })
-    }
+    return true
+  })
+}
   },
 
   created() {

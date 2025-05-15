@@ -57,7 +57,7 @@ const insertProdOrdDtl =
 SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?, 'r1'
 FROM pdn_ord_dtl;`
 
-// pdn_ord_dtl_no ===> SELECT CONCAT('SPM-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED))
+// CONCAT('ODT-', LPAD(IFNULL(MAX, 0) + 1, 3, '0'))
 // SELECT -- 조회 / 
 
 

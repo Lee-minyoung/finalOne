@@ -15,7 +15,7 @@
       <br>
       자재명 <input :value="selectedMatNm" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 180px;" />
       작성일자 <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee; margin-right: 197px;" />
-      검사자 <input :value="selectedInsDev" class="form-control" id="input" readonly style="background-color: #eee;" />
+      검사자 <input :value="employeeName" class="form-control" id="input" readonly style="background-color: #eee;" />
     </div>
     <br>
     <div class="middle">
@@ -94,6 +94,7 @@
 <script>
 import axios from 'axios';
 import MatRsltSelModal from '@/views/qualitys/MatRsltSelModal.vue';
+import { useEmpStore } from '@/stores/empStore.js';
 
 export default {
   components: { MatRsltSelModal },
@@ -117,6 +118,7 @@ export default {
       },
       overallJdg: '',
       selectedRsltNo: '',
+      empStore: useEmpStore(),
     };
   },
   created() {
@@ -143,7 +145,12 @@ export default {
         this.newItem.acpt_qty = mgr - rjct >= 0 ? mgr - rjct : '';
       }
     }
+},  computed: {
+  employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
 },
+
   methods: {
     async incInsRsltInsert() {
       if (!this.selectedRsltNo) {

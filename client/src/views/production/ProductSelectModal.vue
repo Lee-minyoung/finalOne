@@ -23,8 +23,10 @@
           <table class="table table-sm table-bordered text-center" style="min-width: 600px;">
             <thead class="table-light">
               <tr>
-                <th>제품ID</th>
+                <th>제품번호</th>
                 <th>제품명</th>
+                <th>현재고량</th>
+                <th>생산필요수량</th>
               </tr>
             </thead>
             <tbody>
@@ -37,6 +39,8 @@
               >
                 <td>{{ item.prd_no }}</td>
                 <td>{{ item.prd_nm }}</td>
+                <td>{{ item.현재고량 }}</td>
+                <td>{{ item.생산필요수량 }}</td>
               </tr>
             </tbody>
           </table>
@@ -66,8 +70,7 @@ export default {
   computed: {
     // 검색어를 기준으로 prodList를 필터링한 결과 반환
     filteredProducts() {
-      if (!this.prodList) return []  // prodList가 없으면 빈 배열 반환
-      return this.prodList.filter(p => p.prd_nm?.includes(this.search))  // 제품명 포함 여부로 필터링
+      return this.prodList.filter(p => p.prd_nm?.includes(this.search));
     }
   },
 

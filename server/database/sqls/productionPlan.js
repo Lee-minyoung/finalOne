@@ -30,10 +30,16 @@ ORDER BY d.end_dt ASC,
          d.sts ASC;`
 
 
+        
   const selectProd =
-`SELECT prd_no, prd_nm
-   FROM prd
-   ORDER BY prd_no;` 
+`SELECT p.prd_no
+      , p.prd_nm
+      , REPLACE((IFNULL(SUM(ps.cur_stk), 0) - opt_stk_qty ), '-', '') as 생산필요수량
+      , IFNULL(SUM(ps.cur_stk), 0) as 현재고량
+   FROM prd p
+   LEFT JOIN prd_stk ps ON p.prd_no = ps.prd_no
+  GROUP BY p.prd_no
+  ORDER BY prd_no;` 
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
