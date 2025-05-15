@@ -80,5 +80,25 @@ router.post('/find-password', async (req, res) => {
 // });
 
 
-// 비밀번호 찾기 요청을 처리하는 라우터
+// 비밀번호 재설정 요청을 처리하는 라우터
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { empNo, tempPassword, newPassword } = req.body;
+    if (!empNo || !tempPassword || !newPassword) {
+      return res.status(400).json({
+        result: false,
+        message: '모든 필드를 입력해주세요.'
+      });
+    }
+    const result = await loginService.resetPassword(empNo, tempPassword, newPassword);
+    res.json(result);
+  } catch (err) {
+    console.error('비밀번호 재설정 라우터 오류:', err);
+    res.status(500).json({
+      result: false,
+      message: '서버 오류가 발생했습니다.'
+    });
+  }
+});
+
 module.exports = router;
