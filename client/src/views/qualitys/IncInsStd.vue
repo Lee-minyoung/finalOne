@@ -7,7 +7,7 @@
     </div>
     <!-- 조회 조건 -->
     <div class="input">
-      LOT번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly/>
+      LOT번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
       <button class="btn btn-outline-secondary" id="icon-btn" @click="openMatModal">🔍</button>
       <!-- 자재명은 필요시 추가 -->
       자재번호 <input :value="selectedMatNo" class="form-control" id="input" readonly style="background-color: #eee;" />
@@ -30,6 +30,20 @@
         </tr>
       </thead>
       <tbody>
+        <!-- 추가 입력 행 -->
+        <tr>
+          <td></td>
+          <td><input v-model="newItem.ins_itm" class="form-control" placeholder="검사항목" /></td>
+          <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
+          <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
+          <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
+          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
+              style="background-color: #eee;" /></td>
+          <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
+          <td>
+            <button @click="incInsStdInsert" class="btn btn-primary btn-sm">추가</button>
+          </td>
+        </tr>
         <tr v-for="(item, index) in incInsStdList" :key="item.inc_ins_std_no">
           <td>{{ index + 1 }}</td>
           <td>
@@ -87,19 +101,6 @@
             <button @click="deleteRow(index)" class="btn btn-danger btn-sm">삭제</button>
           </td>
         </tr>
-        <!-- 추가 입력 행 -->
-        <tr>
-          <td></td>
-          <td><input v-model="newItem.ins_itm" class="form-control" placeholder="검사항목" /></td>
-          <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
-          <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
-          <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly style="background-color: #eee;" /></td>
-          <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
-          <td>
-            <button @click="incInsStdInsert" class="btn btn-primary btn-sm">추가</button>
-          </td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -117,6 +118,7 @@ export default {
   data() {
     return {
       searchQuery: '',
+      searchMatNo: '',
       incInsStdList: [],
       matList: [],
       showMatModal: false,
@@ -133,13 +135,14 @@ export default {
   methods: {
     // 등록
     async incInsStdInsert() {
-      if (!this.searchQuery) {
+      if (!this.searchMatNo) {
         alert('자재를 먼저 선택하세요.');
         return;
       }
+      console.log('등록할 자재번호:', this.searchMatNo);
       let obj = {
         ...this.newItem,
-        mat_no: this.searchQuery,
+        mat_no: this.searchMatNo,
         crt_by: this.newItem.crt_by,
       };
       try {
@@ -147,7 +150,7 @@ export default {
         let addRes = result.data;
         if (addRes.isSuccessed) {
           alert('등록되었습니다.');
-          this.incInsStdList.push({ ...obj, inc_ins_std_no: addRes.matNo });
+          this.getIncInsStdList(this.searchMatNo); // 등록한 자재번호로 목록 새로고침
           this.newItem = { ins_itm: '', ins_mthd: '', ins_spc: '', ins_eqp: '', crt_by: '', rmk: '' };
         } else {
           alert('모든 필드를 확인하세요.');
@@ -235,6 +238,7 @@ export default {
       this.searchQuery = item.lot_no;
       this.selectedMatNo = item.mat_no;
       this.selectedMatNm = item.mat_nm;
+      this.searchMatNo = item.mat_no;
       this.showMatModal = false;
       this.getIncInsStdList(item.mat_no);
     },
@@ -279,6 +283,7 @@ export default {
   display: inline-block;
   width: 150px;
 }
+
 #icon-btn {
   margin-right: 50px;
 }

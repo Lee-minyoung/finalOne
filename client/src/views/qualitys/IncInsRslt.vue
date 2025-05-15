@@ -33,8 +33,8 @@
         <tr>
           <td>수량</td>
           <td><input v-model="newItem.mgr_count" class="form-control" placeholder="검사량" style="background-color: #eee;" readonly /></td>
-          <td><input v-model="newItem.succ_count" class="form-control" placeholder="합격량" /></td>
-          <td><input v-model="newItem.acpt_count" class="form-control" placeholder="불량량" /></td>
+          <td><input v-model="newItem.acpt_qty" class="form-control" placeholder="합격량" /></td>
+          <td><input v-model="newItem.rjct_qty" class="form-control" placeholder="불량량" /></td>
         </tr>
       </tbody>
     </table>
@@ -109,7 +109,12 @@ export default {
       incInsStdList: [],
       lotList: [],
       showLotModal: false,
-      newItem: {},
+      newItem: {
+        mgr_count: '',
+        acpt_qty: '',   // 합격량
+        rjct_qty: '',   // 불량량
+        rmk: ''
+      },
       overallJdg: '',
       selectedRsltNo: '',
     };
@@ -123,7 +128,21 @@ export default {
       this.updateOverallJdg();
     },
     deep: true
-  }
+  },
+   'newItem.acpt_qty'(val) {
+      const mgr = Number(this.newItem.mgr_count);
+      const acpt = Number(val);
+      if (!isNaN(mgr) && !isNaN(acpt)) {
+        this.newItem.rjct_qty = mgr - acpt >= 0 ? mgr - acpt : '';
+      }
+    },
+    'newItem.rjct_qty'(val) {
+      const mgr = Number(this.newItem.mgr_count);
+      const rjct = Number(val);
+      if (!isNaN(mgr) && !isNaN(rjct)) {
+        this.newItem.acpt_qty = mgr - rjct >= 0 ? mgr - rjct : '';
+      }
+    }
 },
   methods: {
     async incInsRsltInsert() {
@@ -134,12 +153,12 @@ export default {
       // 마스터(inc_ins_rslt) 저장
   let obj = {
     rslt_no: this.selectedRsltNo,
-    mgr_count: this.newItem.mgr_count,
-    acpt_qty: this.newItem.succ_count,   // 합격량
-    rjct_qty: this.newItem.acpt_count,   // 불량량
-    ovr_jdg: this.overallJdg,            // 종합판정(n1/n2)
-    rmk: this.newItem.rmk,
-    pur_ord_no: this.searchPurOrdNo
+  mgr_count: this.newItem.mgr_count,
+  acpt_qty: this.newItem.acpt_qty,   // ← 합격량
+  rjct_qty: this.newItem.rjct_qty,   // ← 불량량
+  ovr_jdg: this.overallJdg,
+  rmk: this.newItem.rmk,
+  pur_ord_no: this.searchPurOrdNo
   };
   try {
     let result = await axios.post("/api/incInsRslt", obj);

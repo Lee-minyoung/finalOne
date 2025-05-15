@@ -120,14 +120,41 @@ export default {
       selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
       selectedInsDate: this.getToday(),     // 날짜
-      newItemList: [],
+       newItem: {
+        mgr_count: '',   // 검사량
+        succ_count: '',  // 합격량
+        dft_count: '',   // 불량량
+        rmk: ''
+      },
       spmInsStdList: [],
       prodList: [],
       showProductModal: false,
-      newItem: [],
+      newItem: {
+        mgr_count: '',   // 검사량
+        succ_count: '',  // 합격량
+        dft_count: '',   // 불량량
+        rmk: ''
+      },
+      newItemList: [],
       overallJdg: '',
       selectedRsltNo: '', // 성적서 번호
     };
+  },
+  watch: {
+    'newItem.succ_count'(val) {
+      const mgr = Number(this.newItem.mgr_count);
+      const succ = Number(val);
+      if (!isNaN(mgr) && !isNaN(succ)) {
+        this.newItem.dft_count = mgr - succ >= 0 ? mgr - succ : '';
+      }
+    },
+    'newItem.dft_count'(val) {
+      const mgr = Number(this.newItem.mgr_count);
+      const dft = Number(val);
+      if (!isNaN(mgr) && !isNaN(dft)) {
+        this.newItem.succ_count = mgr - dft >= 0 ? mgr - dft : '';
+      }
+    }
   },
   created() {
     this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
@@ -204,19 +231,30 @@ if (addRes.isSuccessed) {
     alert('등록 중 오류가 발생했습니다.');
   }
 },
+  parseNumber(str) {
+      // 앞부분의 숫자만 추출 (예: "200g" → 200)
+      const match = String(str).match(/^(\d+(\.\d+)?)/);
+      return match ? Number(match[1]) : NaN;
+    },
+  getJdg(item, mgr_rslt) {
+  if (mgr_rslt === '' || mgr_rslt === null || mgr_rslt === undefined) return '';
 
-    getJdg(item, mgr_rslt) {
-       if (mgr_rslt === '' || mgr_rslt === null || mgr_rslt === undefined) return '';
+  const std = this.parseNumber(item.ins_mthd);
+  const tol = this.parseNumber(item.ins_spc);
+  const result = this.parseNumber(mgr_rslt);
 
-  const std = Number(item.ins_mthd);
-  const tol = Number(item.ins_spc);
-  const result = Number(mgr_rslt);
-
+  // 값이 모두 숫자일 때만 비교
   if (!isNaN(std) && !isNaN(tol) && !isNaN(result)) {
     const min = std - tol;
     const max = std + tol;
     return (result >= min && result <= max) ? '적합' : '부적합';
   }
+
+  // 만약 검사결과가 '적합', '부적합' 등 한글로 들어올 경우
+  if (mgr_rslt === '적합') return '적합';
+  if (mgr_rslt === '부적합') return '부적합';
+
+  // 1/0로 들어올 경우
   if (mgr_rslt === '1' || mgr_rslt === 1) return '적합';
   if (mgr_rslt === '0' || mgr_rslt === 0) return '부적합';
 
