@@ -33,6 +33,23 @@
 
       <!-- 테이블 바디 -->
       <tbody>
+        <!-- 기준서 항목 추가 시 테이블 입력칸 -->
+        <tr>
+          <td></td>
+          <td><input v-model="newItem.ins_itm" class="form-control" placeholder="검사항목" /></td>
+          <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
+          <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
+          <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
+          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
+              style="background-color: #eee;" />
+          </td>
+          <td><input v-model="newItem.mdf_dt" class="form-control" placeholder="수정일자" readonly
+              style="background-color: #eee;" /></td>
+          <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
+          <td>
+            <button @click="spmInsStdInsert" class="btn btn-primary btn-sm">추가</button>
+          </td>
+        </tr>
         <tr v-for="(item, index) in spmInsStdList" :key="item.spm_ins_std_no">
           <td>
             {{ index + 1 }}
@@ -98,24 +115,6 @@
             <button v-if="item.editMode" @click="saveRow(index)" class="btn btn-success btn-sm">저장</button>
             <button v-if="item.editMode" @click="disableEditMode(index)" class="btn btn-secondary btn-sm">취소</button>
             <button @click="deleteRow(index)" class="btn btn-danger btn-sm">삭제</button>
-          </td>
-        </tr>
-
-        <!-- 기준서 항목 추가 시 테이블 입력칸 -->
-        <tr>
-          <td></td>
-          <td><input v-model="newItem.ins_itm" class="form-control" placeholder="검사항목" /></td>
-          <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
-          <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
-          <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
-              style="background-color: #eee;" />
-          </td>
-          <td><input v-model="newItem.mdf_dt" class="form-control" placeholder="수정일자" readonly
-              style="background-color: #eee;" /></td>
-          <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
-          <td>
-            <button @click="spmInsStdInsert" class="btn btn-primary btn-sm">추가</button>
           </td>
         </tr>
       </tbody>
