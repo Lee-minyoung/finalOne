@@ -4,6 +4,7 @@ const spmRcdList =
         v.cpy_nm, 
         s.spm_dt
 FROM spm s JOIN vdr v ON s.vdr_no=v.vdr_no
+WHERE s.fns_ok IS NULL
 ORDER BY s.ord_no`;
 
 // 출하이력 상세조회

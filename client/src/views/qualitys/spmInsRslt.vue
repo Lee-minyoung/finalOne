@@ -3,6 +3,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex gap-4">
         <h2 class="mb-4">완제품검사성적서</h2>
+        <div class="center-button">
+  <button class="btn btn-primary" @click="spmInsStdInsert" style="margin-bottom:-80px;">성적서 반영</button>
+</div>
       </div>
     </div>
     <!-- 조회 조건 -->
@@ -92,9 +95,6 @@
         </tr>
       </tbody>
     </table>
-    <div class="center-button">
-  <button class="btn btn-primary" @click="spmInsStdInsert">성적서 반영</button>
-</div>
   </div>
 
   <!-- 제품 검색 모달 -->
