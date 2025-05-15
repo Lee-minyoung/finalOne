@@ -60,28 +60,30 @@ export default {
   computed: {
 
     filteredOrds() {
-      if (!this.ordList) return [];
-      return this.ordList.filter(m => {
-        const matchName = m.cpy_nm?.includes(this.search);
-        const dtStr = m.spm_dt ? m.spm_dt.slice(0, 10) : '';
-        const startStr = this.spmDateStart;
-        const endStr = this.spmDateEnd;
-        let matchDate = true;
+  if (!this.ordList) return [];
+  return this.ordList.filter(m => {
+    // 검색어가 없으면 모두 통과, 있으면 포함되는 것만
+    const matchName = !this.search || (m.cpy_nm && m.cpy_nm.includes(this.search));
 
-        // 날짜 비교는 Date 객체로 변환해서 비교 (포함 조건)
-        if (startStr && dtStr) {
-          const dt = new Date(dtStr);
-          const start = new Date(startStr);
-          if (dt < start) matchDate = false; // 시작일 '이상'
-        }
-        if (endStr && dtStr) {
-          const dt = new Date(dtStr);
-          const end = new Date(endStr);
-          if (dt > end - 2) matchDate = false; // 종료일 '이하'
-        }
-        return matchName && matchDate;
-      });
+    // UTC → KST 변환을 위해 Date 객체로 변환 후 toISOString().slice(0, 10)
+    let dtStr = '';
+    if (m.spm_dt) {
+      const dateObj = new Date(m.spm_dt);
+      // KST로 변환
+      const kst = new Date(dateObj.getTime() + 9 * 60 * 60 * 1000);
+      dtStr = kst.toISOString().slice(0, 10);
     }
+
+    const startStr = this.spmDateStart;
+    const endStr = this.spmDateEnd;
+    let matchDate = true;
+
+    if (startStr && dtStr && dtStr < startStr) matchDate = false;
+    if (endStr && dtStr && dtStr > endStr) matchDate = false;
+
+    return matchName && matchDate;
+  });
+}
   },
   methods: {
     selectOrd(item) {

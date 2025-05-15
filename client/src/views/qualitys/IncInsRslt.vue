@@ -1,7 +1,13 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-4">입고검사성적서 작성</h2>
+      <h2 class="mb-4">자재검사성적서 작성</h2>
+      <div class="center-button">
+        <button class="btn btn-primary" @click="incInsRsltInsert" style="margin-bottom:-40px;">성적서 반영</button>
+        <div class="d-flex gap-4">
+
+        </div>
+      </div>
     </div>
     <!-- 조회 조건 -->
     <div class="input">
@@ -83,9 +89,6 @@
         </tr>
       </tbody>
     </table>
-    <div class="center-button">
-      <button class="btn btn-primary" @click="incInsRsltInsert">성적서 반영</button>
-    </div>
     <!-- LOT 검색 모달 -->
     <MatRsltSelModal v-if="showLotModal" :lotList="lotList" @select-lot="handleSelectedLot" @close="showLotModal = false" />
   </div>
