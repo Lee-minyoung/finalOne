@@ -46,30 +46,20 @@
         <td v-else-if="item['단위']=='EA'">{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}EA</td>
         <td v-else-if="item['단위']=='ml'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}L</td>
         <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
-        <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
-        <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-</td>
 
-<td v-else-if="item['부족수량'] > item['현재재고'] && reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <span class="badge bg-success px-3 py-2 rounded-pill">요청완료</span>
-</td>
 
-        <td v-if="item['부족수량'] <= 0">
-  <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-</td> -->
 <td>
-  <template v-if="item['부족수량'] <= 0">
-    <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-  </template>
+ <template v-if="item['부족수량'] <= 0 && item['자재출고처리'] == 'q2'">
+  <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
+</template>
 
-  <template v-else-if="item['부족수량']>=0 &&item['자재처리결과']=='c3' || item['부족수량']>=0 && reqClickedList.includes(item['계획ID'] + item['자재명'])">
-    <span class="badge bg-info px-3 py-2 rounded-pill">요청완료</span>
-  </template>
+<template v-else-if="item['부족수량'] >= 0 && (item['자재출고처리'] == 'q2' || reqClickedList.includes(item['계획ID'] + item['자재명']))">
+  <span class="badge bg-info px-3 py-2 rounded-pill">요청완료</span>
+</template>
 
-  <template v-else-if="item['부족수량']>0 &&!(item['자재처리결과']=='c3') && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-    <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-  </template>
+<template v-else-if="item['부족수량'] > 0 && item['자재출고처리'] == 'q1' && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
+  <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
+</template>
 
   
 </td>
@@ -145,27 +135,20 @@ import axios from 'axios';
   },
   // ** 지시번호별 번호 묶기
   computed: {
-  groupedInventory() {
-    const grouped = {}
-    this.inventoryStatus.forEach(item => {
-      const reqNo = item['계획ID']
-      if (!grouped[reqNo]) grouped[reqNo] = []
-      grouped[reqNo].push(item)
-    })
-      //
-     const filterGrouped={} 
-     for(const reqNo in grouped){
-      const items=grouped[reqNo] // 계획 번호 하나당 처리된거, 
-      const allDone=items.every(item=>
-            item['부족수량']<0 
-            //  || item['자재처리결과'] ==='c3' || this.reqClickedList.includes(item['계획ID']+item['자재명'])
-      )
-      if(!allDone){
-           filterGrouped[reqNo]=items 
-      }
-     } 
-    return filterGrouped
-  }
+ groupedInventory() {
+  const grouped = {};
+  this.inventoryStatus.forEach(item => {
+    const reqNo = item['계획ID'];
+    if (!grouped[reqNo]) grouped[reqNo] = [];
+    grouped[reqNo].push(item);
+  });
+
+  // 필터링 없이 전체 리턴
+  return grouped;
+}
+  
+   
+  
 },
 
 
@@ -317,16 +300,16 @@ import axios from 'axios';
 
       //서버에서 출고완료 됐는지 안됐는지 확인
       // 서버왜없지..?    
-      const matsts=await axios.get('/api/MatStatus',{params:{
-        reqId:payload.pln_id,
-        matId:payload.mat_no
-      }});
-      console.log('matsts',matsts);
+      // const matsts=await axios.get('/api/MatStatus',{params:{
+      //   reqId:payload.pln_id,
+      //   matId:payload.mat_no
+      // }});
+      // console.log('matsts',matsts);
 
       //우선 조건문문 풀기 
  
       // 출고가 가능한 애들은 우선 처리됨
-      await axios.post('/api/inventory/lotMinusList',payload); //자재차감 되고 자재출고처리 -> q2로 변환 
+    await axios.post('/api/inventory/lotMinusList',payload); //자재차감 되고 자재출고처리 -> q2로 변환 
       
           
     }catch(err){
