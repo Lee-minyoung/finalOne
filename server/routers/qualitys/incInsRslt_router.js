@@ -8,12 +8,12 @@ router.get('/incInsRslt/lotList', async (req, res) => {
   res.send(list);
 });
 
-//발주번호, 거래처명, 입고수량(검사량) 불러오기
+//발주번호, 거래처명 불러오기
 router.get('/incInsRslt/ord', async (req, res) => {
-  const { pur_ord_no } = req.query;
-  if (!pur_ord_no) return res.status(400).send({});
+  const { lot_no } = req.query;
+  if (!lot_no) return res.status(400).send({});
   try {
-    const [row] = await incInsRsltService.findOrd(pur_ord_no);
+    const [row] = await incInsRsltService.findOrd(lot_no);
     res.send(row || {});
   } catch (err) {
     res.status(500).send({});

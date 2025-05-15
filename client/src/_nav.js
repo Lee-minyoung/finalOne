@@ -116,17 +116,17 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '입고검사기준서',
+        name: '자재검사기준서',
         to: '/IncInsStd',
       },
       {
         component: 'CNavItem',
-        name: '입고검사성적서 작성',
+        name: '자재검사성적서 작성',
         to: '/IncInsRslt',
       },
       {
         component: 'CNavItem',
-        name: '입고검사성적서 조회',
+        name: '자재검사성적서 조회',
         to: '/IncInsGetRslt',
       },
     ],
