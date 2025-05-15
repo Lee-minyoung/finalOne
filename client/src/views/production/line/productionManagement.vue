@@ -75,11 +75,14 @@
 
           <!-- ✅ r2 상태: 생산지시완료 -->
           <template v-else-if="item.ord_sts === 'r2'">
-            <td colspan="2">
+            <td colspan="1">
               <router-link to="/LineMang" class="badge text-dark text-decoration-none"
                 style="background-color: #aee2f8; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px; text-align: center;">
                 생산지시완료
               </router-link>
+            </td>
+            <td>
+              <span>{{ item.ln_no }}</span>
             </td>
             <td>
               <button class="btn btn-sm btn-danger" @click="stopLine(item)">취소</button>
@@ -94,6 +97,9 @@
                 생산공정완료
               </span>
             </td>
+            <!-- <td>
+              <span>{{ item.ln_no }}</span>
+            </td> -->
             <td>
               <button class="btn btn-sm btn-outline-info" @click="viewCompleteStatus(item)">
                 완료현황

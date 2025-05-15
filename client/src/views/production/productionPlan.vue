@@ -13,8 +13,6 @@
             <option value="생산완료">생산완료</option>
           </select>
         </div>
-
-
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
         <!-- <button class="btn btn-light">재고/지시현황</button> -->
         <button class="btn btn-success text-white" @click="addPlan">등록</button>
@@ -131,7 +129,8 @@ export default {
       showInstructionModal: false,
       prodList: [],
       empStore: useEmpStore(),
-      statusFilter: '전체'
+      statusFilter: '미지시/부분지시',
+      today: this.getTodayDate()
     }
   },
   computed: {
@@ -369,6 +368,13 @@ export default {
     //     event.preventDefault()
     //   }
     // }
+    getTodayDate() {
+    const today = new Date()
+    const yyyy = today.getFullYear()
+    const mm = String(today.getMonth() + 1).padStart(2, '0') // 월은 0부터 시작
+    const dd = String(today.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}` // date input 형식: yyyy-mm-dd
+  }
   }
 }
 </script>

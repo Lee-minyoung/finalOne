@@ -4,7 +4,6 @@ MES프로젝트 입니다.
 
 즉석밥 MES 프로그램 제작과정입니다.
 
-
 # 🍱 즉석밥 MES 시스템 (Vue + Node.js 기반)
 
 > 식품 제조업을 위한 실시간 MES 시스템  
@@ -19,6 +18,17 @@ MES프로젝트 입니다.
 **실시간 모니터링, 정확한 자재 추적, 공정별 성능 개선**을 가능하게 합니다.
 
 ---
+
+## 😉 팀원
+- 김희정 (팀장) - 메인, 기초정보(사원, 부서, BOM, 공정코드, 제품공정흐름도, 라인, 설비), 완제품입고처리
+- 이병찬 (부팀장) -
+- 석지욱 - 기초정보(거래처, 자재, 제품), 로그인, 임시 비밀번호 발급
+- 이민영 -
+- 정은애 -
+
+즉석밥 생산 공정에 최적화된 MES 시스템으로  
+공정 단위별 실적, 품질, 자재 흐름을 디지털화하여  
+**정확한 자재 추적, 공정별 성능 개선**을 가능하게 합니다.
 
 ## 🧩 시스템 구성 (5개 주요 기능 영역)
 
@@ -38,8 +48,8 @@ MES프로젝트 입니다.
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | Vue 3, Vite, CoreUI, Bootstrap 5 |
-| Backend | Node.js, Express |
+| Frontend | Vue 3, Vite, CoreUI, Bootstrap 5, vuedraggable, axios, sweetalert2, 카카오맵 주소 검색 API |
+| Backend | Node.js, Express, nodemailer, dotenv |
 | DB | MariaDB (Naver Cloud), Sequelize ORM |
 | 상태 관리 | Pinia |
 | 개발 도구 | ESLint, Prettier, Git |
