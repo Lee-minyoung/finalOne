@@ -53,4 +53,57 @@ router.delete('/emp/:no', async (req, res) => {
   res.send(resInfo);
 })
 
+// 이메일 업데이트 라우터
+router.put('/emp/:empNo/email', async (req, res) => {
+  try {
+    const { empNo } = req.params;
+    const { email } = req.body;
+    
+    const result = await empService.updateEmpEmail(empNo, email);
+    
+    if (result.isUpdated) {
+      res.json({
+        result: true,
+        message: '이메일이 업데이트되었습니다.'
+      });
+    } else {
+      res.json({
+        result: false,
+        message: '이메일 업데이트에 실패했습니다.'
+      });
+    }
+  } catch (err) {
+    console.error('이메일 업데이트 오류:', err);
+    res.status(500).json({
+      result: false,
+      message: '서버 오류가 발생했습니다.'
+    });
+  }
+});
+
+// 모든 사원의 이메일 업데이트
+router.put('/emp/emails/update-all', async (req, res) => {
+  try {
+    const result = await empService.updateAllEmpEmails();
+    
+    if (result.isUpdated) {
+      res.json({
+        result: true,
+        message: `${result.affectedRows}명의 사원 이메일이 업데이트되었습니다.`
+      });
+    } else {
+      res.json({
+        result: false,
+        message: '이메일 업데이트에 실패했습니다.'
+      });
+    }
+  } catch (err) {
+    console.error('이메일 일괄 업데이트 오류:', err);
+    res.status(500).json({
+      result: false,
+      message: '서버 오류가 발생했습니다.'
+    });
+  }
+});
+
 module.exports = router

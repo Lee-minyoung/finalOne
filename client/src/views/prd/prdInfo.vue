@@ -13,8 +13,8 @@
       </div>
     </div>
     <!-- 우측 상세보기 영역 시작 -->
-    <div class="card p-4">
-      <h4 class="mb-4">상세 보기</h4>
+    <div class="card p-3">
+      <h4>상세 보기</h4>
       <div v-if="prdInfo.prd_no">
         <div>
           <div class="row mb-2">

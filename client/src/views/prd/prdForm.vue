@@ -10,8 +10,8 @@
       </div>
     </div>
     <!-- 우측 상세보기 영역 시작 -->
-    <div class="card p-4">
-      <h4 class="mb-4">제품 등록</h4>
+    <div class="card p-3">
+      <h4>제품 등록</h4>
       <div>
         <div class="row mb-2">
           <!-- 제품번호 -->

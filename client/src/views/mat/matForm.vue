@@ -7,8 +7,8 @@
         <button class="btn btn-success" @click="saveMat">저장</button>
       </div>
     </div>
-    <div class="card p-4">
-      <h4 class="mb-4">자재 등록</h4>
+    <div class="card p-3">
+      <h4>자재 등록</h4>
       <div>
         <div class="row mb-2">
           <!-- 자재번호 -->
