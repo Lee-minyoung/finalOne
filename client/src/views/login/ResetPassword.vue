@@ -4,24 +4,23 @@
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
           <div class="login-card">
-            <div class="card-body px-4 py-5">
-              <form @submit.prevent="findPwd">
+            <div class="card-body px-4 py-5">              <form @submit.prevent="resetPwd">
                 <div class="text-center mb-4">
                   <img src="@/assets/icons/login_bobe.png" alt="밥먹고하시조" class="login-logo" />
-                  <p class="welcome-text">비밀번호를 잊으셨나요?<br>사원번호와 이메일을 입력해 주세요.</p>
+                  <p class="welcome-text">임시 비밀번호를 입력하고<br>새로운 비밀번호를 설정해주세요.</p>
                 </div>
 
                 <div class="form-section">
                   <div class="input-wrapper">
                     <div class="input-group">
                       <span class="input-group-text">
-                        <i class="bi bi-person-fill"></i>
+                        <i class="bi bi-shield-lock"></i>
                       </span>
                       <input 
-                        type="text" 
+                        type="password" 
                         class="form-control" 
-                        v-model="findInfo.empNo" 
-                        placeholder="사원번호"
+                        v-model="passwordInfo.tempPassword" 
+                        placeholder="임시 비밀번호"
                         :disabled="isLoading"
                       />
                     </div>
@@ -30,13 +29,26 @@
                   <div class="input-wrapper">
                     <div class="input-group">
                       <span class="input-group-text">
-                        <i class="bi bi-envelope"></i>
+                        <i class="bi bi-key"></i>
                       </span>
                       <input 
-                        type="email" 
+                        type="password"                        class="form-control"                        v-model="passwordInfo.newPassword" 
+                        placeholder="새 비밀번호 (8자 이상)"
+                        :disabled="isLoading"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="input-wrapper">
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-key-fill"></i>
+                      </span>
+                      <input 
+                        type="password" 
                         class="form-control" 
-                        v-model="findInfo.email" 
-                        placeholder="이메일"
+                        v-model="passwordInfo.confirmPassword" 
+                        placeholder="새 비밀번호 확인"
                         :disabled="isLoading"
                       />
                     </div>
@@ -56,10 +68,10 @@
                   <button 
                     type="submit" 
                     class="btn-login"
-                    :disabled="isLoading"
+                    :disabled="isLoading || !isValidForm"
                   >
                     <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                    {{ isLoading ? '처리 중...' : '비밀번호 찾기' }}
+                    {{ isLoading ? '처리 중...' : '비밀번호 변경' }}
                   </button>
                 </div>
               </form>
@@ -77,35 +89,46 @@ import axios from "axios";
 export default {
   data() {
     return {
-      findInfo: {
-        empNo: "",
-        email: "",
+      passwordInfo: {
+        empNo: this.$route.params.empNo,
+        tempPassword: "",
+        newPassword: "",
+        confirmPassword: ""
       },
-      isLoading: false,
+      isLoading: false
     };
   },
-  methods: {
-    async findPwd() {
-      if (!this.findInfo.empNo.trim() || !this.findInfo.email.trim()) {
-        alert("사원번호와 이메일을 모두 입력해 주세요.");
+  computed: {
+    isValidForm() {
+      return this.passwordInfo.tempPassword.trim() &&
+             this.passwordInfo.newPassword.trim() &&
+             this.passwordInfo.confirmPassword.trim() &&
+             this.passwordInfo.newPassword === this.passwordInfo.confirmPassword &&
+             this.passwordInfo.newPassword.length >= 8;
+    }
+  },  methods: {
+    async resetPwd() {
+      if (!this.isValidForm) {
+        alert("모든 필드를 올바르게 입력해주세요.");
         return;
       }
+
+      if (this.passwordInfo.newPassword !== this.passwordInfo.confirmPassword) {
+        alert("새 비밀번호가 일치하지 않습니다.");
+        return;
+      }
+
       this.isLoading = true;
       try {
-        const result = await axios.post(`/api/find-password`, this.findInfo);
-        const findPwdRes = result.data;
-
-        if (findPwdRes.result) {
-          alert("임시 비밀번호가 이메일로 발송되었습니다.\n임시 비밀번호로 로그인하여 새 비밀번호를 설정해주세요.");
-          this.$router.push({ 
-            name: "resetPwd",
-            params: { empNo: this.findInfo.empNo }
-          });
+        const result = await axios.post('/api/reset-password', this.passwordInfo);
+        if (result.data.result) {
+          alert("비밀번호가 성공적으로 변경되었습니다.\n새로운 비밀번호로 로그인해주세요.");
+          this.$router.push({ name: "login" });
         } else {
-          alert(findPwdRes.message || "사원 정보를 찾을 수 없습니다.");
+          alert(result.data.message || "임시 비밀번호가 일치하지 않습니다.");
         }
       } catch (err) {
-        console.error("비밀번호 찾기 오류:", err);
+        console.error("비밀번호 변경 오류:", err);
         alert("서버 오류가 발생했습니다.");
       } finally {
         this.isLoading = false;
@@ -114,7 +137,7 @@ export default {
     goToLogin() {
       this.$router.push({ name: "login" });
     }
-  },
+  }
 };
 </script>
 
@@ -163,6 +186,12 @@ export default {
 
 .input-wrapper {
   margin-bottom: 1.2rem;
+
+  .form-text {
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    margin-left: 0.5rem;
+  }
 }
 
 .input-group {
@@ -244,4 +273,4 @@ export default {
     cursor: not-allowed;
   }
 }
-</style> 
+</style>
