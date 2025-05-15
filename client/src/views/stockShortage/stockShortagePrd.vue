@@ -9,10 +9,10 @@
             <div class="d-flex flex-column w-100">
               <div class="fw-bold">{{ item.prd_no }} {{ item.prd_nm }}</div>
               <div class="small d-flex flex-wrap mt-1 text-muted">
-                <div class="me-3">총재고: {{ item.현재총재고 }} {{ item.unit }}</div>
-                <div class="me-3">필요량: {{ item.필요량 }} {{ item.unit }}</div>
+                <div class="me-3">총재고: {{ valueFormat(item.현재총재고) }}개</div>
+                <div class="me-3">필요량: {{ valueFormat(item.필요량) }}개</div>
                 <div>부족량:
-                  <span :class="item.부족량 > 0 ? 'text-danger' : 'text-success'">{{ item.부족량 }} {{ item.unit }}</span>
+                  <span :class="item.부족량 > 0 ? 'text-danger' : 'text-success'">{{ valueFormat(item.부족량) }}개</span>
                 </div>
               </div>
             </div>
@@ -29,13 +29,13 @@
                 <div class="d-flex bg-light fw-bold text-center border-bottom">
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">LOT번호</div>
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">현재고</div>
-                  <div class="border-end flex-grow-1 py-2" style="width: 30%">입고일자</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">생산일자</div>
                   <div class="flex-grow-1 py-2" style="width: 30%">유통기한</div>
                 </div>
                 <div v-for="(lot, i) in item.lots" :key="i"
                   :class="['d-flex text-center', { 'border-bottom': i !== item.lots.length - 1 }]">
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_no }}</div>
-                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_재고 }}</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ valueFormat(lot.lot_재고) }}개</div>
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.생산일자) }}</div>
                   <div class="flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.유통기한) }}</div>
                 </div>
@@ -53,7 +53,8 @@
 
 <script>
 import axios from 'axios';
-import useDates from '@/utils/useDates.js'
+import useDates from '@/utils/useDates2.js'
+import dataFormat from '@/utils/useCommonCode.js';
 export default {
   name: 'ProductStockAccordion',
   created() {
@@ -74,7 +75,7 @@ export default {
           map.set(row.prd_no, {
             prd_no: row.prd_no,
             prd_nm: row.prd_nm,
-            제품총재고: row.제품총재고,
+            현재총재고: row.현재총재고,
             필요량: row.필요량,
             부족량: row.부족량,
             unit: row.unit,
@@ -86,7 +87,7 @@ export default {
           map.get(row.prd_no).lots.push({
             lot_no: row.lot_no,
             lot_재고: row.lot_재고,
-            입고일자: row.입고일자,
+            생산일자: row.생산일자,
             유통기한: row.유통기한
           })
         }
@@ -96,11 +97,14 @@ export default {
     }
   },
   methods: {
+    valueFormat(value){
+      return dataFormat.numberWithCommas(value);
+    },
     dateFormat(value) {
       return useDates.dateFormat(value, 'yyyy-MM-dd');
     },
     async getPrdData() {
-      let result = await axios.get('/api/stockShortagePrd')  // 제품 API 주소로 변경
+      let result = await axios.get('/api/stockShortagePrd')
         .catch(err => console.log(err));
       this.rawData = result.data;
     },

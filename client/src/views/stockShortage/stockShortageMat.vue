@@ -9,10 +9,10 @@
             <div class="d-flex flex-column w-100">
               <div class="fw-bold">{{ item.mat_no }} {{ item.mat_nm }}</div>
               <div class="small d-flex flex-wrap mt-1 text-muted">
-                <div class="me-3">총재고: {{ item.현재총재고 }} {{ item.unit }}</div>
-                <div class="me-3">필요량: {{ item.필요량 }} {{ item.unit }}</div>
+                <div class="me-3">총재고: {{ valueFormat(item.현재총재고) }}{{ item.unit }}</div>
+                <div class="me-3">필요량: {{ valueFormat(item.필요량) }}{{ item.unit }}</div>
                 <div>부족량:
-                  <span :class="item.부족량 > 0 ? 'text-danger' : 'text-success'">{{ item.부족량 }} {{ item.unit }}</span>
+                  <span :class="item.부족량 > 0 ? 'text-danger' : 'text-success'">{{ valueFormat(item.부족량) }}{{ item.unit }}</span>
                 </div>
               </div>
             </div>
@@ -35,7 +35,7 @@
                 <div v-for="(lot, i) in item.lots" :key="i"
                   :class="['d-flex text-center', { 'border-bottom': i !== item.lots.length - 1 }]">
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_no }}</div>
-                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ lot.lot_재고 }}</div>
+                  <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ valueFormat(lot.lot_재고) }}{{ item.unit }}</div>
                   <div class="border-end flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.입고일자) }}</div>
                   <div class="flex-grow-1 py-2" style="width: 30%">{{ dateFormat(lot.유통기한) }}</div>
                 </div>
@@ -53,7 +53,8 @@
 
 <script>
 import axios from 'axios';
-import useDates from '@/utils/useDates.js'
+import useDates from '@/utils/useDates2.js'
+import dataFormat from '@/utils/useCommonCode.js';
 export default {
   name: 'MaterialStockAccordion',
   created() {
@@ -97,7 +98,9 @@ export default {
     }
   },
   methods: {
-    // 날짜 데이터 포멧 정의
+    valueFormat(value){
+      return dataFormat.numberWithCommas(value);
+    },
     dateFormat(value) {
       return useDates.dateFormat(value, 'yyyy-MM-dd');
     },
