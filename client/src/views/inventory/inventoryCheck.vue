@@ -26,6 +26,7 @@
               <button class="btn btn-success rounded-pill px-3 me-2" @click.stop="checkMat(reqNo)" type="button">
                 자재출고
               </button>
+<<<<<<< HEAD
             </td>
           </tr>
           <!-- class="d-flex justify-content-end mb-3"  -->
@@ -40,6 +41,24 @@
               <td v-if="item['부족수량'] <= 0">0</td>
               <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
               <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
+=======
+
+            
+          </td>
+        </tr>
+        <!-- class="d-flex justify-content-end mb-3"  -->
+        <!-- ** 아코디언 하위 내용 -->
+        <template v-if="isExpanded(reqNo)">
+          <tr v-for="item in items" :key="item.mat_req_no">
+            <!-- <td></td> -->
+            <td>{{ item['자재명'] }}</td>
+            <td> {{converterUnit(item['총필요량'], item['단위'])}}</td> 
+            <td>{{ converterUnit(item['현재재고'],item['단위']) }}</td>
+            <td v-if="item['부족수량']>0">{{ converterUnit(item['부족수량'],item['단위']) }}</td>
+            <td v-if="item['부족수량']<=0">0</td>
+            <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
+            <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
+>>>>>>> origin/lami
   <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
 </td>
 
@@ -116,6 +135,7 @@
               </tr>
             </template>
           </template>
+        </template>
         </template>
       </tbody>
     </table>

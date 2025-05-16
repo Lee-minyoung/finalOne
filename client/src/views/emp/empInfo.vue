@@ -67,6 +67,13 @@
                   placeholder="상세주소는 주소와 함께 저장됩니다." />
               </div>
             </div>
+            <!-- 이메일 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="email" class="form-label me-3" style="min-width: 100px;">이메일</label>
+                <input id="email" type="text" class="form-control" v-model="empInfo.email" placeholder="이메일을 입력해주세요."/>
+              </div>
+            </div>
             <!-- 은행명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
@@ -129,7 +136,7 @@
             <div class="col-md-12">
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                  style="height: 100px" v-model="empInfo.hr_hist"></textarea>
+                  style="height: 50px" v-model="empInfo.hr_hist"></textarea>
                 <label for="floatingTextarea2" class="form-label">인사이력</label>
               </div>
             </div>
@@ -235,6 +242,10 @@ export default {
         alert('주소를 입력해주세요.');
         return;
       }
+      if (!this.empInfo.email?.trim()) {
+        alert('이메일을 입력해주세요.');
+        return;
+      }
       if (!this.empInfo.bnk_nm?.trim()) {
         alert('은행명을 입력해주세요.');
         return;
@@ -264,6 +275,7 @@ export default {
         emp_sts: this.empInfo.emp_sts, // 재직상태
         lv_rsn: this.empInfo.lv_rsn, // 휴직사유
         hr_hist: this.empInfo.hr_hist, // 인사이력
+        email: this.empInfo.email, // 이메일
       };
       // 서버에 데이터를 요청 : PUT + http://localhost:3000/dept/100 => proxy ) /api/dept/100
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용

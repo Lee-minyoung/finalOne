@@ -60,6 +60,13 @@
                 <input id="addr" type="text" class="form-control" v-model="addrPlus" placeholder="상세주소는 주소와 함께 저장됩니다."/>
               </div>
             </div>
+            <!-- 이메일 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label for="email" class="form-label me-3" style="min-width: 100px;">이메일</label>
+                <input id="email" type="text" class="form-control" v-model="email" placeholder="이메일을 입력해주세요."/>
+              </div>
+            </div>
             <!-- 은행명 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
@@ -120,7 +127,7 @@
             <div class="col-md-12">
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                  style="height: 100px" v-model="hr_hist"></textarea>
+                  style="height: 50px" v-model="hr_hist"></textarea>
                 <label for="floatingTextarea2" class="form-label">인사이력</label>
               </div>
             </div>
@@ -152,6 +159,7 @@ export default {
       dept_nm: null, // 부서명
       pst_no: null, // 직급번호
       addrPlus: null, // 상세주소
+      email: null, // 이메일
 
       deptInfo: [], // 부서 select option 만드는 데이터
     };
@@ -203,6 +211,7 @@ export default {
       this.dept_nm = null; // 부서명
       this.pst_no = null; // 직급번호
       this.addrPlus = null; // 상세주소
+      this.email = null; // 이메일
     },
     // 저장 버튼 클릭시 실행할 함수 
     async empInsert() {
@@ -221,6 +230,10 @@ export default {
       }
       if (!this.addr?.trim()) {
         alert('주소를 입력해주세요.');
+        return;
+      }
+      if (!this.email?.trim()) {
+        alert('이메일을 입력해주세요.');
         return;
       }
       if (!this.bnk_nm?.trim()) {
@@ -255,11 +268,13 @@ export default {
         hr_hist: this.hr_hist, // 인사이력
         dept_no: this.dept_no, // 부서번호
         pst_no: this.pst_no, // 직급번호
+        email: this.email, // 이메일
       }
       // 서버에 데이터를 요청 : POST + http://localhost:3000/books => proxy ) /api/books
       // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
       let result = await axios.post("/api/emp", obj)
         .catch(err => console.log(err));
+        console.log(result);
       let addRes = result.data;
       if (addRes.isSuccessed) {
         alert('등록되었습니다.');

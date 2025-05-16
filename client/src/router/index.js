@@ -117,7 +117,7 @@ const routes = [
         name: 'eqp',
         component: () => import('@/views/eqp/eqp.vue'),
       },
-      { // eqp 설비
+      { // prcCode 공정코드
         path: 'prc-code',
         name: 'prcCode',
         component: () => import('@/views/prcCode/prcCode.vue'),
@@ -126,6 +126,11 @@ const routes = [
         path: 'receive-prd',
         name: 'receivePrd',
         component: () => import('@/views/receivePrd/receivePrd.vue'),
+      },
+      { // stockShortage 재고현황
+        path: 'stock-shortage',
+        name: 'stockShortage',
+        component: () => import('@/views/stockShortage/stockShortage.vue'),
       },
       { // 자재현황파악, 자재구매계획
         path: '/inventoryCheck',

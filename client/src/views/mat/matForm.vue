@@ -105,7 +105,7 @@
  * 4. 거래처 목록 조회 및 선택
  */
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+import userDateUtils from '@/utils/useDates2.js';
 import matVdrSelectModal from '@/views/modal/matVdrSelectModal.vue';
 
 export default {

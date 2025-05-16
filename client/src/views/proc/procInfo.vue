@@ -64,13 +64,13 @@
               itemKey="prco_srl_no">
               <template #item="{ element, index }">
                 <tr>
-                  <td class="drag-handle small-text"><i class="bi bi-grip-vertical">{{ element.seq }}</i></td>
+                  <td class="drag-handle small-text text-center"><i class="bi bi-grip-vertical">{{ element.seq }}</i></td>
                   <td><input v-model="element.proc_code_nm" type="text" class="form-control small-text" readonly
                       disabled /></td>
                   <td><input v-model="element.proc_std" type="text" class="form-control small-text" readonly disabled />
                   </td>
-                  <td><input v-model="element.std_val" type="text" class="form-control small-text" /></td>
-                  <td><input v-model="element.std_tm" type="text" class="form-control small-text" /></td>
+                  <td><input v-model="element.std_val" type="text" class="form-control small-text text-end" /></td>
+                  <td><input v-model="element.std_tm" type="text" class="form-control small-text text-end" /></td>
                   <td>
                     <button class="btn btn-outline-danger me-1" @click="removePrcCodeRow(index)"> X </button>
                   </td>
