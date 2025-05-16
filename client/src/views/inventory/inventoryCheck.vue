@@ -145,7 +145,6 @@ export default {
     await this.fetchInventoryPurPlan(); //자재구매계획 일단불러오기   
     await this.filteredPurPlanList(); //수량을 
 
-
   },
   // ** 지시번호별 번호 묶기
   computed: {
@@ -159,21 +158,20 @@ export default {
       //
       const filterGrouped = {}
       for (const reqNo in grouped) {
-        const items = grouped[reqNo] // 계획 번호 하나당 처리된거, 
-        const allDone = items.every(item =>
-          item['부족수량'] < 0
-          //  || item['자재처리결과'] ==='c3' || this.reqClickedList.includes(item['계획ID']+item['자재명'])
-        )
-        if (!allDone) {
-          filterGrouped[reqNo] = items
-        }
+        const items = grouped[reqNo] // 계획 번호 하나당 처리된거,
+        filterGrouped[reqNo] = items 
+        // const allDone = items.every(item =>
+        //   item['부족수량'] > 0   // 여기가 오류임.
+        //   //  || item['자재처리결과'] ==='c3' || this.reqClickedList.includes(item['계획ID']+item['자재명'])
+        // )
+        // if (!allDone) {
+
+        // }
       }
-      console.log(JSON.stringify(filterGrouped, null, 2));
+      // console.log(JSON.stringify(filterGrouped, null, 2));
       return filterGrouped
     }
   },
-
-
 
   methods: {
     async fetchInventoryStatus() {
@@ -228,20 +226,20 @@ export default {
       //console.log('필터링된 자재구매계획',this.filteredPurPlan);
 
     },
-    async getMinOrdqty(matId) {
+    // async getMinOrdqty(matId) {
 
-      try { //
-        const minqty = await axios.get('/api/inventory/minqty', {
-          params: {
-            matId: matId
-          }
-        })
-        console.log('minqty', minqty.data[0]);
-        return minqty.data[0]; //최소량 return 
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    //   try { //
+    //     const minqty = await axios.get('/api/inventory/minqty', {
+    //       params: {
+    //         matId: matId
+    //       }
+    //     })
+    //     console.log('minqty', minqty.data[0]);
+    //     return minqty.data[0]; //최소량 return 
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
     //발주하기 버튼 누르면 발주 처리됨 
     async addPurOrdByPlnNo(purPlnNo) {
       try {
