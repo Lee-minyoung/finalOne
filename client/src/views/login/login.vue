@@ -1,52 +1,50 @@
 <template>
-  <!-- 전체 화면을 수직 및 수평으로 중앙 정렬 -->
-  <div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="login-container d-flex justify-content-center align-items-center min-vh-100">
     <div class="container">
-      <!-- 중앙 정렬된 행 -->
       <div class="row justify-content-center">
-        <!-- 화면 너비의 8칸을 차지하는 열 -->
-        <div class="col-md-8">
-          <div class="card shadow p-4">
-            <div class="card-body">
-              <form>
-                <!-- 로그인 제목 -->
-                <h1 class="text-center">밥먹고하시조</h1>
-                <!-- 부제목 -->
-                <p class="text-muted text-center">Sign In to your account</p>
-                <!-- 사용자명 입력 필드 -->
-                <div class="input-group mb-3">
-                  <!-- 사용자 아이콘 -->
-                  <span class="input-group-text">
-                    <i class="bi bi-person"></i>
-                  </span>
-                  <!-- 사용자명 입력 -->
-                  <input type="text" class="form-control" v-model="loginInfo.emp_no" placeholder="사원번호"
-                    autocomplete="emp_no" />
+        <div class="col-md-6 col-lg-5">
+          <div class="login-card">
+            <div class="card-body px-4 py-5">
+              <form @submit.prevent="userLogin">
+                <div class="text-center mb-4">
+                  <img src="@/assets/icons/login_bobe.png" alt="밥먹고하시조" class="login-logo" />
+                  <p class="welcome-text">오늘도 당신 덕분에 따뜻한 밥이 완성됩니다!</p>
                 </div>
-                <!-- 비밀번호 입력 필드 -->
-                <div class="input-group mb-4">
-                  <!-- 비밀번호 아이콘 -->
-                  <span class="input-group-text">
-                    <i class="bi bi-lock"></i>
-                  </span>
-                  <!-- 비밀번호 입력 -->
-                  <input type="password" class="form-control" v-model="loginInfo.pwd" placeholder="비밀번호"
-                    autocomplete="current-password" />
-                </div>
-                <!-- 버튼 그룹 -->
-                <div class="row">
-                  <!-- 로그인 버튼 -->
-                  <div class="col-6">
-                    <button type="button" class="btn btn-primary w-100" @click="userLogin">
-                      로그인
-                    </button>
+
+                <div class="form-section">
+                  <div class="input-wrapper">
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-person-fill"></i>
+                      </span>
+                      <input type="text" class="form-control" v-model="loginInfo.emp_no" placeholder="사원번호"
+                        :disabled="isLoading" />
+                    </div>
+                    <div class="invalid-feedback" v-if="errors.emp_no">{{ errors.emp_no }}</div>
                   </div>
-                  <!-- 비밀번호 찾기 버튼 -->
-                  <div class="col-6 text-end">
-                    <button type="button" class="btn btn-link px-0">
+
+                  <div class="input-wrapper">
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-lock-fill"></i>
+                      </span>
+                      <input type="password" class="form-control" v-model="loginInfo.pwd" placeholder="비밀번호"
+                        @keyup.enter="userLogin" :disabled="isLoading" />
+                    </div>
+                    <div class="invalid-feedback" v-if="errors.pwd">{{ errors.pwd }}</div>
+                  </div>
+
+                  <div class="text-end mb-3">
+                    <button type="button" class="btn-forgot" @click="$router.push({ name: 'find2pwd' })"
+                      :disabled="isLoading">
                       비밀번호 찾기
                     </button>
                   </div>
+
+                  <button type="submit" class="btn-login" :disabled="isLoading">
+                    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isLoading ? '로그인 중...' : '로그인' }}
+                  </button>
                 </div>
               </form>
             </div>
@@ -58,54 +56,252 @@
 </template>
 
 <script>
-import axios from "axios"; // 서버와 통신하기 위한 Axios 라이브러리
-import { useEmpStore } from "../../stores/empStore"; // Pinia 저장소 가져오기
-import { mapActions } from "pinia"; // Pinia의 actions를 매핑하기 위한 헬퍼 함수
+import axios from "axios";
+import { useEmpStore } from "../../stores/empStore";
+import { mapActions } from "pinia";
+import 'bootstrap-icons/font/bootstrap-icons.css';  // Bootstrap Icons 추가
 
 export default {
   data() {
     return {
-      // 로그인 정보를 저장하는 객체
       loginInfo: {
-        emp_no: "", // 사용자명 (사원번호)
-        pwd: "", // 비밀번호
+        emp_no: "",
+        pwd: "",
       },
+      isLoading: false,
+      errors: {
+        emp_no: '',
+        pwd: ''
+      }
     };
   },
   methods: {
-    // Pinia 저장소의 actions를 가져옴
     ...mapActions(useEmpStore, ["setLoginInfo"]),
-    async userLogin() {
-      try {
-        // 서버로 로그인 요청
-        const result = await axios.post(`/api/login`, this.loginInfo);
-        console.log(result); // 서버 응답 로그 출력
 
-        const loginRes = result.data; // 서버 응답 데이터
-        console.log(loginRes); // 응답 데이터 로그 출력
+    validateForm() {
+      let isValid = true;
+      this.errors = {
+        emp_no: '',
+        pwd: ''
+      };
+
+      if (!this.loginInfo.emp_no?.trim()) {
+        this.errors.emp_no = '사원번호를 입력해주세요';
+        isValid = false;
+      }
+
+      if (!this.loginInfo.pwd?.trim()) {
+        this.errors.pwd = '비밀번호를 입력해주세요';
+        isValid = false;
+      }
+
+      return isValid;
+    },
+
+    async userLogin() {
+      // 폼 검증
+      if (!this.validateForm()) {
+        return;
+      }
+
+      this.isLoading = true;
+
+      try {
+        const result = await axios.post(`/api/login`, this.loginInfo);
+        const loginRes = result.data;
 
         if (loginRes.result) {
-          // 로그인 성공 시 Pinia 저장소에 사용자 정보 저장
           this.setLoginInfo({
             emp_no: loginRes.emp_no,
-            nm: loginRes.nm, // 서버에서 반환된 사용자 이름
-            pst_nm: loginRes.pst_nm, // 서버에서 반환된 직책 이름
-            pst_no: loginRes.pst_no, // 서버에서 반환된 직책 번호
-            dept_no: loginRes.dept_no, // 서버에서 반환된 부서 번호
+            nm: loginRes.nm,
+            pst_nm: loginRes.pst_nm,
+            pst_no: loginRes.pst_no,
+            dept_no: loginRes.dept_no,
           });
+
           alert("사랑합니다!");
-          // 홈 페이지로 이동
           this.$router.push({ name: "Home" });
         } else {
-          // 로그인 실패 시 메시지 표시
-          alert(loginRes.message);
+          this.errors.pwd = loginRes.message || "사원번호 혹은 비밀번호가 일치하지 않습니다.";
         }
       } catch (err) {
-        // 서버 요청 중 오류 발생 시 처리
         console.error("Login error:", err);
-        alert("서버 오류가 발생했습니다.");
+
+        if (err.response) {
+          switch (err.response.status) {
+            case 401:
+              this.errors.pwd = "사원번호 혹은 비밀번호가 일치하지 않습니다.";
+              break;
+            case 429:
+              this.errors.pwd = "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.";
+              break;
+            case 500:
+              alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+              break;
+            default:
+              alert("로그인 중 오류가 발생했습니다.");
+          }
+        } else if (err.request) {
+          alert("서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.");
+        }
+      } finally {
+        this.isLoading = false;
       }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@use "@/styles/style" as *;
+
+.login-container {
+  background-color: #f8f9fa;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 2.8rem !important;
+}
+
+.login-logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.welcome-text {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin-bottom: 2.2rem;
+  font-weight: 500;
+}
+
+.form-section {
+  max-width: 360px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.input-wrapper {
+  margin-bottom: 1.2rem;
+}
+
+.input-group {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  }
+
+  .input-group-text {
+    background-color: white;
+    border: none;
+    color: #6c757d;
+    padding: 0.75rem 1rem;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .form-control {
+    border: none;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.95rem;
+    background-color: white;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: #adb5bd;
+      font-size: 0.92rem;
+    }
+  }
+}
+
+.btn-forgot {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 0.9rem;
+  padding: 0;
+  transition: color 0.2s;
+  margin-bottom: 1.2rem;
+
+  &:hover {
+    color: #0d6efd;
+  }
+}
+
+.btn-login {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: #0d6efd;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+  }
+}
+
+.invalid-feedback {
+  display: block;
+  font-size: 0.85rem;
+  margin: 0.35rem 0 0 0.75rem;
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    margin: 1rem;
+    min-height: 450px;
+  }
+
+  .login-logo {
+    width: 180px;
+  }
+
+  .card-body {
+    padding: 2rem !important;
+  }
+
+  .form-section {
+    max-width: 100%;
+  }
+}
+</style>

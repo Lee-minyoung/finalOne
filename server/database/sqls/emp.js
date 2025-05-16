@@ -25,6 +25,7 @@ const selectEmpOne =
     e.pwd,
     e.nm,
     e.ctt,
+    e.email,
     e.bnk_nm,
     e.acct_no,
     e.addr,
@@ -50,9 +51,8 @@ From emp`;
 
 // 추가
 const insertEmp =
-`INSERT INTO emp (emp_no, pwd, nm, ctt, bnk_nm, acct_no, addr, hire_dt, emp_sts, lv_rsn, hr_hist, dept_no, pst_no)
-SELECT IFNULL(MAX(emp_no), 999) + 1, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?
-FROM emp`;
+`INSERT INTO emp (emp_no, pwd, nm, ctt, bnk_nm, acct_no, addr, hire_dt, emp_sts, lv_rsn, hr_hist, dept_no, pst_no, email)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'a1', ?, ?, ?, ?, ?)`;
 
 // 수정
 const updateEmp =
@@ -65,6 +65,18 @@ const deleteEmp =
 `DELETE FROM emp
 WHERE emp_no = ?`;
 
+// 이메일 업데이트
+const updateEmail =
+`UPDATE emp
+SET email = ?
+WHERE emp_no = ?`;
+
+// 모든 사원의 이메일 업데이트
+const updateAllEmpEmails =
+`UPDATE emp
+SET email = CONCAT('emp', emp_no, '@ricefirstcode.com')
+WHERE email IS NULL OR email = ''`;
+
 module.exports = {
   selectEmpList,
   selectEmpOne,
@@ -72,4 +84,6 @@ module.exports = {
   insertEmp,
   updateEmp,
   deleteEmp,
+  updateEmail,
+  updateAllEmpEmails
 };

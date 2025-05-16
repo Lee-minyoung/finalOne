@@ -7,7 +7,7 @@
     </div>
     <div class="ms-auto">
       <span class="me-1" target="_blank">Powered by</span>
-      <a href="https://coreui.io/vue">MES 프로젝트 밥먹고합시조</a>
+      <a href="https://coreui.io/vue">MES 프로젝트 밥먹고하시조</a>
     </div>
   </CFooter>
 </template>

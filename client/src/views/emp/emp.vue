@@ -18,25 +18,25 @@
         <!-- 좌측 리스트 영역 시작 -->
         <div class="card p-3">
           <h4>사원 목록</h4>
-          <div class="table-wrapper">
+          <div class="table-container">
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>사원번호</th>
-                  <th>이름</th>
-                  <th>부서명</th>
-                  <th>직급명</th>
-                  <th>재직상태</th>
+                  <th class="w-15">사원번호</th>
+                  <th class="w-20">이름</th>
+                  <th class="w-20">부서명</th>
+                  <th class="w-20">직급명</th>
+                  <th class="w-15">재직상태</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="emp in filteredEmpList" v-bind:key="emp.emp_no" @click="selectEmp(emp.emp_no)"
-                  class="table-hover">
-                  <td>{{ emp.emp_no }}</td>
-                  <td>{{ emp.nm }}</td>
-                  <td>{{ emp.dept_nm }}</td>
-                  <td>{{ emp.pst_nm }}</td>
-                  <td>{{ emp.emp_sts }}</td>
+                  :class="{ 'table-primary': selectedEmp && selectedEmp.emp_no === emp.emp_no }" class="table-hover">
+                  <td class="w-15">{{ emp.emp_no }}</td>
+                  <td class="w-20">{{ emp.nm }}</td>
+                  <td class="w-20">{{ emp.dept_nm }}</td>
+                  <td class="w-20">{{ emp.pst_nm }}</td>
+                  <td class="w-15">{{ empStatusFormat(emp.emp_sts) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -45,7 +45,8 @@
       </div> <!-- 좌측 영역 시작 끝 -->
 
       <!-- 우측 영역 -->
-      <empInfo v-if="InfoView" :emp="selectedEmp" @goToForm="msg" @emp-reload="getEmpList" />
+      <empInfo v-if="InfoView" :emp="selectedEmp" @goToForm="msg" @emp-reload="getEmpList"
+        @clear-selection="clearSelection" />
       <empForm v-if="!InfoView" @goToInfo="msg" @emp-reload="getEmpList" />
     </div>
   </div>
@@ -88,40 +89,42 @@ export default {
     this.getEmpList();
   },
   methods: {
-    // 날짜 데이터 포멧 정의
-    CommonCodeFormat(value) {
-      return CommonCodeFormat.CommonCodeFormat(value);
+    // 재직상태 포멧
+    empStatusFormat(value) {
+      return CommonCodeFormat.empStatusFormat(value);
     },
-    // deptList데이터 받아오는 함수
+    // empList데이터 받아오는 함수
     async getEmpList() {
       let result = await axios.get('/api/emp')
         .catch(err => console.log(err));
-      this.empList = result.data; //deptList배열에 결과값 담음
+      this.empList = result.data; // empList배열에 결과값 담음
     },
     // 상세보기에 보여질 데이터 받아오는 함수
-    selectEmp(empNo) { // 리스트에서 선택한 dept정보를 selectedDept에 저장(상세보기에 표시될 부서 데이터)
-      this.InfoView = true;
-      const emp = this.empList.find(emp => emp.emp_no === empNo);
-      console.log(emp);
-      this.selectedEmp = emp;  // 클릭한 부서를 selectedDept에 저장
+    async selectEmp(empNo) { // 리스트에서 선택한 emp정보를 selectedEmp에 저장(상세보기에 표시될 사원 데이터)
+      try {
+        const emp = this.empList.find(emp => emp.emp_no === empNo);
+        // this.InfoView = true;로 컴포넌트를 활성화하면 Vue는 DOM을 업데이트하는 작업을 예약(비동기)
+        this.InfoView = true;
+        // $nextTick()을 사용하면 DOM 업데이트가 완료된 후 안전하게 작업을 수행할 수 있습니다.(비동기-> 동기처리)
+        await this.$nextTick();
+        this.selectedEmp = emp;  // 클릭한 사원을 selectedEmp에 저장
+      } catch (err) {
+        console.error('사원 선택 중 오류 발생:', err);
+      }
     },
-    // goToInfo(deptNo) { // 상세보기 컴포넌트로 전송
-    //   this.$router.push({ name : 'deptInfo', params : { no : deptNo }});
-    // },
     msg(data) {
       this.InfoView = data;
+      if (!data) {
+        this.selectedEmp = null; // lnForm이 활성화되면 선택된 라인 초기화
+      }
+    },
+    clearSelection() {
+      this.selectedEmp = null;
     }
   }
 };
 </script>
 
-<style>
-.table-hover:hover {
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
+<style scoped>
+@import '@/assets/styles/base-table.css';
 </style>

@@ -14,14 +14,32 @@ const selectLastOrdNo=
   from ord_dtl`; 
 //  
 const selectOrdList=
-`SELECT ord_no,
-         vdr_no,
-         emp_no,
-         due_dt,
-         ord_sts,
-         rgt_dt,
-         mdf_dt
-  FROM ord`; 
+// `SELECT ord_no,
+//          vdr_no,
+//          emp_no,
+//          due_dt,
+//          ord_sts,
+//          rgt_dt,
+//          mdf_dt
+//   FROM ord`;
+
+// `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
+// from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
+`SELECT o.ord_no 
+     , o.vdr_no 
+     , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no)  
+     , od.prd_no 
+     , p.prd_nm 
+     , od.prd_qty 
+     , IFNULL((SELECT SUM(cur_stk) FROM prd_stk WHERE prd_no = od.prd_no), 0) as 현재고량
+  FROM ord o
+  LEFT JOIN ord_dtl od ON o.ord_no = od.ord_no
+  LEFT JOIN prd p ON od.prd_no = p.prd_no
+	WHERE NOT EXISTS (
+    SELECT 1 FROM spm s WHERE s.ord_no = o.ord_no
+  )  ORDER BY ord_no
+`;
+
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
@@ -37,12 +55,12 @@ FROM ord o JOIN vdr v ON(o.vdr_no=v.vdr_no)
 const selectOrdDate=
 `SELECT 
       DATE(o.due_dt),
-       p.prd_nm,
-	   ps.cur_stk, 
-       p.prd_no,  
-       SUM(od.prd_qty)
+      p.prd_nm,
+	    ps.cur_stk, 
+      p.prd_no,  
+      SUM(od.prd_qty)
 FROM ord o JOIN  ord_dtl od on(o.ord_no=od.ord_no)
-			     JOIN prd  p ON(od.prd_no=p.prd_no)
+	     JOIN prd  p ON(od.prd_no=p.prd_no)
            JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
 WHERE DATE(o.due_dt) BETWEEN ? and ?
 GROUP BY DATE(o.due_dt), p.prd_nm`; 
@@ -60,7 +78,70 @@ FROM  ord o  JOIN  ord_dtl od on(o.ord_no=od.ord_no)
              JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
 WHERE DATE(o.due_dt)  LIKE ?
 `; 
+//업체코드로 검색 
+const searchVdrNo=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
+FROM vdr 
+WHERE vdr_no= ?`; 
+//업체명으로 검색 
+const searchVdrNm=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
+FROM vdr 
+WHERE cpy_nm LIKE'%?%'`; 
+// 수주,수주받은건 조회 
+const selectOrdAllList=`
+SELECT 
+    o.ord_no,
+    o.vdr_no,
+    o.emp_no,
+    o.due_dt,
+    o.ord_sts,
+    d.ord_dtl_no,
+    d.prd_no,
+   sum(d.prd_qty)
+FROM ord o
+JOIN ord_dtl d ON o.ord_no = d.ord_no
+GROUP BY d.prd_no`;
+//출하최대값찾기
+const selectMaxSpmNo=`
+ select max(spm_no) as maxSpmNo
+ from spm`;
+ //제품lot상세 번호 최댓값 찾기 
+ const selectMaxPrdHistNo=`
+ select max(prd_stk_hist_no) as maxLotNo
+ from prd_stk_hist`;
+ const selectMaxSpmDtlNo=`
+ select max(spm_dtl_no) as maxSpmDtlNo
+ from spm_dtl`;    
+//출하지시 여러정보 찾기기 
+const selectSpmInfo=`
+SELECT o.vdr_no,o.emp_no,od.prd_qty ,od.prd_no ,o.ord_no,o.ord_sts  
+ FROM  ord o JOIN ord_dtl od on(o.ord_no=od.ord_no)
+ where o.ord_no=?`;     
+const insertSpm=`
+INSERT INTO spm (spm_no,ord_no,vdr_no,mgr,spm_dt,dlv_addr)
+VALUES(?,?,?,?,?,?)`; 
+const insertSpmDtl=`
+INSERT INTO spm_dtl (spm_dtl_no,spm_no,qty,unt_prc,prd_no)
+VALUES(?,?,?,?,?)`;
 
+const updatePrdStk=`
+UPDATE prd_stk 
+SET cur_stk=cur_stk - ?
+WHERE lot_no= ?
+AND prd_no=?`;
+const insertPrdStkdtl=`
+INSERT INTO prd_stk_hist (prd_stk_hist_no,lot_no,io_tp,qty,dt,rel_doc)
+ VALUES (?,?,?,?,?,?)`; 
+
+ const prdMaxLotList=`
+ select lot_no,prd_no,cur_stk
+from prd_stk
+where prd_no=?
+ORDER BY cur_stk desc`;
+
+const ordToSpmNo=`
+select s.ord_no as 수주에서출하
+from ord o  JOIN spm s on o.ord_no=s.ord_no
+group by s.ord_no`; 
 
  module.exports={
   insertOrd,
@@ -72,4 +153,15 @@ WHERE DATE(o.due_dt)  LIKE ?
   selectOrdAll,
   selectOrdDate,
   selectOrdDateOne, 
+  selectOrdAllList, 
+  selectMaxSpmNo,
+  selectSpmInfo,
+  selectMaxSpmDtlNo, 
+  insertSpm,  
+  insertSpmDtl,
+  updatePrdStk,
+  insertPrdStkdtl,
+  selectMaxPrdHistNo,
+  prdMaxLotList,
+  ordToSpmNo,   
  }

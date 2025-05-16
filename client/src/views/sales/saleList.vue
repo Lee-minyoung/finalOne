@@ -1,137 +1,218 @@
 <template>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div class="d-flex gap-4">
-    <h2 class="mb-4">주문조회</h2>
-  </div>
-  </div>
-  <div class="d-flex justify-content-end align-items-center mb-3">
-  <!--검색-->
-  <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-      <button type="button" class="btn btn-primary">등록</button>
-   </div>  
-
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">주문번호</th>
-      <th scope="col">업체명</th>
-      <th scope="col">제품</th>
-      <th scope="col">수량</th>
-      <th scope="col">주문일자</th>
-      <th scope="col">납기일자</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="item in ordList" :key="item.ord_no">
-      <th scope="row">{{ item.ord_no }}</th>
-      <td>{{item.cpy_nm}}</td>
-      <td>{{ item.prd_nm }}</td>
-      <td>{{ item.prd_qty }}</td>
-      <td>{{ item.rgt_dt.substring(0,10) }}</td>
-      <td>{{ item.due_dt.substring(0,10) }}</td>
-    </tr> 
-  </tbody>
-</table>
-<!--총 주문수량-->
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div class="d-flex gap-4">
-    <h2 class="mb-4">총 주문 수량</h2>
-  </div>
-  </div>
-
-  
-  <input type="date" v-model="startDate" />
-  <input type="date" v-model="endDate" />
-  <button  class="btn btn-primary" @click="fetchOrdByDate">조회</button>
-
-
-<div>
-   
-
-    <div v-for="(dayData, date) in tableData" :key="date" class="mb-5">
-      <h4>{{ formatDate(date) }}</h4>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>품명</th>
-            <th>현재고</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="dayData.length === 0">
-            <td colspan="2" class="text-center">데이터 없음</td>
-          </tr>
-          <tr v-for="(item, idx) in dayData" :key="idx">
-            <td>{{ item.prd_nm }}</td>
-            <td>{{ item.cur_stk }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="container">
+    <!-- 상단 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">주문조회</h2>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">주문 등록</button>
     </div>
+    <!-- 주문 등록 모달 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">주문등록</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="border rounded p-3 mb-4">
+              <div class="row g-3">
+                <div class="col-md-4"><label>납기예정일</label><input type="date" class="form-control" v-model="dueDt" /></div>
+                <div class="col-md-4"><label>거래처</label><input type="text" class="form-control" :value="selectVdr?.cpy_nm || ''" readonly /></div>
+                <div class="col-md-4"><label>거래처코드</label><input type="text" class="form-control" :value="selectVdr?.vdr_no || ''" readonly /></div>
+              
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-primary" @click="showVdrModal = true">거래처 선택</button>
+                  <button class="btn btn-outline-primary" @click="showPrdModal = true">상품 선택</button>
+                </div>
+                <vdr-select-modal
+                  v-if="showVdrModal"
+                  :vdr-list="vdrList"
+                  :selected="selectVdr"
+                  @select-vdr="handleVdrSelect"
+                  @close="showVdrModal = false"
+                />
+                <prd-select-modal
+                  v-if="showPrdModal"
+                  :prd-list="prdList"
+                  :selected="selectPrd"
+                  @select-prd="handlePrdSelect"
+                  @close="showPrdModal = false"
+                />
+              </div>
+            </div>
+
+            <table class="table table-bordered text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>No</th>
+                  <th>제품 ID</th>
+                  <th>제품명</th>
+                  <th>수량</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
+                  <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
+                  <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            <button class="btn btn-primary" @click="addOrd">주문등록</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <input type="date" v-model="startDate" />
+  <input type="date" v-model="endDate" />
+  <button class="btn btn-primary" @click="fetchOrdByDate">조회</button>
+
+
+    <!-- 주문 리스트 테이블 -->
+     <!--전체조회-->
+    <table v-if="!dateShow" class="table table-bordered text-center mt-4">
+      <thead class="table-light">
+        <tr>   
+          <th>주문번호</th>
+          <th>제품명</th>
+          <th>거래처코드</th>
+          <th>요청수량</th>
+          <th>LOT재고량</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in ordList" :key="index">
+          <td>{{ item.ord_no }}</td>
+          <td>{{ item.prd_nm }}</td>
+          <td>{{ item.vdr_no }}</td>
+          <td>{{ item.prd_qty }}</td>
+          <td>{{ item['현재고량'] }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  <table v-else class="table table-bordered text-center mt-4">
+    <thead  class="table-light">
+      <tr>
+          <th>날짜</th>
+          <th>주문번호</th>
+          <th>제품번호</th>
+          <th>제품명</th>
+          <th>거래처명</th> 
+          <th>요청수량</th>
+          <th>LOT재고량</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(item, index) in ordListByDate" :key="index">
+      
+      </tr>
+    </tbody>
+  </table>
   </div>
-
-
 </template>
-
-
 <script>
-import axios from 'axios'
+import axios from 'axios';
+import vdrSelectModal from '@/views/modal/vdrSelectModal.vue';
+import prdSelectModal from '@/views/modal/prdSelectModal.vue';
 
-export default{
-
- data(){
-    return{
-        ordList:[], 
-        startDate: '',
-        endDate: '',
-        tableData: {},
-        ordListByDate: [], 
-    }
- },
-
-created(){
-  this.getOrdList(); 
-},
-
-mounted() {
-   
-  }, 
-
-methods: {
-    async getOrdList(){
-        try{
-           let result=await axios.get('/api/ordAll')
-                                     .catch(err => console.log(err))    
-           this.ordList=result.data
-        }catch(err){
-            console.log('주문리스트 불러오기 실패',err)
-        }
-
-    },
-   async fetchOrdByDate(){
-    console.log('날짜 확인:', this.startDate,this.endDate);
-      try{
-          let result=await axios.get('/api/ord/by-date',{
-            params:{
-                startDate: this.startDate,
-                endDate: this.endDate
-            }
-          })
-        this.ordListByDate=result.data;  
-      }catch(err){
-        console.log('기간별 주문리스트 불러오기 실패',err)
+export default {
+  components: { vdrSelectModal, prdSelectModal },
+  data() {
+    return {
+      showVdrModal: false,
+      showPrdModal: false,
+      selectVdr: null,
+      selectPrd: null,
+      vdrCd: '',
+      prdNo: '',
+      prdQty: 1,
+      dueDt: '',
+      ordList: [],
+      vdrList: [],
+      prdList: [],
+      ordListByDate: [],
+      startDate: '',
+      endDate: '',
+      dateShow: false,
+    };
+  },
+  async created() {
+    await this.getOrdList();
+    this.vdrList = (await axios.get('/api/vdr')).data || [];
+    this.prdList = (await axios.get('/api/prd')).data || [];
+  },
+  methods: {
+    async getOrdList() {
+      try {
+        const res = await axios.get('/api/ord');
+        this.ordList = res.data;
+      } catch (err) {
+        console.error('주문 불러오기 실패', err);
       }
-   }
+    },
+    async addOrd() {
+      if (!this.vdrCd || !this.prdNo || !this.dueDt || this.prdQty <= 0) {
+        alert('필수 정보를 모두 입력해주세요.');
+        return;
+      }
+      try {
+        const res = await axios.post('/api/ord', {
+          vdr_no: this.vdrCd,
+          due_dt: this.dueDt,
+          prd_no: this.prdNo,
+          prd_qty: this.prdQty,
+        });
+        alert('주문등록 완료');
+        this.getOrdList();
+      } catch (err) {
+        console.error('주문등록 실패', err);
+        alert('등록 실패');
+      }
+    },
+    handleVdrSelect(vdr) {
+      this.selectVdr = vdr;
+      this.vdrCd = vdr.vdr_no;
+      this.showVdrModal = false;
+    },
+    handlePrdSelect(prd) {
+      this.selectPrd = prd;
+      this.prdNo = prd.prd_no;
+      this.showPrdModal = false;
+    },
+    async fetchOrdByDate() {
+      console.log('날짜 확인:', this.startDate, this.endDate)
+      this.dateArray = ['품명', '현재고']
+      this.dateShow = true; 
 
-   
-    
-},
+      try {
+        const result = await axios.get('/api/ord/by-date', {
+          params: {
+            startDate: this.startDate,
+            endDate: this.endDate
+          }
+        })
+        this.ordListByDate = result.data
+        const current = new Date(this.startDate)
+        const end = new Date(this.endDate)
+        while (current <= end) {
+          const dateStr = current.toISOString().slice(0, 10)
+          this.dateArray.push(dateStr)
+          current.setDate(current.getDate() + 1)
+        }
+        console.log('기간별 주문리스트', this.ordListByDate)
 
+      } catch (err) {
+        console.log('기간별 주문리스트 불러오기 실패', err)
+      }
+    },
+  
 
-
-}
+  },
+};
 </script>

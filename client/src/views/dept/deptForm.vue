@@ -15,11 +15,14 @@
       <div>
         <div>
           <label class="form-label">부서번호</label>
-          <input type="text" class="form-control" v-model="deptNo" readonly />
+          <input type="text" class="form-control" v-model="deptNo" readonly disabled />
           <label class="form-label">부서명</label>
           <input type="text" class="form-control" v-model="deptInfo.dept_nm" />
           <label class="form-label">부서관리자</label>
-          <input type="text" class="form-control" v-model="deptInfo.dept_mgr" />
+          <div class="input-group">
+            <input v-model="deptInfo.nm" type="text" class="form-control" readonly />
+            <button class="btn btn-outline-secondary" @click="openEmpModal()">사원 선택</button>
+          </div>
 
           <!-- <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
@@ -29,11 +32,14 @@
 
 
           <label class="form-label">사용여부</label>
-          <input type="text" class="form-control" value="여" readonly />
-          <label class="form-label">생성일자</label>
-          <input type="text" class="form-control" v-model="today" readonly />
+          <input type="text" class="form-control" value="여" readonly disabled />
+          <label class="form-label">등록일자</label>
+          <input type="text" class="form-control" v-model="today" readonly disabled />
         </div>
       </div>
+
+      <empSelectModal v-if="showEmpModal" :empList="empList" :selected="deptInfo.dept_mgr"
+        @select-emp="handleSelectedEmp" @close="showEmpModal = false" />
 
     </div> <!-- 우측 상세보기 영역 끝 -->
   </div> <!-- 우측 영역 끝 -->
@@ -42,9 +48,13 @@
 <script>
 // AJAX 모듈
 import axios from 'axios';
-import userDateUtils from '@/utils/useDates.js';
+import userDateUtils from '@/utils/useDates2.js';
+import empSelectModal from '@/views/modal/empSelectModal.vue';
 
 export default {
+  components: {
+    empSelectModal,
+  },
   data() {
     return {
       deptNo: '',
@@ -52,7 +62,12 @@ export default {
       deptInfo: {
         dept_nm: '',
         dept_mgr: '',
+        nm: '',
       },
+
+      empList: [],
+      showEmpModal: false, // 사원 선택 모달 초기화값 = 닫힘
+      selectedEmp: null, // 선택된 사원
     };
   },
   created() {
@@ -60,12 +75,12 @@ export default {
     this.getToday();
   },
   methods: {
-    // 날짜 데이터 포멧 정의
-    dateFormat(value, format) {
-      return userDateUtils.dateFormat(value, format);
-    },
+    // // 날짜 데이터 포멧 정의
+    // dateFormat(value, format) {
+    //   return userDateUtils.dateFormat(value, format);
+    // },
     getToday() {
-      this.today = this.dateFormat(null, 'yyyy-MM-dd');
+      this.today = userDateUtils.dateFormat(null, 'yyyy-MM-dd');
     },
     // dept_no를 받아 데이터 받아오는 함수
     async getDeptNo() {
@@ -81,6 +96,16 @@ export default {
     },
     // 저장 버튼 클릭시 실행할 함수 
     async deptInsert() {
+
+      // 필수 입력값 검증
+      if (!this.deptInfo.dept_nm?.trim()) {
+        alert('부서명을 입력해주세요.');
+        return;
+      }
+      if (!this.deptInfo.dept_mgr) {
+        alert('부서관리자를 선택해주세요.');
+        return;
+      }
       // Form에 입력된 정보를 기준으로 등록하는 경우
       // 서버에 전달할 정보를 객체로 따로 구성
       let obj = {
@@ -100,11 +125,28 @@ export default {
       };
       this.$emit("goToInfo", true);
     },
+    // 사원 선택 모달 열기
+    openEmpModal() {
+      axios.get('/api/emp')
+        .then(res => {
+          this.empList = res.data;
+          this.showEmpModal = true;
+        })
+        .catch(err => {
+          console.error('사원 목록 불러오기 실패', err)
+        })
+    },
+    handleSelectedEmp(selectedEmp) {
+      this.deptInfo.dept_mgr = selectedEmp.emp_no;
+      this.deptInfo.nm = selectedEmp.nm;
+      // 모달 닫기
+      this.showEmpModal = false;
+    },
   }
 };
 </script>
 
-<style>
+<style scoped>
 .table-hover:hover {
   cursor: pointer;
 }

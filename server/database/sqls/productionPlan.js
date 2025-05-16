@@ -1,36 +1,45 @@
 const selectProPlanList =
 `SELECT 
-  p.pdn_pln_no,
-  pd.prd_nm,
-  d.qty,
-  d.st_dt,
-  d.end_dt,
-  d.situ,
-  d.rmk
-FROM pdn_pln p
-LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-LEFT OUTER JOIN prd pd ON d.prd_no = pd.prd_no
-ORDER BY p.pdn_pln_no;`
+      p.pdn_pln_no,
+      d.pdn_pln_dtl_no,
+      d.prd_no, 
+      pd.prd_nm,
+      d.qty,
+      d.st_dt,
+      d.end_dt,
+      d.sts,
+      d.rmk,
+      IFNULL(SUM(od.ord_qty), 0) AS ord_qty
+ FROM pdn_pln p
+ LEFT JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
+ LEFT JOIN prd pd ON d.prd_no = pd.prd_no
+ LEFT JOIN pdn_ord o ON p.pdn_pln_no = o.pdn_pln_no
+ LEFT JOIN pdn_ord_dtl od  ON o.pdn_ord_no = od.pdn_ord_no 
+                         AND d.prd_no = od.prd_no
+GROUP BY 
+      p.pdn_pln_no,
+      d.pdn_pln_dtl_no,
+      d.prd_no,
+      pd.prd_nm,
+      d.qty,
+      d.st_dt,
+      d.end_dt,
+      d.sts,
+      d.rmk
+ORDER BY d.end_dt ASC,
+         d.sts ASC;`
 
 
-  // const selectProPlanList =
-  // `SELECT p.pdn_pln_no
-  //     , d.qty
-  //     , d.st_dt
-  //     , d.end_dt
-  //     , d.situ
-  //     , d.rmk 
-  //  FROM pdn_pln p
-  //       LEFT OUTER JOIN pdn_pln_dtl d ON p.pdn_pln_no = d.pdn_pln_no
-  // ORDER BY p.pdn_pln_no`
-
-
+        
   const selectProd =
-`SELECT p.prd_no, p.prd_nm, 
-        IFNULL(CAST(bm.cap AS CHAR), '없음') AS cap
+`SELECT p.prd_no
+      , p.prd_nm
+      , REPLACE((IFNULL(SUM(ps.cur_stk), 0) - opt_stk_qty ), '-', '') as 생산필요수량
+      , IFNULL(SUM(ps.cur_stk), 0) as 현재고량
    FROM prd p
-   LEFT OUTER JOIN bom b ON p.prd_no = b.prd_no
-   LEFT OUTER JOIN bom_mat bm ON b.bom_no = bm.bom_no;` 
+   LEFT JOIN prd_stk ps ON p.prd_no = ps.prd_no
+  GROUP BY p.prd_no
+  ORDER BY prd_no;` 
 
 //제품명, 계획수량, 계획시작일, 계획종료일, 상태, 비고
 
@@ -53,7 +62,7 @@ const insertProdPlan =
   VALUES (?,CURDATE(),?)`
 
 const insertProdPlanDtl =
-`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, situ, rmk)
+`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, sts, rmk)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
 // //계획 등록은 2가지 동시 등록 필요함
@@ -65,10 +74,9 @@ const insertProdPlanDtl =
 // `INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, situ, rmk)
 //  VALUES (?, ?, ?, ?, ?, ?)`
 
-const findProdPlanIsn =
-`SELECT qty
-`
-//제품명, 수량, 지시수량, 미지시수량, 생산완료수량, 지시일자, 종료일자
+
+//생산 지시! ==> 출고요청서, 지시번호, 지시세부번호
+//출고요청서 [생산지시번호, 제품번호, 수량, 요청자] [pdn_ord_no, prd_no, 요청수량, ]
 
 
 module.exports = {
@@ -79,4 +87,3 @@ module.exports = {
     insertProdPlanDtl,
     selectProd
 }
-

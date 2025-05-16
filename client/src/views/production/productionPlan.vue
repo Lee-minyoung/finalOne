@@ -1,38 +1,51 @@
 <template>
+
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-4">생산 계획 관리</h2>
+
       <div class="d-flex gap-2">
+        <div class="mb-１ d-flex justify-content">
+          <select v-model="statusFilter" class="form-select w-auto">
+            <option value="전체">전체</option>
+            <option value="미지시/부분지시">미지시/부분지시</option>
+            <option value="지시완료">지시완료</option>
+            <option value="생산완료">생산완료</option>
+          </select>
+        </div>
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
-        <button class="btn btn-primary">재고/지시현황</button>
-        <button class="btn btn-success text-white" @click="addPlan">등록</button>
-        <button class="btn btn-primary">주문현황</button>
+        <!-- <button class="btn btn-light">재고/지시현황</button> -->
+        <button class="btn btn-success text-white" @click="openProductModal">제품등록</button>
+        <button class="btn btn-success text-white" @click="addPlan">계획등록</button>
         <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
       </div>
     </div>
-
     <table class="table table-bordered text-center" style="min-width: 1200px;">
       <colgroup>
         <col style="width: 80px" />
         <col style="width: 160px" />
-        <col style="width: 120px" />
-        <col style="width: 160px" />
-        <col style="width: 160px" />
-        <col style="width: 120px" />
-        <col style="width: 180px" />
         <col style="width: 100px" />
+        <col style="width: 100px" />
+        <col style="width: 140px" />
+        <col style="width: 140px" />
+        <col style="width: 100px" />
+        <col style="width: 120px" />
+        <col style="width: 120px" />
+        <col style="width: 60px" />
       </colgroup>
 
       <thead class="table-light">
         <tr>
-          <th>NO</th>
+          <th>계획번호</th>
           <th>제품명</th>
           <th>계획수량</th>
+          <th>누적지시량</th>
           <th>계획시작일자</th>
-          <th>계획종료일자</th>
+          <th>계획마감일자</th>
+          <th>진행률</th>
           <th>상태</th>
           <th>비고</th>
-          <th>추가/삭제</th>
+          <th>삭제</th>
         </tr>
       </thead>
       <tbody>
@@ -41,50 +54,56 @@
           <td>
             <div class="input-group">
               <input v-model="row.prd_nm" class="form-control" placeholder="제품 선택" readonly />
-              <button class="btn btn-outline-secondary" @click="openProductModal">🔍</button>
             </div>
           </td>
-          <td><input v-model.number="row.qty" type="number" class="form-control" placeholder="수량" /></td>
+          <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
+              @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
+          <td></td>
           <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
           <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
-          <td><input class="form-control" value="계획완료" readonly /></td>
+          <td></td>
+          <td></td>
           <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
           <td>
-            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 1"> - </button>
+            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 0">
+              - </button>
           </td>
         </tr>
-
-        <tr v-for="item in prodPlanList" :key="item.pdn_pln_no"
-            @click="togglePlanSelection(item)"
-            :class="{ 'table-primary': isSelected(item) }"
-            style="cursor: pointer;">
-          <td>{{ item.pdn_pln_no }}</td>
-          <td>{{ item.prd_nm }}</td>
-          <td>{{ item.qty }}</td>
-          <td>{{ dateFormat(item.st_dt, 'yyyy-MM-dd') }}</td>
-          <td>{{ dateFormat(item.end_dt, 'yyyy-MM-dd') }}</td>
-          <td>{{ item.situ }}</td>
-          <td>{{ item.rmk }}</td>
+        <!--@click="!isFullyInstructed(row) && togglePlanSelection(row)"  지시완료되면 선택이 안됨 
+            :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
+            클래스를 동적으로 사용 isSelected 선택시 파란색 배경, isFullyInstructed 지시완료시 회색 글씨 \
+            style 지시 완료면 마우스모양 : 아니면 손가락모양 표현-->
+        <tr v-for="row in sortedProdPlanList" :key="row.pdn_pln_no"
+          @click="!isFullyInstructed(row) && togglePlanSelection(row)"
+          :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
+          :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
+          <td>{{ row.pdn_pln_no }}</td>
+          <td>{{ row.prd_nm }}</td>
+          <td>{{ formatNumber(row.qty) }}</td>
+          <td>{{ formatNumber(row.ord_qty) }}</td>
+          <td>{{ dateFormat(row.st_dt, 'yyyy-MM-dd') }}</td>
+          <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
+          <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
+          <td>
+            <!-- :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" 
+             여기가 퍼센트에 따라 진행률 바 체워짐-->
+            <div class="progress" style="height: 22px;">
+              <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty, row.sts)"
+                :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
+                {{ getStatus(row.qty, row.ord_qty, row.sts) }}
+              </div>
+            </div>
+          </td>
+          <td>{{ row.rmk }}</td>
           <td></td>
         </tr>
       </tbody>
     </table>
 
-    <ProductSelectModal
-      v-if="showProductModal"
-      :prodList="prodList"
-      :selected="planRows"
-      @select-product="handleSelectedProducts"
-      @close="showProductModal = false"
-    />
+    <ProductSelectModal v-if="showProductModal" :prodList="prodList" :selected="planRows"
+      @select-product="handleSelectedProducts" @close="showProductModal = false" />
 
-    <InstructionModal
-      v-if="showInstructionModal"
-      :instructionRows="instructionRows"
-      :summaryRows="planSummaryByProduct"
-      @submit="submitInstructions"
-      @close="showInstructionModal = false"
-    />
+    <InstructionModal v-if="showInstructionModal" @submit="submitInstructions" @close="showInstructionModal = false" />
   </div>
 </template>
 
@@ -93,66 +112,58 @@ import axios from 'axios'
 import useDateUtils from '@/utils/useDates.js'
 import ProductSelectModal from '@/views/production/ProductSelectModal.vue'
 import InstructionModal from '@/views/production/InstructionModal.vue'
+import { useInstructionStore } from '@/stores/instructionStore'
+import { useEmpStore } from "@/stores/empStore.js"
+import Swal from 'sweetalert2'
 
 export default {
-  // 사용하는 모달 컴포넌트 등록
+  name: 'ProductionPlan',
   components: { ProductSelectModal, InstructionModal },
-  
   data() {
     return {
-      prodPlanList: [], // 전체 생산 계획 리스트
-      planRows: [ // 사용자 입력용 계획 행 (최소 1줄은 유지)
-        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
+      prodPlanList: [],
+      planRows: [
+        // { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
       ],
-      selectedPlans: [], // 체크한 계획 항목들 (지시 등록용)
-      showProductModal: false, // 제품 선택 모달 열림 여부
-      showInstructionModal: false, // 지시 등록 모달 열림 여부
-      prodList: [], // 제품 리스트 (모달에서 사용)
-      instructionRows: [] // 지시 등록용 행들
+      showProductModal: false,
+      showInstructionModal: false,
+      prodList: [],
+      empStore: useEmpStore(),
+      statusFilter: '미지시/부분지시',
+      today: this.getTodayDate()
     }
   },
-
-  // 컴포넌트 생성 시, 초기 계획 목록 불러오기
-  created() {
+  computed: {
+    instructionStore() {
+      return useInstructionStore()
+    },
+    employeeName() {
+      return this.empStore.loginInfo.nm || ''
+    },
+    employeeNo() {
+      return this.empStore.loginInfo.emp_no || ''
+    },
+    sortedProdPlanList() {
+      const filtered = this.prodPlanList.filter(row => {
+        const percent = this.getProgress(row.qty, row.ord_qty, row.sts)
+        const status = row.sts
+        if (this.statusFilter === '전체') return true
+        if (this.statusFilter === '미지시/부분지시') return percent < 100
+        if (this.statusFilter === '지시완료') return percent >= 100 && status !== 's3'
+        if (this.statusFilter === '생산완료') return percent >= 100 && status === 's3'
+        return true
+      })
+      return [...filtered].sort((a, b) => {
+        const aDone = Number(a.ord_qty || 0) >= Number(a.qty || 0)
+        const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
+        return aDone - bDone
+      })
+    }
+  },
+  mounted() {
     this.getProdPlanList()
   },
-
-  computed: {
-    // 선택된 계획들에 대해 제품별로 요약된 정보 제공
-    planSummaryByProduct() {
-      const summary = {}
-      for (const plan of this.selectedPlans) {
-        const key = plan.prd_no
-        const qty = Number(plan.qty || 0)
-        const instruction = Number(plan.instruction_qty || 0)
-        const status = plan.status || plan.situ
-
-        // 제품별 데이터 초기화
-        if (!summary[key]) {
-          summary[key] = { product: key, totalQty: 0, instructionQty: 0, doneQty: 0 }
-        }
-
-        // 수량 누적
-        summary[key].totalQty += qty
-        summary[key].instructionQty += instruction
-
-        // 완료된 수량 누적
-        if (status === '완료' || status === '계획완료') {
-          summary[key].doneQty += qty
-        }
-      }
-
-      // 남은 수량 계산
-      for (const key in summary) {
-        summary[key].remainQty = summary[key].totalQty - summary[key].instructionQty
-      }
-
-      return Object.values(summary)
-    }
-  },
-
   methods: {
-    // 생산 계획 목록 API에서 불러오기
     async getProdPlanList() {
       try {
         const result = await axios.get('/api/prodpln')
@@ -161,8 +172,78 @@ export default {
         console.error('계획 목록 불러오기 실패', err)
       }
     },
-
-    // 제품 선택 모달 열기
+    dateFormat(value, format) {
+      return useDateUtils.dateFormat(value, format)
+    },
+    isFullyInstructed(row) {
+      return Number(row.ord_qty || 0) >= Number(row.qty || 0)
+    },
+    isSelected(row) {
+      return this.instructionStore.selectedPlans.some(p => p.pdn_pln_dtl_no === row.pdn_pln_dtl_no)
+    },
+    getProgress(planQty, instQty) {
+      const qty = Number(planQty || 0)
+      const instructed = Number(instQty || 0)
+      if (qty === 0) return 0
+      return Math.round((instructed / qty) * 100)
+    },
+    getStatus(planQty, instQty, sts) {
+      const percent = this.getProgress(planQty, instQty)
+      if (percent === 0) return '계획완료'
+      if (percent < 100) return '부분지시'
+      if (percent >= 100) return sts === 's3' ? '생산완료' : '지시완료'
+      return '오류'
+    },
+    getProgressBarClass(planQty, instQty, sts) {
+      const percent = this.getProgress(planQty, instQty)
+      if (percent === 0) return 'bg-secondary'
+      if (percent < 100) return 'bg-warning text-dark'
+      return sts === 's3' ? 'bg-primary' : 'bg-success'
+    },
+    removePlanRow(index) {
+      this.planRows.splice(index, 1)
+    },
+    resetAll() {
+      if (!confirm('정말 초기화 하시겠습니까? 입력값이 모두 사라집니다.')) return
+      this.planRows = [
+        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: '계획완료' }
+      ]
+      this.instructionStore.selectedPlans = []
+      this.instructionStore.generateInstructionRows()
+      this.showInstructionModal = false
+    },
+    async addPlan() {
+      try {
+        const submittedList = []
+        for (let row of this.planRows) {
+          if (!row.prd_no || row.qty <= 0 || !row.st_dt || !row.end_dt) {
+            alert('모든 항목을 올바르게 입력하세요.')
+            return
+          }
+          await axios.post('/api/prodpln', {
+            ...row,
+            crt_by: this.empStore.loginInfo.emp_no
+          }, {
+            headers: { 'Content-Type': 'application/json' }
+          })
+          submittedList.push(row)
+        }
+        const itemList = submittedList.map(item => `<li>${item.prd_nm} (${item.qty}개)</li>`).join('')
+        await Swal.fire({
+          title: '✅ 계획 등록 완료!',
+          html: `<ul style="text-align:left; padding-left:1.2rem; margin:0;">${itemList}</ul>`,
+          icon: 'success',
+          confirmButtonText: '확인'
+        })
+        this.planRows = [
+          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: 's1' }
+        ]
+        this.getProdPlanList()
+      } catch (err) {
+        console.error('등록 실패', err)
+        await Swal.fire('❌ 실패', '계획 등록 실패', 'error')
+      }
+    },
     openProductModal() {
       axios.get('/api/prodpln/prdList')
         .then(res => {
@@ -173,29 +254,12 @@ export default {
           console.error('제품 목록 불러오기 실패', err)
         })
     },
-
-    // 제품 선택 모달에서 선택된 제품 처리
     handleSelectedProducts(selectedList) {
       let updatedRows = [...this.planRows]
       const existingPrdNos = new Set(updatedRows.map(r => r.prd_no))
-
-      // 1. 기존 행 중 빈 곳에 제품 채우기
-      updatedRows = this.fillEmptyRowsWithSelection(updatedRows, selectedList, existingPrdNos)
-
-      // 2. 나머지 제품은 새 행으로 추가
-      updatedRows = this.appendMissingSelectedProducts(updatedRows, selectedList, existingPrdNos)
-
-      // 3. 선택된 제품만 남기기
-      this.planRows = this.filterOnlySelectedRows(updatedRows, selectedList)
-
-      this.showProductModal = false
-    },
-
-    // 빈 행에 선택한 제품 중복 없이 채우기
-    fillEmptyRowsWithSelection(rows, selectedList, existingPrdNos) {
       let productIndex = 0
-      for (let i = 0; i < rows.length && productIndex < selectedList.length; i++) {
-        const row = rows[i]
+      for (let i = 0; i < updatedRows.length && productIndex < selectedList.length; i++) {
+        const row = updatedRows[i]
         const product = selectedList[productIndex]
         if (!row.prd_no && !existingPrdNos.has(product.prd_no)) {
           row.prd_no = product.prd_no
@@ -204,150 +268,131 @@ export default {
           productIndex++
         }
       }
-      return rows
-    },
-
-    // 기존에 없는 제품을 행으로 추가
-    appendMissingSelectedProducts(rows, selectedList, existingPrdNos) {
       for (const product of selectedList) {
         if (!existingPrdNos.has(product.prd_no)) {
-          rows.push({
+          updatedRows.push({
             prd_no: product.prd_no,
             prd_nm: product.prd_nm,
             qty: '',
             st_dt: '',
             end_dt: '',
             rmk: '',
+            crt_by: this.empStore.loginInfo.emp_no,
             status: '계획완료'
           })
           existingPrdNos.add(product.prd_no)
         }
       }
-      return rows
-    },
-
-    // 선택된 제품만 남기기
-    filterOnlySelectedRows(rows, selectedList) {
-      return rows.filter(row =>
+      this.planRows = updatedRows.filter(row =>
         row.prd_no && selectedList.some(sel => sel.prd_no === row.prd_no)
       )
+      this.showProductModal = false
     },
-
-    // 계획 선택/해제 토글
-    togglePlanSelection(plan) {
-      const index = this.selectedPlans.findIndex(p => p.pdn_pln_no === plan.pdn_pln_no)
+    togglePlanSelection(row) {
+      const index = this.instructionStore.selectedPlans.findIndex(p => p.pdn_pln_no === row.pdn_pln_no)
       if (index >= 0) {
-        this.selectedPlans.splice(index, 1)
+        this.instructionStore.selectedPlans.splice(index, 1)
       } else {
-        this.selectedPlans.push(plan)
+        this.instructionStore.selectedPlans.push(row)
       }
     },
-
-    // 선택 여부 확인
-    isSelected(plan) {
-      return this.selectedPlans.some(p => p.pdn_pln_no === plan.pdn_pln_no)
-    },
-
-    // 입력 행 제거
-    removePlanRow(index) {
-      this.planRows.splice(index, 1)
-    },
-
-    // 날짜 포맷 유틸 사용
-    dateFormat(value, format) {
-      return useDateUtils.dateFormat(value, format)
-    },
-
-    // 계획 등록 처리
-    async addPlan() {
-      try {
-        for (let row of this.planRows) {
-          if (!row.prd_no || !row.qty || !row.st_dt || !row.end_dt) {
-            alert('필수 항목을 모두 입력하세요.')
-            return
-          }
-
-          await axios.post('/api/prodpln', row, {
-            headers: { 'Content-Type': 'application/json' }
-          })
-        }
-
-        alert('등록 완료!')
-        this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
-        ]
-        this.getProdPlanList()
-      } catch (err) {
-        console.error('등록 실패', err)
-        alert('등록 실패 ㅠㅠ')
-      }
-    },
-
-    // 지시 등록 처리
-    async submitInstructions(rows) {
-      try {
-        for (const row of rows) {
-          if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
-            alert(`지시수량 오류 (제품: ${row.prd_no})`)
-            return
-          }
-        }
-
-        await axios.post('/api/prodinst', rows, {
-          headers: { 'Content-Type': 'application/json' }
-        })
-
-        alert("지시 등록 완료!")
-        this.showInstructionModal = false
-        this.getProdPlanList()
-      } catch (err) {
-        console.error("지시 등록 실패", err)
-        alert("지시 등록 실패")
-      }
-    },
-
-    // 전체 초기화
-    resetAll() {
-      if (!confirm('정말 초기화 하시겠습니까? 입력값이 모두 사라집니다.')) return
-
-      // 입력 행 초기화
-      this.planRows = [
-        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', status: '계획완료' }
-      ]
-
-      // 선택 항목 초기화
-      this.selectedPlans = []
-    },
-
-    // 지시 모달 열기
     openInstructionModal() {
-      if (this.selectedPlans.length === 0) {
+      if (this.instructionStore.selectedPlans.length === 0) {
         alert("지시할 계획을 선택해주세요.")
         return
       }
-
-      // 기존 수량 유지 또는 초기화
-      this.instructionRows = this.selectedPlans.map(plan => ({
+      this.instructionStore.selectedPlans = this.instructionStore.selectedPlans.map(plan => ({
         ...plan,
-        instruction_qty: plan.instruction_qty || 0
+        prd_no: plan.prd_no || plan.prd.prd_no || '',
+        pdn_pln_dtl_no: plan.pdn_pln_dtl_no || '',
       }))
-
+      this.instructionStore.generateInstructionRows()
       this.showInstructionModal = true
-    }
+    },
+    async submitInstructions() {
+      const rows = this.instructionStore.instructionRows
+      const grouped = {}
+      for (const row of rows) {
+        if (row.instruction_qty <= 0 || row.instruction_qty > row.qty) {
+          alert(`지시수량 오류 (제품: ${row.prd_nm || row.prd_no})`)
+          return
+        }
+        const key = row.pdn_pln_no
+        if (!grouped[key]) grouped[key] = []
+        grouped[key].push({
+          pdn_pln_dtl_no: row.pdn_pln_dtl_no,
+          prd_no: row.prd_no,
+          instruction_qty: row.instruction_qty,
+          ord_sts: 's1',
+          crt_by: this.empStore.loginInfo.emp_no,
+          rmk: row.rmk
+        })
+      }
+      try {
+        for (const [pdn_pln_no, details] of Object.entries(grouped)) {
+          const payload = { pdn_pln_no, details }
+          await axios.post('/api/prodinst', {
+            ...payload,
+            crt_by: this.empStore.loginInfo.emp_no
+          }, {
+            headers: { 'Content-Type': 'application/json' }
+          })
+        }
+        const itemList = rows.map(item =>
+          `<li>${item.prd_nm} : ${item.instruction_qty}개</li>`).join('')
+        await Swal.fire({
+          title: '🎉 지시 등록 완료!',
+          html: `<ul style="text-align:left; padding-left:1.2rem; margin:0;">${itemList}</ul>`,
+          icon: 'success',
+          confirmButtonText: '확인'
+        })
+        this.showInstructionModal = false
+        this.instructionStore.reset()
+        this.getProdPlanList()
+      } catch (err) {
+        console.error("지시 등록 실패", err.response?.data || err.message)
+        await Swal.fire('❌ 실패', '지시 등록 중 오류 발생', 'error')
+      }
+    },
+    formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
+    onFormattedQtyInput(event, row) {
+      const raw = event.target.value.replace(/[^\d]/g, '') // 숫자만 추출
+      const num = Number(raw)
+      row.qty = Math.max(0, num) // 최소 0 보장
+    },
+    // preventMinusInput(event) {
+    //   if (event.key === '-' || event.key === '+' || event.key === 'e') {
+    //     event.preventDefault()
+    //   }
+    // }
+    getTodayDate() {
+    const today = new Date()
+    const yyyy = today.getFullYear()
+    const mm = String(today.getMonth() + 1).padStart(2, '0') // 월은 0부터 시작
+    const dd = String(today.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}` // date input 형식: yyyy-mm-dd
+  }
   }
 }
-
 </script>
+
+
+
 
 <style scoped>
 h2 {
   font-weight: bold;
   text-align: left;
 }
+
 .table td,
 .table th {
   vertical-align: middle;
 }
+
 .table-primary {
   background-color: #cce5ff !important;
 }

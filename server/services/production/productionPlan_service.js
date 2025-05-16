@@ -27,23 +27,24 @@ const findLastDetailCode = async () => {
 
 //등록은 2가지 테이블에 등록진행해야함
 // 트랜잭션과 프로시저를 사용
-const addProdPlanData = async (planData, detailData) => {
-  const conn = await mariadb.getConnection();  // conn 받아오기
+const addProdPlanData = async (planData, detailDataList) => {
+  const conn = await mariadb.getConnection();
+
   try {
     await conn.beginTransaction();
 
-    // 트랜잭션 conn과 함께 query 호출 (alias만 넘긴다)
-        // 첫 번째 테이블 (헤더) insert
     await mariadb.query('insertProdPlan', planData, conn);
-        // 두 번째 테이블 (디테일) insert
-    await mariadb.query('insertProdPlanDtl', detailData, conn);
+
+    // for (const row of detailDataList) {
+      await mariadb.query('insertProdPlanDtl', detailDataList, conn);
+    // }
 
     await conn.commit();
-    console.log("생산 계획 + 세부계획 등록 완료");
+    console.log('생산계획 등록 완료');
 
   } catch (err) {
     await conn.rollback();
-    console.error("트랜잭션 실패, 롤백", err);
+    console.error('트랜잭션 실패, 롤백', err);
     throw err;
   } finally {
     conn.release();
