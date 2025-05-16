@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex gap-4">
-        <h2 class="mb-4">입고검사기준서</h2>
+        <h2 class="mb-4">자재검사기준서</h2>
       </div>
     </div>
     <!-- 조회 조건 -->

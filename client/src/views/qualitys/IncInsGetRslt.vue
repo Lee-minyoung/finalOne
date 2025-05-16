@@ -1,29 +1,41 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="d-flex gap-4">
-        <h2 class="mb-4">입고검사성적서 조회</h2>
+      <h2 class="mb-4">자재검사성적서 조회</h2>
+      <div class="center-button">
+        <button class="btn btn-primary" @click="exportToPDF" style="margin-bottom:-40px;">PDF 내보내기</button>
+        <div class="d-flex gap-4">
+        </div>
       </div>
     </div>
+    <div ref="pdfarea" >
     <!-- 조회 조건 -->
-    <div class="input">
-      자재검색 <input v-model="searchQuery" class="form-control" placeholder="" readonly />
-      <button class="btn btn-outline-secondary" @click="openMatModal" style="margin-right:501px;">🔍</button>
-      성적서번호 <input :value="selectedRsltNo" class="form-control" readonly style="background-color: #eee;" />
-      <hr style="margin-left:-75px;">
-      LOTNo <input :value="selectedLotNo" class="form-control" readonly
-        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
-      
-      발주번호 <input v-model="searchPurOrdNo" class="form-control" readonly
-        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
-      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee; margin-bottom: 10px;" />
-      <br>
-      자재명 <input :value="selectedMatNm" class="form-control" readonly
-        style="background-color: #eee; margin-right: 180px;" />
-      작성일자 <input :value="selectedInsDate" class="form-control" readonly
-        style="background-color: #eee; margin-right: 197px;" />
-      검사자 <input :value="selectedInsDev" class="form-control" readonly style="background-color: #eee;" />
-    </div>
+    <div class="input search-area" ref="searchArea">
+  <div class="search-row">
+    <label>자재검색</label>
+    <input v-model="searchQuery" class="form-control" readonly />
+    <button class="btn btn-outline-secondary search-btn" @click="openMatModal" style="margin-left: -15px;">🔍</button>
+    <label style="margin-left:270px; margin-right:10px">성적서번호</label>
+    <input :value="selectedRsltNo" class="form-control" readonly />
+  </div>
+  <hr>
+  <div class="search-row">
+    <label>LOTNo</label>
+    <input :value="selectedLotNo" class="form-control" readonly />
+    <label style="margin-left:40px;">발주번호</label>
+    <input v-model="searchPurOrdNo" class="form-control" readonly />
+    <label style="margin-left:40px;">납입업체</label>
+    <input v-model="selectedVdrNm" class="form-control" readonly />
+  </div>
+  <div class="search-row">
+    <label>자재명</label>
+    <input :value="selectedMatNm" class="form-control" readonly />
+    <label style="margin-left:40px;">작성일자</label>
+    <input :value="selectedInsDate" class="form-control" readonly />
+    <label style="margin-left:40px;">검사자</label>
+    <input :value="selectedInsDev" class="form-control" readonly />
+  </div>
+</div>
     <br>
     <div class="middle">
       <!-- 결점구분 -->
@@ -65,7 +77,7 @@
     <h5>검사결과</h5>
     <!-- 테이블 -->
     <!-- 테이블 헤더 -->
-    <table class="table table-bordered text-center ">
+    <table class="table table-bordered text-center" ref="resultTable">
       <thead class="table-light">
         <tr>
           <th>검사항목</th>
@@ -88,6 +100,7 @@
       </tbody>
     </table>
   </div>
+  </div>
 
   <!-- 제품 검색 모달 -->
   <MatGetRsltSelModal
@@ -100,10 +113,10 @@
 <script>
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
+import html2pdf from 'html2pdf.js';
+import { ref } from 'vue';
 import MatGetRsltSelModal
   from '@/views/qualitys/MatGetRsltSelModal.vue'; // 모달
-
-import { ref, onBeforeMount } from 'vue';
 
 // 반응형 객체 선언 : 원시타입    
 const isUpdated = ref(false);
@@ -224,13 +237,64 @@ async handleSelectedProduct(item) {
     this.rsltMaster = null;
     this.rsltDetailList = [];
   }
+  },
+    exportToPDF() {
+  const pdfArea = this.$refs.pdfarea;
+  const searchArea = this.$refs.searchArea;
+  const resultTable = this.$refs.resultTable;
+  // 버튼 DOM 직접 찾기
+  const searchBtn = pdfArea.querySelector('.search-btn');
+  const originalBtnDisplay = searchBtn ? searchBtn.style.display : '';
+
+  // 버튼 숨기기
+  if (searchBtn) searchBtn.style.display = 'none';
+
+  // 기존 transform/width 조작
+  const originalPdfTransform = pdfArea.style.transform;
+  const originalPdfWidth = pdfArea.style.width;
+  const originalSearchTransform = searchArea.style.transform;
+  const originalSearchWidth = searchArea.style.width;
+  const originalResultTransform = resultTable.style.transform;
+  const originalResultWidth = resultTable.style.width;
+
+  pdfArea.style.transform = "scale(0.615)";
+  pdfArea.style.transformOrigin = "top left";
+  pdfArea.style.width = "162.6%";
+  searchArea.style.transform = "scale(1.2)";
+  searchArea.style.transformOrigin = "top left";
+  searchArea.style.width = "83.33%";
+
+  html2pdf(pdfArea, {
+    margin: [15, 15, 15, 15],
+    filename: 'document.pdf',
+    image: { type: "jpg", quality: 0.95 },
+    html2canvas: {
+      useCORS: true,
+      scrollY: 0,
+      scale: 1,
+      dpi: 300,
+      letterRendering: true,
+      allowTaint: false,
+      mediaType: 'print'
+    },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true }
+  }).then(() => {
+    // 원복
+    pdfArea.style.transform = originalPdfTransform;
+    pdfArea.style.width = originalPdfWidth;
+    searchArea.style.transform = originalSearchTransform;
+    searchArea.style.width = originalSearchWidth;
+    resultTable.style.transform = originalResultTransform;
+    resultTable.style.width = originalResultWidth;
+    // 버튼 다시 보이게
+    if (searchBtn) searchBtn.style.display = originalBtnDisplay;
+  });
+}
   }
-},
-
-  };
-
-
+}
 </script>
+
+
 <style>
 .input {
   border: 1px solid lightgray;
@@ -285,5 +349,76 @@ async handleSelectedProduct(item) {
 .jdg-btn.btn-red {
   background-color: #e53935 !important;
   color: #fff !important;
+}
+
+.form-control {
+  display: inline-block;
+  width: 150px;
+  min-height: 32px;
+  font-size: 1em;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #eee;
+}
+.input {
+  border: 1px solid lightgray;
+  padding: 30px;
+  padding-left: 100px;
+  margin-bottom: 30px;
+}
+
+.input.search-area {
+  border: 1px solid lightgray;
+  padding: 30px 40px 20px 40px;
+  margin-bottom: 30px;
+  background: #fff;
+}
+.search-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.search-row label {
+  min-width: 70px;
+  margin-right: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.search-row input {
+  margin-right: 24px;
+  min-width: 160px;
+  background: #eee;
+}
+.search-row .btn {
+  margin-right: 24px;
+}
+.input.search-area hr {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+/* PDF 전용 스타일 */
+@media print {
+  .search-area {
+    background: #fff !important;
+    border: 1.5px solid #bbb !important;
+    padding: 30px 40px 20px 40px !important;
+    font-size: 1.1em !important;
+  }
+  .search-row label {
+    min-width: 100px !important;
+    white-space: nowrap; /* 줄바꿈 방지 */
+    
+  }
+  .search-row input {
+    font-size: 1em !important;
+    height: 2em !important;
+  }
+   /* 버튼 숨기기 */
+  .search-btn {
+    display: none !important;
+  }
 }
 </style>
