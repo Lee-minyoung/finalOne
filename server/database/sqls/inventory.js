@@ -26,8 +26,8 @@ const selectMaterialStatusByRequest =
   m.prc * mrq.qty AS 총가격,
   mrq.prc_rslt AS 자재처리결과,
   mrq.pdn_ord_no AS 생산지시번호,
-  pod.prd_no AS 제품번호,
-  p.prd_nm AS 제품명
+pod.prd_no AS 제품번호,
+p.prd_nm AS 제품명
 FROM mat_rls_req mrq
 LEFT JOIN mat m ON mrq.mat_no = m.mat_no
 LEFT JOIN vdr v ON m.mn_vdr=v.vdr_no
@@ -39,6 +39,8 @@ WHERE mrq.mat_ins_sts = 'q1'
 GROUP BY 
   mrq.mat_req_no, mrq.mat_no, m.mat_nm, mrq.qty, mrq.sts, mrq.mat_ins_sts
 `; 
+
+
 //자재출고요청서에 상태가 c1,c2(확인)인것만 알아서 한건 기준  자재구매계획에 insert
 const insertMaterialPlan=
 `INSERT INTO mat_pur_pln (

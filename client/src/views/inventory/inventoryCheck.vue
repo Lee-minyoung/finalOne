@@ -216,12 +216,12 @@ export default {
         // console.log('for문 minQty',minQty); 
         //  console.log('item수량'); 
         //  console.log(item['수량']); 
-        if (item['수량'] >= minQty.min_ord_qty) {
-          filtered.push(item);
-          // console.log('필터링배열',filtered); 
-        } else {
-          // console.log('최소주문수량보다 작음');
-        }
+        // if (item['수량'] >= minQty.min_ord_qty) {
+        //   filtered.push(item);
+        //   // console.log('필터링배열',filtered); 
+        // } else {
+        //   // console.log('최소주문수량보다 작음');
+        // }
       }//end of for 
 
       this.filteredPurPlan = filtered;
