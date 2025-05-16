@@ -4,7 +4,7 @@
     <div class="mb-１ d-flex justify-content-end">
       <select v-model="statusFilter" class="form-select w-auto">
           <option value="전체">전체</option>
-          <option value="진행중">공정실행 / 공정현황 / 공정완료</option>
+          <option value="진행중">진행중</option>
           <option value="대기중">대기중</option>
           <option value="공정지시">공정지시</option>
           <option value="공정현황">공정현황</option>
