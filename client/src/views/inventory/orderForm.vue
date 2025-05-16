@@ -1,220 +1,350 @@
 <template>
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex gap-4">
-      <h2 class="mb-4">주문조회</h2>
+
+  <!--자재구매계획X,사용자직접입력발주하기 -->
+  <div v-if="checkedMatPln.length ===0" class="container py-4">
+    <h2 class="mb-4 fw-bold">발주서입력</h2>
+
+    <div class="d-flex justify-content-end mb-3 gap-2">
+      <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
+      <button class="btn btn-outline-primary" @click="gotoOrdView">발주 조회</button>
     </div>
-  </div>
 
-  <!-- 상단 검색 -->
-  <div class="d-flex justify-content-end align-items-center mb-3">
-    <!-- <form class="d-flex" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form> -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      주문 등록
-    </button>
-  </div>
-
-  <!-- 주문 등록 모달 -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">주문등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="card p-4 shadow-sm rounded-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">발주일자</label>
+          <input type="date" class="form-control" v-model="purDt" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령인</label>
+          <input type="text" class="form-control" v-model="bizNo" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령방법</label>
+          <input type="text" class="form-control" v-model="dueDt" />
         </div>
 
-        <div class="modal-body">
-          <!-- 검색 옵션 -->
-          <!-- <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="searchType" id="searchByName" checked />
-              <label class="form-check-label" for="searchByName">업체명</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="searchType" id="searchByCode" />
-              <label class="form-check-label" for="searchByCode">업체코드</label>
-            </div>
-            <input type="text" class="form-control w-50 ms-3" placeholder="Search..." />
-          </div> -->
+        <div class="col-md-4">
+          <label class="form-label">수량</label>
+          <input type="number" class="form-control" v-model="qty" />
+        </div>
 
-          <!-- 업체 정보 입력 -->
-          <div class="border rounded p-3 mb-4">
-            <div class="row g-3">
-              <div class="col-md-4"><label class="form-label">업체명</label><input type="text" class="form-control" v-model="vdr" /></div>
-              <div class="col-md-4"><label class="form-label">업체코드</label><input type="text" class="form-control" v-model="vdrCd" /></div>
-              <div class="col-md-4"><label class="form-label">사업자등록번호</label><input type="text" class="form-control" v-model="bizNo" /></div>
-              <div class="col-md-4"><label class="form-label">납기예정일</label><input type="date" class="form-control" v-model="dueDt" /></div>
-              <div class="col-md-4"><label class="form-label">이름</label><input type="text" class="form-control" /></div>
-              <div class="col-md-4"><label class="form-label">연락처</label><input type="text" class="form-control" /></div>
-              <div class="col-md-12"><label class="form-label">주소</label><input type="text" class="form-control" /></div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" @click="showModal = true">자재 선택</button>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처 선택</button>
+        </div>
+
+        <div v-if="selectMats.length" class="col-12">
+          <div class="row g-3 mt-2">
+            <div class="col-md-3">
+              <label class="form-label">자재번호</label>
+              <input v-model="selectMats[0].mat_no" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">자재명</label>
+              <input v-model="selectMats[0].mat_nm" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">자재단가</label>
+              <input v-model="selectMats[0].prc" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">금액</label>
+              <input :value="totalPrc" type="text" class="form-control" readonly />
             </div>
           </div>
-
-          <!-- 제품 리스트 테이블 -->
-          <table class="table table-bordered text-center align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>No</th>
-                <th>제품 ID</th>
-                <th>제품명</th>
-                <th>수량</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td><input type="text" class="form-control" v-model="prdNo" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="number" class="form-control" v-model="prdQty" /></td>
-              </tr>
-            </tbody>
-          </table>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary" @click="addOrd">주문등록</button>
+        <div v-if="selectVdr" class="col-12 mt-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">거래처코드</label>
+              <input v-model="selectVdr.vdr_no" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">거래처명</label>
+              <input v-model="selectVdr.cpy_nm" type="text" class="form-control" readonly />
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <mat-select-modal
+      v-if="showModal"
+      :mat-list="mat"
+      :selected="selectMats"
+      @select-mat="handleMaterialSelect"
+      @close="showModal = false"
+    />
+    <vdr-select-modal
+      v-if="showVdrModal"
+      :vdr-list="vdr"
+      :selected="selectVdr"
+      @select-vdr="handleVdrSelect"
+      @close="showVdrModal = false"
+    />
   </div>
+  <!--사용자직접입력 발주 end -->
 
-  <!-- 주문 리스트 테이블 -->
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">주문번호</th>
-        <th scope="col">제품명</th>
-        <th scope="col">거래처명</th>
-        <th scope="col">제품</th>
-        <th scope="col">요청수량</th>
-        <th scope="col">lot재고량</th>
-        <!-- <th scope="col">수량</th>
-        <th scope="col">주문일자</th>
-        <th scope="col">현재수량</th> -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in ordList" :key="index">
-        <th scope="row">{{ item.ord_no }}</th>
-        <th>{{ item.prd_nm }}</th>
-        <td>{{ item.cpy_nm }}</td>
-        <td>{{ item.prd_nm }}</td>
-        <td>{{item['요청수량'] }}</td>
-        <td v-if="item['lot수량']>0" >{{ item['lot수량'] }}</td>
-        <td v-else>0</td>
-        <!-- <td>{{ item.prd_qty }}</td>
-        <td>{{ item.rgt_dt.substring(0,10) }}</td>
-        <td>{{ item.due_dt.substring(0,10) }}</td> -->
-      </tr>
-    </tbody>
-  </table>
+  <!--자재구매계획에서 체크한후 뜨는 입력폼   -->
+  <div v-else-if="checkedMatPln.length>0" class="container py-4">
+    <h2 class="mb-4 fw-bold">발주서입력</h2>
 
-  <!-- 총 주문 수량 -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex gap-4">
-      <h2 class="mb-4">총 주문 수량</h2>
+    <div class="d-flex justify-content-end mb-3 gap-2">
+      <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
+      <button class="btn btn-outline-primary" @click="gotoOrdView">발주 조회</button>
+    </div>
+
+    <div class="card p-4 shadow-sm rounded-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">발주일자</label>
+          <input type="date" class="form-control" v-model="purDt" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령인</label>
+          <input type="text" class="form-control" v-model="bizNo" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">수령방법</label>
+          <input type="text" class="form-control" v-model="dueDt" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">수량</label>
+          <input type="number" class="form-control" v-model="qty" />
+        </div>
+
+     
+<div class="col-12">
+  <div class="row g-3 mt-2">
+    <!-- 첫 번째 줄: 자재정보 -->
+    <div class="col-md-3">
+      <label class="form-label">자재번호</label>
+      <input v-model="selectMats[0].mat_no" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">자재명</label>
+      <input v-model="selectMats[0].mat_nm" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">자재단가</label>
+      <input v-model="selectMats[0].prc" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">금액</label>
+      <input :value="totalPrc" type="text" class="form-control" readonly />
+    </div>
+
+    <!-- 두 번째 줄: 거래처 정보 -->
+     
+    <div class="col-md-3">
+      <label class="form-label">거래처코드</label>
+      <input v-model=" selectMats[0].vdr_no" type="text" class="form-control" readonly />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">거래처명</label>
+      <input v-model="selectMats[0].cpy_nm" type="text" class="form-control" readonly />
     </div>
   </div>
-  <input type="date" v-model="startDate" />
-  <input type="date" v-model="endDate" />
-  <button class="btn btn-primary" @click="fetchOrdByDate">조회</button>
+</div>
+    
+      </div>
+    </div>  
+  </div>
 
+
+  <h3>자재구매계획</h3>
   <table class="table">
-    <thead>
-      <tr>
-        <th>날짜</th>
-        <th>제품명</th>
-        <th>현재고</th>
-        <th>총 주문수량</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in ordListByDate" :key="index">
-        <td>{{ item['DATE(o.due_dt)'].substring(0,10) }}</td>
-        <td>{{ item.prd_nm }}</td>
-        <td>{{ item.cur_stk }}</td>
-        <td>{{ item['SUM(od.prd_qty)'] }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <thead>
+    <tr>
+      <th scope="col">선택</th>
+      <th scope="col">자재ID</th>
+      <th scope="col">자재명</th>
+      <th scope="col">수량</th>
+      <th scope="col">총가격</th>
+      <th scope="col">거래처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="(item, index) in matPurPlanChecked" :key="item['자재번호']">
+  <td>
+    <input 
+      type="checkbox"
+      :value="item" 
+      v-model="checkedMatPln"    
+      @change="handleCheckChange"
+    />
+  </td>
+  <td>{{ item['자재번호'] }}</td>
+  <td>{{ item['자재명'] }}</td>
+  <td>{{ item['총합'] }}</td>
+  <td>{{ item['총가격'] }}</td>
+  <td v-if="!item['거래처코드']">거래처x</td>
+  <td v-else>{{ item['거래처명'] }}</td>
+</tr>
+  </tbody>
+</table>
 </template>
-
 <script>
-import axios from 'axios'
+import matSelectModal from '@/views/modal/matSelectModal.vue';
+import vdrSelectModal from '@/views/modal/vdrSelectModal.vue'; 
+import axios from 'axios';
 
-export default {
-  data() {
-    return {
-      ordList: [],
-      startDate: '',
-      endDate: '',
-      tableData: {},
-      ordListByDate: [],
-      dateArray: [],
-      vdr: '',
-      vdrCd: '',
-      bizNo: '',
-      dueDt: '',
-      prdNo: '',
-      prdQty: ''
+export default{
+components:{
+  matSelectModal,
+  vdrSelectModal, 
+},
+data() {
+  return {
+   showModal:false,
+   showVdrModal:false,
+   mat:[], //자재목록 
+   selectMats:[],
+   vdr:[], //거래처목록
+   selectVdr:null,  
+    //수량 x 자재가 선택되면 자동 계산  
+   qty:0,  
+   purDt:'',
+   crtDt:new Date().toISOString().slice(0, 10),
+   matPurPlanChecked:[], //자재요청 -> 체크된 애들 
+   checkedMatPln:[],  //  체크박스 눌렀을때 matpln 
+   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때  
+  }
+},
+async created(){
+  const res=await axios.get('/api/inventory/mat');
+  this.mat=res.data;
+  //const vdrs=await axios.get('/api/vdrList');
+  const vdrs=await axios.get('/api/vdr');
+  this.vdr=vdrs.data; 
+  await this.fetchInventoryPurPlan(); // 자재구매계획 데이터 가져오기  
+},
+computed: {
+totalPrc() {
+  if (this.qty && this.selectMats.length) {
+    return this.qty * this.selectMats[0].prc;
+  }
+  return 0;
+}
+},
+methods:{
+  //클릭하면 발주서 조회 페이지로 이동 
+  gotoOrdView() {
+    this.$router.push({ name: 'OrdView' });
+  },
+
+  handleMaterialSelect(selectedMat){
+    this.selectMats=selectedMat;
+    this.showModal=false; 
+    
+  
+  },
+  handleVdrSelect(selectedVdr){
+    this.selectVdr=selectedVdr;
+    this.showVdrModal=false; 
+  }, 
+  async saveOrder() {
+  const payload = {
+    vdr_no: this.selectVdr?.vdr_no??1000,       // 거래처번호
+    crt_dt:this.crtDt,                    
+    pur_dt: this.purDt,                   // 발주일자
+    mat_no: this.selectMats[0]?.mat_no,   // 자재번호
+    qty: this.qty,                        // 수량
+    prc: this.selectMats[0]?.prc,         // 단가
+    total: this.totalPrc                  // 총가격(computed)
+  };
+
+  try {
+    await axios.post('/api/addPurOrd', payload);
+    alert('발주 저장 완료!');
+   // this.matPurPlanChecked=await axios.get('/api/getPurPlnChecked'); 
+   const Nos=await axios.get('/api/PlnToOrd') //
+   console.log('Nos',Nos.data); // 발주서 저장후 체크된 애들 삭제
+   const plnToOrdNo=Nos.data.map(p => p['계획ID']);
+   console.log('plnToOrdNo',plnToOrdNo); 
+   this.matPurPlanChecked=this.matPurPlanChecked.filter(item => !plnToOrdNo.includes(item['계획ID']));    
+    console.log('발주버튼누른후자재구매계획',this.matPurPlanChecked);
+  console.log('matPurPlanChecked 샘플', this.matPurPlanChecked[0]);
+
+  } catch (err) {
+    console.error('저장 실패:', err);
+    alert('에러발생');
+    console.log('payLoad',payload);
+  }
+}, 
+async fetchInventoryPurPlan(){
+    try{
+      const result=await axios.get('/api/getPurPlnChecked')
+      this.matPurPlanChecked=result.data; 
+      console.log('matPurPlanChecked',this.matPurPlanChecked); // 
+    }catch(error){
+      console.log('자재구매계획 실패',error); 
     }
-  },
-
-  created() {
-    this.getOrdList()
-  },
-  methods: {
-    async getOrdList() {
-      try {
-        const result = await axios.get('/api/ord')
-        this.ordList = result.data
-        console.log('주문리스트:', this.ordList)
-      } catch (err) {
-        console.log('주문리스트 불러오기 실패', err)
+   },   
+   //체크박스 클릭후  
+   infoPlntoOrd(item){
+      this.mode='checked'; //자재구매계획
+      this.checkedMatPln=[item]; 
+      this.qty=item['총합'], 
+      this.purDt=new Date().toISOString.slice(0,10);
+      this.selectMats=[
+      {
+        mat_no:item['자재번호'], 
+        mat_nm:item['자재명'], 
+        prc:Number(item['총합']) /Number(item['총합']) || 0 
       }
-    },
-
-    async fetchOrdByDate() {
-      console.log('날짜 확인:', this.startDate, this.endDate)
-      this.dateArray = ['품명', '현재고']
-      try {
-        const result = await axios.get('/api/ord/by-date', {
-          params: {
-            startDate: this.startDate,
-            endDate: this.endDate
-          }
-        })
-        this.ordListByDate = result.data
-        const current = new Date(this.startDate)
-        const end = new Date(this.endDate)
-        while (current <= end) {
-          const dateStr = current.toISOString().slice(0, 10)
-          this.dateArray.push(dateStr)
-          current.setDate(current.getDate() + 1)
-        }
-      } catch (err) {
-        console.log('기간별 주문리스트 불러오기 실패', err)
+    ]; 
+      if(item['거래처코드']){
+        this.selectVdr={
+          vdr_no:item['거래처코드'], 
+          cpy_nm:item['거래처명']
+        };
+      } else{
+        this.selectVdr=null; 
       }
-    },
 
-    async addOrd() {
-      try {
-        const result = await axios.post('/api/ord', {
-          vdr_no: this.vdrCd,
-          due_dt: this.dueDt,
-          prd_no: this.prdNo,
-          prd_qty: this.prdQty
-        })
-        console.log(result.data)
-        this.getOrdList()
-        alert('주문등록 완료')
-      } catch (err) {
-        console.log('주문등록 실패', err)
+    console.log('this.selectMats',this.selectMats);
+
+
+   }, 
+   
+   handleCheckChange() {
+    if (this.checkedMatPln.length === 1) {
+      const item = this.checkedMatPln[0];
+      this.mode = 'checked';
+      this.qty = item['총합'];
+      this.purDt = new Date().toISOString().slice(0, 10);
+      this.selectMats = [{
+        mat_no: item['자재번호'],
+        mat_nm: item['자재명'],
+        prc: Number(item['총가격']) / Number(item['총합']) || 0
+      }];
+      if (item['거래처코드']) {
+        this.selectVdr = {
+          vdr_no: item['거래처코드'],
+          cpy_nm: item['거래처명']
+        };
+      } else {
+        this.selectVdr = null;
       }
+    } else {
+      // 다중 선택 or 해제 → 초기화
+      this.mode = 'basic';
+      this.selectMats = [];
+      this.selectVdr = null;
+      this.qty = 0;
+      alert('하나의 자재만 선택하세요'); 
     }
   }
+
+}, 
+
+
 }
 </script>
