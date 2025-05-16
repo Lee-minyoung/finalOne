@@ -57,7 +57,7 @@
           <th>제품명</th>
           <th>요청수량</th>
           <th>lot재고량</th>
-          <th>납기일자</th>
+         
           <th>상태</th>
         </tr>
       </thead>
@@ -66,13 +66,13 @@
           <td><input type="checkbox" :value="item" v-model="checkOrd" @change="handleCheckChange" /></td>
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
-          <td>{{ item.cpy_nm }}</td>
-          <td>{{ item.prd_no }}</td>
+          <td>{{ item['거래처명'] }}</td>
+          <td>{{ item.prd_qty }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item['요청수량'] }}</td>
-          <td v-if="item['lot수량']<=0" >0</td>
-           <td v-else-if="item['lot수량']>0" >{{ item['lot수량'] }}</td>
-          <td>{{ item['납기예정'] }}</td>
+          <td v-if="item['현재고량']<=0" >0</td>
+           <td v-else-if="item['현재고량']>0" >{{ item['현재고량'] }}</td>
+          
           <td v-if="item['요청수량'] < item['lot수량']">
            <span class="badge text-bg-primary">출하가능</span>
           </td>

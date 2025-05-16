@@ -76,23 +76,27 @@ router.post('/addMatImports',async(req,res)=>{
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
         const datePart = yy+mm+dd; 
+        
         let nextSeq = '001';
         const lastLot = await matImportService.findLastLotNo(); // 예: 'MAT20250511003'
-        console.log('lastLot',lastLot); //20250511003
+        console.log('!!!lastLot!!!',lastLot); //20250511003
         console.log('datePart',datePart); //20250513
         if (lastLot && lastLot.startsWith(`MAT${datePart}`)) {
           const lastSeq = Number(lastLot.slice(-3));
-          nextSeq = String(lastSeq + 1).padStart(3, '0');
+          nextSeqNum =lastSeq + 1; //String(lastSeq + 1).padStart(3, '0');
+          console.log('!!!nextSeqNum!!!',nextSeqNum); // 2  
+          
         }else if(lastLot=='MAT0000000'){
             console.log('null값입니다');
         }    
         const lastLotHistNo=await matImportService.findLastLothistNo();
         const nexLotHistNo=findNextCode(lastLotHistNo); 
 
-
+          console.log('!!!nexLotHistNo!!!',nexLotHistNo); //108
         const infoList=req.body; 
         for (const info of infoList) {
-            
+             nextSeq= String(nextSeqNum).padStart(3, '0'); 
+             console.log('nextSeq',nextSeq); //001,002,003
             const {mat_no,qty,warehouse_no,cnsm_lmt_dt,unt_prc,pur_ord_no,prcsr,vdr_no,rcvr,rcv_mthd}=info; 
             // console.log('프론트에서 받아온애들',info); 
            
@@ -102,12 +106,14 @@ router.post('/addMatImports',async(req,res)=>{
            
             const matStk=[newLotNo,mat_no,qty,warehouse_no,nowStr,cnsm_lmt_dt,unt_prc,'p1',pur_ord_no,prcsr,qty,nowStr];
             await matImportService.addmatStk(matStk);
-            nextSeq++;
+           
+      
             console.log('nextSeq',nextSeq); //001,002,003
           //  console.log('for문 돌려서 자재lot 입고 처리중...');
             const matStkHist=[nexLotHistNo,newLotNo,'o2',qty,nowStr,pur_ord_no,vdr_no,rcvr,rcv_mthd]; 
-          await matImportService.addmatStkHist(matStkHist);
+            await matImportService.addmatStkHist(matStkHist);
             console.log('for문 돌려서 자재lot 이력 입고 처리중...');
+            nextSeqNum++;
             res.status(200).json({message:'발주 -> lot 데이터 입고 처리'});
         }
     

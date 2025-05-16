@@ -79,6 +79,7 @@ router.get('/ord/by-date', async (req, res) => {
 });
 //출하지시등록 
 router.post('/addSpm', async (req, res) => {
+  console.log('출하등록 요청'); // 잘받아옴
   //출하마지막번호  
   try {
     const lastSpmNo = await salesService.findLastSpmNo();

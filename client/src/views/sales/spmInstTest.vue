@@ -25,8 +25,7 @@
           <th>제품ID</th>
           <th>제품명</th>
           <th>요청수량</th>
-          <th>lot재고량</th>
-          <th>납기일자</th>
+          <th>lot재고량</th> 
           <th>상태</th>
         </tr>
       </thead>
@@ -40,18 +39,18 @@
         >
           <td>{{ item.ord_no }}</td>
           <td>{{ item.vdr_no }}</td>
-          <td>{{ item.cpy_nm }}</td>
+          <td>{{ item['거래처명'] }}</td>
           <td>{{ item.prd_no }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ item['요청수량'] }}</td>
-          <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
-          <td>{{ item['납기예정'] }}</td>
+          <td>{{ item.prd_qty }}</td>
+          <td>{{ item['현재고량'] <= 0 ? 0 : item['현재고량'] }}</td>
+        
           <td>
-            <span
-              class="badge"
-              :class="item['요청수량'] < item['lot수량'] ? 'text-bg-primary' : 'text-bg-danger'"
-            >
-              {{ item['요청수량'] < item['lot수량'] ? '출하가능' : '출하대기' }}
+            <span v-if="item.prd_qty < item['현재고량']" class="badge text-bg-primary">
+              출하가능
+            </span>
+            <span v-else-if="item.prd_qty > item['현재고량']" class="badge text-bg-danger">
+              출하불가
             </span>
           </td>
         </tr>
@@ -72,7 +71,7 @@ export default {
   name: 'SpmInst',
   data() {
     return {
-      spmDate: '',
+      spmDate: '2025-05-16',
       manager: '',
       selectedOrders: [],
       ords: []
@@ -112,15 +111,18 @@ export default {
         const payloads = this.selectedOrders.map(item => ({
           ord_no: item.ord_no,
           dlv_addr: item.ofc_addr,
-          spm_dt: item['납기예정'],
+          spm_dt: ,
           vdr_no: item.vdr_no,
-          lot_no: item.lot_no,
+          lot_no: lot_no: item.lot_no || '테스트LOT',
           prd_no: item.prd_no,
           lot_qty: item['lot수량'],
           memo: item.ord_no,
-          req_qty: Number(item['요청수량'])
+          req_qty: Number(item['현재고량'])
         }));
 
+        console.log('payloads lot 번호내놔:', payloads);
+    //    await axios.post('/api/addSpm', payloads);
+    //    console.log('단건 출하지시는 잘됨');  
         await axios.post('/api/addSpms', payloads);
         this.ords=await axios.get('/api/ord');
         alert('출하지시 완료!');

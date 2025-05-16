@@ -27,17 +27,25 @@ const selectOrdList=
 // from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
 `SELECT o.ord_no 
      , o.vdr_no 
-     , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no)  
+     , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no) as 거래처명 
      , od.prd_no 
      , p.prd_nm 
      , od.prd_qty 
      , IFNULL((SELECT SUM(cur_stk) FROM prd_stk WHERE prd_no = od.prd_no), 0) as 현재고량
-  FROM ord o
-  LEFT JOIN ord_dtl od ON o.ord_no = od.ord_no
-  LEFT JOIN prd p ON od.prd_no = p.prd_no
-	WHERE NOT EXISTS (
+     , v.ofc_addr
+     , IFNULL((SELECT lot_no
+               FROM prd_stk 
+               WHERE prd_no=od.prd_no 
+               ORDER BY rcpt_dt DESC, lot_no DESC 
+               LIMIT 1), 0) as lot번호
+FROM ord o
+LEFT JOIN ord_dtl od ON o.ord_no = od.ord_no
+LEFT JOIN prd p ON od.prd_no = p.prd_no
+LEFT JOIN vdr v ON o.vdr_no = v.vdr_no
+WHERE NOT EXISTS (
     SELECT 1 FROM spm s WHERE s.ord_no = o.ord_no
-  )  ORDER BY ord_no
+)  
+ORDER BY ord_no;
 `;
 
 const selectLastPrd=
