@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const incInsGetRsltService = require('../../services/qualitys/IncInsGetRslt_service.js');
+const incInsGetRsltService = require('../../services/qualitys/incInsGetRslt_service.js');
 
 // 검사 자재 불러오기
 router.get('/incInsGetRslt/matList', async (req, res) => {
