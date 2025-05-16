@@ -8,6 +8,10 @@ const express = require('express');
 const session = require('express-session');
 const app = express();
 
+const path = require('path');
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
 
 // 미들웨어 등록 영역, 미들웨어 상단에!!!!!!!!
 // body parser
@@ -54,78 +58,86 @@ const salesRouter = require('./routers/sales/sales_router.js');
 const inventoryRouter = require('./routers/inventory/inventory_router.js');
 const lineManagementRouter = require('./routers/production/lineManagement_rouder.js');
 
-// 기본 라우팅
-app.get('/', (req, res) => {
-  res.send('Welcome MES!!');
-})
+// // 기본 라우팅
+// app.get('/api', (req, res) => {
+//   res.send('Welcome MES!!');
+// })
+
+app.get("/", function (req, res, next) {
+  res.sendFile(path.join(__dirname, "./public", "index.html"));
+});
 
 // 라우터 모듈 등록
 //생산 라우팅
-app.use('/', prodPlanRouter);
-app.use('/', prodInstRouter);
-app.use('/', lineManagementRouter);
+app.use('/api', prodPlanRouter);
+app.use('/api', prodInstRouter);
+app.use('/api', lineManagementRouter);
 // 부서 라우팅
 const deptRouter = require('./routers/base/dept_router.js');
-app.use('/', deptRouter);
+app.use('/api', deptRouter);
 // 사원 라우팅
 const empRouter = require('./routers/base/emp_router.js');
-app.use('/', empRouter);
+app.use('/api', empRouter);
 // BOM 라우팅
 const bomRouter = require('./routers/base/bom_router.js');
-app.use('/', bomRouter);
+app.use('/api', bomRouter);
 // 자재 라우팅
 const matRouter = require('./routers/base/mat_router.js');
-app.use('/', matRouter);
+app.use('/api', matRouter);
 // 제품 라우팅
 const prdRouter = require('./routers/base/prd_router.js');
-app.use('/', prdRouter);
+app.use('/api', prdRouter);
 // 공정 라우팅
 const procRouter = require('./routers/base/proc_router.js');
-app.use('/', procRouter);
+app.use('/api', procRouter);
 // 공정코드 라우팅
 const prcCodeRouter = require('./routers/base/prcCode_router.js');
-app.use('/', prcCodeRouter);
+app.use('/api', prcCodeRouter);
 // 라인 라우팅
 const lnRouter = require('./routers/base/ln_router.js');
-app.use('/', lnRouter);
+app.use('/api', lnRouter);
 // 설비 라우팅
 const eqpRouter = require('./routers/base/eqp_router.js');
-app.use('/', eqpRouter);
+app.use('/api', eqpRouter);
 // 완제품 입고 라우팅
 const receivePrdRouter = require('./routers/base/receivePrd_router.js');
-app.use('/', receivePrdRouter);
+app.use('/api', receivePrdRouter);
 // home 라우팅
 const homeRouter = require('./routers/base/home_router.js');
-app.use('/', homeRouter);
+app.use('/api', homeRouter);
 // 재고 라우팅
 const stockShortageRouter = require('./routers/base/stockShortage_router.js');
-app.use('/', stockShortageRouter);
+app.use('/api', stockShortageRouter);
 
 // 거래처 라우팅
 const vdrRouter = require('./routers/base/vdr_router.js');
-app.use('/', vdrRouter);
+app.use('/api', vdrRouter);
 
 //품질 모듈
-app.use('/', spmInsStd);
-app.use('/', spmInsRsltRouter);
-app.use('/', spmInsGetRsltRouter);
-app.use('/', incInsStd);
-app.use('/', incInsRsltRouter);
-app.use('/', incInsGetRsltRouter);
+app.use('/api', spmInsStd);
+app.use('/api', spmInsRsltRouter);
+app.use('/api', spmInsGetRsltRouter);
+app.use('/api', incInsStd);
+app.use('/api', incInsRsltRouter);
+app.use('/api', incInsGetRsltRouter);
 //출하
-app.use('/', spmMrkRouter);
-app.use('/', spmFnsRouter);
+app.use('/api', spmMrkRouter);
+app.use('/api', spmFnsRouter);
 
-app.use('/', salesRouter);
+app.use('/api', salesRouter);
 
 // 로그인 라우팅
 const loginRouter = require('./routers/access/login_router.js');
-app.use('/', loginRouter);
+app.use('/api', loginRouter);
 
 //자재관련 
-app.use('/',salesRouter);
-app.use('/',inventoryRouter);
+app.use('/api',salesRouter);
+app.use('/api',inventoryRouter);
 const purOrdInstRouter = require('./routers/inventory/purordInst_router.js');
-app.use('/',purOrdInstRouter);
+app.use('/api',purOrdInstRouter);
 const matImportRouter=require('./routers/inventory/matImport_router.js'); 
-app.use('/',matImportRouter); 
+app.use('/api',matImportRouter); 
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "./public", "index.html"));
+});
