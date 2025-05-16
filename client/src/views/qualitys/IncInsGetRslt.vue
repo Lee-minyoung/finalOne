@@ -3,39 +3,31 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-4">자재검사성적서 조회</h2>
       <div class="center-button">
-        <button class="btn btn-primary" @click="exportToPDF" style="margin-bottom:-40px;">PDF 내보내기</button>
+        <button class="btn btn-primary" @click="downloadPdf" style="margin-bottom:-40px;">PDF 내보내기</button>
         <div class="d-flex gap-4">
         </div>
       </div>
     </div>
     <div ref="pdfarea" >
-    <!-- 조회 조건 -->
-    <div class="input search-area" ref="searchArea">
-  <div class="search-row">
-    <label>자재검색</label>
-    <input v-model="searchQuery" class="form-control" readonly />
-    <button class="btn btn-outline-secondary search-btn" @click="openMatModal" style="margin-left: -15px;">🔍</button>
-    <label style="margin-left:270px; margin-right:10px">성적서번호</label>
-    <input :value="selectedRsltNo" class="form-control" readonly />
-  </div>
-  <hr>
-  <div class="search-row">
-    <label>LOTNo</label>
-    <input :value="selectedLotNo" class="form-control" readonly />
-    <label style="margin-left:40px;">발주번호</label>
-    <input v-model="searchPurOrdNo" class="form-control" readonly />
-    <label style="margin-left:40px;">납입업체</label>
-    <input v-model="selectedVdrNm" class="form-control" readonly />
-  </div>
-  <div class="search-row">
-    <label>자재명</label>
-    <input :value="selectedMatNm" class="form-control" readonly />
-    <label style="margin-left:40px;">작성일자</label>
-    <input :value="selectedInsDate" class="form-control" readonly />
-    <label style="margin-left:40px;">검사자</label>
-    <input :value="selectedInsDev" class="form-control" readonly />
-  </div>
-</div>
+   <!-- 조회 조건 -->
+    <div class="input">
+      자재검색 <input v-model="searchQuery" class="form-control" placeholder="" readonly />
+      <button class="btn btn-outline-secondary" @click="openMatModal" style="margin-right:501px;">🔍</button>
+      성적서번호 <input :value="selectedRsltNo" class="form-control" readonly style="background-color: #eee;" />
+      <hr style="margin-left:-75px;">
+      LOTNo <input :value="selectedLotNo" class="form-control" readonly
+        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
+      
+      발주번호 <input v-model="searchPurOrdNo" class="form-control" readonly
+        style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
+      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee; margin-bottom: 10px;" />
+      <br>
+      자재명 <input :value="selectedMatNm" class="form-control" readonly
+        style="background-color: #eee; margin-right: 180px;" />
+      작성일자 <input :value="selectedInsDate" class="form-control" readonly
+        style="background-color: #eee; margin-right: 197px;" />
+      검사자 <input :value="selectedInsDev" class="form-control" readonly style="background-color: #eee;" />
+    </div>
     <br>
     <div class="middle">
       <!-- 결점구분 -->
@@ -113,7 +105,6 @@
 <script>
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
-import html2pdf from 'html2pdf.js';
 import { ref } from 'vue';
 import MatGetRsltSelModal
   from '@/views/qualitys/MatGetRsltSelModal.vue'; // 모달
@@ -138,6 +129,8 @@ export default {
       newItem: [],
       overallJdg: '',
       selectedRsltNo: '', // 성적서 번호
+      matQualityViewdetail: [],
+    matQualityViewall: [],
     };
   },
   created() {
@@ -150,6 +143,85 @@ export default {
     }
   },
   methods: {
+
+     // pdf
+      async downloadPdf() {
+      try {
+        // 템플릿 파일을 가져옴
+        const response = await axios.get('/InsInsGetRslt.html');
+        let templateHtml = response.data;
+
+        // 동적으로 데이터를 템플릿에 삽입
+    const detailList = this.rsltDetailList || [];
+    const tableRows = detailList.map(item => `
+  <tr>
+    <td>${item.ins_itm}</td>
+    <td>${item.ins_mthd}</td>
+    <td>${item.mgr_rslt}</td>
+    <td>${this.getJdgName(item.jdg)}</td>
+    <td>${item.rmk || ''}</td>
+  </tr>
+`).join('');
+
+let judgeButton = '';
+if (this.rsltMaster?.ovr_jdg === 'n1') {
+  judgeButton = '<button class="jdg-btn btn-green">합격</button>';
+} else if (this.rsltMaster?.ovr_jdg === 'n2') {
+  judgeButton = '<button class="jdg-btn btn-red">불합격</button>';
+}
+templateHtml = templateHtml
+  .replace('{{ mat_nm }}', this.selectedMatNm || this.searchQuery || 'N/A')
+  .replace('{{ table_rows }}', tableRows)
+  .replace('{{ mat_id }}', this.searchQuery || 'N/A')
+  .replace('{{ lot_no }}', this.selectedLotNo || 'N/A')
+  .replace('{{ quality_id }}', this.selectedRsltNo || 'N/A')
+  .replace('{{ pur_ord_no }}', this.searchPurOrdNo || 'N/A')
+  .replace('{{ vdr_nm }}', this.selectedVdrNm || 'N/A')
+  .replace('{{ date }}', this.selectedInsDate || new Date().toLocaleDateString())
+  .replace('{{ ins_dev }}', this.selectedInsDev || 'N/A')
+  .replace('{{ mgr_count }}', this.rsltMaster?.mgr_count ?? '')
+  .replace('{{ succ_count }}', this.rsltMaster?.succ_count ?? '')
+  .replace('{{ dft_count }}', this.rsltMaster?.dft_count ?? '')
+  .replace('{{ ovr_jdg }}', this.rsltMaster?.ovr_jdg ?? '')
+  .replace('{{ table_rows }}', tableRows)
+  .replace('{{ judge_button }}', judgeButton)
+
+        // 임시 DOM에 HTML 추가
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = templateHtml;
+        document.body.appendChild(tempElement);
+
+        // PDF로 변환
+        const opt = {
+          margin: 0.3,
+          filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        // PDF 다운로드
+        await html2pdf().set(opt).from(tempElement).save();
+
+        // 변환 후 임시 DOM 제거
+        document.body.removeChild(tempElement);
+      } catch (err) {
+        console.error("PDF 다운로드 실패:", err);
+      }
+    },
+      async matQualityViewDropDown() {
+        let ajaxRes =
+          await axios.get(`/api/matQualityViewDropDown`)
+          .catch(err => console.log(err));
+        this.matQualityViewDropdown = ajaxRes.data;
+      },
+
+
+
+
+
+
+
     // 공통코드 변환
     getJdgName(code) {
       if (code === 'o1') return '적합';
@@ -237,59 +309,7 @@ async handleSelectedProduct(item) {
     this.rsltMaster = null;
     this.rsltDetailList = [];
   }
-  },
-    exportToPDF() {
-  const pdfArea = this.$refs.pdfarea;
-  const searchArea = this.$refs.searchArea;
-  const resultTable = this.$refs.resultTable;
-  // 버튼 DOM 직접 찾기
-  const searchBtn = pdfArea.querySelector('.search-btn');
-  const originalBtnDisplay = searchBtn ? searchBtn.style.display : '';
-
-  // 버튼 숨기기
-  if (searchBtn) searchBtn.style.display = 'none';
-
-  // 기존 transform/width 조작
-  const originalPdfTransform = pdfArea.style.transform;
-  const originalPdfWidth = pdfArea.style.width;
-  const originalSearchTransform = searchArea.style.transform;
-  const originalSearchWidth = searchArea.style.width;
-  const originalResultTransform = resultTable.style.transform;
-  const originalResultWidth = resultTable.style.width;
-
-  pdfArea.style.transform = "scale(0.615)";
-  pdfArea.style.transformOrigin = "top left";
-  pdfArea.style.width = "162.6%";
-  searchArea.style.transform = "scale(1.2)";
-  searchArea.style.transformOrigin = "top left";
-  searchArea.style.width = "83.33%";
-
-  html2pdf(pdfArea, {
-    margin: [15, 15, 15, 15],
-    filename: 'document.pdf',
-    image: { type: "jpg", quality: 0.95 },
-    html2canvas: {
-      useCORS: true,
-      scrollY: 0,
-      scale: 1,
-      dpi: 300,
-      letterRendering: true,
-      allowTaint: false,
-      mediaType: 'print'
-    },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true }
-  }).then(() => {
-    // 원복
-    pdfArea.style.transform = originalPdfTransform;
-    pdfArea.style.width = originalPdfWidth;
-    searchArea.style.transform = originalSearchTransform;
-    searchArea.style.width = originalSearchWidth;
-    resultTable.style.transform = originalResultTransform;
-    resultTable.style.width = originalResultWidth;
-    // 버튼 다시 보이게
-    if (searchBtn) searchBtn.style.display = originalBtnDisplay;
-  });
-}
+  }
   }
 }
 </script>
@@ -397,28 +417,5 @@ async handleSelectedProduct(item) {
   margin: 18px 0;
   border: none;
   border-top: 1px solid #ccc;
-}
-
-/* PDF 전용 스타일 */
-@media print {
-  .search-area {
-    background: #fff !important;
-    border: 1.5px solid #bbb !important;
-    padding: 30px 40px 20px 40px !important;
-    font-size: 1.1em !important;
-  }
-  .search-row label {
-    min-width: 100px !important;
-    white-space: nowrap; /* 줄바꿈 방지 */
-    
-  }
-  .search-row input {
-    font-size: 1em !important;
-    height: 2em !important;
-  }
-   /* 버튼 숨기기 */
-  .search-btn {
-    display: none !important;
-  }
 }
 </style>
