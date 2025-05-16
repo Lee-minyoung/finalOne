@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h2 class="mb-4">완제품검사성적서</h2>
+    <div class="input-area" >
+      <div class="search-row">
+      <label>제품검색</label>
+      <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
+      <button class="btn btn-outline-secondary" id="icon-btn" @click="openProductModal"
+        style="margin-right:505px;">🔍</button>
+      <label>성적서번호</label>
+      <input :value="selectedRsltNo" class="form-control" id="input" readonly style="background-color: #eee;" />
+    </div>
+    <hr style="margin-left:-75px;">
+
+    <label>라인번호</label>
+    <input :value="selectedLineId" class="form-control" id="input" readonly style="background-color: #eee;" />
+    <label>제품명</label>
+    <input :value="selectedProductName" class="form-control" id="input" readonly style="background-color: #eee;" />
+    <label>작성일자</label>
+    <input :value="selectedInsDate" class="form-control" id="input" readonly style="background-color: #eee;" />
+    <label>검사자</label> 
+    <input :value="selectedInsDev" class="form-control" id="input" readonly style="background-color: #eee;" />
+  </div>
+  <br>
+  <div class="middle">
+    <!-- 결점구분 -->
+    <div>
+      <table class="table table-bordered text-center" id="table">
+        <thead class="table-light">
+          <tr>
+            <th>결점구분</th>
+            <th>검사량</th>
+            <th>합격량</th>
+            <th>불량량</th>
+          </tr>
+        </thead>
+
+        <!-- 수량 입력칸 -->
+        <tbody>
+          <tr>
+            <td>수량</td>
+            <td>{{ rsltMaster?.mgr_count }}</td>
+            <td>{{ rsltMaster?.succ_count }}</td>
+            <td>{{ rsltMaster?.dft_count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 종합판정 -->
+    <div class="rst">
+      <div class="hstack gap-3">
+        <div style="padding-left:50px;">종합판정</div>
+        <div class="vr"></div>
+        <button :class="['jdg-btn', rsltMaster?.ovr_jdg === 'n1' ? 'btn-green' : '']"
+          style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">합격</button>
+        <button :class="['jdg-btn', rsltMaster?.ovr_jdg === 'n2' ? 'btn-red' : '']"
+          style="width:150px; height:100px; border-radius: 5px; border-color:lightgray;">불합격</button>
+      </div>
+    </div>
+  </div>
+  <h5>검사결과</h5>
+  <!-- 테이블 -->
+  <!-- 테이블 헤더 -->
+  <table class="table table-bordered text-center ">
+    <thead class="table-light">
+      <tr>
+        <th>검사항목</th>
+        <th>검사기준</th>
+        <th>검사결과</th>
+        <th>판정</th>
+        <th>비고</th>
+      </tr>
+    </thead>
+
+    <!-- 테이블 바디 : 검사결과  -->
+    <tbody>
+      <tr v-for="(item, index) in rsltDetailList" :key="index">
+        <td>{{ item.ins_itm }}</td>
+        <td>{{ item.ins_mthd }}</td>
+        <td>{{ item.mgr_rslt }}</td>
+        <td>{{ getJdgName(item.jdg) }}</td>
+        <td>{{ item.rmk }}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- 제품 검색 모달 -->
+  <PrdGetSelModal v-if="showProductModal" :prodList="prodList" @select-product="handleSelectedProduct"
+    @close="showProductModal = false" />
+</body>
+
+</html>
