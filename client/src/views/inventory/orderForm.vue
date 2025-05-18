@@ -214,7 +214,8 @@ data() {
    crtDt:new Date().toISOString().slice(0, 10),
    matPurPlanChecked:[], //자재요청 -> 체크된 애들 
    checkedMatPln:[],  //  체크박스 눌렀을때 matpln 
-   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때  
+   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때
+
   }
 },
 async created(){
@@ -231,7 +232,8 @@ totalPrc() {
     return this.qty * this.selectMats[0].prc;
   }
   return 0;
-}
+},
+
 },
 methods:{
   //클릭하면 발주서 조회 페이지로 이동 
