@@ -108,6 +108,7 @@ router.post('/addMatImports',async(req,res)=>{
             const matStkHist=[nexLotHistNo,newLotNo,'o2',qty,nowStr,pur_ord_no,vdr_no,rcvr,rcv_mthd]; 
           await matImportService.addmatStkHist(matStkHist);
             console.log('for문 돌려서 자재lot 이력 입고 처리중...');
+            res.status(200).json({message:'자재입고완료'}); 
         }
     
     }catch(err){
@@ -116,6 +117,49 @@ router.post('/addMatImports',async(req,res)=>{
     } 
   }
   )
+
+// router.post('/addMatImports', async (req, res) => {
+//   try {
+//     const now = new Date();
+//     const nowStr = now.toISOString().slice(0, 19).replace('T', ' ');
+
+//     const lastLotHistNo = await matImportService.findLastLothistNo();
+//     let nextLotHistNo = parseInt(lastLotHistNo || 0, 10) + 1;
+
+//     const infoList = req.body;
+
+//     for (const info of infoList) {
+//       const {
+//         mat_no, qty, warehouse_no, cnsm_lmt_dt,
+//         unt_prc, pur_ord_no, prcsr, vdr_no, rcvr, rcv_mthd
+//       } = info;
+
+//       const newLotNo = await matImportService.findLastLotNo();
+
+//       const matStk = [
+//         newLotNo, mat_no, qty, warehouse_no, nowStr,
+//         cnsm_lmt_dt, unt_prc, 'p1', pur_ord_no,
+//         Number(prcsr || 0), qty, nowStr
+//       ];
+//       await matImportService.addmatStk(matStk);
+
+//       const matStkHist = [
+//         nextLotHistNo, newLotNo, 'o2', qty, nowStr,
+//         pur_ord_no, vdr_no, rcvr, Number(rcv_mthd || 0)
+//       ];
+//       await matImportService.addmatStkHist(matStkHist);
+//       nextLotHistNo++;
+
+//       console.log(`[입고 완료] ${newLotNo}`);
+//     }
+
+//     res.status(200).json({ message: '자재 입고 완료' });
+//   } catch (err) {
+//     console.error('🔥 등록 중 에러:', err);
+//     res.status(500).json({ message: '등록 실패', error: err.message });
+//   }
+// });
+
 
 // router.post('/addMatImports', async (req, res) => {
 //   try {

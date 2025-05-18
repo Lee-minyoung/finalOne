@@ -39,29 +39,6 @@
           </select>
         </td>
       </tr>
-
-
-      <!--거래처변경  -->
-      <!-- <div v-if="selectVdr.vdr_no>0" class="col-md-3">
-          <label class="form-label">거래처코드</label>
-           <input v-model="selectVdr.vdr_no"type="number" class="form-control" >
-        </div>
-          <div v-else class="col-md-3">
-          <label class="form-label">거래처코드</label>
-           <input v-model="selectVdr"type="number" class="form-control" >
-        </div>               -->
-      <!-- <div class="col-md-3">
-          <label class="form-label">숫자임 !창고번호</label>
-          <input type="number" v-model="wareNo" class="form-control" >
-        </div> -->
-      <!-- <tr class="mb-4">
-              <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
-              <td colspan="3" style="border:none;">
-                <select class="form-select" v-model="wareNo">
-                  <input value=1 readonly>대구창고</input>
-                </select>
-              </td>
-            </tr> -->
       <tr class="mb-4">
         <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
         <td colspan="3" style="border:none;">
@@ -73,30 +50,12 @@
         <th style="width: 20%; min-width: 120px; border:none;">수령방법</th>
         <td colspan="3" style="border:none;">
           <select class="form-select" v-model="rcvrMth">
-            <option value=1>수령방법1</option>
-            <option value=2>수령방법2</option>
-            <option value=3>수령방법3</option>
+            <option value=1>일반입고</option>
+            <option value=2>샘플입고</option>
           </select>
         </td>
       </tr>
-
-
-      <!-- <div class="col-md-3">
-          <label class="form-label">숫자임! 수령방법</label>
-          <input v-model="rcvrMth" type="number" class="form-control">
-        </div> -->
     </div>
-    <!-- <div class="col-md-4 d-flex align-items-end">
-          <button class="btn btn-outline-secondary w-100" @click="showVdrModal = true">거래처변경</button>
-        </div> -->
-    <!-- <vdr-select-modal
-      v-if="showVdrModal"
-      :vdr-list="vdr"
-      :selected="selectVdr"
-      @select-vdr="handleVdrSelect"
-      @close="showVdrModal = false"
-    /> -->
-    <!-- 제품 목록 테이블 -->
     <table class="table table-bordered text-center mt-4">
       <thead class="table-light">
         <tr>
@@ -111,17 +70,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr v-for="(item,index) in ords">
-            <td><input type="checkbox" 
-                 :value="item"
-                 v-model="checkOrd"
-                 @change="handleCheckChange" /></td>
-            <td>{{ item.ord_no}}</td>
-            <td>{{item.vdr_no  }}</td>
-            <td>{{ item.prd_no }}</td>
-            <td>{{ item.prd_qty }}</td>
-          </tr> -->
-
         <tr v-for="item in purToLotStatus" :key="item.pur_ord_no">
           <td><input type="checkbox" :value="item" v-model="checkPur" @change="handleCheckChange" /></td>
           <td>{{ item.pur_ord_no }}</td>
@@ -238,7 +186,8 @@ export default {
       try {
         await axios.post('/api/addMatImports', payloads);
         alert('자재입고완료');
-
+        const res= await axios.get('/api/ordToLot');
+        this.purToLotStatus=res.data;  
       }
       catch (err) {
         alert('자재입고실패');

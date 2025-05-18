@@ -56,12 +56,6 @@
 
 
 
-<<<<<<< HEAD
-        <td v-if="item['단위']=='g'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}kg</td>
-        <td v-else-if="item['단위']=='EA'">{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}EA</td>
-        <td v-else-if="item['단위']=='ml'">{{ item['부족수량'] > 0 ? item['부족수량']/1000 : 0 }}L</td>
-        <td v-else>{{ item['부족수량'] > 0 ? item['부족수량'] : 0 }}</td>
-=======
             <td v-if="item['단위'] == 'g'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}kg</td>
             <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}EA</td>
             <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}L</td>
@@ -70,23 +64,8 @@
             <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
   <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
 </td>
->>>>>>> 3cb0100fc0a407e4e878aa9ad699ba5fe3b602b7
 
 
-<<<<<<< HEAD
-<td>
- <template v-if="item['부족수량'] <= 0 && item['자재출고처리'] == 'q2'">
-  <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-</template>
-
-<template v-else-if="item['부족수량'] >= 0 && (item['자재출고처리'] == 'q2' || reqClickedList.includes(item['계획ID'] + item['자재명']))">
-  <span class="badge bg-info px-3 py-2 rounded-pill">요청완료</span>
-</template>
-
-<template v-else-if="item['부족수량'] > 0 && item['자재출고처리'] == 'q1' && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-</template>
-=======
         <td v-if="item['부족수량'] <= 0">
   <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
 </td> -->
@@ -104,7 +83,6 @@
                 <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)"
                   type="button">자재요청</button>
               </template>
->>>>>>> 3cb0100fc0a407e4e878aa9ad699ba5fe3b602b7
 
 
             </td>
@@ -144,7 +122,7 @@
         <td>{{ item['자재명'] }}</td>
         <td>{{ formatNumber(item['총합']) }}</td>
         <td>{{ formatNumber(item['총가격']) }}원</td>
-        <td>{{ item['거래처명'] }}</td>
+        <td>{{ item.cpy_nm }}</td>
         <!--생산계획 버튼-->
 
         <!--생산계획모달 end-->
@@ -191,7 +169,6 @@ export default {
   },
   // ** 지시번호별 번호 묶기
   computed: {
-<<<<<<< HEAD
  groupedInventory() {
   const grouped = {};
   this.inventoryStatus.forEach(item => {
@@ -207,30 +184,6 @@ export default {
    
   
 },
-=======
-    groupedInventory() {
-      const grouped = {}
-      this.inventoryStatus.forEach(item => {
-        const reqNo = item['계획ID']
-        if (!grouped[reqNo]) grouped[reqNo] = []
-        grouped[reqNo].push(item)
-      })
-      //
-      const filterGrouped = {}
-      for (const reqNo in grouped) {
-        const items = grouped[reqNo] // 계획 번호 하나당 처리된거, 
-        const allDone = items.every(item =>
-          item['부족수량'] < 0
-          //  || item['자재처리결과'] ==='c3' || this.reqClickedList.includes(item['계획ID']+item['자재명'])
-        )
-        if (!allDone) {
-          filterGrouped[reqNo] = items
-        }
-      }
-      return filterGrouped
-    }
-  },
->>>>>>> 3cb0100fc0a407e4e878aa9ad699ba5fe3b602b7
 
 
 
@@ -379,7 +332,6 @@ export default {
 
 
 
-<<<<<<< HEAD
       //서버에서 출고완료 됐는지 안됐는지 확인
       // 서버왜없지..?    
       // const matsts=await axios.get('/api/MatStatus',{params:{
@@ -396,26 +348,6 @@ export default {
           
     }catch(err){
         if(err.response && err.response.status===400){
-=======
-        //서버에서 출고완료 됐는지 안됐는지 확인
-        // 서버왜없지..?    
-        const matsts = await axios.get('/api/MatStatus', {
-          params: {
-            reqId: payload.pln_id,
-            matId: payload.mat_no
-          }
-        });
-        console.log('matsts', matsts);
-
-        //우선 조건문문 풀기 
-
-        // 출고가 가능한 애들은 우선 처리됨
-        await axios.post('/api/inventory/lotMinusList', payload); //자재차감 되고 자재출고처리 -> q2로 변환 
-
-
-      } catch (err) {
-        if (err.response && err.response.status === 400) {
->>>>>>> 3cb0100fc0a407e4e878aa9ad699ba5fe3b602b7
           alert(err.response.data.message);
         } else {
           alert('서버오류가 부족합니다')
@@ -428,7 +360,7 @@ export default {
       const allAvailable = matList.every(item => {
         const reqQty = parseFloat(item['총필요량']);
         const curQty = parseFloat(item['현재재고']);
-        // console.log('allAvailabe실행중..',item);
+         console.log('allAvailabe실행중..',item);
 
         return curQty >= reqQty;
       });

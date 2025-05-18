@@ -178,6 +178,7 @@ router.post('/addSpms', async (req, res) => {
   const infoList = req.body;
   const io = 'o1';
   const now = new Date();
+  const mgr=1;
   const nowStr = now.toISOString().slice(0, 10).replace('T', ' '); //2025-05-12
   for (const info of infoList) {
     let {
@@ -197,28 +198,28 @@ router.post('/addSpms', async (req, res) => {
     // lot를 찾음 
     console.log('lots : ', lots);
     for (const lot of lots) {
-      const minusQty = Math.min(req_qty, lot.cur_stk); //이번lot에서 차감할양
-      await salesService.minusLotCurStk([minusQty, lot.lot_no, lot.prd_no]);
+      const minusQty = Math.min(req_qty, lot.cur_stk); //이번lot에서 차감할양 
+      await salesService.minusLotCurStk([minusQty, lot.lot_no, lot.prd_no]); //lot에서 양을 차감함 
+    
       req_qty -= minusQty;
-      console.log(req_qty);
+    
       console.log('lot남은자재', lot.cur_stk);
-      const lastNo = await salesService.findLastPrdHist();
-      const nextHistNo = findNextCode(lastNo);
-      const result = await salesService.addPrdStkHist([nextHistNo, lot_no, io, Number(req_qty), nowStr, memo]);
+    
+      const lastNo = await salesService.findLastSpmNo(); //출하 최댓값찾기
+      const lastdtlNo=await salesService.findLastSpmDtlNo();  //출하세부 최댓값 찾기 
+      const nextSpmNo=findNextCode(lastNo); //출하 다음번호 설정 
+      const nextdtlNo = findNextCode(lastdtlNo); //출하상세 다음번호 설정 
+      const f1='f1'; 
+      //출하,출하세부 테이블에 insert  
+      await salesService.addSpmData([nextSpmNo,ord_no,vdr_no,mgr,spm_dt,dlv_addr,f1]); 
+      await salesService.addSpmDtlData([nextdtlNo, nextSpmNo ,minusQty,2500,prd_no]); 
+
+      //prd_hist 테이블에 insert  
+      const lastPrdNo = await salesService.findLastPrdHist();
+      const nextHistNo = findNextCode(lastPrdNo);
+      await salesService.addPrdStkHist([nextHistNo, lot.lot_no, io, minusQty, nowStr, memo]);
     }
     console.log('lot에서 모든 재고를 뺌');
-
-    // if(req_qty>0){
-    //             console.log('제품lot부족');
-    //             //서버 ->  프론트로 알려야함 바로 자재구매계획 등록?? 일단그건보류... 
-    //             return res.status(400).json({
-    //               success:false,
-    //               message:`제품${prd_no}의 재고가 부족합니다`
-    //             });           
-    //           }else if(req_qty<=0){
-    //             console.log('요청수량 제품충분! ');
-
-    //           }
   }
   return res.status(200).json({
     message: '등록완료',
