@@ -9,60 +9,90 @@
     <div class="modal fade" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">주문등록</h5>
+          <div class="modal-header bg-light">
+            <h5 class="modal-title fw-bold">주문등록</h5>
             <button class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <div class="border rounded p-3 mb-4">
+            <!-- 기본 정보 입력 영역 -->
+            <div class="border rounded p-4 mb-4 shadow-sm">
+              <h6 class="mb-3 fw-bold text-primary">기본 정보</h6>
               <div class="row g-3">
-                <div class="col-md-4"><label>납기예정일</label><input type="date" class="form-control" v-model="dueDt" /></div>
-                <div class="col-md-4"><label>거래처</label><input type="text" class="form-control" :value="selectVdr?.cpy_nm || ''" readonly /></div>
-                <div class="col-md-4"><label>거래처코드</label><input type="text" class="form-control" :value="selectVdr?.vdr_no || ''" readonly /></div>
-              
-                <div class="d-flex gap-2">
-                  <button class="btn btn-outline-primary" @click="showVdrModal = true">거래처 선택</button>
-                  <button class="btn btn-outline-primary" @click="showPrdModal = true">상품 선택</button>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">납기예정일</label>
+                  <input type="date" class="form-control" v-model="dueDt" />
                 </div>
-                <vdr-select-modal
-                  v-if="showVdrModal"
-                  :vdr-list="vdrList"
-                  :selected="selectVdr"
-                  @select-vdr="handleVdrSelect"
-                  @close="showVdrModal = false"
-                />
-                <prd-select-modal
-                  v-if="showPrdModal"
-                  :prd-list="prdList"
-                  :selected="selectPrd"
-                  @select-prd="handlePrdSelect"
-                  @close="showPrdModal = false"
-                />
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">거래처</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" :value="selectVdr?.cpy_nm || ''" readonly />
+                    <button class="btn btn-outline-primary" @click="showVdrModal = true">
+                      <i class="bi bi-search"></i> 선택
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">거래처코드</label>
+                  <input type="text" class="form-control" :value="selectVdr?.vdr_no || ''" readonly />
+                </div>
               </div>
             </div>
 
-            <table class="table table-bordered text-center align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th>No</th>
-                  <th>제품 ID</th>
-                  <th>제품명</th>
-                  <th>수량</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
-                  <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
-                  <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
-                </tr>
-              </tbody>
-            </table>
+            <!-- 주문 상품 영역 -->
+            <div class="border rounded p-4 shadow-sm">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0 fw-bold text-primary">주문 상품</h6>
+                <button class="btn btn-outline-primary" @click="showPrdModal = true">
+                  <i class="bi bi-plus-circle"></i> 상품 추가
+                </button>
+              </div>
+              <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th class="bg-light">No</th>
+                    <th class="bg-light">제품 ID</th>
+                    <th class="bg-light">제품명</th>
+                    <th class="bg-light">수량</th>
+                    <th class="bg-light">관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
+                    <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
+                    <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 모달 컴포넌트 -->
+            <vdr-select-modal
+              v-if="showVdrModal"
+              :vdr-list="vdrList"
+              :selected="selectVdr"
+              @select-vdr="handleVdrSelect"
+              @close="showVdrModal = false"
+            />
+            <prd-select-modal
+              v-if="showPrdModal"
+              :prd-list="prdList"
+              :selected="selectPrd"
+              @select-prd="handlePrdSelect"
+              @close="showPrdModal = false"
+            />
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer bg-light">
             <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-            <button class="btn btn-primary" @click="addOrd">주문등록</button>
+            <button class="btn btn-primary" @click="addOrd">
+              <i class="bi bi-check-circle"></i> 주문등록
+            </button>
           </div>
         </div>
       </div>
@@ -90,31 +120,29 @@
           <td>{{ item.ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.vdr_no }}</td>
-          <td>{{ item['요청수량'] }}</td>
+          <td>{{item['요청수량']}}</td>
           <td>{{ item['lot수량'] }}</td>
         </tr>
       </tbody>
     </table>
 
   <table v-else class="table table-bordered text-center mt-4">
-   <thead class="table-light">
-        <tr>   
+    <thead  class="table-light">
+      <tr>
+          <th>날짜</th>
           <th>주문번호</th>
+          <th>제품번호</th>
           <th>제품명</th>
-          <th>거래처코드</th>
+          <th>거래처명</th> 
           <th>요청수량</th>
           <th>LOT재고량</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in ordListByDate" :key="index">
-          <td>{{ item.ord_no }}</td>
-          <td>{{ item.prd_nm }}</td>
-          <td>{{ item.vdr_no }}</td>
-          <td>{{ item['요청수량'] }}</td>
-          <td>{{ item['lot수량'] }}</td>
-        </tr>
-      </tbody>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(item, index) in ordListByDate" :key="index">
+      
+      </tr>
+    </tbody>
   </table>
   </div>
 </template>
@@ -154,7 +182,6 @@ export default {
       try {
         const res = await axios.get('/api/ord');
         this.ordList = res.data;
-        console.log('getOrdList',this.ordList);
       } catch (err) {
         console.error('주문 불러오기 실패', err);
       }
