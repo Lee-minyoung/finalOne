@@ -218,7 +218,84 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
 });
 
 
+//최조 재고량 조회
+router.get('/inventory/checkMinStk', async (req, res) => {
+  try {
+    const { matNo, reqQty } = req.query;
+    console.log('[체크] matNo:', req.query.matNo, 'reqQty:', req.query.reqQty);
 
+    if (!matNo || !reqQty) {
+      return res.status(400).json({ message: 'matNo, reqQty가 필요합니다.' });
+    }
+
+    const result = await inventoryService.getMinStkAfterRelease(parseInt(reqQty), matNo);
+
+    if (result.length > 0) {
+      res.status(200).json({
+        warning: true,
+        message: '출고 후 최소재고량 미달 예상',
+        data: result
+      });
+    } else {
+      res.status(200).json({
+        warning: false,
+        message: '출고 후 재고는 최소재고량 이상입니다.'
+      });
+    }
+  } catch (err) {
+    console.error('🔥 최소재고량 확인 오류:', err);
+    res.status(500).json({ message: '서버 오류', error: err.message });
+  }
+});
+
+
+// 1번 출고처리 프로시저 호출
+router.post('/inventory/releaseByReqNo', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProc(reqNo);
+
+    res.status(200).json({
+      message: '출고 처리 완료',
+      data: result
+    });
+  } catch (err) {
+    console.error('출고 처리 중 오류:', err);
+    res.status(500).json({
+      message: '출고 처리 실패',
+      error: err.message
+    });
+  }
+});
+
+// 2번: 출고 + 구매계획 함께 처리
+router.post('/inventory/releaseAndPlan', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callReleaseAndPlanProc(reqNo);
+    res.status(200).json({ message: '출고 및 구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 통합 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+// 3번: 구매계획만 처리
+router.post('/inventory/planOnly', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callPlanOnlyProc(reqNo);
+    res.status(200).json({ message: '구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 구매계획 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
 
 
 module.exports=router;

@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <h2 class="mb-4">생산지시현황</h2>
 
-    <!-- ✅ 지시 상태 필터 드롭다운 -->
+    <!-- ✅ 지시 상태 필터 -->
     <div class="d-flex justify-content-end mb-3">
       <select v-model="statusFilter" class="form-select w-auto">
         <option value="전체">전체</option>
@@ -13,111 +13,98 @@
       </select>
     </div>
 
-    <table class="table table-bordered text-center" style="min-width: 1200px;">
-      <colgroup>
-        <col style="width: 120px" />
-        <col style="width: 180px" />
-        <col style="width: 120px" />
-        <col style="width: 140px" />
-        <col style="width: 120px" />
-        <col style="width: 120px" />
-        <col style="width: 120px" />
-        <col style="width: 100px" />
-      </colgroup>
-      <thead class="table-light">
-        <tr>
-          <th>지시번호</th>
-          <th>제품명</th>
-          <th>지시수량</th>
-          <th>지시일자</th>
-          <th>지시자</th>
-          <th>재료 입고</th>
-          <th>라인 지정</th>
-          <th>현황</th>
-        </tr>
-      </thead>
+    <!-- ✅ 반응형 테이블 -->
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>지시번호</th>
+            <th>제품명</th>
+            <th class="d-none d-md-table-cell">지시수량</th>
+            <th class="d-none d-md-table-cell">지시일자</th>
+            <th class="d-none d-md-table-cell">지시자</th>
+            <th class="d-none d-lg-table-cell">재료 입고</th>
+            <th class="d-none d-lg-table-cell">라인 지정</th>
+            <th>현황</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr v-for="item in filteredList" :key="item.pdn_ord_dtl_no">
-          <td>{{ item.pdn_ord_no }}</td>
-          <td>{{ item.prd_nm }}</td>
-          <td>{{ formatNumber(item.ord_qty) }}</td>
-          <td>{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
-          <td>{{ item.crt_by }}</td>
+        <tbody>
+          <tr v-for="item in filteredList" :key="item.pdn_ord_dtl_no">
+            <td>{{ item.pdn_ord_no }}</td>
+            <td>{{ item.prd_nm }}</td>
+            <td class="d-none d-md-table-cell">{{ formatNumber(item.ord_qty) }}</td>
+            <td class="d-none d-md-table-cell">{{ dateFormat(item.pdn_ord_dt, 'yyyy-MM-dd') }}</td>
+            <td class="d-none d-md-table-cell">{{ item.crt_by }}</td>
 
-          <!-- ✅ r1 상태 -->
-          <template v-if="item.ord_sts === 'r1'">
-            <td>
-              <span class="badge" :class="{
-                'bg-warning text-dark': item.mat_ins_sts === 'q1',
-                'bg-success': item.mat_ins_sts === 'q2'
-              }">
-                {{
-                  item.mat_ins_sts === 'q1' ? '입고대기'
-                    : item.mat_ins_sts === 'q2' ? '입고완료'
-                      : '오류'
-                }}
-              </span>
-            </td>
-            <td>
-              <div class="d-flex align-items-center justify-content-center gap-2">
-                <span v-if="item.selected_line">{{ item.selected_line }}</span>
-                <span v-else class="text-muted">미지정</span>
-                <button class="btn btn-outline-secondary" @click="openModal(item)">
-                  🔍
+            <!-- ✅ r1 상태: 지시 가능 or 대기 -->
+            <template v-if="item.ord_sts === 'r1'">
+              <td class="d-none d-lg-table-cell">
+                <span class="badge"
+                  :class="{
+                    'bg-warning text-dark': item.mat_ins_sts === 'q1',
+                    'bg-success': item.mat_ins_sts === 'q2'
+                  }">
+                  {{
+                    item.mat_ins_sts === 'q1' ? '입고대기'
+                      : item.mat_ins_sts === 'q2' ? '입고완료'
+                        : '오류'
+                  }}
+                </span>
+              </td>
+              <td class="d-none d-lg-table-cell">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <span v-if="item.selected_line">{{ item.selected_line }}</span>
+                  <span v-else class="text-muted">미지정</span>
+                  <button class="btn btn-outline-secondary btn-sm" @click="openModal(item)">🔍</button>
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-primary" @click="assignLine(item)">지시</button>
+              </td>
+            </template>
+
+            <!-- ✅ r2 상태: 지시 완료 -->
+            <template v-else-if="item.ord_sts === 'r2'">
+              <td class="d-none d-lg-table-cell" colspan="1">
+                <router-link to="/LineMang" class="badge text-dark text-decoration-none"
+                  style="background-color: #aee2f8; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px;">
+                  생산지시완료
+                </router-link>
+              </td>
+              <td class="d-none d-lg-table-cell">
+                <span>{{ item.ln_no }}</span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-danger" @click="stopLine(item)">취소</button>
+              </td>
+            </template>
+
+            <!-- ✅ r3 상태: 생산 완료 -->
+            <template v-else-if="item.ord_sts === 'r3'">
+              <td class="d-none d-lg-table-cell" colspan="2">
+                <span class="badge text-white"
+                  style="background-color: #6c757d; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px;">
+                  생산공정완료
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-info" @click="viewCompleteStatus(item)">
+                  완료현황
                 </button>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-sm btn-primary" @click="assignLine(item)">지시</button>
-            </td>
-          </template>
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <!-- ✅ r2 상태: 생산지시완료 -->
-          <template v-else-if="item.ord_sts === 'r2'">
-            <td colspan="1">
-              <router-link to="/LineMang" class="badge text-dark text-decoration-none"
-                style="background-color: #aee2f8; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px; text-align: center;">
-                생산지시완료
-              </router-link>
-            </td>
-            <td>
-              <span>{{ item.ln_no }}</span>
-            </td>
-            <td>
-              <button class="btn btn-sm btn-danger" @click="stopLine(item)">취소</button>
-            </td>
-          </template>
-
-          <!-- ✅ r3 상태: 생산공정완료 -->
-          <template v-else-if="item.ord_sts === 'r3'">
-            <td colspan="2">
-              <span class="badge text-white"
-                style="background-color: #6c757d; font-size: 0.95rem; padding: 0.5rem 1.2rem; display: inline-block; min-width: 110px; text-align: center;">
-                생산공정완료
-              </span>
-            </td>
-            <!-- <td>
-              <span>{{ item.ln_no }}</span>
-            </td> -->
-            <td>
-              <button class="btn btn-sm btn-outline-info" @click="viewCompleteStatus(item)">
-                완료현황
-              </button>
-            </td>
-          </template>
-
-        </tr>
-      </tbody>
-
-
-    </table>
-
-    <!-- ✅ 모달 -->
-    <LineInstructionModal v-if="showLineModal" :item="selectedItem" :used-lines="usedLines" @set-line="setLine"
-      @close="showLineModal = false" />
+    <!-- ✅ 라인 선택 모달 -->
+    <LineInstructionModal v-if="showLineModal" :item="selectedItem" :used-lines="usedLines"
+      @set-line="setLine" @close="showLineModal = false" />
   </div>
 </template>
+
 
 <script>
 import axios from 'axios'
