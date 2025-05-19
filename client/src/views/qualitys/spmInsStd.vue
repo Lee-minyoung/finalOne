@@ -40,7 +40,7 @@
           <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
           <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
           <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
+          <td><input :value="employeeName" class="form-control" placeholder="작성자" readonly
               style="background-color: #eee;" />
           </td>
           <td><input v-model="newItem.mdf_dt" class="form-control" placeholder="수정일자" readonly
@@ -130,7 +130,7 @@
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
 import PrdSelModal from '@/views/qualitys/PrdSelModal.vue'; // 모달
-
+import { useEmpStore } from '@/stores/empStore.js';
 import { ref, onBeforeMount } from 'vue';
 
 // 반응형 객체 선언 : 원시타입    
@@ -154,6 +154,7 @@ export default {
         crt_by: '',
         mdf_dt: '',
       },
+      empStore: useEmpStore(),
       // updateItem: {
       //   ins_itm: '',
       //   ins_mthd: '',
@@ -163,6 +164,11 @@ export default {
       //   spm_ins_std_no: '',
       // },
     };
+  },
+  computed:{
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
   },
   methods: {
     // 등록

@@ -12,6 +12,13 @@
 // LEFT JOIN pur_ord p ON s.pur_ord_no = p.pur_ord_no
 // LEFT JOIN vdr v ON p.vdr_no = v.vdr_no`;
 
+// 자재검색
+const selectMat =
+`SELECT mat_no,
+        mat_nm
+FROM mat 
+ORDER BY mat_no`;
+
 //발주번호, 거래처명 불러오기
 const selectOrd =
 `SELECT m.pur_ord_no, v.cpy_nm
@@ -63,7 +70,7 @@ WHERE inc_ins_std_no =  ?`;
 // 성적서 등록
 const insertRslt=
 `INSERT INTO inc_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, acpt_qty, rjct_qty, ovr_jdg, rmk, pur_ord_no, lot_no)
-VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
+VALUES(?, ?, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl=
 `INSERT INTO inc_ins_rslt_dtl(inc_ins_rslt_dtl_no, mgr_date, inc_ins_std_no, mgr_rslt, jdg, rmk, cert_no)
@@ -81,15 +88,15 @@ const selectLastRsltNo1 =
  const selectLot=
  `SELECT s.lot_no, m.mat_no, m.mat_nm, s.prc_qty, s.pur_ord_no
 FROM mat_stk s JOIN mat m ON s.mat_no=m.mat_no
-WHERE lot_no IN(SELECT lot_no FROM inc_ins_rslt) IS NULL`;
+WHERE lot_no = (SELECT lot_no FROM inc_ins_rslt) IS NULL`;
 
 // 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
 const selRsltMat=
 `SELECT s.lot_no, m.mat_no, m.mat_nm
-FROM mat_stk s JOIN mat m 
-WHERE lot_no IN (SELECT lot_no
+FROM mat_stk s JOIN mat m ON s.mat_no=m.mat_no
+WHERE lot_no IN(SELECT lot_no
 			FROM inc_ins_rslt)`;
-
+      
 // 상세조회
 const selRsltPrdDtl=
 `SELECT 
@@ -125,6 +132,7 @@ WHERE lot_no = ?`;
 
 
 module.exports={
+  selectMat,
   selectLot,
   selectOrd,
   selectIncInsStd,

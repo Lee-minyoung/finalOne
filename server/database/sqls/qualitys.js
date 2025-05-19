@@ -110,8 +110,9 @@ WHERE spm_ins_rslt_dtl_no LIKE 'YGS-%'
 
  // 성적서 조회
  const getSpmInsRslt1=
- `SELECT r.mgr_count, r.succ_count, r.dft_count, r.ovr_jdg, d.mgr_rslt, d.jdg, d.rmk, d.prd_no
-FROM spm_ins_rslt r JOIN spm_ins_rslt_dtl d
+ `SELECT r.mgr_count, r.succ_count, r.dft_count, r.ovr_jdg, d.mgr_rslt, d.jdg, d.rmk, d.prd_no, e.nm
+FROM spm_ins_rslt r JOIN spm_ins_rslt_dtl d ON r.rslt_no=d.rslt_no
+JOIN emp e ON r.mgr=e.emp_no
 WHERE d.rslt_no = ?`
 
 const getSpmInsRslt2=

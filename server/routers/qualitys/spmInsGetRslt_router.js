@@ -29,4 +29,15 @@ router.get('/spmInsGetRslt/detail', async (req, res) => {
   }
 });
 
+router.get('/spmInsGetRslt/withEmp', async (req, res) => {
+  const { rslt_no } = req.query;
+  if (!rslt_no) return res.status(400).send('rslt_no 필요');
+  try {
+    const rows = await spmInsGetRsltService.getSpmInsRsltWithEmp(rslt_no);
+    res.send(rows);
+  } catch (err) {
+    res.status(500).send('조회 실패');
+  }
+});
+
 module.exports = router;
