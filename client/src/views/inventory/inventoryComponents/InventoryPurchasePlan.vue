@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>자재구매요청</h3>
+    <h3>자재구매계획</h3>
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">
         <thead>
@@ -47,6 +47,4 @@ export default {
     }
   }
 }
-
 </script>
-
