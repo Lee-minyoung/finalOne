@@ -36,28 +36,20 @@ router.post('/ord', async (req, res) => {
     const ord_sts = 'y'; //상태
     const rgt_dt = new Date(); //현재 날짜  
     const mdf_dt = new Date(); //수정날짜 현재날짜     
-    //detailData
-    const lastDetail = await salesService.findLastDetail(); //  
-    const nextOrdDetail = findNextCode(lastDetail);
-    console.log('다음 수주세부번호', nextOrdDetail); //
-    const ord_dtl_no = nextOrdDetail;
-    const prd_no = req.body.prd_no; //일단 임시로 만듦 
-    const prd_qty = req.body.prd_qty; //수량 
-
-    //const ord_sts=  일단 null값 
     const ordData = [ord_no, vdr_no, emp_no, due_dt, ord_sts, rgt_dt, mdf_dt];
-    const detailData = [ord_dtl_no, ord_no, prd_no, prd_qty];
-    console.log('ordData:', ordData);
-    console.log('detailData:', detailData);
-    //3. 트랜잭션 insert
+    // 1. 주문 기본정보 저장
     await salesService.addOrdData2(ordData);
-    await salesService.addOrdDtlData2(detailData);
-
+    // 2. 상품별로 상세 저장
+    let lastDetail = await salesService.findLastDetail();
+    for (const product of req.body.products) {
+      lastDetail++;
+      const detailData = [lastDetail, ord_no, product.prd_no, product.prd_qty];
+      await salesService.addOrdDtlData2(detailData);
+    }
     res.status(200).json({
       message: '등록완료',
       code: nextOrdNo
     });
-
   } catch (err) {
     console.error("🔥 등록 중 에러:", err);
     res.status(500).json({
@@ -65,7 +57,6 @@ router.post('/ord', async (req, res) => {
       error: err.message
     });
   }
-
 });
 // 기간별 주문조회  
 router.get('/ord/by-date', async (req, res) => {
