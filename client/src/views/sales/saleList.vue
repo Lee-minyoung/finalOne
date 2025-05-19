@@ -50,7 +50,11 @@
         <div class="modal-content">
           <div class="modal-header bg-light">
             <h5 class="modal-title fw-bold">주문등록</h5>
+<<<<<<< HEAD
             <button class="btn-close" @click="showOrderModal = false"></button>
+=======
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+>>>>>>> origin/Eunae
           </div>
           <div class="modal-body">
             <!-- 기본 정보 입력 영역 -->
@@ -96,6 +100,7 @@
                   </tr>
                 </thead>
                 <tbody>
+<<<<<<< HEAD
                   <tr v-for="(prd, idx) in orderProducts" :key="prd.prd_no">
                     <td>{{ idx + 1 }}</td>
                     <td><input type="text" class="form-control" :value="prd.prd_no" readonly /></td>
@@ -103,6 +108,15 @@
                     <td><input type="number" class="form-control" v-model.number="prd.qty" min="1" /></td>
                     <td>
                       <button class="btn btn-sm btn-outline-danger" @click="removeProduct(idx)">
+=======
+                  <tr>
+                    <td>1</td>
+                    <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
+                    <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
+                    <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-danger">
+>>>>>>> origin/Eunae
                         <i class="bi bi-trash"></i>
                       </button>
                     </td>
@@ -110,6 +124,25 @@
                 </tbody>
               </table>
             </div>
+<<<<<<< HEAD
+=======
+
+            <!-- 모달 컴포넌트 -->
+            <vdr-select-modal
+              v-if="showVdrModal"
+              :vdr-list="vdrList"
+              :selected="selectVdr"
+              @select-vdr="handleVdrSelect"
+              @close="showVdrModal = false"
+            />
+            <prd-select-modal
+              v-if="showPrdModal"
+              :prd-list="prdList"
+              :selected="selectPrd"
+              @select-prd="handlePrdSelect"
+              @close="showPrdModal = false"
+            />
+>>>>>>> origin/Eunae
           </div>
           <div class="modal-footer bg-light">
             <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -144,8 +177,13 @@
           <td>{{ item.ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.vdr_no }}</td>
+<<<<<<< HEAD
           <td>{{ item['요청수량']}}</td>
           <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0}}</td>
+=======
+          <td>{{item['요청수량']}}</td>
+          <td>{{ item['lot수량'] }}</td>
+>>>>>>> origin/Eunae
         </tr>
       </tbody>
     </table>
@@ -169,7 +207,11 @@
           <td>{{ item.prd_nm }}</td>
          <td>{{ item.cpy_nm }}</td>
           <td>{{item['요청수량']}}</td>
+<<<<<<< HEAD
           <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0 }}</td>
+=======
+          <td>{{ item['lot수량'] }}</td>
+>>>>>>> origin/Eunae
       </tr>
     </tbody>
   </table>

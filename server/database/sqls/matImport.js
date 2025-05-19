@@ -1,6 +1,11 @@
 //matImport.js
+<<<<<<< HEAD
 const selectMatImportList =
   `SELECT 
+=======
+const selectMatImportList=
+`SELECT 
+>>>>>>> origin/Eunae
         po.pur_ord_no,
         po.mat_no,
         m.mat_nm as 자재명, 
@@ -23,6 +28,7 @@ const selectMatImportList =
 //  left join mat m on mpp.mat_no=m.mat_no
 //  left JOIN vdr v ON po.vdr_no=v.vdr_no
 //  GROUP BY po.pur_ord_no`; 
+<<<<<<< HEAD
 
 
 // 추가시 적용되는 자재LOT번호
@@ -41,6 +47,19 @@ const selectLastLotNo =
   END AS addLotNo
 FROM mat_stk
 WHERE lot_no LIKE CONCAT('MAT', DATE_FORMAT(CURDATE(), '%y%m%d'), '%')`;
+=======
+
+const selectLastLotNo=
+`SELECT lot_no 
+FROM mat_stk 
+WHERE lot_no LIKE CONCAT('MAT', DATE_FORMAT(NOW(), '%Y%m%d'), '%') 
+ORDER BY lot_no DESC 
+LIMIT 1
+for update`;
+    
+const selectLastLothistNo=`
+SELECT MAX(mat_stk_hist_no) AS maxMatHist FROM mat_stk_hist;`   
+>>>>>>> origin/Eunae
 
 // 추가시 적용되는 자재재고이력번호
 const selectLastLothistNo = `
@@ -75,6 +94,7 @@ const insertmatStkHist =
   ?, ?, ?, ?
 )`;
 
+<<<<<<< HEAD
 // const get_next_lot_no =
 //   `CALL get_next_lot_no`;
 
@@ -86,3 +106,16 @@ module.exports = {
   insertmatStkHist,
   // get_next_lot_no
 }
+=======
+const get_next_lot_no =
+`CALL get_next_lot_no`
+
+ module.exports={
+    selectMatImportList, 
+    selectLastLotNo,
+    selectLastLothistNo,
+    insertmatStk,
+    insertmatStkHist,
+    get_next_lot_no
+ }
+>>>>>>> origin/Eunae
