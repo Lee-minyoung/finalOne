@@ -43,9 +43,9 @@
           <td>{{ item.cpy_nm }}</td>
           <td>{{ item.prd_no }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ item['요청수량'] }}</td>
-          <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
-          <td>{{ item['납기예정'] }}</td>
+          <td>{{ item.prd_qty }}</td>
+          <td>{{ item['현재고량'] <= 0 ? 0 : item['현재고량'] }}</td>
+          <td>{{ item.due_dt }}</td> 
           <td>
             <span
               class="badge"

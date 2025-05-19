@@ -55,7 +55,7 @@
           <td>{{ ord['수량'] }}</td>
           <td>{{ ord['단가'] }}</td>
           <td>{{ ord['금액'] }}</td>
-          <td>{{ ord.vdr_no }}</td>
+          <td>{{ ord.cpy_nm }}</td>
           <td>{{ ord['발주일자'] }}</td>
           <td>
             <span v-if="ord['발주에서재고']>0">

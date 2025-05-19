@@ -32,14 +32,17 @@ const selectOrdList=
      , p.prd_nm 
      , od.prd_qty 
      , IFNULL((SELECT SUM(cur_stk) FROM prd_stk WHERE prd_no = od.prd_no), 0) as 현재고량
+     , v.cpy_nm
+     , DATE_FORMAT(o.due_dt, '%Y-%m-%d') AS due_dt
   FROM ord o
   LEFT JOIN ord_dtl od ON o.ord_no = od.ord_no
   LEFT JOIN prd p ON od.prd_no = p.prd_no
+  JOIN vdr v ON v.vdr_no=o.vdr_no
 	WHERE NOT EXISTS (
     SELECT 1 FROM spm s WHERE s.ord_no = o.ord_no
-  )  ORDER BY ord_no
-`;
-
+  )
+ORDER BY o.ord_no desc;
+`; 
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 

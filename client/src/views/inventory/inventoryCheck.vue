@@ -17,7 +17,8 @@
               <span class="d-flex justify-content-between align-items-center w-100">
                 <span>
                   <b>{{ isExpanded(reqNo) ? '▼' : '▶' }}</b>
-                  출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건) | 지시번호 : <b>{{ items[0].생산지시번호 }}</b> | 제품명 : <b>{{ items[0].제품명 }}</b>
+                  출고요청번호: <b>{{ reqNo }}</b> (자재 {{ items.length }}건) | 지시번호 : <b>{{ items[0].생산지시번호 }}</b> | 제품명 :
+                  <b>{{ items[0].제품명 }}</b>
                 </span>
                 <button class="btn btn-success rounded-pill px-2 py-1 me-2" @click.stop="checkMat(reqNo)" type="button">
                   자재출고
@@ -25,7 +26,6 @@
               </span>
             </td>
           </tr>
-          
           <!-- 아코디언 하위 내용 -->
           <template v-if="isExpanded(reqNo)">
             <!-- 각 섹션의 헤더 -->
@@ -49,9 +49,12 @@
               <td class="align-middle" v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['현재재고'] / 1000) }}L</td>
               <td class="align-middle" v-else>{{ formatNumber(item['현재재고']) }}</td>
 
-              <td class="align-middle" v-if="item['단위'] == 'g'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}kg</td>
-              <td class="align-middle" v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}EA</td>
-              <td class="align-middle" v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}L</td>
+              <td class="align-middle" v-if="item['단위'] == 'g'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 :
+                0) }}kg</td>
+              <td class="align-middle" v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] :
+                0) }}EA</td>
+              <td class="align-middle" v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] /
+                1000 : 0) }}L</td>
               <td class="align-middle" v-else>{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}</td>
 
               <td class="align-middle">
@@ -61,8 +64,10 @@
                 <template v-else-if="item['자재처리결과'] == 'c3' || reqClickedList.includes(item['계획ID'] + item['자재명'])">
                   <button class="btn btn-info rounded-pill px-2 py-1" disabled>요청완료</button>
                 </template>
-                <template v-else-if="item['부족수량'] > 0 && !(item['자재처리결과'] == 'c3') && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-                  <button class="btn btn-success rounded-pill px-2 py-1" @click="addPurOrd(item)" type="button">자재요청</button>
+                <template
+                  v-else-if="item['부족수량'] > 0 && !(item['자재처리결과'] == 'c3') && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
+                  <button class="btn btn-success rounded-pill px-2 py-1" @click="addPurOrd(item)"
+                    type="button">자재요청</button>
                 </template>
               </td>
             </tr>
@@ -71,7 +76,6 @@
       </tbody>
     </table>
   </div>
-
   <h3>자재구매계획 </h3>
   <table class="table table-bordered text-center" style="max-width: 1150px;">
     <colgroup>
@@ -82,10 +86,8 @@
       <col style="width: 200px" />
       <col style="width: 100px" />
     </colgroup>
-
     <thead>
       <tr>
-
         <th scope="col">자재ID</th>
         <th scope="col">자재명</th>
         <th scope="col">수량</th>
@@ -97,16 +99,13 @@
     <tbody class="align-middle">
       <!-- 필터.. -->
       <tr v-for="(item, index) in inventoryPurPlan" :key="index">
-
         <td>{{ item['자재번호'] }}</td>
         <td>{{ item['자재명'] }}</td>
         <td class="text-end pe-4">{{ formatNumber(item['총합']) }}</td>
         <td class="text-end pe-4">{{ formatNumber(item['총가격']) }}원</td>
         <td>{{ item['거래처명'] }}</td>
         <!--생산계획 버튼-->
-
         <!--생산계획모달 end-->
-
         <td>
           <button class="btn btn-success rounded-pill px-2 py-1"
             @click="minCheckAndPurOrd(item['자재번호'], item['총합'], item['계획ID'])" type="button">발주하기</button>
@@ -114,12 +113,9 @@
       </tr>
     </tbody>
   </table>
-
-
 </template>
 
 <script>
-
 import axios from 'axios';
 export default {
   name: 'InventoryCheck',
@@ -137,15 +133,12 @@ export default {
       reqClickedList: [],
       lotMinusDoneReqNo: [], //출고 마감 완료  
       plnToOrdNo: [], //
-
     };
   },
   async created() {
-    await this.fetchInventoryStatus();
-    await this.fetchInventoryPurPlan(); //자재구매계획 일단불러오기   
+    await this.fetchInventoryStatus(); // 아코디언 리스트
+    await this.fetchInventoryPurPlan(); // 자재구매계획 일단불러오기   
     await this.filteredPurPlanList(); //수량을 
-
-
   },
   // ** 지시번호별 번호 묶기
   computed: {
@@ -172,11 +165,8 @@ export default {
       return filterGrouped
     }
   },
-
-
-
   methods: {
-    async fetchInventoryStatus() {
+    async fetchInventoryStatus() { // 아코디언에서 사용
       try {
         const result = await axios.get('/api/inventory/mtStatus')
         this.inventoryStatus = result.data;
@@ -190,7 +180,6 @@ export default {
         const result = await axios.get('/api/getPurPlnChecked')
         //allPurPlan 모든 자재구매계획을 불러옴 
         this.allPurPlan = result.data;
-
         // 자재구매계획 -> 발주 처리된 자재구매계획번호를 서버에서 불러옴  
         //  // 발주처리된 자재구매계획은 안보여지게함    
         const Nos = await axios.get('/api/PlnToOrd') //
@@ -198,14 +187,11 @@ export default {
         console.log('allpurPlan', this.allPurPlan);
         console.log(this.plnToOrdNo);
         this.inventoryPurPlan = this.allPurPlan.filter(p => !this.plnToOrdNo.includes(p['계획ID']));
-
       } catch (error) {
         console.log('자재구매계획 실패', error);
       }
-
     },
     async filteredPurPlanList() {
-
       const rawData = this.inventoryPurPlan; //item['자재ID']='M-001'
       console.log('필터링전 rawdata', rawData);
       const filtered = []; //수량이  
@@ -223,13 +209,10 @@ export default {
         //   // console.log('최소주문수량보다 작음');
         // }
       }//end of for 
-
       this.filteredPurPlan = filtered;
       //console.log('필터링된 자재구매계획',this.filteredPurPlan);
-
     },
     async getMinOrdqty(matId) {
-
       try { //
         const minqty = await axios.get('/api/inventory/minqty', {
           params: {
@@ -256,11 +239,9 @@ export default {
         //fetchInventoryPurPlan()
         await this.fetchInventoryPurPlan();
         return add;
-
       } catch (error) {
         console.log(error,);
       }
-
     },
     //** */ 아코디언 토글
     toggleAccordion(reqNo) {
@@ -283,7 +264,6 @@ export default {
       } else {
         alert('최소수량을 넘기지 못해 주문할수 없습니다');
       }
-
     },
     //생산계획 모달창에서 자재ID로 생산계획 조회하기 일단 나중에.... 
     async fetchPrdPlanByMatId(matId) {
@@ -308,8 +288,6 @@ export default {
       const availableMats = matList.filter(item => item['부족수량'] <= 0);
       //자재구매계획 세워야하는 자재 
       //const purPlnMats=matList.filter(item=>item['부족수량']>0);
-
-
       try {
         const payload = availableMats.map(item => ({
           mat_no: item['자재ID'],
@@ -317,9 +295,6 @@ export default {
           pln_id: item['계획ID']
         }))
         console.log('payload', payload);
-
-
-
         //서버에서 출고완료 됐는지 안됐는지 확인
         // 서버왜없지..?    
         const matsts = await axios.get('/api/MatStatus', {
@@ -329,13 +304,9 @@ export default {
           }
         });
         console.log('matsts', matsts);
-
         //우선 조건문문 풀기 
-
         // 출고가 가능한 애들은 우선 처리됨
         await axios.post('/api/inventory/lotMinusList', payload); //자재차감 되고 자재출고처리 -> q2로 변환 
-
-
       } catch (err) {
         if (err.response && err.response.status === 400) {
           alert(err.response.data.message);
@@ -351,10 +322,8 @@ export default {
         const reqQty = parseFloat(item['총필요량']);
         const curQty = parseFloat(item['현재재고']);
         // console.log('allAvailabe실행중..',item);
-
         return curQty >= reqQty;
       });
-
       if (!allAvailable) {
         alert('일부 자재의 재고가 부족합니다.');
         return;
@@ -373,19 +342,13 @@ export default {
       //       mat_no:matNo, 
       //       req_qty:reqQty,
       //       pln_id:plnId
-
       //      });         
-
       //      if(curQty<minStk){
       //       console.log('자재구매계획으로 이동');
-
       //      }
-
       //      this.inventoryStatus=this.inventoryStatus.filter(item=>item['계획ID']!==reqNo);
       //      this.expandedReqNos=this.expandedReqNos.filter(id=>id!==reqNo);
-
       //      alert('출고가 완료 되었습니다'); 
-
       //   }catch(err){
       //     console.log(err); 
       //     alert('실패')
@@ -393,15 +356,10 @@ export default {
       //  }
       //  //현재재고가 더 총필요량보다 적은경우 
       // //   else if(curQty<reqQty){
-
       // //  }
-
-
-
       // }
     },
     goToReqPage(item) {
-
       console.log('자재요청item', item);
       this.$router.push({
         name: 'MatReq',
@@ -434,8 +392,6 @@ export default {
         console.log('allpurPlan', this.allPurPlan);
         console.log(this.plnToOrdNo);
         this.inventoryPurPlan = this.allPurPlan.filter(p => !this.plnToOrdNo.includes(p['계획ID']));
-
-
       } catch (error) {
         console.log('자재요청실패', error);
       }
@@ -444,8 +400,6 @@ export default {
       if (n == null || isNaN(n)) return '-'
       return new Intl.NumberFormat().format(n)
     },
-
-    //this.pu
   }
 }
 

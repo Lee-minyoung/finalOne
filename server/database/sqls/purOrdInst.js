@@ -30,11 +30,14 @@ const selectMatPurPlanChecked=
   v.vdr_no AS 거래처코드,
   v.cpy_nm AS 거래처명,
   m.prc*mpp.qty AS 총가격, 
-  m.unit AS 단위
+  m.unit AS 단위,
+  p.mat_pur_pln_no
 FROM mat_pur_pln mpp
 LEFT JOIN mat m ON mpp.mat_no = m.mat_no
 LEFT JOIN vdr v ON m.mn_vdr = v.vdr_no
+left join pur_ord p on mpp.mat_pur_pln_no=p.mat_pur_pln_no 
 WHERE mpp.ord_check = 'check' 
+and p.mat_pur_pln_no is null
 ORDER BY mpp.mat_pur_pln_no DESC`;
 
  //자재출고요청 -> q1(출고요청) 인지 ,q2(출고완료) 인지조회 
