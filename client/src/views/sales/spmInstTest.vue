@@ -111,12 +111,17 @@ export default {
           return;
         }
       }
-
+// 오늘 날짜 구하기 (YYYY-MM-DD)
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${yyyy}-${mm}-${dd}`;
       try {
         const payloads = this.selectedOrders.map(item => ({
           ord_no: item.ord_no,
           dlv_addr: item.ofc_addr,
-          spm_dt: item['납기예정'],
+          spm_dt: todayStr, // ← 오늘 날짜로 세팅
           vdr_no: item.vdr_no,
           lot_no: item.lot_no,
           prd_no: item.prd_no,
