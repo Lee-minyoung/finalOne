@@ -14,10 +14,7 @@
                     지시번호: <b>{{ items[0].생산지시번호 }}</b> |
                     제품명: <b>{{ items[0].제품명 }}</b>
                   </span>
-                  <button
-                    class="btn btn-success rounded-pill px-2 py-1 me-2"
-                    @click.stop="processRequest(reqNo)"
-                  >
+                  <button class="btn btn-success rounded-pill px-2 py-1 me-2" @click.stop="processRequest(reqNo)">
                     자재출고
                   </button>
                 </div>

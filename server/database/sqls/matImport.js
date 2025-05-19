@@ -39,10 +39,14 @@ INSERT INTO mat_stk_hist (
   ?, ?, ?, ?
 )`
 
+const get_next_lot_no =
+`CALL get_next_lot_no`
+
  module.exports={
     selectMatImportList, 
     selectLastLotNo,
     selectLastLothistNo,
     insertmatStk,
-    insertmatStkHist,    
+    insertmatStkHist,
+    get_next_lot_no
  }

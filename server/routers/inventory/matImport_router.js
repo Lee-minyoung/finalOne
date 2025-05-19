@@ -31,6 +31,7 @@ router.post('/addMatImports', async (req, res) => {
       } = info;
 
       const newLotNo = await matImportService.getNextLotNo();
+      console.log(newLotNo)
 
       const matStk = [
         newLotNo, mat_no, qty, warehouse_no, nowStr,

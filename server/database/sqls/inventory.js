@@ -256,6 +256,13 @@ HAVING 출고후예상재고 < m.min_stk_qty;`
 // 출고요청 -> q2-> q2로 변경경 거래처/수령인/수령방법 제외. 출고이력이기에..
 const callReleaseProc = `CALL proc_release_by_req_id(?)`;
 
+// 2번: 출고 + 구매계획 통합 프로시저
+const callReleaseAndPlanProc = `CALL proc_release_and_plan_by_req_id(?)`;
+
+// 3번: 구매계획 등록만 (출고 불가능 자재)
+const callPlanOnlyProc = `CALL proc_insert_pur_plan_for_insufficient(?)`;
+
+
 module.exports = {
  selectPrdPlanByMaterial,
  selectMaterialStatusByRequest,
@@ -284,5 +291,8 @@ updateMatStkBylotNo,
 updateMatStsToq2BymatNo,
  // 자재출고처리 c3로 변경
  findMinStkAfterRelease, // 최소재고량 조회
-callReleaseProc //출고버튼 클릭시 이력에 남김
+callReleaseProc, //출고버튼 클릭시 이력에 남김
+callReleaseAndPlanProc,
+callPlanOnlyProc
+
 };

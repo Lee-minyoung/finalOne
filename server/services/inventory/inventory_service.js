@@ -143,17 +143,19 @@ const changeMatStsToq2ByMatNo=async(reqNo,matNo)=>{
 const getMinStkAfterRelease = async (reqQty, matNo) => {
   return await mariadb.query('findMinStkAfterRelease', [reqQty, matNo]);
 };
-// 출고요청. 
+// 1번 출고요청. 
 const callReleaseProc = async (reqNo) => {
   console.log('[서비스] 출고 단독 처리:', matReqNo);
   return await mariadb.query('callReleaseProc', [reqNo]);
 };
 
+// 2번 출고 + 자재요청
 const callReleaseAndPlanProc = async (matReqNo) => {
   console.log('[서비스] 출고+구매계획 통합 처리:', matReqNo);
   return await mariadb.query('callReleaseAndPlanProc', [matReqNo]);
 };
 
+// 3번 자재요청
 const callPlanOnlyProc = async (matReqNo) => {
   console.log('[서비스] 구매계획 단독 처리:', matReqNo);
   return await mariadb.query('callPlanOnlyProc', [matReqNo]);

@@ -16,7 +16,7 @@
       @refresh-pur-plan="fetchInventoryPurPlan"
     />
   </div>
-</template>
+</template> 
 
 <script>
 import InventoryStatus from './InventoryStatus.vue'
