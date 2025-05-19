@@ -1,12 +1,21 @@
 //matImport.js
 const selectMatImportList=
-`SELECT po.pur_ord_no,po.mat_no,m.mat_nm as 자재명 ,po.qty ,po.unt_prc,po.vdr_no,DATE_FORMAT(DATE_ADD(mpp.crt_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,v.cpy_nm AS 거래처명,ms.pur_ord_no as 발주에서자재
- from pur_ord po 
- join mat_pur_pln mpp on po.mat_no=mpp.mat_no
- left join mat m on mpp.mat_no=m.mat_no
- left JOIN vdr v ON po.vdr_no=v.vdr_no
- left JOIN mat_stk ms ON po.pur_ord_no=ms.pur_ord_no
- where ms.pur_ord_no IS NULL
+`SELECT 
+        po.pur_ord_no,
+        po.mat_no,
+        m.mat_nm as 자재명, 
+        po.qty,
+        po.unt_prc,
+        po.vdr_no,
+        DATE_FORMAT(DATE_ADD(mpp.crt_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,
+        v.cpy_nm AS 거래처명,
+        ms.pur_ord_no as 발주에서자재
+ FROM pur_ord po 
+ JOIN mat_pur_pln mpp on po.mat_no=mpp.mat_no
+ LEFT JOIN mat m on mpp.mat_no=m.mat_no
+ LEFT JOIN vdr v ON po.vdr_no=v.vdr_no
+ LEFT JOIN mat_stk ms ON po.pur_ord_no=ms.pur_ord_no
+ WHERE ms.pur_ord_no IS NULL
  GROUP BY po.pur_ord_no`;
 // `SELECT po.pur_ord_no,po.mat_no,m.mat_nm as 자재명 ,po.qty ,po.unt_prc,po.vdr_no,DATE_FORMAT(DATE_ADD(mpp.crt_dt,interval 1 year),"%Y-%m-%d") AS 유통기한,v.cpy_nm AS 거래처명 
 //  from pur_ord po 
