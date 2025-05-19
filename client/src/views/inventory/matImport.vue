@@ -1,4 +1,5 @@
 <template>
+
   <div class="col-md-10 p-4">
     <h4 class="mb-4">입고처리</h4>
     <!-- 출하지시 입력 폼 -->
@@ -58,6 +59,7 @@
     <table class="table table-bordered text-center mt-4">
       <thead class="table-light">
         <tr>
+          <th><input type="checkbox" /></th>
           <th>발주번호</th>
           <th>자재ID</th>
           <th>자재명</th>
@@ -74,63 +76,113 @@
           <td>{{ item.mat_no }}</td>
           <td>{{ item['자재명'] }}</td>
           <td>{{ item.qty }}</td>
-          <td>{{ item['유통기한'] }}</td>
+          <td> {{ item['유통기한'] }}</td>
           <td>{{ item.vdr_no }}</td>
           <td>{{ item['거래처명'] }}</td>
         </tr>
       </tbody>
     </table>
-  </div>
-</template>
+    <!-- 자재입고 버튼 -->
+    <!-- <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" @click="saveImport">자재입고</button>
+      </div> -->
+    <!--자재여러개입고-->
+    <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-primary" @click="manyImports">자재입고</button>
+    </div>
 
+  </div>
+
+
+
+</template>
 <script>
 import axios from 'axios';
-import { useEmpStore } from '@/stores/empStore.js';
 import Swal from 'sweetalert2';
 
 export default {
   data() {
     return {
-      purToLotStatus: [],
-      checkPur: [],
-      purOrdNo: 0,
-      matNo: '',
-      wareNo: 0,
-      expDt: '',
-      prcsr: '',
-      rcvr: 0,
-      rcvrMth: '1',
-      empStore: useEmpStore(),
+      mode: 'basic', //체크하기   
+      purToLotStatus: [], //입고검사하고 lot대기하는 애들 
+      checkPur: [], //발주 -> lot 대기하는 애들중에 체크되는 애들 
+      //프론트 -> 서버로 넘겨야함      
+      purOrdNo: 0, //발주번호 
+      matNo: '',//자재번호
+      wareNo: 0, //창고번호     
+      expDt: '', //유통기한
+      prcsr: '', //처리자 - 로그인 한 사람  
+      rcvr: 0, //수령자 
+      rcvrMth: '', //수령방법 
+
     };
   },
   async created() {
-    const result = await axios.get('/api/ordToLot');
+    const result = await axios.get('/api/ordToLot')
     this.purToLotStatus = result.data;
   },
-  computed: {
-    employeeName() {
-      return this.empStore.loginInfo.nm || '';
-    },
-  },
   methods: {
+    //자재하나만 입고 
+    async saveImport() {
+      const payLoad = {
+        mat_no: this.checkPur[0]?.mat_no,//자재번호
+        //현재재고....  cur_stk,prc_qty,qty 모두 공통 
+        qty: this.checkPur[0]?.qty,
+        //입고일자,처리일시,일자,  
+        warehouse_no: this.wareNo, //창고번호 
+        cnsm_lmt_dt: this.expDt, //유통기한
+        unt_prc: this.checkPur[0]?.unt_prc,//단가
+        pur_ord_no: this.purOrdNo, //발주번호,비고(입고시발주번호) 
+        prcsr: this.prcsr, //처리자 
+        vdr_no: this.checkPur[0]?.vdr_no, //거래처번호
+        rcvr: this.rcvr, //수령자
+        rcv_mthd: this.rcvrMth //수령방법  
+      }
+      try {
+        await axios.post('/api/addMatImport', payLoad);
+        alert('자재입고완료');
+      } catch (err) {
+        alert('실패 ㅠㅠ ');
+
+      }
+    },
+    handleCheckChange() {
+      if (this.checkPur.length === 1) {
+        const item = this.checkPur[0];
+        this.mode = 'checked';
+        this.purOrdNo = item.pur_ord_no;
+        this.expDt = item['유통기한'];
+      } else {
+        this.mode = 'basic'
+        // alert('하나의 발주건만 선택해주세요');
+        // return;  
+      }
+
+    },
+    //여러개입고하기 
     async manyImports() {
+
+      console.log('전체발주건', this.purToLotStatus);
+      console.log('체크된 발주건', this.checkPur);
+
       const selectedOrds = this.purToLotStatus.filter(order => {
         return this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no);
       });
 
       const payloads = selectedOrds.map(item => ({
-        mat_no: item.mat_no,
+        mat_no: item.mat_no,//자재번호
+        //현재재고....  cur_stk,prc_qty,qty 모두 공통 
         qty: item.qty,
-        warehouse_no: this.wareNo,
-        cnsm_lmt_dt: item['유통기한'],
-        unt_prc: item.unt_prc,
-        pur_ord_no: item.pur_ord_no,
-        prcsr: this.empStore.loginInfo.emp_no,
-        vdr_no: item.vdr_no,
-        rcvr: this.empStore.loginInfo.emp_no,
-        rcv_mthd: this.rcvrMth
-      }));
-
+        //입고일자,처리일시,일자,  
+        warehouse_no: this.wareNo, //창고번호 
+        cnsm_lmt_dt: this.expDt, //유통기한
+        unt_prc: item.unt_prc,//단가
+        pur_ord_no: item.pur_ord_no, //발주번호,비고(입고시발주번호) 
+        prcsr: this.prcsr, //처리자 
+        vdr_no: item.vdr_no, //거래처번호
+        rcvr: this.rcvr, //수령자
+        rcv_mthd: this.rcvrMth //수령방법
+      }))
       try {
         await axios.post('/api/addMatImports', payloads);
         alert('자재입고완료');
@@ -140,29 +192,10 @@ export default {
       catch (err) {
         alert('자재입고실패');
       }
-    },
-    isSelected(item) {
-      return this.checkPur.some(p => p.pur_ord_no === item.pur_ord_no);
-    },
-    toggleRow(item) {
-      const idx = this.checkPur.findIndex(p => p.pur_ord_no === item.pur_ord_no);
-      if (idx > -1) {
-        this.checkPur.splice(idx, 1);
-      } else {
-        this.checkPur.push(item);
-      }
-      if (this.checkPur.length === 1) {
-        const first = this.checkPur[0];
-        this.purOrdNo = first.pur_ord_no;
-        this.expDt = first['유통기한'];
-      }
-    },
-  },
-};
-</script>
+    }
 
-<style scoped>
-.table-primary {
-  background-color: #cce5ff;
+  },
+
 }
-</style>
+
+</script>

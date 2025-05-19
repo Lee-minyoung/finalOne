@@ -129,7 +129,7 @@
   <table v-else class="table table-bordered text-center mt-4">
     <thead  class="table-light">
       <tr>
-          <th>날짜</th>
+        
           <th>주문번호</th>
           <th>제품번호</th>
           <th>제품명</th>
@@ -140,7 +140,12 @@
     </thead>
     <tbody>
       <tr v-for="(item, index) in ordListByDate" :key="index">
-      
+        <td>{{ item.ord_no }}</td>
+         <td>{{ item.prd_no }}</td>
+          <td>{{ item.prd_nm }}</td>
+         <td>{{ item.cpy_nm }}</td>
+          <td>{{item['요청수량']}}</td>
+          <td>{{ item['lot수량'] }}</td>
       </tr>
     </tbody>
   </table>
