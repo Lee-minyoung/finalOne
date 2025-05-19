@@ -20,6 +20,7 @@ const findIncInsStdList = async (mat_no) => {
 const addRslt = async (incInsRsltInfo) => {
   let data = [
     incInsRsltInfo.rslt_no,
+     incInsRsltInfo.mgr,
     incInsRsltInfo.mgr_count,
     incInsRsltInfo.acpt_qty,
     incInsRsltInfo.rjct_qty,

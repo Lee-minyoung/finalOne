@@ -87,8 +87,9 @@ const selectLastRsltNo1 =
  // 성적서가 작성되지 않은 검사 자재 불러오기(성적서 작성 페이지)
  const selectLot=
  `SELECT s.lot_no, m.mat_no, m.mat_nm, s.prc_qty, s.pur_ord_no
-FROM mat_stk s JOIN mat m ON s.mat_no=m.mat_no
-WHERE lot_no = (SELECT lot_no FROM inc_ins_rslt) IS NULL`;
+FROM mat_stk s
+JOIN mat m ON s.mat_no = m.mat_no
+WHERE s.lot_no NOT IN (SELECT lot_no FROM inc_ins_rslt)`;
 
 // 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
 const selRsltMat=
