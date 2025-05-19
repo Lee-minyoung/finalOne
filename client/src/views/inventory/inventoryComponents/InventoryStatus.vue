@@ -105,7 +105,7 @@ export default {
     // ✅ 출고 시도 → 실패 시 구매계획
     async processRequest(reqNo) {
       try {
-        const { data } = await axios.post('/api/inventory/releaseSmart', { reqNo })
+        const { data } = await axios.post('/api/inventory/releaseByReqNo', { reqNo })
 
         if (data.status === 'purchase_required') {
           const confirm = await Swal.fire({
