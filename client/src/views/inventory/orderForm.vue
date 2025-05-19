@@ -1,7 +1,7 @@
 <template>
 
   <!--자재구매계획X,사용자직접입력발주하기 -->
-  <div v-if="checkedMatPln.length ===0" class="container py-4">
+  <div v-if="mode=='basic'" class="container py-4">
     <h2 class="mb-4 fw-bold">발주서입력</h2>
 
     <div class="d-flex justify-content-end mb-3 gap-2">
@@ -91,7 +91,7 @@
   <!--사용자직접입력 발주 end -->
 
   <!--자재구매계획에서 체크한후 뜨는 입력폼   -->
-  <div v-else-if="checkedMatPln.length>0" class="container py-4">
+  <div v-else-if="mode=='checked'" class="container py-4">
     <h2 class="mb-4 fw-bold">발주서입력</h2>
 
     <div class="d-flex justify-content-end mb-3 gap-2">
@@ -182,10 +182,10 @@
   </td>
   <td>{{ item['자재번호'] }}</td>
   <td>{{ item['자재명'] }}</td>
-  <td>{{ item['총합'] }}</td>
-  <td>{{ item['총가격'] }}</td>
-  <td v-if="!item['거래처코드']">거래처x</td>
-  <td v-else>{{ item['거래처명'] }}</td>
+  <td>{{converterUnit( item['총합'],item.unit) }}</td>
+  <td>{{ formatNumber(item['총가격'])  }}</td>
+  <td v-if="!item.vdr_no">거래처x</td>
+  <td v-else>{{ item.cpy_nm }}</td>
 </tr>
   </tbody>
 </table>
@@ -214,7 +214,8 @@ data() {
    crtDt:new Date().toISOString().slice(0, 10),
    matPurPlanChecked:[], //자재요청 -> 체크된 애들 
    checkedMatPln:[],  //  체크박스 눌렀을때 matpln 
-   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때  
+   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때
+
   }
 },
 async created(){
@@ -231,7 +232,8 @@ totalPrc() {
     return this.qty * this.selectMats[0].prc;
   }
   return 0;
-}
+},
+
 },
 methods:{
   //클릭하면 발주서 조회 페이지로 이동 
@@ -271,7 +273,8 @@ methods:{
    this.matPurPlanChecked=this.matPurPlanChecked.filter(item => !plnToOrdNo.includes(item['계획ID']));    
     console.log('발주버튼누른후자재구매계획',this.matPurPlanChecked);
   console.log('matPurPlanChecked 샘플', this.matPurPlanChecked[0]);
-
+    this.checkedMatPln=[];
+    this.mode='basic'; 
   } catch (err) {
     console.error('저장 실패:', err);
     alert('에러발생');
@@ -323,6 +326,8 @@ async fetchInventoryPurPlan(){
       this.selectMats = [{
         mat_no: item['자재번호'],
         mat_nm: item['자재명'],
+        vdr_no:item.vdr_no,
+        cpy_nm:item.cpy_nm,
         prc: Number(item['총가격']) / Number(item['총합']) || 0
       }];
       if (item['거래처코드']) {
@@ -341,7 +346,22 @@ async fetchInventoryPurPlan(){
       this.qty = 0;
       alert('하나의 자재만 선택하세요'); 
     }
-  }
+  }, 
+     formatNumber(n) {
+      if (n == null || isNaN(n)) return '-'
+      return new Intl.NumberFormat().format(n)
+    },
+
+   converterUnit(value, unit) {
+      let convertedValue = value;
+      if (unit === 'g') {
+        convertedValue = value / 1000 ; // Convert grams to kilograms
+      } else if (unit === 'L') {
+        convertedValue = value / 1000; // Convert liters to kiloliters
+      }
+      convertedValue = this.formatNumber(convertedValue) + ' ' + unit; // Return the original value for other units
+      return convertedValue
+    }
 
 }, 
 

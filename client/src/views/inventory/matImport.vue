@@ -1,43 +1,60 @@
 <template>
   <div class="col-md-10 p-4">
-    <!-- 상단 제목 -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="mb-0">입고처리</h4>
-    </div>
-
-    <!-- 입력 박스 -->
-    <div class="card p-3 mb-4">
-      <!-- 카드 상단에 버튼 정렬 -->
-      <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-primary btn-sm" @click="manyImports">자재입고</button>
-      </div>
-
-      <div class="row g-3">
-        <!-- 담당자 -->
-        <div class="col-md-4">
-          <label class="form-label">담당자</label>
-          <input v-model="employeeName" class="form-control" type="text" placeholder="예담창고" disabled>
-        </div>
-
-        <!-- 창고번호 -->
-        <div class="col-md-4">
-          <label class="form-label">창고번호</label>
-          <input class="form-control" type="text" placeholder="예담창고" disabled>
-        </div>
-
-        <!-- 수령방법 -->
-        <div class="col-md-4">
-          <label class="form-label">수령방법</label>
-          <select class="form-select" v-model="rcvrMth">
-            <option value="1">수령방법1</option>
-            <option value="2">수령방법2</option>
-            <option value="3">수령방법3</option>
+    <h4 class="mb-4">입고처리</h4>
+    <!-- 출하지시 입력 폼 -->
+    <div class="row mb-3 g-3">
+      <!-- <div class="col-md-3">
+          <label class="form-label">유통기한</label>
+          <input v-model="expDt"  type="date" class="form-control">
+        </div> -->
+      <!-- <div class="col-md-3">
+          <label class="form-label">숫자임!수령자</label>
+          <input v-model="rcvr" type="number" class="form-control">
+        </div> -->
+      <tr class="mb-4">
+        <th style="width: 20%; min-width: 120px; border:none;">수령자</th>
+        <td colspan="3" style="border:none;">
+          <select v-model="rcvr" class="form-select">
+            <option value=1>수령자1</option>
+            <option value=2>수령자2</option>
+            <option value=3>수령자3</option>
           </select>
-        </div>
-      </div>
-    </div>
+        </td>
+      </tr>
 
-    <!-- 제품 목록 테이블 -->
+
+      <!-- <div class="col-md-3">
+          <label class="form-label">숫자임!처리자</label>
+          <input v-model="prcsr" type="number" class="form-control">
+        </div> -->
+
+      <tr class="mb-4">
+        <th style="width: 20%; min-width: 120px; border:none;">처리자</th>
+        <td colspan="3" style="border:none;">
+          <select v-model="prcsr" class="form-select">
+            <option value=1>처리자1</option>
+            <option value=2>처리자2</option>
+            <option value=3>처리자3</option>
+          </select>
+        </td>
+      </tr>
+      <tr class="mb-4">
+        <th style="width: 20%; min-width: 120px; border:none;">창고번호</th>
+        <td colspan="3" style="border:none;">
+          <input class="form-control" type="text" placeholder="예담창고" aria-label="Disabled input example" disabled>
+        </td>
+      </tr>
+
+      <tr class="mb-4">
+        <th style="width: 20%; min-width: 120px; border:none;">수령방법</th>
+        <td colspan="3" style="border:none;">
+          <select class="form-select" v-model="rcvrMth">
+            <option value=1>일반입고</option>
+            <option value=2>샘플입고</option>
+          </select>
+        </td>
+      </tr>
+    </div>
     <table class="table table-bordered text-center mt-4">
       <thead class="table-light">
         <tr>
@@ -51,8 +68,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in purToLotStatus" :key="item.pur_ord_no" :class="{ 'table-primary': isSelected(item) }"
-          @click="toggleRow(item)" style="cursor: pointer;">
+        <tr v-for="item in purToLotStatus" :key="item.pur_ord_no">
+          <td><input type="checkbox" :value="item" v-model="checkPur" @change="handleCheckChange" /></td>
           <td>{{ item.pur_ord_no }}</td>
           <td>{{ item.mat_no }}</td>
           <td>{{ item['자재명'] }}</td>
@@ -117,10 +134,10 @@ export default {
       try {
         await axios.post('/api/addMatImports', payloads);
         alert('자재입고완료');
-        // 입고 후 목록에서 제거
-        this.purToLotStatus = this.purToLotStatus.filter(item => !this.checkPur.includes(item));
-        this.checkPur = [];
-      } catch (err) {
+        const res= await axios.get('/api/ordToLot');
+        this.purToLotStatus=res.data;  
+      }
+      catch (err) {
         alert('자재입고실패');
       }
     },
