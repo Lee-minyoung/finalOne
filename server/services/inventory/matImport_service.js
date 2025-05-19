@@ -108,19 +108,11 @@ const addMatStkAndMatStkHist = async (matStkList) => {
 };
 
 // ✅ lot_no 자동 생성 프로시저 실행
-<<<<<<< HEAD
 // const getNextLotNo = async () => {
 //   const [rows] = await mariadb.query('get_next_lot_no');
 //   console.log(JSON.stringify(rows, null, 2))
 //   return rows[0][0]?.new_lot_no;
 // };
-=======
-const getNextLotNo = async () => {
-  const [rows] = await mariadb.query('get_next_lot_no');
-  console.log(JSON.stringify(rows, null, 2))
-  return rows[0][0]?.new_lot_no;
-};
->>>>>>> origin/Eunae
 
 module.exports = {
   findmatPurToLotList,

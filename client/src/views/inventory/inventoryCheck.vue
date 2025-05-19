@@ -28,18 +28,9 @@
             </span>
           </td>
         </tr>
-<<<<<<< HEAD
-        <!-- class="d-flex justify-content-end mb-3"  -->
-        <!-- ** 아코디언 하위 내용 -->
-        <template v-if="isExpanded(reqNo)">
-          <tr v-for="item in items" :key="item.mat_req_no">
-            <!-- <td></td> -->
-            <td>{{ item['자재명'] }}</td>
-=======
         <template v-if="isExpanded(reqNo)">
           <tr v-for="item in items" :key="item.mat_req_no">
            <td>{{ item['자재명'] }}</td>
->>>>>>> origin/Eunae
 
             <td v-if="item['단위'] == 'g'">{{ formatNumber(item['총필요량'] / 1000) }}kg</td>
             <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['총필요량']) }}EA</td>
@@ -57,19 +48,6 @@
             <td v-else-if="item['단위'] == 'EA'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}EA</td>
             <td v-else-if="item['단위'] == 'ml'">{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] / 1000 : 0) }}L</td>
             <td v-else>{{ formatNumber(item['부족수량'] > 0 ? item['부족수량'] : 0) }}</td>
-<<<<<<< HEAD
-            <!-- <td>{{ item['상태'] === 'g1' ? '미확인' : '확인' }}</td> -->
-            <!-- <td v-if="item['부족수량'] > item['현재재고'] && !reqClickedList.includes(item['계획ID'] + item['자재명'])">
-  <button class="btn btn-success rounded-pill px-3 py-2" @click="addPurOrd(item)" type="button">자재요청</button>
-</td>
-
-
-        <td v-if="item['부족수량'] <= 0">
-  <span class="badge bg-primary px-3 py-2 rounded-pill">출고완료</span>
-</td> -->
-=======
-
->>>>>>> origin/Eunae
             <td>
               <template v-if="item['부족수량'] <= 0">
                 <button class="btn btn-primary rounded-pill px-3 py-2" disabled>출고완료</button>
@@ -163,12 +141,6 @@
         <td>{{ formatNumber(item['총합']) }}</td>
         <td>{{ formatNumber(item['총가격']) }}원</td>
         <td>{{ item.cpy_nm }}</td>
-<<<<<<< HEAD
-        <!--생산계획 버튼-->
-
-        <!--생산계획모달 end-->
-=======
->>>>>>> origin/Eunae
 
         <td>
           <button class="btn btn-success rounded-pill px-2 py-1"

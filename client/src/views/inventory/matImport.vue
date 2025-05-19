@@ -95,13 +95,10 @@ export default {
     }
   },
   methods: {
-<<<<<<< HEAD
     async getList() {
       const result = await axios.get('/api/ordToLot');
       this.purToLotStatus = result.data;
     },
-=======
->>>>>>> origin/Eunae
     isSelected(item) {
       return this.checkPur.some(p => p.pur_ord_no === item.pur_ord_no);
     },
@@ -119,7 +116,6 @@ export default {
         this.expDt = first['유통기한'];
       }
     },
-<<<<<<< HEAD
 
     // 자재입고 버튼 클릭시 실행할 함수 
     async manyImports() {
@@ -168,47 +164,6 @@ export default {
         }
       }
     },
-=======
-    async manyImports() {
-      const selectedOrds = this.purToLotStatus.filter(order =>
-        this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no)
-      );
-
-      const payloads = selectedOrds.map(item => ({
-        mat_no: item.mat_no,
-        qty: item.qty,
-        warehouse_no: this.wareNo,
-        cnsm_lmt_dt: item['유통기한'],
-        unt_prc: item.unt_prc,
-        prcsr: this.empStore.loginInfo.emp_no
-      }));
-
-      try {
-        await axios.post('/api/inventory/addLots', payloads);
-
-        await Swal.fire({
-          icon: 'success',
-          title: '입고 완료',
-          text: '선택한 자재의 LOT이 성공적으로 등록되었습니다.'
-        });
-
-        // 등록된 pur_ord_no만 제거
-        const completedPurNos = selectedOrds.map(item => item.pur_ord_no);
-        this.purToLotStatus = this.purToLotStatus.filter(item =>
-          !completedPurNos.includes(item.pur_ord_no)
-        );
-        this.checkPur = [];
-
-      } catch (err) {
-        console.error('🔥 자재입고 실패:', err);
-        await Swal.fire({
-          icon: 'error',
-          title: '입고 실패',
-          text: '중복 LOT 번호 또는 서버 오류가 발생했습니다.'
-        });
-      }
-    }
->>>>>>> origin/Eunae
   }
 };
 </script>

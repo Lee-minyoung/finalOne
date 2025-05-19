@@ -1,10 +1,6 @@
 <template>
   <div>
-<<<<<<< HEAD
     <h3>자재출고요청</h3>
-=======
-    <h3>자재현황파악</h3>
->>>>>>> origin/Eunae
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">
         <tbody>
@@ -109,11 +105,8 @@ export default {
     // ✅ 출고 시도 → 실패 시 구매계획
     async processRequest(reqNo) {
       try {
-<<<<<<< HEAD
         const { data } = await axios.post('/api/inventory/releaseByReqNo', { reqNo })
-=======
-        const { data } = await axios.post('/api/inventory/releaseSmart', { reqNo })
->>>>>>> origin/Eunae
+
 
         if (data.status === 'purchase_required') {
           const confirm = await Swal.fire({
@@ -185,8 +178,4 @@ export default {
     },
   }
 }
-<<<<<<< HEAD
 </script>
-=======
-</script>
->>>>>>> origin/Eunae

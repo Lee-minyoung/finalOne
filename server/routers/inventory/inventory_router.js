@@ -234,33 +234,6 @@ router.get('/inventory/checkMinStk', async (req, res) => {
   try {
     const { matNo, reqQty } = req.query;
     console.log('[체크] matNo:', req.query.matNo, 'reqQty:', req.query.reqQty);
-<<<<<<< HEAD
-=======
-
-    if (!matNo || !reqQty) {
-      return res.status(400).json({ message: 'matNo, reqQty가 필요합니다.' });
-    }
-
-    const result = await inventoryService.getMinStkAfterRelease(parseInt(reqQty), matNo);
-
-    if (result.length > 0) {
-      res.status(200).json({
-        warning: true,
-        message: '출고 후 최소재고량 미달 예상',
-        data: result
-      });
-    } else {
-      res.status(200).json({
-        warning: false,
-        message: '출고 후 재고는 최소재고량 이상입니다.'
-      });
-    }
-  } catch (err) {
-    console.error('🔥 최소재고량 확인 오류:', err);
-    res.status(500).json({ message: '서버 오류', error: err.message });
-  }
-});
->>>>>>> origin/Eunae
 
     if (!matNo || !reqQty) {
       return res.status(400).json({ message: 'matNo, reqQty가 필요합니다.' });

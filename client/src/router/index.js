@@ -162,23 +162,6 @@ const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior: () => ({ top: 0 })
-<<<<<<< HEAD
-=======
-})
-
-// ✅ 로그인 안하면 접근 못하게 막기
-router.beforeEach((to, from, next) => {
-  const store = useEmpStore()
-  const isLoggedIn = !!store?.loginInfo?.emp_no
-
-  if (to.meta.requiresAuth && !isLoggedIn) {
-    next({ name: 'login' })
-  } else if (to.name === 'login' && isLoggedIn) {
-    next({ name: 'Home' })
-  } else {
-    next()
-  }
->>>>>>> origin/Eunae
 })
 
 // ✅ 로그인 안하면 접근 못하게 막기

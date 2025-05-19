@@ -68,8 +68,6 @@ export default {
     }
   }
 }
-<<<<<<< HEAD
+
 </script>
-=======
-</script>
->>>>>>> origin/Eunae
+

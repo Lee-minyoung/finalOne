@@ -1,10 +1,6 @@
 <template>
   <div>
-<<<<<<< HEAD
     <h3>자재구매요청</h3>
-=======
-    <h3>자재구매계획</h3>
->>>>>>> origin/Eunae
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">
         <thead>
@@ -51,8 +47,6 @@ export default {
     }
   }
 }
-<<<<<<< HEAD
+
 </script>
-=======
-</script>
->>>>>>> origin/Eunae
+

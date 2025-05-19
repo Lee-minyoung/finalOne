@@ -1,10 +1,6 @@
 <template>
   <!--자재구매계획X,사용자직접입력발주하기 -->
-<<<<<<< HEAD
-  <div v-if="mode=='basic'" class="container py-4">
-=======
   <div v-if="mode == 'basic'" class="container py-4">
->>>>>>> origin/Eunae
     <h2 class="mb-4 fw-bold">발주서입력</h2>
     <div class="d-flex justify-content-end mb-3 gap-2">
       <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
@@ -69,36 +65,15 @@
       </div>
     </div>
 
-<<<<<<< HEAD
-    <mat-single-select-modal
-      v-if="showModal"
-      :mat-list="mat"
-      :selected="selectMats[0]"
-      @select-mat="handleMaterialSelect"
-      @close="showModal = false"
-    />
-    <vdr-select-modal
-      v-if="showVdrModal"
-      :vdr-list="vdr"
-      :selected="selectVdr"
-      @select-vdr="handleVdrSelect"
-      @close="showVdrModal = false"
-    />
-=======
     <mat-select-modal v-if="showModal" :mat-list="mat" :selected="selectMats" @select-mat="handleMaterialSelect"
       @close="showModal = false" />
     <vdr-select-modal v-if="showVdrModal" :vdr-list="vdr" :selected="selectVdr" @select-vdr="handleVdrSelect"
       @close="showVdrModal = false" />
->>>>>>> origin/Eunae
   </div>
   <!--사용자직접입력 발주 end -->
 
   <!--자재구매계획에서 체크한후 뜨는 입력폼   -->
-<<<<<<< HEAD
-  <div v-else-if="mode=='checked'" class="container py-4">
-=======
   <div v-else-if="mode == 'checked'" class="container py-4">
->>>>>>> origin/Eunae
     <h2 class="mb-4 fw-bold">발주서입력</h2>
     <div class="d-flex justify-content-end mb-3 gap-2">
       <button class="btn btn-primary" @click="saveOrder">발주 등록</button>
@@ -156,164 +131,35 @@
     </div>
   </div>
   <h3>자재구매계획</h3>
-  <table class="table">
-<<<<<<< HEAD
-  <thead>
-    <tr>
-      <th scope="col">선택</th>
-      <th scope="col">자재ID</th>
-      <th scope="col">자재명</th>
-      <th scope="col">수량</th>
-      <th scope="col">총가격</th>
-      <th scope="col">거래처</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="(item, index) in matPurPlanChecked" :key="item['자재번호']">
-  <td>
-    <input 
-      type="checkbox"
-      :value="item" 
-      v-model="checkedMatPln"    
-      @change="handleCheckChange"
-    />
-  </td>
-  <td>{{ item['자재번호'] }}</td>
-  <td>{{ item['자재명'] }}</td>
-  <td>{{converterUnit( item['총합'],item.unit) }}</td>
-  <td>{{ formatNumber(item['총가격'])  }}</td>
-  <td v-if="!item.vdr_no">거래처x</td>
-  <td v-else>{{ item.cpy_nm }}</td>
-</tr>
-  </tbody>
-</table>
-</template>
-<script>
-import matSelectModal from '@/views/modal/matSelectModal.vue';
-import matSingleSelectModal from '@/views/modal/matSingleSelectModal.vue';
-import vdrSelectModal from '@/views/modal/vdrSelectModal.vue'; 
-import axios from 'axios';
-
-export default{
-components:{
-  matSelectModal,
-  matSingleSelectModal,
-  vdrSelectModal, 
-},
-data() {
-  return {
-   showModal:false,
-   showVdrModal:false,
-   mat:[], //자재목록 
-   selectMats:[], // 기존 코드와의 호환성을 위해 배열 유지
-   vdr:[], //거래처목록
-   selectVdr:null,  
-    //수량 x 자재가 선택되면 자동 계산  
-   qty:0,  
-   purDt:'',
-   crtDt:new Date().toISOString().slice(0, 10),
-   matPurPlanChecked:[], //자재요청 -> 체크된 애들 
-   checkedMatPln:[],  //  체크박스 눌렀을때 matpln 
-   mode:'basic', //자재구매계획 눌렀을때랑 안눌렀을때
-
-  }
-},
-async created(){
-  const res=await axios.get('/api/inventory/mat');
-  this.mat=res.data;
-  //const vdrs=await axios.get('/api/vdrList');
-  const vdrs=await axios.get('/api/vdr');
-  this.vdr=vdrs.data; 
-  await this.fetchInventoryPurPlan(); // 자재구매계획 데이터 가져오기  
-},
-computed: {
-totalPrc() {
-  if (this.qty && this.selectMats.length) {
-    return this.qty * this.selectMats[0].prc;
-  }
-  return 0;
-},
-
-},
-methods:{
-  //클릭하면 발주서 조회 페이지로 이동 
-  gotoOrdView() {
-    this.$router.push({ name: 'OrdView' });
-  },
-
-  handleMaterialSelect(selectedMat){
-    // 선택된 자재를 배열로 변환하여 저장 (기존 코드와의 호환성 유지)
-    this.selectMats = selectedMat ? [selectedMat] : [];
-    this.showModal = false;
-  },
-  handleVdrSelect(selectedVdr){
-    this.selectVdr=selectedVdr;
-    this.showVdrModal=false; 
-  }, 
-  async saveOrder() {
-  const payload = {
-    vdr_no: this.selectVdr?.vdr_no??1000,       // 거래처번호
-    crt_dt:this.crtDt,                    
-    pur_dt: this.purDt,                   // 발주일자
-    mat_no: this.selectMats[0]?.mat_no,   // 자재번호
-    qty: this.qty,                        // 수량
-    prc: this.selectMats[0]?.prc,         // 단가
-    total: this.totalPrc                  // 총가격(computed)
-  };
-
-  try {
-    await axios.post('/api/addPurOrd', payload);
-    alert('발주 저장 완료!');
-   // this.matPurPlanChecked=await axios.get('/api/getPurPlnChecked'); 
-   const Nos=await axios.get('/api/PlnToOrd') //
-   console.log('Nos',Nos.data); // 발주서 저장후 체크된 애들 삭제
-   const plnToOrdNo=Nos.data.map(p => p['계획ID']);
-   console.log('plnToOrdNo',plnToOrdNo); 
-   this.matPurPlanChecked=this.matPurPlanChecked.filter(item => !plnToOrdNo.includes(item['계획ID']));    
-    console.log('발주버튼누른후자재구매계획',this.matPurPlanChecked);
-  console.log('matPurPlanChecked 샘플', this.matPurPlanChecked[0]);
-    this.checkedMatPln=[];
-    this.mode='basic'; 
-  } catch (err) {
-    console.error('저장 실패:', err);
-    alert('에러발생');
-    console.log('payLoad',payload);
-  }
-}, 
-async fetchInventoryPurPlan(){
-    try{
-      const result=await axios.get('/api/getPurPlnChecked')
-      this.matPurPlanChecked=result.data; 
-      console.log('matPurPlanChecked',this.matPurPlanChecked); // 
-    }catch(error){
-      console.log('자재구매계획 실패',error); 
-=======
-    <thead>
-      <tr>
-        <th scope="col">선택</th>
-        <th scope="col">자재번호</th>
-        <th scope="col">자재명</th>
-        <th scope="col">수량</th>
-        <th scope="col">총가격</th>
-        <th scope="col">거래처</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in matPurPlanChecked" :key="item['자재번호']">
-        <td>
-          <!-- <input type="checkbox" :value="item" v-model="checkedMatPln" @change="handleCheckChange(index)" /> -->
-          <input type="checkbox" :value="item" :checked="checkedMatPln === index" @change="handleCheckChange(index)" />
-        </td>
-        <td>{{ item['자재번호'] }}</td>
-        <td>{{ item['자재명'] }}</td>
-        <!-- <td>{{ converterUnit(item['총합'], item.unit) }}</td> -->
-        <td>{{ item['총합'] }}</td>
-        <td>{{ formatNumber(item['총가격']) }}</td>
-        <td v-if="!item.vdr_no">거래처x</td>
-        <td v-else>{{ item.cpy_nm }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <table class="table table-hover text-center align-middle">
+      <thead>
+        <tr>
+          <th scope="col">자재번호</th>
+          <th scope="col">자재명</th>
+          <th scope="col">수량</th>
+          <th scope="col">총가격</th>
+          <th scope="col">거래처</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in matPurPlanChecked"
+          :key="item['자재번호']"
+          @click="handleCheckChange(index)"
+          :class="{ 'table-primary': checkedMatPln === index }"
+          style="cursor: pointer"
+        >
+          <td>{{ item['자재번호'] }}</td>
+          <td>{{ item['자재명'] }}</td>
+          <td>{{ item['총합'] }}</td>
+          <td>{{ formatNumber(item['총가격']) }}</td>
+          <td>
+            <span v-if="!item.vdr_no">거래처x</span>
+            <span v-else>{{ item.cpy_nm }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 </template>
 <script>
 import matSelectModal from '@/views/modal/matSelectModal.vue';
@@ -341,7 +187,6 @@ export default {
       checkedMatPln: null,  //  체크박스 눌렀을때 matpln 
       mode: 'basic', //자재구매계획 눌렀을때랑 안눌렀을때
       mat_pur_pln_no: null, // 자재 구매 계획 번호
->>>>>>> origin/Eunae
     }
   },
   async created() {
@@ -406,33 +251,6 @@ export default {
         alert('에러발생');
         console.log('payLoad', payload);
       }
-<<<<<<< HEAD
-
-    console.log('this.selectMats',this.selectMats);
-
-
-   }, 
-   
-   handleCheckChange() {
-    if (this.checkedMatPln.length === 1) {
-      const item = this.checkedMatPln[0];
-      this.mode = 'checked';
-      this.qty = item['총합'];
-      this.purDt = new Date().toISOString().slice(0, 10);
-      this.selectMats = [{
-        mat_no: item['자재번호'],
-        mat_nm: item['자재명'],
-        vdr_no:item.vdr_no,
-        cpy_nm:item.cpy_nm,
-        prc: Number(item['총가격']) / Number(item['총합']) || 0
-      }];
-      if (item['거래처코드']) {
-        this.selectVdr = {
-          vdr_no: item['거래처코드'],
-          cpy_nm: item['거래처명']
-        };
-      } else {
-=======
     },
     async fetchInventoryPurPlan() { // 자재구매계획 불러오는 API
       try {
@@ -472,7 +290,6 @@ export default {
         this.checkedMatPln = null;
         this.mode = 'basic';
         this.selectMats = [];
->>>>>>> origin/Eunae
         this.selectVdr = null;
         this.qty = 0;
       } else {
@@ -498,36 +315,6 @@ export default {
           ? { vdr_no: item.vdr_no, cpy_nm: item.cpy_nm }
           : null;
       }
-<<<<<<< HEAD
-    } else {
-      // 다중 선택 or 해제 → 초기화
-      this.mode = 'basic';
-      this.selectMats = [];
-      this.selectVdr = null;
-      this.qty = 0;
-      alert('하나의 자재만 선택하세요'); 
-    }
-  }, 
-     formatNumber(n) {
-      if (n == null || isNaN(n)) return '-'
-      return new Intl.NumberFormat().format(n)
-    },
-
-   converterUnit(value, unit) {
-      let convertedValue = value;
-      if (unit === 'g') {
-        convertedValue = value / 1000 ; // Convert grams to kilograms
-      } else if (unit === 'L') {
-        convertedValue = value / 1000; // Convert liters to kiloliters
-      }
-      convertedValue = this.formatNumber(convertedValue) + ' ' + unit; // Return the original value for other units
-      return convertedValue
-    }
-
-}, 
-
-
-=======
     },
     // handleCheckChange(index) {
     //   // if (this.checkedMatPln.length === 1) {
@@ -578,6 +365,5 @@ export default {
     //   return convertedValue
     // }
   },
->>>>>>> origin/Eunae
 }
 </script>
