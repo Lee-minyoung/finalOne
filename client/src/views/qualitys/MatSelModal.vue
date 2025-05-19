@@ -18,17 +18,17 @@
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
               <tr>
-                <th>LOT번호</th>
+                <th>자재번호</th>
                 <th>자재명</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="item in filteredMats"
-                :key="item.lot_no"
+                :key="item.mat_no"
                 @click="selectMat(item)"
                 style="cursor: pointer;">
-                <td>{{ item.lot_no }}</td>
+                <td>{{ item.mat_no }}</td>
                 <td>{{ item.mat_nm }}</td>
               </tr>
             </tbody>

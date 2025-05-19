@@ -7,10 +7,9 @@
     </div>
     <!-- 조회 조건 -->
     <div class="input">
-      LOT번호 <input v-model="searchQuery" class="form-control" id="input_id" placeholder="" readonly />
-      <button class="btn btn-outline-secondary" id="icon-btn" @click="openMatModal">🔍</button>
       <!-- 자재명은 필요시 추가 -->
-      자재번호 <input :value="selectedMatNo" class="form-control" id="input" readonly style="background-color: #eee;" />
+      자재번호 <input :value="selectedMatNo" class="form-control" id="input_id" readonly style="background-color: #eee;" />
+      <button class="btn btn-outline-secondary" id="icon-btn" @click="openMatModal">🔍</button>
       자재명 <input :value="selectedMatNm" class="form-control" id="input" readonly style="background-color: #eee;" />
     </div>
     <br>
@@ -37,7 +36,7 @@
           <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
           <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
           <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input v-model="newItem.crt_by" class="form-control" placeholder="작성자" readonly
+          <td><input :value="employeeName" class="form-control" placeholder="작성자" readonly
               style="background-color: #eee;" /></td>
           <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>
           <td>
@@ -112,6 +111,7 @@
 <script>
 import axios from 'axios';
 import MatSelModal from '@/views/qualitys/MatSelModal.vue';
+import { useEmpStore } from '@/stores/empStore.js';
 
 export default {
   components: { MatSelModal },
@@ -130,7 +130,13 @@ export default {
         crt_by: '',
         rmk: '',
       },
+      empStore: useEmpStore(),
     };
+  },
+  computed:{
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
   },
   methods: {
     // 등록
@@ -223,16 +229,15 @@ export default {
     },
     // 모달
     openMatModal() {
-      axios.get('/api/incInsStd/matList')
-        .then(res => {
-          this.matList = Array.isArray(res.data) ? res.data : [];
-          this.showMatModal = true;
-        })
-        .catch(err => {
-          console.error('자재 목록 불러오기 실패', err);
-          this.matList = [];
-        });
-    },
+  axios.get('/api/incInsStd/mat')
+    .then(res => {
+      this.matList = Array.isArray(res.data) ? res.data : [];
+      this.showMatModal = true;
+    })
+    .catch(err => {
+      this.matList = [];
+    });
+},
     // 자재 선택 시
     handleSelectedMat(item) {
       this.searchQuery = item.lot_no;
