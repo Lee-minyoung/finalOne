@@ -112,7 +112,7 @@
             </div>
           </div>
           <div class="modal-footer bg-light">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            <button class="btn btn-secondary" @click="closeModal">닫기</button>
             <button class="btn btn-primary" @click="addOrd">
               <i class="bi bi-check-circle"></i> 주문등록
             </button>
@@ -159,13 +159,13 @@ export default {
       ordList: [],
       vdrList: [],
       prdList: [],
-      ordListByDate: [],
-      startDate: '',
-      endDate: '',
+      dateArray: [], // 날짜 배열 추가
+      startDate: new Date().toISOString().slice(0, 10), // 오늘 날짜로 초기화
+      endDate: new Date().toISOString().slice(0, 10),   // 오늘 날짜로 초기화
       dateShow: false,
-      orderProducts: [], // 주문 상품 배열
-      tempPrd: null,     // 임시 선택 상품
-      tempQty: 1,        // 임시 수량
+      orderProducts: [],
+      tempPrd: null,
+      tempQty: 1,
     };
   },
   async created() {
@@ -174,7 +174,14 @@ export default {
     this.prdList = (await axios.get('/api/prd')).data || [];
   },
   methods: {
-    async getOrdList() {
+      closeModal() {
+        this.showOrderModal = false;
+        this.dueDt = '';
+        this.selectVdr = null;
+        this.vdrCd = '';
+        this.orderProducts = [];
+      },
+      async getOrdList() {
       try {
         const res = await axios.get('/api/ord');
         this.ordList = res.data;
@@ -238,9 +245,10 @@ export default {
       this.orderProducts.splice(idx, 1);
     },
     async fetchOrdByDate() {
-      console.log('날짜 확인:', this.startDate, this.endDate)
-      this.dateArray = ['품명', '현재고']
-      this.dateShow = true; 
+      if (!this.startDate || !this.endDate) {
+        alert('시작일과 종료일을 모두 선택해주세요.');
+        return;
+      }
 
       try {
         const result = await axios.get('/api/ord/by-date', {
@@ -248,19 +256,17 @@ export default {
             startDate: this.startDate,
             endDate: this.endDate
           }
-        })
-        this.ordListByDate = result.data
-        const current = new Date(this.startDate)
-        const end = new Date(this.endDate)
-        while (current <= end) {
-          const dateStr = current.toISOString().slice(0, 10)
-          this.dateArray.push(dateStr)
-          current.setDate(current.getDate() + 1)
+        });
+        
+        if (result.data) {
+          this.ordList = result.data;
+          if (this.ordList.length === 0) {
+            alert('해당 기간에 주문 내역이 없습니다.');
+          }
         }
-        console.log('기간별 주문리스트', this.ordListByDate)
-
       } catch (err) {
-        console.log('기간별 주문리스트 불러오기 실패', err)
+        console.error('기간별 주문리스트 불러오기 실패', err);
+        alert('주문 내역 조회 중 오류가 발생했습니다.');
       }
     },
   },
