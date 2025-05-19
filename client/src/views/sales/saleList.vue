@@ -120,8 +120,8 @@
           <td>{{ item.ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.vdr_no }}</td>
-          <td>{{item['요청수량']}}</td>
-          <td>{{ item['lot수량'] }}</td>
+          <td>{{ item['요청수량']}}</td>
+          <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0}}</td>
         </tr>
       </tbody>
     </table>
@@ -145,7 +145,7 @@
           <td>{{ item.prd_nm }}</td>
          <td>{{ item.cpy_nm }}</td>
           <td>{{item['요청수량']}}</td>
-          <td>{{ item['lot수량'] }}</td>
+          <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0 }}</td>
       </tr>
     </tbody>
   </table>
