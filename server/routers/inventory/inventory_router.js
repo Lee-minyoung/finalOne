@@ -47,15 +47,24 @@ router.post('/inventory/mtPlan',async (req,res)=>{
 });
 // 자재구매계획에서 발주table로 insert 
 router.post('/inventory/purOrd',async (req,res)=>{
-  const {purPlnNo} =req.body.params; //쿼리에서 어떤 자재구매계획번호를 발주테이블 insert할건지..
-  //마지막 발주번호 찾기 
-  const lastOrdNo=await inventoryService.findLastPurOrdNo();//1
-  const nextOrdNo=findNextCode(lastOrdNo); 
+  
 
   console.log('nextOrdNo',nextOrdNo); 
   const result=await inventoryService.addPurOrd(nextOrdNo,purPlnNo);
   res.send(result);    
 }); 
+
+router.post('/inventory/updateCheck', async (req, res) => {
+  const { plnNo } = req.body;
+
+  try {
+    await inventoryService.modifyMatOrdCheck(plnNo);
+    res.status(200).json({ message: '체크 완료' });
+  } catch (err) {
+    console.error('🔥 ord_check 업데이트 실패:', err);
+    res.status(500).json({ message: '서버 오류', error: err.message });
+  }
+});
 
 
 
@@ -65,6 +74,8 @@ router.get('/inventory/matPurPlan',async(req,res)=>{
                                        .catch(err=>console.log(err)); 
   res.json(matPurPlan);                                       
 }); 
+
+
 //최소구매 갯수 구하기 
 router.get('/inventory/minqty',async(req,res)=>{
   const mat_no=req.query.matId; 
@@ -296,6 +307,52 @@ router.post('/inventory/planOnly', async (req, res) => {
     res.status(500).json({ message: '처리 실패', error: err.message });
   }
 });
+
+router.post('/inventory/releaseSmart', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProcSmart(reqNo);
+
+    // 🔐 방어 처리
+    if (!result || typeof result !== 'object') {
+      console.warn('📛 프로시저 결과 없음 또는 잘못된 형식:', result);
+      return res.status(500).json({
+        status: 'error',
+        message: '출고 처리 결과가 유효하지 않습니다.'
+      });
+    }
+
+    const { resultCode, resultMsg } = result;
+
+    if (resultCode === 'OUT_OF_STOCK' || resultCode === 'EXPIRED') {
+      return res.status(200).json({
+        status: 'purchase_required',
+        message: resultMsg,
+        reqNo
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: '출고 완료',
+      reqNo
+    });
+
+  } catch (err) {
+    console.error('🔥 출고 스마트 처리 실패:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: '출고 처리 중 오류 발생',
+      error: err.message
+    });
+  }
+});
+
 
 
 module.exports=router;
