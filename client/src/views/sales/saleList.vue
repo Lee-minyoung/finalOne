@@ -1,60 +1,17 @@
 <template>
-  <div class="container mt-4">
-    <!-- 상단 타이틀 + 주요 버튼 -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div class="container">
+    <!-- 상단 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-0">주문조회</h2>
-      <button class="btn btn-primary" @click="showOrderModal = true">주문 등록</button>
-    </div>
-    <!-- 조회/검색 폼 -->
-    <div class="d-flex flex-wrap gap-2 mb-3">
-      <input type="date" v-model="startDate" class="form-control w-auto" />
-      <input type="date" v-model="endDate" class="form-control w-auto" />
-      <button class="btn btn-outline-primary" @click="fetchOrdByDate">조회</button>
-    </div>
-    <!-- 주문 리스트 테이블 -->
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle">
-        <colgroup>
-          <col style="width: 80px" />
-          <col style="width: 160px" />
-          <col style="width: 120px" />
-          <col style="width: 100px" />
-          <col style="width: 100px" />
-          <col style="width: 120px" />
-        </colgroup>
-        <thead class="table-light">
-          <tr>
-            <th>주문번호</th>
-            <th>제품명</th>
-            <th>거래처명</th>
-            <th>요청수량</th>
-            <th>LOT재고량</th>
-            <th>수주등록일</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in ordList" :key="item.ord_no + '-' + item.prd_no">
-            <td>{{ item.ord_no }}</td>
-            <td>{{ item.prd_nm }}</td>
-            <td>{{ item.cpy_nm }}</td>
-            <td>{{ item['요청수량'] }}</td>
-            <td>{{ item['lot수량'] }}</td>
-            <td>{{ item.rgt_dt }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">주문 등록</button>
     </div>
     <!-- 주문 등록 모달 -->
-    <div v-if="showOrderModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index: 1051;">
+    <div class="modal fade" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <div class="modal-header bg-light">
             <h5 class="modal-title fw-bold">주문등록</h5>
-<<<<<<< HEAD
-            <button class="btn-close" @click="showOrderModal = false"></button>
-=======
             <button class="btn-close" data-bs-dismiss="modal"></button>
->>>>>>> origin/Eunae
           </div>
           <div class="modal-body">
             <!-- 기본 정보 입력 영역 -->
@@ -100,15 +57,6 @@
                   </tr>
                 </thead>
                 <tbody>
-<<<<<<< HEAD
-                  <tr v-for="(prd, idx) in orderProducts" :key="prd.prd_no">
-                    <td>{{ idx + 1 }}</td>
-                    <td><input type="text" class="form-control" :value="prd.prd_no" readonly /></td>
-                    <td><input type="text" class="form-control" :value="prd.prd_nm" readonly /></td>
-                    <td><input type="number" class="form-control" v-model.number="prd.qty" min="1" /></td>
-                    <td>
-                      <button class="btn btn-sm btn-outline-danger" @click="removeProduct(idx)">
-=======
                   <tr>
                     <td>1</td>
                     <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
@@ -116,7 +64,6 @@
                     <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
                     <td>
                       <button class="btn btn-sm btn-outline-danger">
->>>>>>> origin/Eunae
                         <i class="bi bi-trash"></i>
                       </button>
                     </td>
@@ -124,8 +71,6 @@
                 </tbody>
               </table>
             </div>
-<<<<<<< HEAD
-=======
 
             <!-- 모달 컴포넌트 -->
             <vdr-select-modal
@@ -142,7 +87,6 @@
               @select-prd="handlePrdSelect"
               @close="showPrdModal = false"
             />
->>>>>>> origin/Eunae
           </div>
           <div class="modal-footer bg-light">
             <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -153,7 +97,6 @@
         </div>
       </div>
     </div>
-<<<<<<< HEAD
 
     <input type="date" v-model="startDate" />
   <input type="date" v-model="endDate" />
@@ -177,13 +120,8 @@
           <td>{{ item.ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.vdr_no }}</td>
-<<<<<<< HEAD
           <td>{{ item['요청수량']}}</td>
           <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0}}</td>
-=======
-          <td>{{item['요청수량']}}</td>
-          <td>{{ item['lot수량'] }}</td>
->>>>>>> origin/Eunae
         </tr>
       </tbody>
     </table>
@@ -207,32 +145,10 @@
           <td>{{ item.prd_nm }}</td>
          <td>{{ item.cpy_nm }}</td>
           <td>{{item['요청수량']}}</td>
-<<<<<<< HEAD
           <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0 }}</td>
-=======
-          <td>{{ item['lot수량'] }}</td>
->>>>>>> origin/Eunae
       </tr>
     </tbody>
   </table>
-=======
-    <!-- 모달 컴포넌트 -->
-    <vdr-select-modal
-      v-if="showVdrModal"
-      :vdr-list="vdrList"
-      :selected="selectVdr"
-      :vdr-type="'b1'"
-      @select-vdr="handleVdrSelect"
-      @close="showVdrModal = false"
-    />
-    <prd-select-modal
-      v-if="showPrdModal"
-      :prd-list="prdList"
-      :selected="tempPrd"
-      @select-prd="handlePrdSelect"
-      @close="showPrdModal = false"
-    />
->>>>>>> origin/pumulo
   </div>
 </template>
 <script>
@@ -244,7 +160,6 @@ export default {
   components: { vdrSelectModal, prdSelectModal },
   data() {
     return {
-      showOrderModal: false,
       showVdrModal: false,
       showPrdModal: false,
       selectVdr: null,
@@ -260,9 +175,6 @@ export default {
       startDate: '',
       endDate: '',
       dateShow: false,
-      orderProducts: [], // 주문 상품 배열
-      tempPrd: null,     // 임시 선택 상품
-      tempQty: 1,        // 임시 수량
     };
   },
   async created() {
@@ -280,7 +192,7 @@ export default {
       }
     },
     async addOrd() {
-      if (!this.vdrCd || !this.dueDt || this.orderProducts.length === 0) {
+      if (!this.vdrCd || !this.prdNo || !this.dueDt || this.prdQty <= 0) {
         alert('필수 정보를 모두 입력해주세요.');
         return;
       }
@@ -288,14 +200,11 @@ export default {
         const res = await axios.post('/api/ord', {
           vdr_no: this.vdrCd,
           due_dt: this.dueDt,
-          products: this.orderProducts.map(p => ({
-            prd_no: p.prd_no,
-            prd_qty: p.qty
-          }))
+          prd_no: this.prdNo,
+          prd_qty: this.prdQty,
         });
         alert('주문등록 완료');
         this.getOrdList();
-        this.orderProducts = [];
       } catch (err) {
         console.error('주문등록 실패', err);
         alert('등록 실패');
@@ -306,33 +215,10 @@ export default {
       this.vdrCd = vdr.vdr_no;
       this.showVdrModal = false;
     },
-    handlePrdSelect(prds) {
-      prds.forEach(prd => {
-        if (!this.orderProducts.some(p => p.prd_no === prd.prd_no)) {
-          this.orderProducts.push({
-            prd_no: prd.prd_no,
-            prd_nm: prd.prd_nm,
-            qty: 1 // 기본 수량
-          });
-        }
-      });
+    handlePrdSelect(prd) {
+      this.selectPrd = prd;
+      this.prdNo = prd.prd_no;
       this.showPrdModal = false;
-    },
-    addProduct() {
-      if (!this.tempPrd || this.tempQty <= 0) {
-        alert('상품과 수량을 입력하세요.');
-        return;
-      }
-      this.orderProducts.push({
-        prd_no: this.tempPrd.prd_no,
-        prd_nm: this.tempPrd.prd_nm,
-        qty: this.tempQty
-      });
-      this.tempPrd = null;
-      this.tempQty = 1;
-    },
-    removeProduct(idx) {
-      this.orderProducts.splice(idx, 1);
     },
     async fetchOrdByDate() {
       console.log('날짜 확인:', this.startDate, this.endDate)
@@ -360,6 +246,8 @@ export default {
         console.log('기간별 주문리스트 불러오기 실패', err)
       }
     },
+  
+
   },
 };
 </script>

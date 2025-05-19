@@ -1,10 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <div class="container mt-4">
-    <!-- 상단 타이틀 + 주요 버튼 -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-      <h2 class="mb-0">출하지시</h2>
-=======
   <div class="col-md-10 p-4">
     <h4 class="mb-4">출하지시</h4>
 
@@ -49,9 +43,9 @@
           <td>{{ item.cpy_nm }}</td>
           <td>{{ item.prd_no }}</td>
           <td>{{ item.prd_nm }}</td>
-          <td>{{ item.prd_qty }}</td>
-          <td>{{ item['현재고량'] <= 0 ? 0 : item['현재고량'] }}</td>
-          <td>{{ item.due_dt }}</td> 
+          <td>{{ item['요청수량'] }}</td>
+          <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
+          <td>{{ item['납기예정'] }}</td>
           <td>
             <span
               class="badge"
@@ -66,68 +60,7 @@
 
     <!-- 출하지시 버튼 -->
     <div class="d-flex justify-content-end mt-3">
->>>>>>> origin/Eunae
       <button class="btn btn-primary" @click="saveSpm">출하지시</button>
-    </div>
-    <!-- 출하일자/담당자 입력 폼 -->
-    <div class="d-flex flex-wrap gap-2 mb-3">
-      <input v-model="spmDate" type="date" class="form-control w-auto" placeholder="출하일자" />
-      <input v-model="manager" type="text" class="form-control w-auto" placeholder="담당자" />
-    </div>
-    <!-- 수주 목록 테이블 -->
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle">
-        <colgroup>
-          <col style="width: 80px" />
-          <col style="width: 120px" />
-          <col style="width: 120px" />
-          <col style="width: 100px" />
-          <col style="width: 160px" />
-          <col style="width: 100px" />
-          <col style="width: 100px" />
-          <col style="width: 120px" />
-          <col style="width: 100px" />
-        </colgroup>
-        <thead class="table-light">
-          <tr>
-            <th>주문ID</th>
-            <th>거래처ID</th>
-            <th>거래처명</th>
-            <th>제품ID</th>
-            <th>제품명</th>
-            <th>요청수량</th>
-            <th>LOT재고량</th>
-            <th>납기일자</th>
-            <th>상태</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in ords"
-            :key="item.ord_no + '-' + item.prd_no"
-            @click="toggleOrder(item)"
-            :class="{ 'table-primary': isSelected(item) }"
-            style="cursor: pointer"
-          >
-            <td>{{ item.ord_no }}</td>
-            <td>{{ item.vdr_no }}</td>
-            <td>{{ item.cpy_nm }}</td>
-            <td>{{ item.prd_no }}</td>
-            <td>{{ item.prd_nm }}</td>
-            <td>{{ item['요청수량'] }}</td>
-            <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
-            <td>{{ item['납기예정'] }}</td>
-            <td>
-              <span
-                class="badge"
-                :class="item['요청수량'] < item['lot수량'] ? 'text-bg-primary' : 'text-bg-danger'"
-              >
-                {{ item['요청수량'] < item['lot수량'] ? '출하가능' : '출하대기' }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </template>
@@ -175,17 +108,12 @@ export default {
           return;
         }
       }
-// 오늘 날짜 구하기 (YYYY-MM-DD)
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const todayStr = `${yyyy}-${mm}-${dd}`;
+
       try {
         const payloads = this.selectedOrders.map(item => ({
           ord_no: item.ord_no,
           dlv_addr: item.ofc_addr,
-          spm_dt: todayStr, // ← 오늘 날짜로 세팅
+          spm_dt: item['납기예정'],
           vdr_no: item.vdr_no,
           lot_no: item.lot_no,
           prd_no: item.prd_no,
