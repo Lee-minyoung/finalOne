@@ -128,7 +128,7 @@ SELECT ?,
 FROM mat_pur_pln
 WHERE mat_pur_pln_no = ?
  `;
- 
+
 // 발주번호 최대값 찾기 
 const selectLastPurOrdNo=
 `SELECT MAX(pur_ord_no) AS maxPur FROM pur_ord`;
@@ -255,6 +255,8 @@ const callReleaseAndPlanProc = `CALL proc_release_and_plan_by_req_id(?)`;
 // 3번: 구매계획 등록만 (출고 불가능 자재)
 const callPlanOnlyProc = `CALL proc_insert_pur_plan_for_insufficient(?)`;
 
+const insertMultipleLots =
+`CALL proc_insert_lot_multiple(?)`
 
 module.exports = {
  selectPrdPlanByMaterial,

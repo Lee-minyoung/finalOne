@@ -22,10 +22,12 @@
                       @click.stop="processRequest(reqNo)">
                       자재출고
                     </button>
-                    <button v-else-if="!items.some(item => item.자재처리결과 === 'c4')" 
+
+                    <button v-else-if="!items.some(item => item.자재처리결과 === 'c4')"
                       class="btn btn-warning rounded-pill px-2 py-1 me-2" @click.stop="registerPlan(reqNo)">
                       구매계획 등록
                     </button>
+
                     <span v-else class="badge bg-secondary px-3 py-2 rounded-pill me-2">
                       구매요청완료
                     </span>
@@ -155,6 +157,9 @@ export default {
         })
       }
     },
+
+
+
     async registerPlan(reqNo) {
       try {
         const res = await axios.post('/api/inventory/planOnly', { reqNo })
@@ -167,7 +172,7 @@ export default {
     },
     canRelease(items) {
       return items.every(item =>
-        item['상태'] === '출고가능' || item['상태'] === '주의: 최소재고 미달'
+        item['자재출고처리'] === 'q1' && item['현재재고'] >= item['총필요량']
       );
     },
   }

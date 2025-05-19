@@ -186,6 +186,11 @@ const modifyMatOrdCheck = async (planNo) => {
   return result;
 };
 
+const insertMultipleLots = async (lotData) => {
+  const jsonStr = JSON.stringify(lotData);
+  return await mariadb.query('insertMultipleLots', [jsonStr]);
+};
+
 
 module.exports = {
 
@@ -219,5 +224,6 @@ callReleaseProc, //자재 출고 이력
 callReleaseAndPlanProc,
 callPlanOnlyProc,
 callReleaseProcSmart,
-modifyMatOrdCheck
+modifyMatOrdCheck,
+insertMultipleLots
 }; 

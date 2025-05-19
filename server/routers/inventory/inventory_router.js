@@ -354,5 +354,22 @@ router.post('/inventory/releaseSmart', async (req, res) => {
 });
 
 
+router.post('/inventory/addLots', async (req, res) => {
+  try {
+    const lotList = req.body; // 프론트에서 JSON 배열 형태로 받음
+
+    if (!Array.isArray(lotList) || lotList.length === 0) {
+      return res.status(400).json({ message: 'LOT 데이터가 비어 있습니다.' });
+    }
+
+    await inventoryService.insertMultipleLots(lotList);
+
+    res.status(200).json({ message: 'LOT 등록 완료' });
+  } catch (err) {
+    console.error('🔥 LOT 등록 오류:', err);
+    res.status(500).json({ message: 'LOT 등록 실패', error: err.message });
+  }
+});
+
 
 module.exports=router;
