@@ -25,6 +25,7 @@ const selectOrdList=
 
 // `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
 // from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
+<<<<<<< HEAD
 `SELECT o.ord_no 
      , o.vdr_no 
      , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no)  
@@ -43,6 +44,30 @@ const selectOrdList=
   )
 ORDER BY o.ord_no desc;
 `; 
+=======
+`SELECT 
+  o.ord_no,
+  o.vdr_no,
+  v.cpy_nm,
+  od.prd_no,
+  p.prd_nm,
+  sum(od.prd_qty) AS 요청수량,
+  ps.cur_stk AS lot수량,
+  DATE_FORMAT(DATE_ADD(o.rgt_dt, INTERVAL 14 DAY), "%Y-%m-%d") AS 납기예정,
+  ps.lot_no,
+  v.ofc_addr,
+  s.ord_no AS 출하에서수주번호
+FROM ord o
+JOIN ord_dtl od ON o.ord_no = od.ord_no
+JOIN prd p ON od.prd_no = p.prd_no
+LEFT JOIN prd_stk ps ON od.prd_no = ps.prd_no
+JOIN vdr v ON o.vdr_no = v.vdr_no
+LEFT JOIN spm s ON s.ord_no = o.ord_no
+WHERE s.ord_no IS NULL
+GROUP BY o.ord_no
+ORDER BY o.ord_no`;
+
+>>>>>>> ea6bb99274547af08d1a7bb06d0e67c21cc213ef
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
@@ -57,29 +82,38 @@ FROM ord o JOIN vdr v ON(o.vdr_no=v.vdr_no)
 //날짜 기간 별 주문 
 const selectOrdDate=
 `SELECT 
-      DATE(o.due_dt),
-      p.prd_nm,
-	    ps.cur_stk, 
-      p.prd_no,  
-      SUM(od.prd_qty)
-FROM ord o JOIN  ord_dtl od on(o.ord_no=od.ord_no)
-	     JOIN prd  p ON(od.prd_no=p.prd_no)
-           JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
-WHERE DATE(o.due_dt) BETWEEN ? and ?
-GROUP BY DATE(o.due_dt), p.prd_nm`; 
+  o.ord_no,
+  o.vdr_no,
+  v.cpy_nm,
+  od.prd_no,
+  p.prd_nm,
+  od.prd_qty AS 요청수량,
+  ps.cur_stk AS lot수량,
+  DATE_FORMAT(DATE_ADD(o.rgt_dt, INTERVAL 14 DAY), "%Y-%m-%d") AS 납기예정,
+  ps.lot_no,
+  v.ofc_addr,
+  s.ord_no AS 출하에서수주번호
+FROM ord o
+JOIN ord_dtl od ON o.ord_no = od.ord_no
+JOIN prd p ON od.prd_no = p.prd_no
+LEFT JOIN prd_stk ps ON od.prd_no = ps.prd_no
+JOIN vdr v ON o.vdr_no = v.vdr_no
+LEFT JOIN spm s ON s.ord_no = o.ord_no
+WHERE s.ord_no IS NULL
+and DATE(o.rgt_dt) BETWEEN ? and ?
+ORDER BY o.ord_no;
+`; 
 //특정 날짜 주문 
 const selectOrdDateOne=
 `
-SELECT 
-      DATE(o.due_dt),
-      p.prd_nm,
-	    ps.cur_stk, 
-      p.prd_no,  
-      SUM(od.prd_qty)
-FROM  ord o  JOIN  ord_dtl od on(o.ord_no=od.ord_no)
-			       JOIN prd  p ON(od.prd_no=p.prd_no)
-             JOIN prd_stk  ps ON(p.prd_no=ps.prd_no)
-WHERE DATE(o.due_dt)  LIKE ?
+select o.ord_no,o.vdr_no,v.cpy_nm,od.prd_no,p.prd_nm,od.prd_qty as 요청수량,ps.cur_stk as lot수량,DATE_FORMAT(DATE_ADD(o.due_dt,INTERVAL 14 DAY)," %Y-%m-%d") as 납기예정,ps.lot_no,v.ofc_addr 
+from ord o join ord_dtl od on o.ord_no=od.ord_no
+join prd p on od.prd_no=p.prd_no
+right join  prd_stk ps on od.prd_no=ps.prd_no
+join vdr v on o.vdr_no=v.vdr_no
+where o.ord_no is not null
+and DATE(o.rgt_dt) BETWEEN '2025-02-03' and '2025-05-30'
+order by DATE_FORMAT(DATE_ADD(o.rgt_dt,INTERVAL 14 DAY)," %Y-%m-%d")
 `; 
 //업체코드로 검색 
 const searchVdrNo=`SELECT  cpy_nm as 업체명 ,vdr_no as 업체코드,biz_reg_no as 사업자등록번호 ,mgr_nm as 담당자,mgr_ctt as 연락처,ofc_addr as 주소  
@@ -107,6 +141,8 @@ GROUP BY d.prd_no`;
 const selectMaxSpmNo=`
  select max(spm_no) as maxSpmNo
  from spm`;
+ //출하상세 최대값 찾기 
+ 
  //제품lot상세 번호 최댓값 찾기 
  const selectMaxPrdHistNo=`
  select max(prd_stk_hist_no) as maxLotNo

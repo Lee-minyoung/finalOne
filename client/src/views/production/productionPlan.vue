@@ -1,11 +1,9 @@
 <template>
-
   <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-4">생산 계획 관리</h2>
-
-      <div class="d-flex gap-2">
-        <div class="mb-１ d-flex justify-content">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h2 class="mb-0">생산 계획 관리</h2>
+      <div class="d-flex flex-wrap gap-2">
+        <div class="mb-1">
           <select v-model="statusFilter" class="form-select w-auto">
             <option value="전체">전체</option>
             <option value="미지시/부분지시">미지시/부분지시</option>
@@ -14,98 +12,100 @@
           </select>
         </div>
         <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
-        <!-- <button class="btn btn-light">재고/지시현황</button> -->
         <button class="btn btn-success text-white" @click="openProductModal">제품등록</button>
         <button class="btn btn-success text-white" @click="addPlan">계획등록</button>
         <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
       </div>
     </div>
-    <table class="table table-bordered text-center" style="min-width: 1200px;">
-      <colgroup>
-        <col style="width: 80px" />
-        <col style="width: 160px" />
-        <col style="width: 100px" />
-        <col style="width: 100px" />
-        <col style="width: 140px" />
-        <col style="width: 140px" />
-        <col style="width: 100px" />
-        <col style="width: 120px" />
-        <col style="width: 120px" />
-        <col style="width: 60px" />
-      </colgroup>
 
-      <thead class="table-light">
-        <tr>
-          <th>계획번호</th>
-          <th>제품명</th>
-          <th>계획수량</th>
-          <th>누적지시량</th>
-          <th>계획시작일자</th>
-          <th>계획마감일자</th>
-          <th>진행률</th>
-          <th>상태</th>
-          <th>비고</th>
-          <th>삭제</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in planRows" :key="'new-' + index">
-          <td>신규</td>
-          <td>
-            <div class="input-group">
-              <input v-model="row.prd_nm" class="form-control" placeholder="제품 선택" readonly />
-            </div>
-          </td>
-          <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
-              @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
-          <td></td>
-          <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
-          <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
-          <td></td>
-          <td></td>
-          <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
-          <td>
-            <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 0">
-              - </button>
-          </td>
-        </tr>
-        <!--@click="!isFullyInstructed(row) && togglePlanSelection(row)"  지시완료되면 선택이 안됨 
-            :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
-            클래스를 동적으로 사용 isSelected 선택시 파란색 배경, isFullyInstructed 지시완료시 회색 글씨 \
-            style 지시 완료면 마우스모양 : 아니면 손가락모양 표현-->
-        <tr v-for="row in sortedProdPlanList" :key="row.pdn_pln_no"
-          @click="!isFullyInstructed(row) && togglePlanSelection(row)"
-          :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
-          :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
-          <td>{{ row.pdn_pln_no }}</td>
-          <td>{{ row.prd_nm }}</td>
-          <td>{{ formatNumber(row.qty) }}</td>
-          <td>{{ formatNumber(row.ord_qty) }}</td>
-          <td>{{ dateFormat(row.st_dt, 'yyyy-MM-dd') }}</td>
-          <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
-          <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
-          <td>
-            <!-- :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" 
-             여기가 퍼센트에 따라 진행률 바 체워짐-->
-            <div class="progress" style="height: 22px;">
-              <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty, row.sts)"
-                :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
-                {{ getStatus(row.qty, row.ord_qty, row.sts) }}
+    <!-- 🧩 반응형 테이블 래퍼 -->
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <colgroup>
+          <col style="width: 80px" />
+          <col style="width: 160px" />
+          <col style="width: 100px" />
+          <col style="width: 100px" />
+          <col style="width: 140px" />
+          <col style="width: 140px" />
+          <col style="width: 100px" />
+          <col style="width: 120px" />
+          <col style="width: 120px" />
+          <col style="width: 60px" />
+        </colgroup>
+
+        <thead class="table-light">
+          <tr>
+            <th>계획번호</th>
+            <th>제품명</th>
+            <th>계획수량</th>
+            <th>누적지시량</th>
+            <th>계획시작일자</th>
+            <th>계획마감일자</th>
+            <th>진행률</th>
+            <th>상태</th>
+            <th>비고</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- 신규 입력 행 -->
+          <tr v-for="(row, index) in planRows" :key="'new-' + index">
+            <td>신규</td>
+            <td>
+              <div class="input-group">
+                <input v-model="row.prd_nm" class="form-control" placeholder="제품 선택" readonly />
               </div>
-            </div>
-          </td>
-          <td>{{ row.rmk }}</td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+            <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
+                @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
+            <td></td>
+            <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
+            <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
+            <td></td>
+            <td></td>
+            <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
+            <td>
+              <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 0">-</button>
+            </td>
+          </tr>
 
+          <!-- 기존 계획 목록 -->
+          <tr v-for="row in sortedProdPlanList" :key="row.pdn_pln_no"
+              @click="!isFullyInstructed(row) && togglePlanSelection(row)"
+              :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
+              :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
+            <td>{{ row.pdn_pln_no }}</td>
+            <td>{{ row.prd_nm }}</td>
+            <td>{{ formatNumber(row.qty) }}</td>
+            <td>{{ formatNumber(row.ord_qty) }}</td>
+            <td>{{ dateFormat(row.st_dt, 'yyyy-MM-dd') }}</td>
+            <td>{{ dateFormat(row.end_dt, 'yyyy-MM-dd') }}</td>
+            <td>{{ getProgress(row.qty, row.ord_qty) }}%</td>
+            <td>
+              <div class="progress" style="height: 22px;">
+                <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty, row.sts)"
+                    :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
+                  {{ getStatus(row.qty, row.ord_qty, row.sts) }}
+                </div>
+              </div>
+            </td>
+            <td>{{ row.rmk }}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 모달 컴포넌트 -->
     <ProductSelectModal v-if="showProductModal" :prodList="prodList" :selected="planRows"
-      @select-product="handleSelectedProducts" @close="showProductModal = false" />
+        @select-product="handleSelectedProducts" @close="showProductModal = false" />
 
     <InstructionModal v-if="showInstructionModal" @submit="submitInstructions" @close="showInstructionModal = false" />
   </div>
 </template>
+
 
 <script>
 import axios from 'axios'

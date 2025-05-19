@@ -74,8 +74,8 @@ import Swal from 'sweetalert2';
 export default {
   data() {
     return {
-      purToLotStatus: [],
-      checkPur: [],
+      purToLotStatus: [],    // 발주된 자재 리스트
+      checkPur: [],          // 선택된 자재 리스트
       purOrdNo: 0,
       matNo: '',
       wareNo: 0,
@@ -93,37 +93,9 @@ export default {
   computed: {
     employeeName() {
       return this.empStore.loginInfo.nm || '';
-    },
+    }
   },
   methods: {
-    async manyImports() {
-      const selectedOrds = this.purToLotStatus.filter(order => {
-        return this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no);
-      });
-
-      const payloads = selectedOrds.map(item => ({
-        mat_no: item.mat_no,
-        qty: item.qty,
-        warehouse_no: this.wareNo,
-        cnsm_lmt_dt: item['유통기한'],
-        unt_prc: item.unt_prc,
-        pur_ord_no: item.pur_ord_no,
-        prcsr: this.empStore.loginInfo.emp_no,
-        vdr_no: item.vdr_no,
-        rcvr: this.empStore.loginInfo.emp_no,
-        rcv_mthd: this.rcvrMth
-      }));
-
-      try {
-        await axios.post('/api/addMatImports', payloads);
-        alert('자재입고완료');
-        // 입고 후 목록에서 제거
-        this.purToLotStatus = this.purToLotStatus.filter(item => !this.checkPur.includes(item));
-        this.checkPur = [];
-      } catch (err) {
-        alert('자재입고실패');
-      }
-    },
     isSelected(item) {
       return this.checkPur.some(p => p.pur_ord_no === item.pur_ord_no);
     },
@@ -134,13 +106,53 @@ export default {
       } else {
         this.checkPur.push(item);
       }
+
       if (this.checkPur.length === 1) {
         const first = this.checkPur[0];
         this.purOrdNo = first.pur_ord_no;
         this.expDt = first['유통기한'];
       }
     },
-  },
+    async manyImports() {
+      const selectedOrds = this.purToLotStatus.filter(order =>
+        this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no)
+      );
+
+      const payloads = selectedOrds.map(item => ({
+        mat_no: item.mat_no,
+        qty: item.qty,
+        warehouse_no: this.wareNo,
+        cnsm_lmt_dt: item['유통기한'],
+        unt_prc: item.unt_prc,
+        prcsr: this.empStore.loginInfo.emp_no
+      }));
+
+      try {
+        await axios.post('/api/inventory/addLots', payloads);
+
+        await Swal.fire({
+          icon: 'success',
+          title: '입고 완료',
+          text: '선택한 자재의 LOT이 성공적으로 등록되었습니다.'
+        });
+
+        // 등록된 pur_ord_no만 제거
+        const completedPurNos = selectedOrds.map(item => item.pur_ord_no);
+        this.purToLotStatus = this.purToLotStatus.filter(item =>
+          !completedPurNos.includes(item.pur_ord_no)
+        );
+        this.checkPur = [];
+
+      } catch (err) {
+        console.error('🔥 자재입고 실패:', err);
+        await Swal.fire({
+          icon: 'error',
+          title: '입고 실패',
+          text: '중복 LOT 번호 또는 서버 오류가 발생했습니다.'
+        });
+      }
+    }
+  }
 };
 </script>
 

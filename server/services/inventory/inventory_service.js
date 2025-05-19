@@ -139,6 +139,27 @@ const changeMatStsToq2ByMatNo=async(reqNo,matNo)=>{
   return result;
 }    
 
+//최소재고량 조회
+const getMinStkAfterRelease = async (reqQty, matNo) => {
+  return await mariadb.query('findMinStkAfterRelease', [reqQty, matNo]);
+};
+// 1번 출고요청. 
+const callReleaseProc = async (reqNo) => {
+  console.log('[서비스] 출고 단독 처리:', matReqNo);
+  return await mariadb.query('callReleaseProc', [reqNo]);
+};
+
+// 2번 출고 + 자재요청
+const callReleaseAndPlanProc = async (matReqNo) => {
+  console.log('[서비스] 출고+구매계획 통합 처리:', matReqNo);
+  return await mariadb.query('callReleaseAndPlanProc', [matReqNo]);
+};
+
+// 3번 자재요청
+const callPlanOnlyProc = async (matReqNo) => {
+  console.log('[서비스] 구매계획 단독 처리:', matReqNo);
+  return await mariadb.query('callPlanOnlyProc', [matReqNo]);
+};
 
 module.exports = {
 
@@ -167,4 +188,8 @@ changeMatStsToq2, //자재입출고요청서 자재출고처리 q2로 바꿈
 findMatLotList, //lot 많은순 리스트 
 minusCurStkByLot,
 changeMatStsToq2ByMatNo,   
+getMinStkAfterRelease, //최소재고량 조회
+callReleaseProc, //자재 출고 이력
+callReleaseAndPlanProc,
+callPlanOnlyProc
 }; 

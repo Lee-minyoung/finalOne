@@ -1,7 +1,7 @@
 // 자재구매계획 번호 없이 바로 발주서 등록 하는경우 
 const insertPurOrdNoPlnNo=
-`INSERT pur_ord (pur_ord_no,vdr_no,crt_dt,pur_dt,mat_no,qty,unt_prc,amt)
-VALUES (?,?,?,?,?,?,?,?)`;
+`INSERT pur_ord (pur_ord_no,vdr_no,crt_dt,pur_dt,mat_no,qty,unt_prc,amt, mat_pur_pln_no)
+VALUES (?,?,?,?,?,?,?,?,?)`;
 // 자재요청 클릭시 자재구매계획 등록 
 const insertPurPlnByBtnClick=
 `INSERT INTO mat_pur_pln(mat_pur_pln_no,crt_dt,mat_no,vdr,qty,unt_prc,ord_check) 
@@ -27,6 +27,7 @@ const selectMatPurPlanChecked=
   m.mat_no AS 자재번호,
   DATE_FORMAT(mpp.crt_dt, "%Y-%m-%d") AS 작성일자,
   m.mat_nm AS 자재명,
+<<<<<<< HEAD
   v.vdr_no AS 거래처코드,
   v.cpy_nm AS 거래처명,
   m.prc*mpp.qty AS 총가격, 
@@ -38,6 +39,21 @@ LEFT JOIN vdr v ON m.mn_vdr = v.vdr_no
 left join pur_ord p on mpp.mat_pur_pln_no=p.mat_pur_pln_no 
 WHERE mpp.ord_check = 'check' 
 and p.mat_pur_pln_no is null
+=======
+  v.vdr_no,
+  v.cpy_nm,
+  m.prc * mpp.qty AS 총가격,
+  m.unit
+FROM mat_pur_pln mpp
+LEFT JOIN mat m ON mpp.mat_no = m.mat_no
+LEFT JOIN vdr v ON m.mn_vdr = v.vdr_no
+WHERE mpp.ord_check = 'check'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM pur_ord po
+    WHERE po.mat_pur_pln_no = mpp.mat_pur_pln_no
+  )
+>>>>>>> ea6bb99274547af08d1a7bb06d0e67c21cc213ef
 ORDER BY mpp.mat_pur_pln_no DESC`;
 
  //자재출고요청 -> q1(출고요청) 인지 ,q2(출고완료) 인지조회 

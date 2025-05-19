@@ -222,7 +222,8 @@ const updateMatInsStsToq2=
 `UPDATE mat_rls_req
 SET mat_ins_sts='q2'
 WHERE mat_req_no = ?`;
-//자재 lot리스트 재고 많은순 리스트
+//자재 lot리스트 재고 많은순 리스트 
+// 유지지
 const matMaxLotList=
 `SELECT lot_no,mat_no,cur_stk  
 FROM mat_stk
@@ -239,6 +240,28 @@ const updateMatStsToq2BymatNo=
 SET mat_ins_sts='q2'
 WHERE mat_req_no = ?
 AND mat_no= ?` 
+
+const findMinStkAfterRelease =
+`SELECT 
+  m.mat_no AS 자재ID,
+  m.mat_nm AS 자재명,
+  m.min_stk_qty AS 최소재고량,
+  IFNULL(SUM(s.cur_stk), 0) - ? AS 출고후예상재고
+FROM mat m
+LEFT JOIN mat_stk s ON m.mat_no = s.mat_no
+WHERE m.mat_no = ?
+GROUP BY m.mat_no, m.mat_nm, m.min_stk_qty
+HAVING 출고후예상재고 < m.min_stk_qty;`
+
+// 출고요청 -> q2-> q2로 변경경 거래처/수령인/수령방법 제외. 출고이력이기에..
+const callReleaseProc = `CALL proc_release_by_req_id(?)`;
+
+// 2번: 출고 + 구매계획 통합 프로시저
+const callReleaseAndPlanProc = `CALL proc_release_and_plan_by_req_id(?)`;
+
+// 3번: 구매계획 등록만 (출고 불가능 자재)
+const callPlanOnlyProc = `CALL proc_insert_pur_plan_for_insufficient(?)`;
+
 
 module.exports = {
  selectPrdPlanByMaterial,
@@ -266,5 +289,10 @@ updateMatInsStsToq2,
 matMaxLotList, 
 updateMatStkBylotNo,
 updateMatStsToq2BymatNo,
- // 자재출고처리 c3로 변경 
+ // 자재출고처리 c3로 변경
+ findMinStkAfterRelease, // 최소재고량 조회
+callReleaseProc, //출고버튼 클릭시 이력에 남김
+callReleaseAndPlanProc,
+callPlanOnlyProc
+
 };
