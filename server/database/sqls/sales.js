@@ -31,7 +31,7 @@ const selectOrdList=
   v.cpy_nm,
   od.prd_no,
   p.prd_nm,
-  sum(od.prd_qty) AS 요청수량,
+  od.prd_qty AS 요청수량,
   ps.cur_stk AS lot수량,
   DATE_FORMAT(DATE_ADD(o.rgt_dt, INTERVAL 14 DAY), "%Y-%m-%d") AS 납기예정,
   ps.lot_no,

@@ -131,33 +131,35 @@
     </div>
   </div>
   <h3>자재구매계획</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">선택</th>
-        <th scope="col">자재번호</th>
-        <th scope="col">자재명</th>
-        <th scope="col">수량</th>
-        <th scope="col">총가격</th>
-        <th scope="col">거래처</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in matPurPlanChecked" :key="item['자재번호']">
-        <td>
-          <!-- <input type="checkbox" :value="item" v-model="checkedMatPln" @change="handleCheckChange(index)" /> -->
-          <input type="checkbox" :value="item" :checked="checkedMatPln === index" @change="handleCheckChange(index)" />
-        </td>
-        <td>{{ item['자재번호'] }}</td>
-        <td>{{ item['자재명'] }}</td>
-        <!-- <td>{{ converterUnit(item['총합'], item.unit) }}</td> -->
-        <td>{{ item['총합'] }}</td>
-        <td>{{ formatNumber(item['총가격']) }}</td>
-        <td v-if="!item.vdr_no">거래처x</td>
-        <td v-else>{{ item.cpy_nm }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <table class="table table-hover text-center align-middle">
+      <thead>
+        <tr>
+          <th scope="col">자재번호</th>
+          <th scope="col">자재명</th>
+          <th scope="col">수량</th>
+          <th scope="col">총가격</th>
+          <th scope="col">거래처</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in matPurPlanChecked"
+          :key="item['자재번호']"
+          @click="handleCheckChange(index)"
+          :class="{ 'table-primary': checkedMatPln === index }"
+          style="cursor: pointer"
+        >
+          <td>{{ item['자재번호'] }}</td>
+          <td>{{ item['자재명'] }}</td>
+          <td>{{ item['총합'] }}</td>
+          <td>{{ formatNumber(item['총가격']) }}</td>
+          <td>
+            <span v-if="!item.vdr_no">거래처x</span>
+            <span v-else>{{ item.cpy_nm }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 </template>
 <script>
 import matSelectModal from '@/views/modal/matSelectModal.vue';

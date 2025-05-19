@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>자재현황파악</h3>
+    <h3>자재출고요청</h3>
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">
         <tbody>
