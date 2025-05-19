@@ -16,7 +16,7 @@
         <!-- 담당자 -->
         <div class="col-md-4">
           <label class="form-label">담당자</label>
-          <input v-model="employeeName" class="form-control" type="text" placeholder="예담창고" disabled>
+          <input v-model="employeeName" class="form-control" type="text" placeholder="" disabled>
         </div>
 
         <!-- 창고번호 -->
@@ -87,8 +87,7 @@ export default {
     };
   },
   async created() {
-    const result = await axios.get('/api/ordToLot');
-    this.purToLotStatus = result.data;
+    this.getList();
   },
   computed: {
     employeeName() {
@@ -96,6 +95,10 @@ export default {
     }
   },
   methods: {
+    async getList() {
+      const result = await axios.get('/api/ordToLot');
+      this.purToLotStatus = result.data;
+    },
     isSelected(item) {
       return this.checkPur.some(p => p.pur_ord_no === item.pur_ord_no);
     },
@@ -113,45 +116,54 @@ export default {
         this.expDt = first['유통기한'];
       }
     },
+
+    // 자재입고 버튼 클릭시 실행할 함수 
     async manyImports() {
-      const selectedOrds = this.purToLotStatus.filter(order =>
-        this.checkPur.map(p => p.pur_ord_no).includes(order.pur_ord_no)
-      );
+      if (confirm('입고처리 하시겠습니까?')) {
+        try {
+          // 선택된 pur_ord_no 목록 추출
+          const selectedPurOrdNos = this.checkPur.map(p => p.pur_ord_no);
 
-      const payloads = selectedOrds.map(item => ({
-        mat_no: item.mat_no,
-        qty: item.qty,
-        warehouse_no: this.wareNo,
-        cnsm_lmt_dt: item['유통기한'],
-        unt_prc: item.unt_prc,
-        prcsr: this.empStore.loginInfo.emp_no
-      }));
+          // 선택된 pur_ord_no에 해당하는 전체 주문 정보 추출
+          const selectedOrds = this.purToLotStatus.filter(order =>
+            selectedPurOrdNos.includes(order.pur_ord_no)
+          );
 
-      try {
-        await axios.post('/api/inventory/addLots', payloads);
+          // 서버에 보낼 자재 입고 정보 배열 구성
+          const matStkList = selectedOrds.map(item => {
+            return {
+              // 자재LOT
+              mat_no: item.mat_no, // 자재번호
+              cur_stk: item.qty, // 현재재고 = 입고 수량으로 가정
+              cnsm_lmt_dt: item.유통기한, // 유통기한
+              unt_prc: item.unt_prc, // 단가
+              pur_ord_no: item.pur_ord_no, // 발주번호
+              prcsr: this.empStore.loginInfo.emp_no, // 처리자
+              prc_qty: item.qty, // 처리수량      
+              // 자재입출고이력
+              qty: item.qty, // 수량
+              rmk: null, // 비고 (필요 시 추가)
+              vdr_no: item.vdr_no, // 거래처번호
+              rcvr: this.empStore.loginInfo.emp_no, // 수령인
+              rcv_mthd: this.rcvrMth // 수령방법
+            };
+          });
+          // POST 요청으로 서버에 다건 입고 처리 요청
+          const result = await axios.post("/api/matStkAndHist", matStkList);
 
-        await Swal.fire({
-          icon: 'success',
-          title: '입고 완료',
-          text: '선택한 자재의 LOT이 성공적으로 등록되었습니다.'
-        });
-
-        // 등록된 pur_ord_no만 제거
-        const completedPurNos = selectedOrds.map(item => item.pur_ord_no);
-        this.purToLotStatus = this.purToLotStatus.filter(item =>
-          !completedPurNos.includes(item.pur_ord_no)
-        );
-        this.checkPur = [];
-
-      } catch (err) {
-        console.error('🔥 자재입고 실패:', err);
-        await Swal.fire({
-          icon: 'error',
-          title: '입고 실패',
-          text: '중복 LOT 번호 또는 서버 오류가 발생했습니다.'
-        });
+          if (result.data.message === '전체 등록 완료') {
+            alert('자재 입고가 완료되었습니다.');
+            this.checkPur = [];
+            this.getList(); // 리스트 갱신
+          } else {
+            alert('자재 입고가 실패되었습니다.');
+          }
+        } catch (err) {
+          console.error('입고 처리 중 오류 발생:', err);
+          alert('입고 처리 중 오류가 발생했습니다.');
+        }
       }
-    }
+    },
   }
 };
 </script>
