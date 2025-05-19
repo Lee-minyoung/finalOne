@@ -153,10 +153,6 @@ export default {
         this.newItem.acpt_qty = mgr - rjct >= 0 ? mgr - rjct : '';
       }
     }
-},  computed: {
-  employeeName() {
-      return this.empStore.loginInfo.nm || '';
-    },
 },
 
   methods: {
