@@ -9,7 +9,7 @@
         <div class="modal-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <input type="text" class="form-control w-25" placeholder="제품명 검색" v-model="search" />
-            <button class="btn btn-sm btn-primary" @click="$emit('select-prd', selectedPrd)">제품 등록</button>
+            <button class="btn btn-sm btn-primary" @click="$emit('select-prd', selectedPrds)">제품 등록</button>
           </div>
           <div class="table-container">
             <table class="table table-sm table-bordered text-center">
@@ -38,12 +38,12 @@
 export default {
   props: {
     prdList: Array,       // 전체 제품 목록
-    selected: String       // 이미 선택된 제품 => prd_no
+    selected: Array       // 이미 선택된 제품 목록
   },
   data() {
     return {
       search: '',
-      selectedPrd: null,
+      selectedPrds: []
     };
   },
   computed: {
@@ -53,19 +53,19 @@ export default {
     }
   },
   created() {
-    this.selectedPrd = this.selected ? { prd_no: this.selected } : null;  // 선택 상태 초기화(기존에 선택된 제품이 있다면 selectedPrd에 넣어줌)
+    this.selectedPrds = [...(this.selected || [])];
   },
   methods: {
-    // 제품 선택하면 그걸 selectedPrd에 넣어주는 메소드 (no랑 nm둘다)
     togglePrdSelection(item) {
-      if (this.selectedPrd && this.selectedPrd.prd_no === item.prd_no) {
-        this.selectedPrd = null; // 선택 해제
+      const index = this.selectedPrds.findIndex(prd => prd.prd_no === item.prd_no)
+      if (index >= 0) {
+        this.selectedPrds.splice(index, 1)
       } else {
-        this.selectedPrd = { prd_no: item.prd_no, prd_nm: item.prd_nm }; // 선택한 제품으로 대체
+        this.selectedPrds.push(item)
       }
     },
     isSelected(item) {
-      return this.selectedPrd && this.selectedPrd.prd_no === item.prd_no;
+      return this.selectedPrds.some(prd => prd.prd_no === item.prd_no)
     }
   }
 }

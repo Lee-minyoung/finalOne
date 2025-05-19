@@ -73,10 +73,10 @@
       </div>
     </div>
 
-    <mat-select-modal
+    <mat-single-select-modal
       v-if="showModal"
       :mat-list="mat"
-      :selected="selectMats"
+      :selected="selectMats[0]"
       @select-mat="handleMaterialSelect"
       @close="showModal = false"
     />
@@ -192,12 +192,14 @@
 </template>
 <script>
 import matSelectModal from '@/views/modal/matSelectModal.vue';
+import matSingleSelectModal from '@/views/modal/matSingleSelectModal.vue';
 import vdrSelectModal from '@/views/modal/vdrSelectModal.vue'; 
 import axios from 'axios';
 
 export default{
 components:{
   matSelectModal,
+  matSingleSelectModal,
   vdrSelectModal, 
 },
 data() {
@@ -205,7 +207,7 @@ data() {
    showModal:false,
    showVdrModal:false,
    mat:[], //자재목록 
-   selectMats:[],
+   selectMats:[], // 기존 코드와의 호환성을 위해 배열 유지
    vdr:[], //거래처목록
    selectVdr:null,  
     //수량 x 자재가 선택되면 자동 계산  
@@ -242,10 +244,9 @@ methods:{
   },
 
   handleMaterialSelect(selectedMat){
-    this.selectMats=selectedMat;
-    this.showModal=false; 
-    
-  
+    // 선택된 자재를 배열로 변환하여 저장 (기존 코드와의 호환성 유지)
+    this.selectMats = selectedMat ? [selectedMat] : [];
+    this.showModal = false;
   },
   handleVdrSelect(selectedVdr){
     this.selectVdr=selectedVdr;

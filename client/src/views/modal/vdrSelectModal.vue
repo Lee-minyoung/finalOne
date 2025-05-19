@@ -60,7 +60,11 @@
 export default {
   props: {
     vdrList: Array, // 전체 거래처 목록
-    selected: Object // 이미 선택된 거래처 (null 가능)
+    selected: Object, // 이미 선택된 거래처 (null 가능)
+    vdrType: { // 필터링할 거래처 타입
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -71,9 +75,12 @@ export default {
   computed: {
     filteredVdrs() {
       if (!this.vdrList) return [];
-      return this.vdrList.filter(vdr =>
-        vdr.cpy_nm?.toLowerCase().includes(this.search.toLowerCase())
-      );
+      return this.vdrList.filter(vdr => {
+        const matchesSearch = vdr.cpy_nm?.toLowerCase().includes(this.search.toLowerCase());
+        const matchesType = !this.vdrType || 
+          (this.vdrType === 'b1' && (vdr.ofc_tp === 'b1' || vdr.ofc_tp === 'b3'));
+        return matchesSearch && matchesType;
+      });
     }
   },
   created() {

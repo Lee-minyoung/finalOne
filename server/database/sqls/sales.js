@@ -14,6 +14,31 @@ const selectLastOrdNo=
   from ord_dtl`; 
 //  
 const selectOrdList=
+`SELECT 
+  o.ord_no,
+  o.vdr_no,
+  v.cpy_nm,
+  od.prd_no,
+  p.prd_nm,
+  od.prd_qty AS 요청수량,
+  ps.cur_stk AS lot수량,
+  DATE_FORMAT(o.rgt_dt, '%Y-%m-%d') AS rgt_dt,
+  DATE_FORMAT(DATE_ADD(o.rgt_dt, INTERVAL 14 DAY), '%Y-%m-%d') AS 납기예정,
+  ps.lot_no,
+  v.ofc_addr,
+  s.ord_no AS 출하에서수주번호
+FROM ord o
+JOIN ord_dtl od ON o.ord_no = od.ord_no
+JOIN prd p ON od.prd_no = p.prd_no
+LEFT JOIN prd_stk ps ON od.prd_no = ps.prd_no
+JOIN vdr v ON o.vdr_no = v.vdr_no
+LEFT JOIN spm s ON s.ord_no = o.ord_no
+WHERE s.ord_no IS NULL
+GROUP BY o.ord_no, od.prd_no
+ORDER BY o.rgt_dt DESC, o.ord_no DESC, od.prd_no`;
+
+// `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
+// from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
 // `SELECT ord_no,
 //          vdr_no,
 //          emp_no,
@@ -25,27 +50,13 @@ const selectOrdList=
 
 // `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
 // from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
-`SELECT 
-  o.ord_no,
-  o.vdr_no,
-  v.cpy_nm,
-  od.prd_no,
-  p.prd_nm,
-  sum(od.prd_qty) AS 요청수량,
-  ps.cur_stk AS lot수량,
-  DATE_FORMAT(DATE_ADD(o.rgt_dt, INTERVAL 14 DAY), "%Y-%m-%d") AS 납기예정,
-  ps.lot_no,
-  v.ofc_addr,
-  s.ord_no AS 출하에서수주번호
-FROM ord o
-JOIN ord_dtl od ON o.ord_no = od.ord_no
-JOIN prd p ON od.prd_no = p.prd_no
-LEFT JOIN prd_stk ps ON od.prd_no = ps.prd_no
-JOIN vdr v ON o.vdr_no = v.vdr_no
-LEFT JOIN spm s ON s.ord_no = o.ord_no
-WHERE s.ord_no IS NULL
-GROUP BY o.ord_no
-ORDER BY o.ord_no`;
+// `SELECT 
+//   o.ord_no,
+//   o.vdr_no,
+//   od.prd_no,
+//   od.prd_qty
+// FROM ord o
+// JOIN ord_dtl od ON o.ord_no = od.ord_no`;
 
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
