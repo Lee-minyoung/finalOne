@@ -70,9 +70,12 @@
           <td>{{converterUnit(ord['수량'],ord.unit) }}</td>
           <td>{{ ord['단가'] }}</td>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <td>{{ ord['금액'] }}</td>
           <td>{{ ord.cpy_nm }}</td>
 =======
+=======
+>>>>>>> 6a9aee91f1b003d56d62a2dc3d9a1abb2695e08b
           <td>{{ formatNumber(ord['금액']) }}원</td>
           <td>{{ ord.vdr_no }}</td>
 >>>>>>> ea6bb99274547af08d1a7bb06d0e67c21cc213ef

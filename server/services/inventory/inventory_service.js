@@ -44,8 +44,9 @@ const findLastMatNo=async () => {
 const findMatPurplan=async ()=>{
   const result=await mariadb.query('selectMatPurPlan');
   return result;
-
 }
+
+
 //최소수량 구하기 
 const findMinqty=async(matId) =>{
   const result=await mariadb.query('selectMinqty',[matId]);
@@ -161,6 +162,36 @@ const callPlanOnlyProc = async (matReqNo) => {
   return await mariadb.query('callPlanOnlyProc', [matReqNo]);
 };
 
+
+// 출고 처리: 프로시저 호출 + 결과 코드 조회
+const callReleaseProcSmart = async (reqNo) => {
+  const conn = await mariadb.getConnection();
+  try {
+    await conn.query('CALL proc_release_by_req_id(?, @res_code, @msg)', [reqNo]);
+
+    const [rows] = await conn.query('SELECT @res_code AS resultCode, @msg AS resultMsg');
+
+    // ❗ 이게 빠져있으면 undefined
+    return rows[0]; // ✅ 꼭 반환해줘야 함!
+  } catch (err) {
+    console.error('🔥 출고 프로시저 오류:', err);
+    throw err;
+  } finally {
+    conn.release();
+  }
+};
+
+const modifyMatOrdCheck = async (planNo) => {
+  const result = await mariadb.query('updateOrdCheck', [planNo]);
+  return result;
+};
+
+const insertMultipleLots = async (lotData) => {
+  const jsonStr = JSON.stringify(lotData);
+  return await mariadb.query('insertMultipleLots', [jsonStr]);
+};
+
+
 module.exports = {
 
 findPrdPlan, 
@@ -191,5 +222,8 @@ changeMatStsToq2ByMatNo,
 getMinStkAfterRelease, //최소재고량 조회
 callReleaseProc, //자재 출고 이력
 callReleaseAndPlanProc,
-callPlanOnlyProc
+callPlanOnlyProc,
+callReleaseProcSmart,
+modifyMatOrdCheck,
+insertMultipleLots
 }; 

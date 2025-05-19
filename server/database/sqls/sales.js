@@ -25,7 +25,7 @@ const selectOrdList=
 
 // `select o.ord_no,o.vdr_no,od.prd_no,od.prd_qty
 // from ord o join ord_dtl od on o.ord_no=od.ord_no`;  
-<<<<<<< HEAD
+
 `SELECT o.ord_no 
      , o.vdr_no 
      , (SELECT cpy_nm FROM vdr WHERE vdr_no = o.vdr_no)  
@@ -44,7 +44,6 @@ const selectOrdList=
   )
 ORDER BY o.ord_no desc;
 `; 
-=======
 `SELECT 
   o.ord_no,
   o.vdr_no,
@@ -67,7 +66,6 @@ WHERE s.ord_no IS NULL
 GROUP BY o.ord_no
 ORDER BY o.ord_no`;
 
->>>>>>> ea6bb99274547af08d1a7bb06d0e67c21cc213ef
 const selectLastPrd=
 `SELECT max(prd_no) as lastCode
 FROM ord_dtl WHERE prd_no LIKE'PRD%'`; 
