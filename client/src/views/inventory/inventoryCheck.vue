@@ -271,20 +271,20 @@ export default {
       //console.log('필터링된 자재구매계획',this.filteredPurPlan);
 
     },
-    // async getMinOrdqty(matId) {
+    async getMinOrdqty(matId) {
 
-    //   try { //
-    //     const minqty = await axios.get('/api/inventory/minqty', {
-    //       params: {
-    //         matId: matId
-    //       }
-    //     })
-    //     console.log('minqty', minqty.data[0]);
-    //     return minqty.data[0]; //최소량 return 
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
+      try { //
+        const minqty = await axios.get('/api/inventory/minqty', {
+          params: {
+            matId: matId
+          }
+        })
+        console.log('minqty', minqty.data[0]);
+        return minqty.data[0]; //최소량 return 
+      } catch (error) {
+        console.log(error);
+      }
+    },
     //발주하기 버튼 누르면 발주 처리됨 
     async addPurOrdByPlnNo(purPlnNo) {
       try {

@@ -135,7 +135,7 @@ const routes = [
       { // 자재현황파악, 자재구매계획
         path: '/inventoryCheck',
         name: 'InventoryCheck',
-        component: () => import('@/views/inventory/inventoryCheck.vue'),
+        component: () => import('@/views/inventory/inventoryComponents/inventoryCheck.vue'),
       },
       { // 발주서입력, 자재구매계획
         path: '/orderForm',
