@@ -8,10 +8,13 @@ const findNextCode = (lastCode) => {
 };
 // 수주 조회  
 router.get('/ord', async (req, res) => {
-  // let ordList=await  salesService.
-  let ordList = await salesService.findOrdAll()
-    .catch(err => console.log(err));
-  res.send(ordList);
+  try {
+    const ordList = await salesService.findOrdAll();
+    res.json(ordList);
+  } catch (err) {
+    console.error('주문조회 실패', err);
+    res.status(500).json({ message: '주문조회 실패', error: err.message });
+  }
 });
 //주문 조회 
 router.get('/ordAll', async (req, res) => {
