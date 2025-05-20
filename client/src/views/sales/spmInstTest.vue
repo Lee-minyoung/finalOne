@@ -26,13 +26,13 @@
         </colgroup>
         <thead class="table-light">
           <tr>
-            <th>주문ID</th>
-            <th>거래처ID</th>
+            <th>주문번호</th>
+            <th>거래처번호</th>
             <th>거래처명</th>
-            <th>제품ID</th>
+            <th>제품번호</th>
             <th>제품명</th>
             <th>요청수량</th>
-            <th>LOT재고량</th>
+            <th>재고량</th>
             <th>납기일자</th>
             <th>상태</th>
           </tr>
