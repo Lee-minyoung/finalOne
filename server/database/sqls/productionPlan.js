@@ -62,8 +62,8 @@ const insertProdPlan =
   VALUES (?,CURDATE(),?)`
 
 const insertProdPlanDtl =
-`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, sts, rmk)
- VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+`INSERT INTO pdn_pln_dtl (pdn_pln_dtl_no, pdn_pln_no, prd_no, qty, st_dt, end_dt, sts)
+ VALUES (?, ?, ?, ?, ?, ?, 's2')`
 
 // //계획 등록은 2가지 동시 등록 필요함
 // const insertProdPlan =

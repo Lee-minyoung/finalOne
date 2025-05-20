@@ -94,7 +94,8 @@ WHERE s.lot_no NOT IN (SELECT lot_no FROM inc_ins_rslt)`;
 // 성적서가 작성된 검사 자재 불러오기(성적서 조회 페이지)
 const selRsltMat=
 `SELECT s.lot_no, m.mat_no, m.mat_nm
-FROM mat_stk s JOIN mat m ON s.mat_no=m.mat_no
+FROM mat_stk s 
+JOIN mat m ON s.mat_no=m.mat_no
 WHERE lot_no IN(SELECT lot_no
 			FROM inc_ins_rslt)`;
       

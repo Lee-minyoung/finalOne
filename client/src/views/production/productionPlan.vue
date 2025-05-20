@@ -21,7 +21,7 @@
     <!-- 🧩 반응형 테이블 래퍼 -->
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">
-        <!-- <colgroup>
+        <colgroup>
           <col style="width: 80px" />
           <col style="width: 160px" />
           <col style="width: 100px" />
@@ -32,7 +32,7 @@
           <col style="width: 120px" />
           <col style="width: 120px" />
           <col style="width: 60px" />
-        </colgroup> -->
+        </colgroup>
 
         <thead class="table-light">
           <tr>

@@ -28,21 +28,19 @@ LEFT JOIN (
   FROM mat_rls_req
   GROUP BY pdn_ord_no
 ) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
+ORDER BY o.pdn_ord_dt`;
 
---  정렬 조건 추가!
-ORDER BY
-  CASE od.ord_sts
-    WHEN 'r1' THEN 0
-    WHEN 'r2' THEN 1
-    WHEN 'r3' THEN 2
-    ELSE 3
-  END,
-  CASE mrr.mat_ins_sts
-    WHEN 'q2' THEN 0
-    ELSE 1
-  END,
-STR_TO_DATE(end_tm, '%H:%i:%s') DESC`;
 
+// CASE od.ord_sts
+// WHEN 'r1' THEN 0
+// WHEN 'r2' THEN 1
+// WHEN 'r3' THEN 2
+// ELSE 3
+// END,
+// CASE mrr.mat_ins_sts
+// WHEN 'q2' THEN 0
+// ELSE 1
+// END,
 
 const selectLineDropdown =
 `SELECT ln_no, ln_nm, ln_sts
