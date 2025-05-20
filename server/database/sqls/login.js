@@ -7,10 +7,12 @@ const findEmpInfoByEmpNo =
         , e.ctt
         , e.email
         , e.dept_no
+        , d.dept_nm
         , e.pst_no
         , p.pst_nm
 FROM emp e 
 LEFT OUTER JOIN pst p ON e.pst_no = p.pst_no
+LEFT OUTER JOIN dept d ON e.dept_no = d.dept_no
 WHERE e.emp_no = ?`;
 
 // 이메일로 사원 정보 조회

@@ -44,7 +44,7 @@
                         @focus="clearError('pwd')"
                       />
                     </div>
-                    <div class="invalid-feedback" v-if="errors.pwd">{{ errors.pwd }}</div>
+                    <div class="invalid-feedback" v-if="errors.pwd" v-html="errors.pwd"></div>
                   </div>
 
                   <div class="text-end mb-3">
@@ -149,17 +149,18 @@ export default {
             pst_nm: result.data.pst_nm,
             pst_no: result.data.pst_no,
             dept_no: result.data.dept_no,
+            dept_nm: result.data.dept_nm,
           });
 
           alert("로그인 성공!");
           this.$router.push({ name: "Home" });
         } else {
-          this.errors.pwd = result.data.message || "사원번호 혹은 비밀번호가 일치하지 않습니다.";
+          this.errors.pwd = "입력하신 사원번호 또는 비밀번호가 일치하지 않습니다.<br/>다시 한 번 확인해 주세요.";
         }
       } catch (err) {
         console.error("Login error:", err);
         if (err.response) {
-          this.errors.pwd = err.response.data.message || "로그인 중 오류가 발생했습니다.";
+          this.errors.pwd = err.response.data.message || "입력하신 사원번호 또는 비밀번호가 일치하지 않습니다.<br/>다시 한 번 확인해 주세요.";
         } else {
           this.errors.pwd = "서버와 통신할 수 없습니다.";
         }

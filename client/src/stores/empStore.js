@@ -8,6 +8,7 @@ export const useEmpStore = defineStore("emp", {
       pst_nm: null, // 로그인한 사원 직급명
       pst_no: null, // 로그인한 사원 직급번호
       dept_no: null, // 로그인한 사원 부서번호
+      dept_nm: null, // 로그인한 사원 부서명
     },
   }),
   getters: {
@@ -23,6 +24,7 @@ export const useEmpStore = defineStore("emp", {
       this.loginInfo.pst_nm = info.pst_nm;
       this.loginInfo.pst_no = info.pst_no;
       this.loginInfo.dept_no = info.dept_no;
+      this.loginInfo.dept_nm = info.dept_nm;
     },
   },
 

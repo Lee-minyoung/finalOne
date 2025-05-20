@@ -40,14 +40,14 @@ const loginService = {
             // 3. 입력 비밀번호 해시 후 DB값과 비교
             const hashedPassword = createHashedPassword(loginInfo.pwd);
             if (empInfo.pwd === hashedPassword || empInfo.pwd === loginInfo.pwd) {
-                console.log("로그인 성공:", empInfo.emp_no);
-                return {
+                console.log("로그인 성공:", empInfo.emp_no);                return {
                     result: true,
                     emp_no: empInfo.emp_no,
                     nm: empInfo.nm,
                     pst_no: empInfo.pst_no,
                     pst_nm: empInfo.pst_nm,
-                    dept_no: empInfo.dept_no
+                    dept_no: empInfo.dept_no,
+                    dept_nm: empInfo.dept_nm
                 };
             }
 
