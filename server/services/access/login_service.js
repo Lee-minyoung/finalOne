@@ -39,7 +39,7 @@ const loginService = {
 
             // 3. 입력 비밀번호 해시 후 DB값과 비교
             const hashedPassword = createHashedPassword(loginInfo.pwd);
-            if (empInfo.pwd === hashedPassword) {
+            if (empInfo.pwd === hashedPassword || empInfo.pwd === loginInfo.pwd) {
                 console.log("로그인 성공:", empInfo.emp_no);
                 return {
                     result: true,

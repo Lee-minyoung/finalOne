@@ -54,6 +54,13 @@
                 </div>
               </div>
             </div>
+            <!-- 가격 -->
+            <div class="col-md-12 mb-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-3" style="min-width: 100px;">가격</label>
+                <input type="text" class="form-control" :value="formatPrice(matInfo.prc)" @input="updatePrice($event)" />
+              </div>
+            </div>
             <!-- 최소주문량, 최소재고량 -->
             <div class="col-md-6 mb-3">
               <div class="d-flex align-items-center">
@@ -172,6 +179,29 @@ export default {
       }
       this.showVdrModal = false;
     },
+
+    formatPrice(value) {
+      // 입력값이 있을 경우에만 처리
+      if (value) {
+        // 숫자를 천단위 구분자가 있는 문자열로 변환
+        return Number(value).toLocaleString();
+      }
+      return '0';
+    },
+
+    updatePrice(event) {
+      // 입력된 값에서 쉼표를 제거하고 숫자만 추출
+      const value = event.target.value.replace(/,/g, '');
+      // 숫자가 아닌 문자가 입력되었다면 이전 값을 유지
+      if (!/^\d*$/.test(value)) {
+        event.target.value = this.formatPrice(this.matInfo.prc);
+        return;
+      }
+      // 정수로 변환하여 저장
+      this.matInfo.prc = Number(value);
+      // 포맷팅된 값을 입력 필드에 표시
+      event.target.value = this.formatPrice(this.matInfo.prc);
+    },
     /**
      * 날짜 포맷팅 유틸리티 함수
      * - DB에서 가져온 날짜를 지정된 형식으로 변환
@@ -256,6 +286,7 @@ export default {
         mat_nm: this.matInfo.mat_nm, // 자재명
         mat_tp: this.matInfo.mat_tp, // 자재유형
         mn_vdr: this.matInfo.mn_vdr || null,  // 대표거래처 (선택 안된 경우 null)
+        prc: Number(this.matInfo.prc) || 0, // 가격
         min_ord_qty: this.matInfo.min_ord_qty || 0, // 최소주문량
         min_stk_qty: this.matInfo.min_stk_qty || 0, // 최소재고량
         unit: this.matInfo.unit || '', // 단위

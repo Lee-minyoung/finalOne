@@ -7,26 +7,46 @@
             <div class="card-body px-4 py-5">
               <form @submit.prevent="resetPwd">
                 <div class="text-center mb-3">
-                  <p class="welcome-text">새 비밀번호를 입력해 주세요.</p>
+                  <p class="welcome-text">
+                    새 비밀번호를 입력해 주세요.<br>
+                    <span class="form-text">보안을 위해 8자 이상, 영문/숫자/특수문자 조합을 권장합니다.</span>
+                  </p>
                 </div>
                 <div class="form-section">
                   <div class="input-wrapper">
+                    <label class="form-label">새 비밀번호</label>
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-key"></i>
+                      </span>
                     <input 
-                      type="password" 
+                        :type="showPwd ? 'text' : 'password'"
                       class="form-control"
                       v-model="passwordInfo.newPassword"
-                      placeholder="8자 이상, 특수문자 포함"
+                        placeholder="새 비밀번호를 입력하세요"
+                        :class="{ 'is-invalid': newPwdError }"
                       :disabled="isLoading"
                     />
+                      <button class="btn btn-outline-secondary" type="button" @click="showPwd = !showPwd">
+                        <i :class="showPwd ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                      </button>
+                    </div>
                   </div>
                   <div class="input-wrapper">
+                    <label class="form-label">새 비밀번호 확인</label>
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-key-fill"></i>
+                      </span>
                     <input 
-                      type="password" 
+                        :type="showPwd ? 'text' : 'password'"
                       class="form-control"
                       v-model="passwordInfo.confirmPassword"
-                      placeholder="새 비밀번호를 다시 입력하세요"
+                        placeholder="비밀번호를 한 번 더 입력하세요"
+                        :class="{ 'is-invalid': confirmPwdError }"
                       :disabled="isLoading"
                     />
+                    </div>
                   </div>
                   <div class="text-end mb-3">
                     <button 
@@ -35,7 +55,8 @@
                       @click="goToLogin"
                       :disabled="isLoading"
                     >
-                      ← 로그인으로 돌아가기
+                      <i class="bi bi-arrow-left me-1"></i>
+                      로그인으로 돌아가기
                     </button>
                   </div>
                   <button 
@@ -67,17 +88,27 @@ export default {
         newPassword: "",
         confirmPassword: ""
       },
-      isLoading: false
+      isLoading: false,
+      showPwd: false
     };
   },
   computed: {
+    newPwdError() {
+      if (!this.passwordInfo.newPassword) return "새 비밀번호를 입력하세요.";
+      if (this.passwordInfo.newPassword.length < 8) return "8자 이상 입력하세요.";
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(this.passwordInfo.newPassword)) return "특수문자를 포함하세요.";
+      return "";
+    },
+    confirmPwdError() {
+      if (!this.passwordInfo.confirmPassword) return "비밀번호를 한 번 더 입력하세요.";
+      if (this.passwordInfo.newPassword !== this.passwordInfo.confirmPassword) return "비밀번호가 일치하지 않습니다.";
+      return "";
+    },
     isValidForm() {
       return (
-        this.passwordInfo.newPassword.trim() &&
-        this.passwordInfo.confirmPassword.trim() &&
-        this.passwordInfo.newPassword === this.passwordInfo.confirmPassword &&
         this.passwordInfo.newPassword.length >= 8 &&
-        /[!@#$%^&*(),.?":{}|<>]/.test(this.passwordInfo.newPassword)
+        /[!@#$%^&*(),.?":{}|<>]/.test(this.passwordInfo.newPassword) &&
+        this.passwordInfo.newPassword === this.passwordInfo.confirmPassword
       );
     }
   },
@@ -148,6 +179,14 @@ export default {
   padding: 2.5rem 2.8rem !important;
 }
 
+.welcome-text {
+  color: #1a1d1f;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
 .form-section {
   max-width: 360px;
   margin: 0 auto;
@@ -158,11 +197,28 @@ export default {
   margin-bottom: 1.2rem;
 }
 
-.input-group, .form-control {
+.input-group {
   border: 1px solid #dee2e6;
   border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  }
+
+  .input-group-text {
+    background-color: white;
+    border: none;
+    color: #6c757d;
+    padding: 0.75rem 1rem;
+    transition: color 0.3s ease;
+    i { font-size: 1.1rem; }
+  }
+
+  &:focus-within .input-group-text {
+    color: #0d6efd;
 }
 
 .form-control {
@@ -172,6 +228,41 @@ export default {
   background-color: white;
   &:focus { box-shadow: none; }
   &::placeholder { color: #adb5bd; font-size: 0.92rem; }
+  }
+}
+
+.form-label {
+  color: #495057;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.4rem;
+  margin-left: 0.5rem;
+}
+
+.btn-forgot {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  transition: color 0.2s;
+  margin-bottom: 1.2rem;
+  border-radius: 6px;
+
+  &:hover {
+    color: #0d6efd;
+    background: none;
+  }
+
+  i {
+    font-size: 0.9rem;
+  }
 }
 
 .btn-login {
@@ -198,22 +289,6 @@ export default {
   &:disabled {
     background: #adb5bd;
     cursor: not-allowed;
-  }
-}
-
-.btn-forgot {
-  background: none;
-  border: none;
-  color: #6c757d;
-  font-size: 0.9rem;
-  padding: 0.5rem;
-  transition: color 0.2s;
-  margin-bottom: 1.2rem;
-  border-radius: 6px;
-
-  &:hover {
-    color: #0d6efd;
-    background: none;
   }
 }
 

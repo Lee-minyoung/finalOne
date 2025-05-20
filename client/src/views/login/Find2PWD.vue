@@ -25,7 +25,7 @@
                         :disabled="isLoading || isEmailSent"
                       />
                     </div>
-                    <div class="form-text">입력하신 이메일로 임시 비밀번호가 발송됩니다.</div>
+                    <div class="form-text" v-if="!isEmailSent">입력하신 이메일로 임시 비밀번호가 발송됩니다.</div>
                   </div>
 
                   <div v-if="isEmailSent" class="input-wrapper">
@@ -219,7 +219,7 @@ export default {
     border-color: #0d6efd;
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
   }
-
+  
   .input-group-text {
     background-color: white;
     border: none;
@@ -228,7 +228,7 @@ export default {
     transition: color 0.3s ease;
     i { font-size: 1.1rem; }
   }
-
+    
   &:focus-within .input-group-text {
     color: #0d6efd;
   }
@@ -274,8 +274,8 @@ export default {
     margin: 0 0.5rem;
     position: relative;
     top: -0.5rem;
+    }
   }
-}
 
 .form-label {
   color: #495057;

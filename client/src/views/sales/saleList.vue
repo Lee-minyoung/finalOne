@@ -240,6 +240,8 @@ export default {
       });
       this.tempPrd = null;
       this.tempQty = 1;
+      // 모달 닫기
+      this.showPrdModal = false;
     },
     removeProduct(idx) {
       this.orderProducts.splice(idx, 1);
