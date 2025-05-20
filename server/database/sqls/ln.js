@@ -59,7 +59,7 @@ FROM ln`;
 // Ln 추가
 const insertLn =
 `INSERT INTO ln (ln_no, ln_nm, prd_no, ln_sts, use_yn, dly_avg_pdn_qty)
-VALUES (?, ?, ?, 'l2', 'f1', ?)`;
+VALUES (?, ?, ?, 'l1', 'f1', ?)`;
 
 // ln_dtl 추가
 const insertLnDtl =

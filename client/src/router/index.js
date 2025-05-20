@@ -39,7 +39,7 @@ const productionRoutes = [
   {
     path: '/LineMang',
     name: '라인관리',
-    component: () => import('@/views/production/line/lineManagement.vue')
+    component: () => import('@/views/production/line/LineManagement.vue')
   },
   {
     path: '/LineMangDtl',
