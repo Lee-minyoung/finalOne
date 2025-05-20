@@ -261,6 +261,7 @@ router.get('/inventory/checkMinStk', async (req, res) => {
 
 
 // 1번 출고처리 프로시저 호출
+// 1번 출고처리 프로시저 호출
 router.post('/inventory/releaseByReqNo', async (req, res) => {
   try {
     const { reqNo } = req.body;
