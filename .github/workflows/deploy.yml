@@ -20,7 +20,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: client
-        run: npm ci
+        run: npm update
 
       - name: Build Vue app
         working-directory: client
