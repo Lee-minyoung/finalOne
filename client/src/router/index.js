@@ -67,17 +67,17 @@ const qualityRoutes = [
   {
     path: '/IncInsStd',
     name: 'IncInsStd',
-    component: () => import('@/views/qualitys/incInsStd.vue')
+    component: () => import('@/views/qualitys/IncInsStd.vue')
   },
   {
     path: '/IncInsRslt',
     name: 'IncInsRslt',
-    component: () => import('@/views/qualitys/incInsRslt.vue')
+    component: () => import('@/views/qualitys/IncInsRslt.vue')
   },
   {
     path: '/IncInsGetRslt',
     name: 'IncInsGetRslt',
-    component: () => import('@/views/qualitys/incInsGetRslt.vue')
+    component: () => import('@/views/qualitys/IncInsGetRslt.vue')
   }
 ]
 
