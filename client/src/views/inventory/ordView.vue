@@ -69,6 +69,8 @@
           <td>{{ ord['자재명'] }}</td>
           <td>{{converterUnit(ord['수량'],ord.unit) }}</td>
           <td>{{ ord['단가'] }}</td>
+          <td>{{ ord['금액'] }}</td>
+          <td>{{ ord.cpy_nm }}</td>
           <td>{{ formatNumber(ord['금액']) }}원</td>
           <td>{{ ord.vdr_no }}</td>
           <td>{{ ord['발주일자'] }}</td>

@@ -1,7 +1,14 @@
 const mariadb = require("../../database/mapper.js");
 const { convertObjToAry } = require('../../utils/converts.js');
 
-// 자재 목록 조회
+// 자재 목록 조회(기준서)
+const findMat = async () => {
+  let list = await mariadb.query("selectMat")
+    .catch(err => console.log(err));
+  return list;
+};
+
+// 자재 목록 조회(성적서)
 const findLot = async () => {
   let list = await mariadb.query("selectLot")
     .catch(err => console.log(err));
@@ -62,6 +69,7 @@ const deleteIncInsStd = async (inc_ins_std_no) => {
 };
 
 module.exports = {
+  findMat,
   findLot,
   findIncInsStdList,
   addIncInsStd,

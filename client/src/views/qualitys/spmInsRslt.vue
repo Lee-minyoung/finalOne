@@ -16,7 +16,7 @@
       라인번호 <input :value="selectedLineId" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
       제품명 <input :value="selectedProductName" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
       작성일자 <input :value="selectedInsDate" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
-      검사자 <input :value="selectedInsDev" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
+      검사자 <input :value="employeeName" class="form-control" readonly style="background-color: #eee; margin-right:52px;" />
     </div>
     <br>
     <div class="middle">
@@ -104,7 +104,7 @@
 import axios from 'axios';
 import useDateUtils from '@/utils/useDates.js' // 날짜 포맷 유틸
 import PrdSelModal from '@/views/qualitys/PrdRsltSelModal.vue'; // 모달
-
+import { useEmpStore } from '@/stores/empStore.js';
 import { ref, onBeforeMount } from 'vue';
 
 // 반응형 객체 선언 : 원시타입    
@@ -136,8 +136,10 @@ export default {
       newItemList: [],
       overallJdg: '',
       selectedRsltNo: '', // 성적서 번호
+      empStore: useEmpStore(),
     };
   },
+
   watch: {
     'newItem.succ_count'(val) {
       const mgr = Number(this.newItem.mgr_count);
@@ -154,10 +156,10 @@ export default {
       }
     }
   },
-  created() {
-    this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
-  },
   computed: {
+    employeeName() {
+      return this.empStore.loginInfo.nm || '';
+    },
   autoOverallJdg() {
     // 모든 판정이 '적합'이면 '합격', 하나라도 '부적합'이면 '불합격'
     if (!this.spmInsStdList.length) return '';

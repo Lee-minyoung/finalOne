@@ -109,6 +109,7 @@ export default {
       selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
       selectedInsDate: this.getToday(),     // 날짜
+      selectedInsDev: '',          // 검사자
       newItemList: [],
       spmInsStdList: [],
       prodList: [],
@@ -121,7 +122,7 @@ export default {
     };
   },
   created() {
-    this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
+   this.selectedInsDev = localStorage.getItem('username') || '';
   },
   methods: {
 
@@ -223,11 +224,17 @@ export default {
     },
 
     async fetchRsltDetail(prd_no, ln_opr_no) {
-      const res = await axios.get('/api/spmInsGetRslt/detail', { params: { prd_no, ln_opr_no } });
-      this.rsltMaster = res.data.master; // rslt_no, mgr_count, succ_count, dft_count, ovr_jdg
-      this.rsltDetailList = res.data.detail; // [{ ins_itm, ins_mthd, mgr_rslt, jdg, rmk }, ...]
-      this.selectedRsltNo = this.rsltMaster?.rslt_no || '';
-      console.log(this.rsltDetailList)
+     const res = await axios.get('/api/spmInsGetRslt/detail', { params: { prd_no, ln_opr_no } });
+  this.rsltMaster = res.data.master;
+  this.rsltDetailList = res.data.detail;
+  this.selectedRsltNo = this.rsltMaster?.rslt_no || '';
+
+  // 검사자명 추가로 불러오기
+  if (this.selectedRsltNo) {
+    const empRes = await axios.get('/api/spmInsGetRslt/withEmp', { params: { rslt_no: this.selectedRsltNo } });
+    // getSpmInsRslt1은 여러 row가 나올 수 있으니 첫 번째 row의 nm 사용
+    this.selectedInsDev = empRes.data[0]?.nm || '';
+  }
     },
 
     // 모달

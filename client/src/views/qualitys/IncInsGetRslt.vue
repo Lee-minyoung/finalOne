@@ -115,7 +115,8 @@ export default {
       searchQuery: '',             // 제품검색
       selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
-      selectedInsDate: '',     // 날짜
+      selectedInsDate: '',        // 날짜
+      selectedInsDev: '',        // 검사자
       newItemList: [],
       spmInsStdList: [],
       prodList: [],
@@ -130,7 +131,7 @@ export default {
     };
   },
   created() {
-    this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
+     this.selectedInsDev = localStorage.getItem('username') || '';
   },
   computed: {
     filteredLots() {

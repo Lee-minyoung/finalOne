@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const incInsStdService = require('../../services/qualitys/incInsStd_service.js');
 
+// 자재 불러오기(기준서)
+router.get('/incInsStd/mat', async (req, res) => {
+  let list = await incInsStdService.findMat()
+    .catch(err => console.log(err));
+  res.send(list);
+});
+
 // 자재번호, 자재명 불러오기
 router.get('/incInsStd/matList', async (req, res) => {
   let list = await incInsStdService.findLot()
