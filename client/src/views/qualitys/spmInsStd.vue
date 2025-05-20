@@ -320,7 +320,7 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 .input {
   border: 1px solid lightgray;
   padding: 30px;

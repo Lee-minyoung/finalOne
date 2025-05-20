@@ -11,10 +11,10 @@ ORDER BY mat_no`;
 // 자재 상세 정보 조회
 // - 특정 자재번호에 해당하는 자재의 모든 정보를 조회
 // - 거래처 정보와 JOIN하여 대표거래처명도 함께 조회
-// - 조회 정보: 자재번호, 자재명, 자재유형, 대표거래처, 최소주문량, 최소재고량, 단위, 리드타임, 등록일자, 수정일자, 거래처명
+// - 조회 정보: 자재번호, 자재명, 자재유형, 대표거래처, 최소주문량, 최소재고량, 단위, 리드타임, 등록일자, 수정일자, 거래처명, 가격
 const selectMatOne =
   `SELECT m.mat_no, m.mat_nm, m.mat_tp, m.mn_vdr, m.min_ord_qty, m.min_stk_qty, m.unit, m.ld_tm, m.rgt_dt, m.mdf_dt,
-        v.cpy_nm as vdr_nm
+        v.cpy_nm as vdr_nm, m.prc
 FROM mat m
 LEFT JOIN vdr v ON m.mn_vdr = v.vdr_no
 WHERE m.mat_no = ?`;
@@ -38,8 +38,8 @@ FROM mat`;
 // - 새로운 자재 정보를 테이블에 추가
 // - 등록일자는 현재 시스템 날짜로 자동 설정
 const insertMat =
-  `INSERT INTO mat ( mat_no, mat_nm, mat_tp, mn_vdr, min_ord_qty, min_stk_qty, unit, ld_tm, rgt_dt )
-VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, sysdate() )`;
+  `INSERT INTO mat ( mat_no, mat_nm, mat_tp, mn_vdr, min_ord_qty, min_stk_qty, unit, ld_tm, rgt_dt, prc )
+VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, sysdate(), ? )`;
 
 // 자재 정보 수정
 // - 특정 자재번호에 해당하는 자재의 정보를 수정

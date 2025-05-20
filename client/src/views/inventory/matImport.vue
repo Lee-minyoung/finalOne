@@ -42,11 +42,11 @@
       <thead class="table-light">
         <tr>
           <th>발주번호</th>
-          <th>자재ID</th>
+          <th>자재번호</th>
           <th>자재명</th>
           <th>수량</th>
           <th>유통기한</th>
-          <th>거래처ID</th>
+          <th>거래처번호</th>
           <th>거래처명</th>
         </tr>
       </thead>

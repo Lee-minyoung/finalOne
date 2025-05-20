@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label fw-bold">거래처코드</label>
+                  <label class="form-label fw-bold">거래처번호</label>
                   <input type="text" class="form-control" :value="selectVdr?.vdr_no || ''" readonly />
                 </div>
               </div>
@@ -42,7 +42,7 @@
             <div class="border rounded p-4 shadow-sm">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="mb-0 fw-bold text-primary">주문 상품</h6>
-                <button class="btn btn-outline-primary" @click="showPrdModal = true">
+                <button class="btn btn-primary" @click="showPrdModal = true">
                   <i class="bi bi-plus-circle"></i> 상품 추가
                 </button>
               </div>
@@ -50,7 +50,7 @@
                 <thead class="table-light">
                   <tr>
                     <th class="bg-light">No</th>
-                    <th class="bg-light">제품 ID</th>
+                    <th class="bg-light">제품번호</th>
                     <th class="bg-light">제품명</th>
                     <th class="bg-light">수량</th>
                     <th class="bg-light">관리</th>
@@ -107,9 +107,9 @@
         <tr>
           <th>주문번호</th>
           <th>제품명</th>
-          <th>거래처코드</th>
+          <th>거래처번호</th>
           <th>요청수량</th>
-          <th>LOT재고량</th>
+          <th>재고량</th>
         </tr>
       </thead>
       <tbody>
@@ -130,7 +130,7 @@
           <th>제품명</th>
           <th>거래처명</th>
           <th>요청수량</th>
-          <th>LOT재고량</th>
+          <th>재고량</th>
         </tr>
       </thead>
       <tbody>

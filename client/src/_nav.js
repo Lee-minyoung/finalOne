@@ -186,18 +186,18 @@ export default [
     ],
   },
 
-  {
-    component: 'CNavGroup',
-    name: '실시간 모니터링',
-    icon: 'cil-speedometer',
-    visible: true,
-    items: [
-      {
-        component: 'CNavItem',
-        name: '대시보드',
-        to: '/dashboard',
-      },
-    ],
-  },
+  // {
+  //   component: 'CNavGroup',
+  //   name: '실시간 모니터링',
+  //   icon: 'cil-speedometer',
+  //   visible: true,
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: '대시보드',
+  //       to: '/dashboard',
+  //     },
+  //   ],
+  // },
  
 ]

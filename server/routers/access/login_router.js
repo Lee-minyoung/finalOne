@@ -34,8 +34,8 @@ router.get('/logout', (req, res) => {
 // 비밀번호 찾기 요청을 처리하는 라우터
 router.post('/find-password', async (req, res) => {
   try {
-    const { empNo, email } = req.body;
-    const result = await loginService.findPassword(empNo, email);
+    const { email } = req.body;
+    const result = await loginService.findPassword(email);
     res.json(result);
   } catch (err) {
     console.error('비밀번호 찾기 라우터 오류:', err);
@@ -83,14 +83,14 @@ router.post('/find-password', async (req, res) => {
 // 비밀번호 재설정 요청을 처리하는 라우터
 router.post('/reset-password', async (req, res) => {
   try {
-    const { empNo, tempPassword, newPassword } = req.body;
-    if (!empNo || !tempPassword || !newPassword) {
+    const { empNo, newPassword } = req.body;
+    if (!empNo || !newPassword) {
       return res.status(400).json({
         result: false,
         message: '모든 필드를 입력해주세요.'
       });
     }
-    const result = await loginService.resetPassword(empNo, tempPassword, newPassword);
+    const result = await loginService.resetPassword(empNo, newPassword);
     res.json(result);
   } catch (err) {
     console.error('비밀번호 재설정 라우터 오류:', err);
