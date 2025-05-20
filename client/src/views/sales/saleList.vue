@@ -103,7 +103,7 @@
     <!-- 주문 리스트 테이블 -->
     <!--전체조회-->
     <table v-if="!dateShow" class="table table-bordered text-center mt-4">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>주문번호</th>
           <th>제품명</th>
@@ -153,28 +153,28 @@ import prdSelectModal from '@/views/production/ProductSelectModal.vue';
 export default {
   components: { vdrSelectModal, prdSelectModal },
   data() {
-   const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const todayStr = `${yyyy}-${mm}-${dd}`;
-  return {
-    showVdrModal: false,
-    showPrdModal: false,
-    selectVdr: null,
-    selectPrd: null,
-    vdrCd: '',
-    prdNo: '',
-    prdQty: 1,
-    dueDt: '',
-    ordList: [],
-    vdrList: [],
-    prdList: [],
-    selectPrdList: [],
-    ordListByDate: [],
-    startDate: todayStr,   // ← 오늘로 기본값
-    endDate: todayStr,     // ← 오늘로 기본값
-    dateShow: false,
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    return {
+      showVdrModal: false,
+      showPrdModal: false,
+      selectVdr: null,
+      selectPrd: null,
+      vdrCd: '',
+      prdNo: '',
+      prdQty: '',
+      dueDt: '',
+      ordList: [],
+      vdrList: [],
+      prdList: [],
+      selectPrdList: [],
+      ordListByDate: [],
+      startDate: todayStr,   // ← 오늘로 기본값
+      endDate: todayStr,     // ← 오늘로 기본값
+      dateShow: false,
     };
   },
   async created() {
@@ -189,6 +189,7 @@ export default {
     async getOrdList() {
       try {
         const res = await axios.get('/api/ord');
+        console.log('ordList:', res.data);
         this.ordList = res.data;
       } catch (err) {
         console.error('주문 불러오기 실패', err);

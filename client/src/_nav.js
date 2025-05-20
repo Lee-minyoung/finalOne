@@ -26,7 +26,7 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: '출고조회',
+        name: '출하조회',
         to: '/SpmFns',
       },
     ],
