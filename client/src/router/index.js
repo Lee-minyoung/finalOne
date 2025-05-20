@@ -85,7 +85,7 @@ const inventoryRoutes = [
   {
     path: '/inventoryCheck',
     name: 'InventoryCheck',
-    component: () => import('@/views/inventory/inventoryComponents/inventoryCheck.vue')
+    component: () => import('@/views/inventory/inventoryComponents/InventoryCheck.vue')
   },
   {
     path: '/orderForm',
