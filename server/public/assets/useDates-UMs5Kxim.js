@@ -1,2 +1,0 @@
-const i=function(t,s){if(!t||isNaN(new Date(t).getTime()))return"";let e=new Date(t),c=e.getFullYear(),l=("0"+(e.getMonth()+1)).slice(-2),r=("0"+e.getDate()).slice(-2);const n=("0"+e.getHours()).slice(-2),a=("0"+e.getMinutes()).slice(-2),o=("0"+e.getSeconds()).slice(-2);return s.replace("yyyy",c).replace("MM",l).replace("dd",r).replace("hh",n).replace("mm",a).replace("ss",o)},d={dateFormat:i};export{d as u};
-//# sourceMappingURL=useDates-UMs5Kxim.js.map

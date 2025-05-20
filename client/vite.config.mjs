@@ -7,12 +7,12 @@ import autoprefixer from 'autoprefixer'    // CSS 벤더 프리픽스 자동 추
 // Vite 설정을 export
 export default defineConfig(() => {
   return {
-     build:
-    {
-        outDir: '../server/public',
-        emptyOutDir: true,
-        sourcemap: true
-    },
+    //  build:
+    // {
+    //     outDir: '../server/public',
+    //     emptyOutDir: true,
+    //     sourcemap: true
+    // },
     plugins: [vue()],        // Vue 플러그인 활성화
     base: './',              // 상대 경로로 빌드 (보통 GitHub Pages나 하위 도메인 배포 시 사용)
 
