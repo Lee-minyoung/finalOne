@@ -40,7 +40,7 @@
                 <td>{{ item.prd_no }}</td>
                 <td>{{ item.prd_nm }}</td>
                 <td>{{ item.현재고량 }}</td>
-                <td>{{ item.생산필요수량 }}</td>
+                <td>{{ item.부족량 }}</td>
               </tr>
             </tbody>
           </table>

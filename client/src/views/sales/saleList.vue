@@ -26,7 +26,7 @@
                   <label class="form-label fw-bold">거래처</label>
                   <div class="input-group">
                     <input type="text" class="form-control" :value="selectVdr?.cpy_nm || ''" readonly />
-                    <button class="btn btn-outline-primary" @click="showVdrModal = true">
+                    <button class="btn btn-primary" @click="showVdrModal = true">
                       <i class="bi bi-search"></i> 선택
                     </button>
                   </div>
@@ -42,9 +42,9 @@
             <div class="border rounded p-4 shadow-sm">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="mb-0 fw-bold text-primary">주문 상품</h6>
-                <button class="btn btn-outline-primary" @click="showPrdModal = true">
+                <!-- <button class="btn btn-outline-primary" @click="showPrdModal = true">
                   <i class="bi bi-plus-circle"></i> 상품 추가
-                </button>
+                </button> -->
               </div>
               <table class="table table-bordered text-center align-middle">
                 <thead class="table-light">
@@ -59,7 +59,11 @@
                 <tbody>
                   <tr>
                     <td>1</td>
-                    <td><input type="text" class="form-control" v-model="prdNo" readonly /></td>
+                    <td><div class="input-group"> <input type="text" class="form-control" v-model="prdNo" readonly />
+                      <button class="btn btn-primary" @click="showPrdModal = true">
+                        <i class="bi bi-search"></i> 선택
+                      </button></div>
+                    </td>
                     <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
                     <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
                     <td>
@@ -73,20 +77,10 @@
             </div>
 
             <!-- 모달 컴포넌트 -->
-            <vdr-select-modal
-              v-if="showVdrModal"
-              :vdr-list="vdrList"
-              :selected="selectVdr"
-              @select-vdr="handleVdrSelect"
-              @close="showVdrModal = false"
-            />
-            <prd-select-modal
-              v-if="showPrdModal"
-              :prd-list="prdList"
-              :selected="selectPrd"
-              @select-prd="handlePrdSelect"
-              @close="showPrdModal = false"
-            />
+            <vdr-select-modal v-if="showVdrModal" :vdr-list="vdrList" :selected="selectVdr"
+              @select-vdr="handleVdrSelect" @close="showVdrModal = false" />
+            <prd-select-modal v-if="showPrdModal" :prd-list="prdList" :selected="selectPrd"
+              @select-prd="handlePrdSelect" @close="showPrdModal = false" />
           </div>
           <div class="modal-footer bg-light">
             <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -97,17 +91,18 @@
         </div>
       </div>
     </div>
-
+    <div>
+      
     <input type="date" v-model="startDate" />
-  <input type="date" v-model="endDate" />
-  <button class="btn btn-primary" @click="fetchOrdByDate">조회</button>
-
+    <input type="date" v-model="endDate" />
+    <button class="btn btn-primary" @click="fetchOrdByDate"><span>조회</span></button>
+  </div>
 
     <!-- 주문 리스트 테이블 -->
-     <!--전체조회-->
+    <!--전체조회-->
     <table v-if="!dateShow" class="table table-bordered text-center mt-4">
       <thead class="table-light">
-        <tr>   
+        <tr>
           <th>주문번호</th>
           <th>제품명</th>
           <th>거래처코드</th>
@@ -120,35 +115,35 @@
           <td>{{ item.ord_no }}</td>
           <td>{{ item.prd_nm }}</td>
           <td>{{ item.vdr_no }}</td>
-          <td>{{ item['요청수량']}}</td>
-          <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0}}</td>
+          <td>{{ item['요청수량'] }}</td>
+          <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0 }}</td>
         </tr>
       </tbody>
     </table>
 
-  <table v-else class="table table-bordered text-center mt-4">
-    <thead  class="table-light">
-      <tr>
-        
+    <table v-else class="table table-bordered text-center mt-4">
+      <thead class="table-light">
+        <tr>
+
           <th>주문번호</th>
           <th>제품번호</th>
           <th>제품명</th>
-          <th>거래처명</th> 
+          <th>거래처명</th>
           <th>요청수량</th>
           <th>LOT재고량</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in ordListByDate" :key="index">
-        <td>{{ item.ord_no }}</td>
-         <td>{{ item.prd_no }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in ordListByDate" :key="index">
+          <td>{{ item.ord_no }}</td>
+          <td>{{ item.prd_no }}</td>
           <td>{{ item.prd_nm }}</td>
-         <td>{{ item.cpy_nm }}</td>
-          <td>{{item['요청수량']}}</td>
+          <td>{{ item.cpy_nm }}</td>
+          <td>{{ item['요청수량'] }}</td>
           <td>{{ item['lot수량'] !== null ? item['lot수량'] : 0 }}</td>
-      </tr>
-    </tbody>
-  </table>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 <script>
@@ -223,7 +218,7 @@ export default {
     async fetchOrdByDate() {
       console.log('날짜 확인:', this.startDate, this.endDate)
       this.dateArray = ['품명', '현재고']
-      this.dateShow = true; 
+      this.dateShow = true;
 
       try {
         const result = await axios.get('/api/ord/by-date', {
@@ -246,7 +241,7 @@ export default {
         console.log('기간별 주문리스트 불러오기 실패', err)
       }
     },
-  
+
 
   },
 };

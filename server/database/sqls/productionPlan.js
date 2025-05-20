@@ -34,7 +34,7 @@ ORDER BY d.end_dt ASC,
   const selectProd =
 `SELECT p.prd_no
       , p.prd_nm
-      , REPLACE((IFNULL(SUM(ps.cur_stk), 0) - opt_stk_qty ), '-', '') as 생산필요수량
+      , REPLACE((IFNULL(SUM(ps.cur_stk), 0) - opt_stk_qty ), '-', '') as 부족량
       , IFNULL(SUM(ps.cur_stk), 0) as 현재고량
    FROM prd p
    LEFT JOIN prd_stk ps ON p.prd_no = ps.prd_no

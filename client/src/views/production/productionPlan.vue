@@ -270,12 +270,13 @@ export default {
       }
       for (const product of selectedList) {
         if (!existingPrdNos.has(product.prd_no)) {
+          const { startDate, endDate } = this.getDefaultDates()
           updatedRows.push({
             prd_no: product.prd_no,
             prd_nm: product.prd_nm,
-            qty: '',
-            st_dt: '',
-            end_dt: '',
+            qty: Math.max(0, product.부족량 || 0),
+            st_dt: startDate,
+            end_dt: endDate,
             rmk: '',
             crt_by: this.empStore.loginInfo.emp_no,
             status: '계획완료'
@@ -374,7 +375,15 @@ export default {
     const mm = String(today.getMonth() + 1).padStart(2, '0') // 월은 0부터 시작
     const dd = String(today.getDate()).padStart(2, '0')
     return `${yyyy}-${mm}-${dd}` // date input 형식: yyyy-mm-dd
-  }
+  },
+  getDefaultDates() {
+  const today = new Date()
+  const startDate = today.toISOString().split('T')[0] // 오늘
+  const endDate = new Date(today)
+  endDate.setDate(today.getDate() + 7)                // +7일
+  const endDateFormatted = endDate.toISOString().split('T')[0]
+  return { startDate, endDate: endDateFormatted }
+},
   }
 }
 </script>
