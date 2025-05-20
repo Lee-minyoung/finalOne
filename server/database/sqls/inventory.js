@@ -25,9 +25,7 @@ const selectMaterialStatusByRequest =
   m.prc AS 단가,
   m.prc * mrq.qty AS 총가격,
   mrq.prc_rslt AS 자재처리결과,
-  mrq.pdn_ord_no AS 생산지시번호,
-pod.prd_no AS 제품번호,
-p.prd_nm AS 제품명
+  mrq.pdn_ord_no AS 생산지시번호
 FROM mat_rls_req mrq
 LEFT JOIN mat m ON mrq.mat_no = m.mat_no
 LEFT JOIN vdr v ON m.mn_vdr=v.vdr_no
