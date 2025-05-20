@@ -4,6 +4,7 @@
       :inventory-status="inventoryStatus"
       :req-clicked-list="reqClickedList"
       @refresh-status="fetchInventoryStatus"
+      @refresh-purchase-plan="fetchInventoryPurPlan"
       @update-req-clicked="updateReqClickedList"
     />
 

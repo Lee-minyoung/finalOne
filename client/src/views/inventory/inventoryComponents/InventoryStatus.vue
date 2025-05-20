@@ -107,6 +107,7 @@ export default {
       try {
         const { data } = await axios.post('/api/inventory/releaseByReqNo', { reqNo })
 
+
         if (data.status === 'purchase_required') {
           const confirm = await Swal.fire({
             icon: 'warning',
@@ -126,6 +127,8 @@ export default {
                 confirmButtonText: '확인'
               })
               this.$emit('refresh-status')
+              this.$emit('refresh-purchase-plan')  // 🔥 이거 추가!
+
             } catch (err) {
               console.error('📛 구매계획 등록 오류', err)
               await Swal.fire({
@@ -147,6 +150,8 @@ export default {
           confirmButtonText: '확인'
         })
         this.$emit('refresh-status')
+        this.$emit('refresh-purchase-plan')  // 🔥 이거 추가!
+
       } catch (err) {
         console.error('📛 출고 처리 오류', err)
         await Swal.fire({
