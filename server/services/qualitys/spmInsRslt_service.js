@@ -19,16 +19,18 @@ const findSpmInsStdList = async (prd_no) => {
 
 // 성적서 등록
 const addRslt = async (spmInsRsltInfo) => {
-  let insertColumns = ['rslt_no', 'mgr_count', 'succ_count', 'dft_count', 'ovr_jdg', 'rmk', 'ln_opr_no', 'prd_no'];
+  let insertColumns = [
+    'rslt_no', 'mgr', 'mgr_count', 'succ_count', 'dft_count', 'ovr_jdg', 'rmk', 'ln_opr_no', 'prd_no'
+  ];
   let data = insertColumns.map(col => spmInsRsltInfo[col]);
   let resInfo = await mariadb.query("insertRslt1", data)
-                              .catch(err => console.log('쿼리 실행 오류:', err));
+    .catch(err => console.log('쿼리 실행 오류:', err));
 
   let result = null;
   if (resInfo && resInfo.affectedRows > 0) {
     result = {
       isSuccessed: true,
-      prdNo: spmInsRsltInfo.prd_no, // 등록된 제품 번호 반환
+      prdNo: spmInsRsltInfo.prd_no,
     };
   } else {
     result = {

@@ -89,7 +89,7 @@ ORDER BY p.prd_nm`;
 // 성적서 등록
 const insertRslt1=
 `INSERT INTO spm_ins_rslt(rslt_no, mgr, ins_dt, mgr_count, succ_count, dft_count, ovr_jdg, rmk, ln_opr_no, prd_no)
-VALUES(?, 1000, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
+VALUES(?, ?, SYSDATE(), ?, ?, ?, ?, ?, ?, ?)`;
 
 const insertRsltDtl2=
 `INSERT INTO spm_ins_rslt_dtl(spm_ins_rslt_dtl_no, mgr_date, spm_ins_std_no, mgr_rslt, jdg, dft_qty, rslt_no, rmk)
