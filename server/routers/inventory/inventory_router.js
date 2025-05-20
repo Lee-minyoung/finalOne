@@ -371,5 +371,116 @@ router.post('/inventory/addLots', async (req, res) => {
   }
 });
 
+// 1번 출고처리 프로시저 호출
+router.post('/inventory/releaseByReqNo', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProc(reqNo);
+
+    res.status(200).json({
+      message: '출고 처리 완료',
+      data: result
+    });
+  } catch (err) {
+    console.error('출고 처리 중 오류:', err);
+    res.status(500).json({
+      message: '출고 처리 실패',
+      error: err.message
+    });
+  }
+});
+
+// 2번: 출고 + 구매계획 함께 처리
+router.post('/inventory/releaseAndPlan', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callReleaseAndPlanProc(reqNo);
+    res.status(200).json({ message: '출고 및 구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 통합 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+// 3번: 구매계획만 처리
+router.post('/inventory/planOnly', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callPlanOnlyProc(reqNo);
+    res.status(200).json({ message: '구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 구매계획 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+router.post('/inventory/releaseSmart', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProcSmart(reqNo);
+
+    // 🔐 방어 처리
+    if (!result || typeof result !== 'object') {
+      console.warn('📛 프로시저 결과 없음 또는 잘못된 형식:', result);
+      return res.status(500).json({
+        status: 'error',
+        message: '출고 처리 결과가 유효하지 않습니다.'
+      });
+    }
+
+    const { resultCode, resultMsg } = result;
+
+    if (resultCode === 'OUT_OF_STOCK' || resultCode === 'EXPIRED') {
+      return res.status(200).json({
+        status: 'purchase_required',
+        message: resultMsg,
+        reqNo
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: '출고 완료',
+      reqNo
+    });
+
+  } catch (err) {
+    console.error('🔥 출고 스마트 처리 실패:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: '출고 처리 중 오류 발생',
+      error: err.message
+    });
+  }
+});
+
+
+router.post('/inventory/addLots', async (req, res) => {
+  try {
+    const lotList = req.body; // 프론트에서 JSON 배열 형태로 받음
+
+    if (!Array.isArray(lotList) || lotList.length === 0) {
+      return res.status(400).json({ message: 'LOT 데이터가 비어 있습니다.' });
+    }
+
+    await inventoryService.insertMultipleLots(lotList);
+
+    res.status(200).json({ message: 'LOT 등록 완료' });
+  } catch (err) {
+    console.error('🔥 LOT 등록 오류:', err);
+    res.status(500).json({ message: 'LOT 등록 실패', error: err.message });
+  }
+});
+
 
 module.exports=router;
