@@ -59,12 +59,12 @@
                 <tbody>
                   <tr>
                     <td>1</td>
-                    <td><div class="input-group"> <input type="text" class="form-control" v-model="prdNo" readonly />
-                      <button class="btn btn-primary" @click="showPrdModal = true">
+                    <td><div class="input-group"> <input type="text" class="form-control" v-model="prdNo" disabled />
+                      <button class="btn btn-primary" @click="showPrdModal = true" >
                         <i class="bi bi-search"></i> 선택
                       </button></div>
                     </td>
-                    <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" readonly /></td>
+                    <td><input type="text" class="form-control" :value="selectPrd?.prd_nm || ''" disabled /></td>
                     <td><input type="number" class="form-control" v-model.number="prdQty" min="1" /></td>
                     <td>
                       <button class="btn btn-sm btn-outline-danger">
