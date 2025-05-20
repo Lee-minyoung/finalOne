@@ -81,6 +81,7 @@ export default {
   async created() {
     const ords = await axios.get('/api/ord');
     this.ords = ords.data;
+    console.log(ords);
   },
   methods: {
     isSelected(item) {
@@ -125,9 +126,8 @@ export default {
         this.ords=await axios.get('/api/ord');
         alert('출하지시 완료!');
         this.selectedOrders = [];
-
-        const ords = await axios.get('/api/ord');
-        this.ords = ords.data;
+        const ord = await axios.get('/api/ord');
+        this.ords = ord.data;
       } catch (err) {
         console.error(err);
         alert('출하지시 중 오류 발생');

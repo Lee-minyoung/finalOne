@@ -1,194 +1,17 @@
-import { h, resolveComponent } from 'vue'
+// router/index.js
 import { createRouter, createWebHashHistory } from 'vue-router'
-import DefaultLayout from '@/layouts/DefaultLayout'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import { useEmpStore } from '@/stores/empStore'
 
-const routes = [
+const loginRoutes = [
   {
     path: '/',
-    name: 'Main',
-    component: DefaultLayout,
-    redirect: '',
-    children: [
-      {
-        path: '',
-        name: 'Home',
-        component: () => import('@/views/Home.vue'),
-      },
-      { // 생산 계획 관리
-        path: '/ProdPlan',
-        name: 'ProdPlan',
-        component: () => import('@/views/production/productionPlan.vue'),
-      },
-      { // 부서
-        path: 'dept',
-        name: 'dept',
-        component: () => import('@/views/dept/dept.vue'),
-      },
-      { // 사원
-        path: 'emp',
-        name: 'emp',
-        component: () => import('@/views/emp/emp.vue'),
-      },
-      { // 제품
-        path: 'prd',
-        name: 'prd',
-        component: () => import('@/views/prd/prd.vue'),
-      },
-
-      // 품질
-      // 완제품검사기준서
-      {
-        path: '/SpmInsStd',
-        name: 'SpmInsStd',
-        component: () => import('@/views/qualitys/spmInsStd.vue'),
-      },
-      { // 완제품검사성적서
-        path: '/SpmInsRslt',
-        name: 'SpmInsRslt',
-        component: () => import('@/views/qualitys/spmInsRslt.vue'),
-      },
-      { // 완제품검사성적서 조회
-        path: '/SpmInsGetRslt',
-        name: 'SpmInsGetRslt',
-        component: () => import('@/views/qualitys/spmInsGetRslt.vue'),
-      },
-      // 입고검사기준서
-      {
-        path: '/IncInsStd',
-        name: 'IncInsStd',
-        component: () => import('@/views/qualitys/incInsStd.vue'),
-      },
-      // 입고검사성적서
-      {
-        path: '/IncInsRslt',
-        name: 'IncInsRslt',
-        component: () => import('@/views/qualitys/incInsRslt.vue'),
-      },
-      // 입고검사성적서 조회
-      {
-        path: '/IncInsGetRslt',
-        name: 'IncInsGetRslt',
-        component: () => import('@/views/qualitys/incInsGetRslt.vue'),
-      },
-
-      // 출하
-      {
-        path: '/SpmMrk',
-        name: 'SpmMrk',
-        component: () => import('@/views/spm/SpmMrk.vue'),
-      },
-      {
-        path: '/SpmFns',
-        name: 'SpmFns',
-        component: () => import('@/views/spm/SpmFns.vue'),
-      },
-      { // 주문조회, 총주문수량
-        path: '/SaleList',
-        name: 'SaleList',
-        component: () => import('@/views/sales/saleList.vue'),
-      },
-      { // bom
-        path: 'bom',
-        name: 'bom',
-        component: () => import('@/views/bom/bom.vue'),
-      },
-      { // proc 공정
-        path: 'proc',
-        name: 'proc',
-        component: () => import('@/views/proc/proc.vue'),
-      },
-      { // 자재
-        path: '/mat',
-        name: 'mat',
-        component: () => import('@/views/mat/mat.vue'),
-      },
-      { // 거래처
-        path: '/vdr',
-        name: 'vdr',
-        component: () => import('@/views/vdr/vdr.vue'),
-      },
-      { // ln 라인
-        path: 'ln',
-        name: 'ln',
-        component: () => import('@/views/ln/ln.vue'),
-      },
-      { // eqp 설비
-        path: 'eqp',
-        name: 'eqp',
-        component: () => import('@/views/eqp/eqp.vue'),
-      },
-      { // prcCode 공정코드
-        path: 'prc-code',
-        name: 'prcCode',
-        component: () => import('@/views/prcCode/prcCode.vue'),
-      },
-      { // receicePrd 완제품입고처리
-        path: 'receive-prd',
-        name: 'receivePrd',
-        component: () => import('@/views/receivePrd/receivePrd.vue'),
-      },
-      { // stockShortage 재고현황
-        path: 'stock-shortage',
-        name: 'stockShortage',
-        component: () => import('@/views/stockShortage/stockShortage.vue'),
-      },
-      { // 자재현황파악, 자재구매계획
-        path: '/inventoryCheck',
-        name: 'InventoryCheck',
-        component: () => import('@/views/inventory/inventoryCheck.vue'),
-      },
-      { // 발주서입력, 자재구매계획
-        path: '/orderForm',
-        name: 'orderForm',
-        component: () => import('@/views/inventory/orderForm.vue'),
-      },
-      { // 발주서조회
-        path: '/ordview',
-        name: 'OrdView',
-        component: () => import('@/views/inventory/ordView.vue'),
-      },
-      { // 생산지시현황
-        path: '/ProdMeng',
-        name: '생산지시현황',
-        component: () => import('@/views/production/line/productionManagement'),
-      },
-      { // 라인관리
-        path: '/LineMang',
-        name: '라인관리',
-        component: () => import('@/views/production/line/lineManagement'),
-      },
-      { // 라인관리상세
-        path: '/LineMangDtl',
-        name: '라인관리상세',
-        component: () => import('@/views/production/line/LineManagementDtl'),
-      },
-      { // 자재요청페이지
-        path: '/MatReq',
-        name: 'MatReq',
-        component: () => import('@/views/inventory/matReq.vue')
-      },
-      {
-        path: '/SpmInst',
-        name: 'SpmInst',
-        component: () => import('@/views/sales/spmInst.vue')
-      },
-      {
-        path: '/MatImport',
-        name: 'MatImport',
-        component: () => import('@/views/inventory/matImport.vue')
-      },
-      {
-        path: '/spmInstTest',
-        name: 'spmInstTest',
-        component: () => import('@/views/sales/spmInstTest.vue')
-      }
-      //상단 {}를 복사하여 사용하시면 됩니다.   
-    ],
+    redirect: '/login'
   },
-  { // 로그인
-    path: '/login', //실제주소 
-    name: 'login', // 부르는 이름
-    component: () => import('@/views/login/login.vue'),
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/login/login.vue')
   },
   {
     path: '/find2pwd',
@@ -199,14 +22,160 @@ const routes = [
     path: '/resetPwd/:empNo?',
     name: 'resetPwd',
     component: () => import('@/views/login/ResetPassword.vue')
-  },
+  }
 ]
+
+const productionRoutes = [
+  {
+    path: '/ProdPlan',
+    name: 'ProdPlan',
+    component: () => import('@/views/production/productionPlan.vue')
+  },
+  {
+    path: '/ProdMeng',
+    name: '생산지시현황',
+    component: () => import('@/views/production/line/productionManagement.vue')
+  },
+  {
+    path: '/LineMang',
+    name: '라인관리',
+    component: () => import('@/views/production/line/lineManagement.vue')
+  },
+  {
+    path: '/LineMangDtl',
+    name: '라인관리상세',
+    component: () => import('@/views/production/line/LineManagementDtl.vue')
+  }
+]
+
+const qualityRoutes = [
+  {
+    path: '/SpmInsStd',
+    name: 'SpmInsStd',
+    component: () => import('@/views/qualitys/spmInsStd.vue')
+  },
+  {
+    path: '/SpmInsRslt',
+    name: 'SpmInsRslt',
+    component: () => import('@/views/qualitys/spmInsRslt.vue')
+  },
+  {
+    path: '/SpmInsGetRslt',
+    name: 'SpmInsGetRslt',
+    component: () => import('@/views/qualitys/spmInsGetRslt.vue')
+  },
+  {
+    path: '/IncInsStd',
+    name: 'IncInsStd',
+    component: () => import('@/views/qualitys/incInsStd.vue')
+  },
+  {
+    path: '/IncInsRslt',
+    name: 'IncInsRslt',
+    component: () => import('@/views/qualitys/incInsRslt.vue')
+  },
+  {
+    path: '/IncInsGetRslt',
+    name: 'IncInsGetRslt',
+    component: () => import('@/views/qualitys/incInsGetRslt.vue')
+  }
+]
+
+const inventoryRoutes = [
+  {
+    path: '/inventoryCheck',
+    name: 'InventoryCheck',
+    component: () => import('@/views/inventory/inventoryComponents/inventoryCheck.vue')
+  },
+  {
+    path: '/orderForm',
+    name: 'orderForm',
+    component: () => import('@/views/inventory/orderForm.vue')
+  },
+  {
+    path: '/ordview',
+    name: 'OrdView',
+    component: () => import('@/views/inventory/ordView.vue')
+  },
+  {
+    path: '/MatReq',
+    name: 'MatReq',
+    component: () => import('@/views/inventory/matReq.vue')
+  },
+  {
+    path: '/MatImport',
+    name: 'MatImport',
+    component: () => import('@/views/inventory/matImport.vue')
+  }
+]
+
+const basicRoutes = [
+  { path: '/dept', name: 'dept', component: () => import('@/views/dept/dept.vue') },
+  { path: '/emp', name: 'emp', component: () => import('@/views/emp/emp.vue') },
+  { path: '/prd', name: 'prd', component: () => import('@/views/prd/prd.vue') },
+  { path: '/mat', name: 'mat', component: () => import('@/views/mat/mat.vue') },
+  { path: '/vdr', name: 'vdr', component: () => import('@/views/vdr/vdr.vue') },
+  { path: '/bom', name: 'bom', component: () => import('@/views/bom/bom.vue') },
+  { path: '/proc', name: 'proc', component: () => import('@/views/proc/proc.vue') },
+  { path: '/ln', name: 'ln', component: () => import('@/views/ln/ln.vue') },
+  { path: '/eqp', name: 'eqp', component: () => import('@/views/eqp/eqp.vue') },
+  { path: '/prc-code', name: 'prcCode', component: () => import('@/views/prcCode/prcCode.vue') }
+]
+
+const saleRoutes = [
+  { path: '/SpmInst', name: 'SpmInst', component: () => import('@/views/sales/spmInst.vue') },
+  { path: '/SpmMrk', name: 'SpmMrk', component: () => import('@/views/spm/SpmMrk.vue') },
+  { path: '/SpmFns', name: 'SpmFns', component: () => import('@/views/spm/SpmFns.vue') },
+  { path: '/SaleList', name: 'SaleList', component: () => import('@/views/sales/saleList.vue') },
+  { path: '/spmInstTest', name: 'spmInstTest', component: () => import('@/views/sales/spmInstTest.vue') }
+]
+
+const stockRoutes = [
+  { path: '/receive-prd', name: 'receivePrd', component: () => import('@/views/receivePrd/receivePrd.vue') },
+  { path: '/stock-shortage', name: 'stockShortage', component: () => import('@/views/stockShortage/stockShortage.vue') }
+]
+
+const protectedMainRoutes = [
+  {
+    path: '/main',
+    name: 'Main',
+    component: DefaultLayout,
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', name: 'Home', component: () => import('@/views/Home.vue') },
+      ...productionRoutes,
+      ...qualityRoutes,
+      ...inventoryRoutes,
+      ...basicRoutes,
+      ...saleRoutes,
+      ...stockRoutes
+    ]
+  }
+]
+
+const routes = [
+  ...loginRoutes,
+  ...protectedMainRoutes
+]
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior() {
-    return { top: 0 }
-  },
+  scrollBehavior: () => ({ top: 0 })
+})
+
+// ✅ 로그인 안하면 접근 못하게 막기
+router.beforeEach((to, from, next) => {
+  const store = useEmpStore()
+  const isLoggedIn = !!store?.loginInfo?.emp_no
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ name: 'login' })
+  } else if (to.name === 'login' && isLoggedIn) {
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -47,15 +47,24 @@ router.post('/inventory/mtPlan',async (req,res)=>{
 });
 // 자재구매계획에서 발주table로 insert 
 router.post('/inventory/purOrd',async (req,res)=>{
-  const {purPlnNo} =req.body.params; //쿼리에서 어떤 자재구매계획번호를 발주테이블 insert할건지..
-  //마지막 발주번호 찾기 
-  const lastOrdNo=await inventoryService.findLastPurOrdNo();//1
-  const nextOrdNo=findNextCode(lastOrdNo); 
+  
 
   console.log('nextOrdNo',nextOrdNo); 
   const result=await inventoryService.addPurOrd(nextOrdNo,purPlnNo);
   res.send(result);    
 }); 
+
+router.post('/inventory/updateCheck', async (req, res) => {
+  const { plnNo } = req.body;
+
+  try {
+    await inventoryService.modifyMatOrdCheck(plnNo);
+    res.status(200).json({ message: '체크 완료' });
+  } catch (err) {
+    console.error('🔥 ord_check 업데이트 실패:', err);
+    res.status(500).json({ message: '서버 오류', error: err.message });
+  }
+});
 
 
 
@@ -65,6 +74,8 @@ router.get('/inventory/matPurPlan',async(req,res)=>{
                                        .catch(err=>console.log(err)); 
   res.json(matPurPlan);                                       
 }); 
+
+
 //최소구매 갯수 구하기 
 router.get('/inventory/minqty',async(req,res)=>{
   const mat_no=req.query.matId; 
@@ -218,7 +229,258 @@ router.post('/inventory/purOrdByClickButton', async (req, res) => {
 });
 
 
+//최조 재고량 조회
+router.get('/inventory/checkMinStk', async (req, res) => {
+  try {
+    const { matNo, reqQty } = req.query;
+    console.log('[체크] matNo:', req.query.matNo, 'reqQty:', req.query.reqQty);
 
+    if (!matNo || !reqQty) {
+      return res.status(400).json({ message: 'matNo, reqQty가 필요합니다.' });
+    }
+
+    const result = await inventoryService.getMinStkAfterRelease(parseInt(reqQty), matNo);
+
+    if (result.length > 0) {
+      res.status(200).json({
+        warning: true,
+        message: '출고 후 최소재고량 미달 예상',
+        data: result
+      });
+    } else {
+      res.status(200).json({
+        warning: false,
+        message: '출고 후 재고는 최소재고량 이상입니다.'
+      });
+    }
+  } catch (err) {
+    console.error('🔥 최소재고량 확인 오류:', err);
+    res.status(500).json({ message: '서버 오류', error: err.message });
+  }
+});
+
+
+// 1번 출고처리 프로시저 호출
+router.post('/inventory/releaseByReqNo', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProc(reqNo);
+
+    res.status(200).json({
+      message: '출고 처리 완료',
+      data: result
+    });
+  } catch (err) {
+    console.error('출고 처리 중 오류:', err);
+    res.status(500).json({
+      message: '출고 처리 실패',
+      error: err.message
+    });
+  }
+});
+
+// 2번: 출고 + 구매계획 함께 처리
+router.post('/inventory/releaseAndPlan', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callReleaseAndPlanProc(reqNo);
+    res.status(200).json({ message: '출고 및 구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 통합 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+// 3번: 구매계획만 처리
+router.post('/inventory/planOnly', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callPlanOnlyProc(reqNo);
+    res.status(200).json({ message: '구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 구매계획 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+router.post('/inventory/releaseSmart', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProcSmart(reqNo);
+
+    // 🔐 방어 처리
+    if (!result || typeof result !== 'object') {
+      console.warn('📛 프로시저 결과 없음 또는 잘못된 형식:', result);
+      return res.status(500).json({
+        status: 'error',
+        message: '출고 처리 결과가 유효하지 않습니다.'
+      });
+    }
+
+    const { resultCode, resultMsg } = result;
+
+    if (resultCode === 'OUT_OF_STOCK' || resultCode === 'EXPIRED') {
+      return res.status(200).json({
+        status: 'purchase_required',
+        message: resultMsg,
+        reqNo
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: '출고 완료',
+      reqNo
+    });
+
+  } catch (err) {
+    console.error('🔥 출고 스마트 처리 실패:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: '출고 처리 중 오류 발생',
+      error: err.message
+    });
+  }
+});
+
+
+router.post('/inventory/addLots', async (req, res) => {
+  try {
+    const lotList = req.body; // 프론트에서 JSON 배열 형태로 받음
+
+    if (!Array.isArray(lotList) || lotList.length === 0) {
+      return res.status(400).json({ message: 'LOT 데이터가 비어 있습니다.' });
+    }
+
+    await inventoryService.insertMultipleLots(lotList);
+
+    res.status(200).json({ message: 'LOT 등록 완료' });
+  } catch (err) {
+    console.error('🔥 LOT 등록 오류:', err);
+    res.status(500).json({ message: 'LOT 등록 실패', error: err.message });
+  }
+});
+
+// 1번 출고처리 프로시저 호출
+router.post('/inventory/releaseByReqNo', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProc(reqNo);
+
+    res.status(200).json({
+      message: '출고 처리 완료',
+      data: result
+    });
+  } catch (err) {
+    console.error('출고 처리 중 오류:', err);
+    res.status(500).json({
+      message: '출고 처리 실패',
+      error: err.message
+    });
+  }
+});
+
+// 2번: 출고 + 구매계획 함께 처리
+router.post('/inventory/releaseAndPlan', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callReleaseAndPlanProc(reqNo);
+    res.status(200).json({ message: '출고 및 구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 통합 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+// 3번: 구매계획만 처리
+router.post('/inventory/planOnly', async (req, res) => {
+  const { reqNo } = req.body;
+  try {
+    await inventoryService.callPlanOnlyProc(reqNo);
+    res.status(200).json({ message: '구매계획 등록 완료' });
+  } catch (err) {
+    console.error('🔥 구매계획 처리 오류:', err);
+    res.status(500).json({ message: '처리 실패', error: err.message });
+  }
+});
+
+router.post('/inventory/releaseSmart', async (req, res) => {
+  try {
+    const { reqNo } = req.body;
+
+    if (!reqNo) {
+      return res.status(400).json({ message: '출고요청번호(reqNo)가 필요합니다.' });
+    }
+
+    const result = await inventoryService.callReleaseProcSmart(reqNo);
+
+    // 🔐 방어 처리
+    if (!result || typeof result !== 'object') {
+      console.warn('📛 프로시저 결과 없음 또는 잘못된 형식:', result);
+      return res.status(500).json({
+        status: 'error',
+        message: '출고 처리 결과가 유효하지 않습니다.'
+      });
+    }
+
+    const { resultCode, resultMsg } = result;
+
+    if (resultCode === 'OUT_OF_STOCK' || resultCode === 'EXPIRED') {
+      return res.status(200).json({
+        status: 'purchase_required',
+        message: resultMsg,
+        reqNo
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: '출고 완료',
+      reqNo
+    });
+
+  } catch (err) {
+    console.error('🔥 출고 스마트 처리 실패:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: '출고 처리 중 오류 발생',
+      error: err.message
+    });
+  }
+});
+
+
+router.post('/inventory/addLots', async (req, res) => {
+  try {
+    const lotList = req.body; // 프론트에서 JSON 배열 형태로 받음
+
+    if (!Array.isArray(lotList) || lotList.length === 0) {
+      return res.status(400).json({ message: 'LOT 데이터가 비어 있습니다.' });
+    }
+
+    await inventoryService.insertMultipleLots(lotList);
+
+    res.status(200).json({ message: 'LOT 등록 완료' });
+  } catch (err) {
+    console.error('🔥 LOT 등록 오류:', err);
+    res.status(500).json({ message: 'LOT 등록 실패', error: err.message });
+  }
+});
 
 
 module.exports=router;

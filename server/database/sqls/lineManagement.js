@@ -29,7 +29,7 @@ LEFT JOIN (
   GROUP BY pdn_ord_no
 ) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
 
--- ✅ 정렬 조건 추가!
+--  정렬 조건 추가!
 ORDER BY
   CASE od.ord_sts
     WHEN 'r1' THEN 0
@@ -137,7 +137,6 @@ st(초) * 지시량 개당 지시량 / 병렬 병렬
 재시작 해야하는지..
 
 4. 라인상세에 시작/종료버튼
-
 
 라인가동세부에 등록해야 할 컬럼
 라인가동 세부번호 | 시작시간 | 종료시간 | 지시수량 |  생산수량 | 불량수량 | 설비오류번호 | 라인가동번호 | 라인세부번호 | 자재번호

@@ -10,6 +10,11 @@ export const useEmpStore = defineStore("emp", {
       dept_no: null, // 로그인한 사원 부서번호
     },
   }),
+  getters: {
+    isLoggedIn: (state) => !!state.emp.emp_no, // ✅ 로그인 상태 여부
+    empNo: (state) => state.emp.emp_no,
+    empName: (state) => state.emp.nm
+  },
   actions: {
     // 로그인 정보를 저장
     setLoginInfo(info) {

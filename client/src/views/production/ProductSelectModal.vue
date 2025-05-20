@@ -26,7 +26,7 @@
                 <th>제품번호</th>
                 <th>제품명</th>
                 <th>현재고량</th>
-                <th>생산필요수량</th>
+                <th>부족량</th>
               </tr>
             </thead>
             <tbody>

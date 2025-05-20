@@ -44,8 +44,9 @@ const findLastMatNo=async () => {
 const findMatPurplan=async ()=>{
   const result=await mariadb.query('selectMatPurPlan');
   return result;
-
 }
+
+
 //최소수량 구하기 
 const findMinqty=async(matId) =>{
   const result=await mariadb.query('selectMinqty',[matId]);
@@ -139,6 +140,58 @@ const changeMatStsToq2ByMatNo=async(reqNo,matNo)=>{
   return result;
 }    
 
+//최소재고량 조회
+const getMinStkAfterRelease = async (reqQty, matNo) => {
+  return await mariadb.query('findMinStkAfterRelease', [reqQty, matNo]);
+};
+
+// 1번 출고요청. 
+const callReleaseProc = async (reqNo) => {
+  console.log('[서비스] 출고 단독 처리:', reqNo);
+  return await mariadb.query('callReleaseProc', [reqNo]);
+};
+
+// 2번 출고 + 자재요청
+const callReleaseAndPlanProc = async (matReqNo) => {
+  console.log('[서비스] 출고+구매계획 통합 처리:', matReqNo);
+  return await mariadb.query('callReleaseAndPlanProc', [matReqNo]);
+};
+
+// 3번 자재요청
+const callPlanOnlyProc = async (matReqNo) => {
+  console.log('[서비스] 구매계획 단독 처리:', matReqNo);
+  return await mariadb.query('callPlanOnlyProc', [matReqNo]);
+};
+
+
+// 출고 처리: 프로시저 호출 + 결과 코드 조회
+const callReleaseProcSmart = async (reqNo) => {
+  const conn = await mariadb.getConnection();
+  try {
+    await conn.query('CALL proc_release_by_req_id(?, @res_code, @msg)', [reqNo]);
+
+    const [rows] = await conn.query('SELECT @res_code AS resultCode, @msg AS resultMsg');
+
+    // ❗ 이게 빠져있으면 undefined
+    return rows[0]; // ✅ 꼭 반환해줘야 함!
+  } catch (err) {
+    console.error('🔥 출고 프로시저 오류:', err);
+    throw err;
+  } finally {
+    conn.release();
+  }
+};
+
+const modifyMatOrdCheck = async (planNo) => {
+  const result = await mariadb.query('updateOrdCheck', [planNo]);
+  return result;
+};
+
+const insertMultipleLots = async (lotData) => {
+  const jsonStr = JSON.stringify(lotData);
+  return await mariadb.query('insertMultipleLots', [jsonStr]);
+};
+
 
 module.exports = {
 
@@ -167,4 +220,11 @@ changeMatStsToq2, //자재입출고요청서 자재출고처리 q2로 바꿈
 findMatLotList, //lot 많은순 리스트 
 minusCurStkByLot,
 changeMatStsToq2ByMatNo,   
+getMinStkAfterRelease, //최소재고량 조회
+callReleaseProc, //자재 출고 이력
+callReleaseAndPlanProc,
+callPlanOnlyProc,
+callReleaseProcSmart,
+modifyMatOrdCheck,
+insertMultipleLots
 }; 

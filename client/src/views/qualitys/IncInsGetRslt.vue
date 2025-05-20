@@ -8,8 +8,7 @@
         </div>
       </div>
     </div>
-    <div ref="pdfarea" >
-   <!-- 조회 조건 -->
+    <!-- 조회 조건 -->
     <div class="input">
       자재검색 <input v-model="searchQuery" class="form-control" placeholder="" readonly />
       <button class="btn btn-outline-secondary" @click="openMatModal" style="margin-right:501px;">🔍</button>
@@ -17,10 +16,11 @@
       <hr style="margin-left:-75px;">
       LOTNo <input :value="selectedLotNo" class="form-control" readonly
         style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
-      
+
       발주번호 <input v-model="searchPurOrdNo" class="form-control" readonly
         style="background-color: #eee; margin-right: 180px; margin-bottom: 10px;" />
-      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly style="background-color: #eee; margin-bottom: 10px;" />
+      납입업체 <input v-model="selectedVdrNm" class="form-control" readonly
+        style="background-color: #eee; margin-bottom: 10px;" />
       <br>
       자재명 <input :value="selectedMatNm" class="form-control" readonly
         style="background-color: #eee; margin-right: 180px;" />
@@ -92,14 +92,10 @@
       </tbody>
     </table>
   </div>
-  </div>
 
   <!-- 제품 검색 모달 -->
-  <MatGetRsltSelModal
-  v-if="showMatModal"
-  :matList="prodList"
-  @select-lot="handleSelectedProduct"
-  @close="showMatModal = false" />
+  <MatGetRsltSelModal v-if="showMatModal" :matList="prodList" @select-lot="handleSelectedProduct"
+    @close="showMatModal = false" />
 </template>
 
 <script>
@@ -119,7 +115,8 @@ export default {
       searchQuery: '',             // 제품검색
       selectedLineId: '',          // 라인번호
       selectedProductName: '',     // 제품명
-      selectedInsDate: '',     // 날짜
+      selectedInsDate: '',        // 날짜
+      selectedInsDev: '',        // 검사자
       newItemList: [],
       spmInsStdList: [],
       prodList: [],
@@ -130,11 +127,11 @@ export default {
       overallJdg: '',
       selectedRsltNo: '', // 성적서 번호
       matQualityViewdetail: [],
-    matQualityViewall: [],
+      matQualityViewall: [],
     };
   },
   created() {
-    this.selectedInsDev = localStorage.getItem('username') || ''; // 검사자(로그인 사용자)
+     this.selectedInsDev = localStorage.getItem('username') || '';
   },
   computed: {
     filteredLots() {
@@ -144,16 +141,16 @@ export default {
   },
   methods: {
 
-     // pdf
-      async downloadPdf() {
+    // pdf
+    async downloadPdf() {
       try {
         // 템플릿 파일을 가져옴
         const response = await axios.get('/InsInsGetRslt.html');
         let templateHtml = response.data;
 
         // 동적으로 데이터를 템플릿에 삽입
-    const detailList = this.rsltDetailList || [];
-    const tableRows = detailList.map(item => `
+        const detailList = this.rsltDetailList || [];
+        const tableRows = detailList.map(item => `
   <tr>
     <td>${item.ins_itm}</td>
     <td>${item.ins_mthd}</td>
@@ -163,28 +160,28 @@ export default {
   </tr>
 `).join('');
 
-let judgeButton = '';
-if (this.rsltMaster?.ovr_jdg === 'n1') {
-  judgeButton = '<button class="jdg-btn btn-green">합격</button>';
-} else if (this.rsltMaster?.ovr_jdg === 'n2') {
-  judgeButton = '<button class="jdg-btn btn-red">불합격</button>';
-}
-templateHtml = templateHtml
-  .replace('{{ mat_nm }}', this.selectedMatNm || this.searchQuery || 'N/A')
-  .replace('{{ table_rows }}', tableRows)
-  .replace('{{ mat_id }}', this.searchQuery || 'N/A')
-  .replace('{{ lot_no }}', this.selectedLotNo || 'N/A')
-  .replace('{{ quality_id }}', this.selectedRsltNo || 'N/A')
-  .replace('{{ pur_ord_no }}', this.searchPurOrdNo || 'N/A')
-  .replace('{{ vdr_nm }}', this.selectedVdrNm || 'N/A')
-  .replace('{{ date }}', this.selectedInsDate || new Date().toLocaleDateString())
-  .replace('{{ ins_dev }}', this.selectedInsDev || 'N/A')
-  .replace('{{ mgr_count }}', this.rsltMaster?.mgr_count ?? '')
-  .replace('{{ succ_count }}', this.rsltMaster?.succ_count ?? '')
-  .replace('{{ dft_count }}', this.rsltMaster?.dft_count ?? '')
-  .replace('{{ ovr_jdg }}', this.rsltMaster?.ovr_jdg ?? '')
-  .replace('{{ table_rows }}', tableRows)
-  .replace('{{ judge_button }}', judgeButton)
+        let judgeButton = '';
+        if (this.rsltMaster?.ovr_jdg === 'n1') {
+          judgeButton = '<button class="jdg-btn btn-green">합격</button>';
+        } else if (this.rsltMaster?.ovr_jdg === 'n2') {
+          judgeButton = '<button class="jdg-btn btn-red">불합격</button>';
+        }
+        templateHtml = templateHtml
+          .replace('{{ mat_nm }}', this.selectedMatNm || this.searchQuery || 'N/A')
+          .replace('{{ table_rows }}', tableRows)
+          .replace('{{ mat_id }}', this.searchQuery || 'N/A')
+          .replace('{{ lot_no }}', this.selectedLotNo || 'N/A')
+          .replace('{{ quality_id }}', this.selectedRsltNo || 'N/A')
+          .replace('{{ pur_ord_no }}', this.searchPurOrdNo || 'N/A')
+          .replace('{{ vdr_nm }}', this.selectedVdrNm || 'N/A')
+          .replace('{{ date }}', this.selectedInsDate || new Date().toLocaleDateString())
+          .replace('{{ ins_dev }}', this.selectedInsDev || 'N/A')
+          .replace('{{ mgr_count }}', this.rsltMaster?.mgr_count ?? '')
+          .replace('{{ succ_count }}', this.rsltMaster?.succ_count ?? '')
+          .replace('{{ dft_count }}', this.rsltMaster?.dft_count ?? '')
+          .replace('{{ ovr_jdg }}', this.rsltMaster?.ovr_jdg ?? '')
+          .replace('{{ table_rows }}', tableRows)
+          .replace('{{ judge_button }}', judgeButton)
 
         // 임시 DOM에 HTML 추가
         const tempElement = document.createElement('div');
@@ -209,12 +206,12 @@ templateHtml = templateHtml
         console.error("PDF 다운로드 실패:", err);
       }
     },
-      async matQualityViewDropDown() {
-        let ajaxRes =
-          await axios.get(`/api/matQualityViewDropDown`)
+    async matQualityViewDropDown() {
+      let ajaxRes =
+        await axios.get(`/api/matQualityViewDropDown`)
           .catch(err => console.log(err));
-        this.matQualityViewDropdown = ajaxRes.data;
-      },
+      this.matQualityViewDropdown = ajaxRes.data;
+    },
 
 
 
@@ -254,62 +251,63 @@ templateHtml = templateHtml
     hideModal() {
       this.showMatModal = false; // 모달 닫기
     },
-      openMatModal() {
-    axios.get('/api/incInsGetRslt/rsltMat')
-      .then(res => {
-        this.prodList = Array.isArray(res.data) ? res.data : [];
-        this.showMatModal = true;
-      })
-      .catch(() => {
-        this.prodList = [];
-        alert('제품 목록 불러오기 실패');
-      });
-  },
+    openMatModal() {
+      axios.get('/api/incInsGetRslt/rsltMat')
+        .then(res => {
+          this.prodList = Array.isArray(res.data) ? res.data : [];
+          this.showMatModal = true;
+        })
+        .catch(() => {
+          this.prodList = [];
+          alert('제품 목록 불러오기 실패');
+        });
+    },
     // 제품 선택 시
-async handleSelectedProduct(item) {
-  // 1. LOT 상세정보 조회 (selRsltPrdDtl 쿼리 활용)
-  try {
-    const res = await axios.get('/api/incInsGetRslt/rsltPrdDtl', { params: { lot_no: item.lot_no } });
-    if (res.data && res.data.length > 0) {
-      const info = res.data[0];
+    async handleSelectedProduct(item) {
+      // 1. LOT 상세정보 조회 (selRsltPrdDtl 쿼리 활용)
+      try {
+        const res = await axios.get('/api/incInsGetRslt/rsltPrdDtl', { params: { lot_no: item.lot_no } });
+        if (res.data && res.data.length > 0) {
+          const info = res.data[0];
 
-      // 2. input칸에 값 자동 세팅
-      this.searchQuery = item.mat_no || '';
-      this.selectedMatNm = item.mat_nm || '';
-      this.selectedLotNo = info.lot_no || '';
-      this.searchPurOrdNo = info.pur_ord_no || '';
-      this.selectedVdrNm = info.vdr_nm || '';
-      this.selectedInsDate = info.ins_dt ? info.ins_dt.slice(0, 10) : '';
-      this.selectedInsDev = info.mgr_nm || '';
-      this.rsltMaster = {
-        mgr_count: info.mgr_count,
-        succ_count: info.acpt_qty,
-        dft_count: info.rjct_qty,
-        ovr_jdg: info.ovr_jdg,
-        rslt_no: info.rslt_no
-    };
-    this.selectedRsltNo = info.rslt_no || '';
-    this.rsltDetailList = res.data.map(row => ({
-      ins_itm: row.ins_itm,
-      ins_mthd: row.ins_mthd,
-      mgr_rslt: row.mgr_rslt,
-      jdg: row.jdg,
-      rmk: row.rmk
-    }));
-  }}
-  catch (err) {
-    alert('상세정보 조회 실패');
-    this.searchQuery = '';
-    this.selectedMatNm = '';
-    this.selectedLotNo = '';
-    this.searchPurOrdNo = '';
-    this.selectedVdrNm = '';
-    this.selectedInsDate = '';
-    this.selectedInsDev = '';
-    this.rsltMaster = null;
-    this.rsltDetailList = [];
-  }
-  }
+          // 2. input칸에 값 자동 세팅
+          this.searchQuery = item.mat_no || '';
+          this.selectedMatNm = item.mat_nm || '';
+          this.selectedLotNo = info.lot_no || '';
+          this.searchPurOrdNo = info.pur_ord_no || '';
+          this.selectedVdrNm = info.vdr_nm || '';
+          this.selectedInsDate = info.ins_dt ? info.ins_dt.slice(0, 10) : '';
+          this.selectedInsDev = info.mgr_nm || '';
+          this.rsltMaster = {
+            mgr_count: info.mgr_count,
+            succ_count: info.acpt_qty,
+            dft_count: info.rjct_qty,
+            ovr_jdg: info.ovr_jdg,
+            rslt_no: info.rslt_no
+          };
+          this.selectedRsltNo = info.rslt_no || '';
+          this.rsltDetailList = res.data.map(row => ({
+            ins_itm: row.ins_itm,
+            ins_mthd: row.ins_mthd,
+            mgr_rslt: row.mgr_rslt,
+            jdg: row.jdg,
+            rmk: row.rmk
+          }));
+        }
+      }
+      catch (err) {
+        alert('상세정보 조회 실패');
+        this.searchQuery = '';
+        this.selectedMatNm = '';
+        this.selectedLotNo = '';
+        this.searchPurOrdNo = '';
+        this.selectedVdrNm = '';
+        this.selectedInsDate = '';
+        this.selectedInsDev = '';
+        this.rsltMaster = null;
+        this.rsltDetailList = [];
+      }
+    }
   }
 }
 </script>
@@ -381,6 +379,7 @@ async handleSelectedProduct(item) {
   border-radius: 4px;
   background: #eee;
 }
+
 .input {
   border: 1px solid lightgray;
   padding: 30px;
@@ -394,25 +393,30 @@ async handleSelectedProduct(item) {
   margin-bottom: 30px;
   background: #fff;
 }
+
 .search-row {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
 }
+
 .search-row label {
   min-width: 70px;
   margin-right: 8px;
   font-weight: 500;
   white-space: nowrap;
 }
+
 .search-row input {
   margin-right: 24px;
   min-width: 160px;
   background: #eee;
 }
+
 .search-row .btn {
   margin-right: 24px;
 }
+
 .input.search-area hr {
   margin: 18px 0;
   border: none;

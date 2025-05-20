@@ -153,10 +153,6 @@ export default {
         this.newItem.acpt_qty = mgr - rjct >= 0 ? mgr - rjct : '';
       }
     }
-},  computed: {
-  employeeName() {
-      return this.empStore.loginInfo.nm || '';
-    },
 },
 
   methods: {
@@ -168,6 +164,7 @@ export default {
       // 마스터(inc_ins_rslt) 저장
   let obj = {
     rslt_no: this.selectedRsltNo,
+     mgr: this.empStore.loginInfo.emp_no,
   mgr_count: this.newItem.mgr_count,
   acpt_qty: this.newItem.acpt_qty,   // ← 합격량
   rjct_qty: this.newItem.rjct_qty,   // ← 불량량

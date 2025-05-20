@@ -34,8 +34,8 @@
           <td>{{ dateFormat(item.st_tm, 'hh시 mm분 ss초') }}</td>
           <td>{{ dateFormat(item.end_tm, 'hh시 mm분 ss초') }}</td>
           <td>{{ formatNumber(item.ord_qty) }}</td>
-          <td>{{ formatNumber(item.pdn_qty) }}</td>
           <td>{{ formatNumber(item.dft_qty) }}</td>
+          <td>{{ formatNumber(item.pdn_qty) }}</td>
           <td>
             <button v-if="item.ln_sts === 'l1'" class="btn btn-sm btn-secondary" disabled>대기중</button>
             <button v-else-if="item.ln_sts === 'l2'" class="btn btn-sm btn-primary"

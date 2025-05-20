@@ -7,21 +7,21 @@
     - 로그인 상태에 따라 환영 메시지 또는 로그인 안내 메시지 표시
   -->
 
-  <header class="bg-body border-bottom shadow-sm sticky-top z-3">
-    <div class="navbar px-3 py-2 d-flex justify-content-between align-items-start flex-wrap">
+  <header class="bg-body border-bottom shadow-sm sticky-top z-5">
+    <div class="navbar px-3 py-4 d-flex justify-content-between align-items-start flex-wrap">
       <!-- 좌측: 사원명 + 현재 위치 -->
       <div class="d-flex flex-column">
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-5">
           <button class="btn btn-outline-secondary btn-sm" @click="toggleSidebar">
             <i class="bi bi-list"></i>
           </button>
           <!-- 로그인 상태: 사원명/직급명 환영 메시지, 비로그인: 안내 메시지 -->
-          <span class="fw-bold fs-4" v-if="employeeName">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
-          <span class="fw-bold fs-4" v-else>안전한 이용을 위해 로그인이 필요합니다.</span>
+          <span class="fw-bold fs-3" v-if="employeeName">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span>
+          <span class="fw-bold fs-3" v-else>안전한 이용을 위해 로그인이 필요합니다.</span>
           <!-- <span class="fw-bold fs-4">{{ employeeName }} {{ employeePstNm }}님 환영합니다</span> -->
         </div>
         <div class="mt-3 ms-5 text-secondary" style="font-size: 1rem;">
-          현재 위치: {{ currentPathLabel }}
+          <!-- 현재 위치: {{ currentPathLabel }} -->
         </div>
       </div>
 
@@ -29,7 +29,7 @@
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
         <!-- 설정 버튼 -->
         <button class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-gear me-1"></i> 설정
+          <i class="bi bi-gear me-2"></i> 설정
         </button>
         <!-- 로그인/로그아웃 버튼: 로그인 상태에 따라 다르게 표시 -->
         <button v-if="employeeName" class="btn btn-secondary btn-sm" @click="handleLogout">

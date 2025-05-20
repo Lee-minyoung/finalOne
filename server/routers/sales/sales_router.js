@@ -36,28 +36,20 @@ router.post('/ord', async (req, res) => {
     const ord_sts = 'y'; //상태
     const rgt_dt = new Date(); //현재 날짜  
     const mdf_dt = new Date(); //수정날짜 현재날짜     
-    //detailData
-    const lastDetail = await salesService.findLastDetail(); //  
-    const nextOrdDetail = findNextCode(lastDetail);
-    console.log('다음 수주세부번호', nextOrdDetail); //
-    const ord_dtl_no = nextOrdDetail;
-    const prd_no = req.body.prd_no; //일단 임시로 만듦 
-    const prd_qty = req.body.prd_qty; //수량 
-
-    //const ord_sts=  일단 null값 
     const ordData = [ord_no, vdr_no, emp_no, due_dt, ord_sts, rgt_dt, mdf_dt];
-    const detailData = [ord_dtl_no, ord_no, prd_no, prd_qty];
-    console.log('ordData:', ordData);
-    console.log('detailData:', detailData);
-    //3. 트랜잭션 insert
+    // 1. 주문 기본정보 저장
     await salesService.addOrdData2(ordData);
-    await salesService.addOrdDtlData2(detailData);
-
+    // 2. 상품별로 상세 저장
+    let lastDetail = await salesService.findLastDetail();
+    for (const product of req.body.products) {
+      lastDetail++;
+      const detailData = [lastDetail, ord_no, product.prd_no, product.prd_qty];
+      await salesService.addOrdDtlData2(detailData);
+    }
     res.status(200).json({
       message: '등록완료',
       code: nextOrdNo
     });
-
   } catch (err) {
     console.error("🔥 등록 중 에러:", err);
     res.status(500).json({
@@ -65,7 +57,6 @@ router.post('/ord', async (req, res) => {
       error: err.message
     });
   }
-
 });
 // 기간별 주문조회  
 router.get('/ord/by-date', async (req, res) => {
@@ -178,6 +169,7 @@ router.post('/addSpms', async (req, res) => {
   const infoList = req.body;
   const io = 'o1';
   const now = new Date();
+  const mgr=1;
   const nowStr = now.toISOString().slice(0, 10).replace('T', ' '); //2025-05-12
   for (const info of infoList) {
     let {
@@ -197,28 +189,28 @@ router.post('/addSpms', async (req, res) => {
     // lot를 찾음 
     console.log('lots : ', lots);
     for (const lot of lots) {
-      const minusQty = Math.min(req_qty, lot.cur_stk); //이번lot에서 차감할양
-      await salesService.minusLotCurStk([minusQty, lot.lot_no, lot.prd_no]);
+      const minusQty = Math.min(req_qty, lot.cur_stk); //이번lot에서 차감할양 
+      await salesService.minusLotCurStk([minusQty, lot.lot_no, lot.prd_no]); //lot에서 양을 차감함 
+    
       req_qty -= minusQty;
-      console.log(req_qty);
+    
       console.log('lot남은자재', lot.cur_stk);
-      const lastNo = await salesService.findLastPrdHist();
-      const nextHistNo = findNextCode(lastNo);
-      const result = await salesService.addPrdStkHist([nextHistNo, lot_no, io, Number(req_qty), nowStr, memo]);
+    
+      const lastNo = await salesService.findLastSpmNo(); //출하 최댓값찾기
+      const lastdtlNo=await salesService.findLastSpmDtlNo();  //출하세부 최댓값 찾기 
+      const nextSpmNo=findNextCode(lastNo); //출하 다음번호 설정 
+      const nextdtlNo = findNextCode(lastdtlNo); //출하상세 다음번호 설정 
+      const f1='f1'; 
+      //출하,출하세부 테이블에 insert  
+      await salesService.addSpmData([nextSpmNo,ord_no,vdr_no,mgr,spm_dt,dlv_addr,f1]); 
+      await salesService.addSpmDtlData([nextdtlNo, nextSpmNo ,minusQty,2500,prd_no]); 
+
+      //prd_hist 테이블에 insert  
+      const lastPrdNo = await salesService.findLastPrdHist();
+      const nextHistNo = findNextCode(lastPrdNo);
+      await salesService.addPrdStkHist([nextHistNo, lot.lot_no, io, minusQty, nowStr, memo]);
     }
     console.log('lot에서 모든 재고를 뺌');
-
-    // if(req_qty>0){
-    //             console.log('제품lot부족');
-    //             //서버 ->  프론트로 알려야함 바로 자재구매계획 등록?? 일단그건보류... 
-    //             return res.status(400).json({
-    //               success:false,
-    //               message:`제품${prd_no}의 재고가 부족합니다`
-    //             });           
-    //           }else if(req_qty<=0){
-    //             console.log('요청수량 제품충분! ');
-
-    //           }
   }
   return res.status(200).json({
     message: '등록완료',

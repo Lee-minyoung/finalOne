@@ -20,7 +20,8 @@ router.post('/addPurOrd', async (req, res) => {
       mat_no,
       qty,
       prc,
-      total
+      total,
+      mat_pur_pln_no,
     } = req.body;
 
     //sdfsdf
@@ -33,7 +34,7 @@ router.post('/addPurOrd', async (req, res) => {
       return res.status(400).send({ error: '수량, 단가, 금액은 숫자여야 합니다' });
     }
     // 5. 파라미터 배열 만들기
-    const info = [nextOrdNo, vdr_no, crt_dt, pur_dt, mat_no, qty, prc, total];
+    const info = [nextOrdNo, vdr_no, crt_dt, pur_dt, mat_no, qty, prc, total, mat_pur_pln_no];
     console.log('info', info);
     
     // 6. 서비스 호출
