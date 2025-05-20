@@ -42,7 +42,7 @@
             <div class="border rounded p-4 shadow-sm">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="mb-0 fw-bold text-primary">주문 상품</h6>
-                <button class="btn btn-outline-primary" @click="showPrdModal = true">
+                <button class="btn btn-primary" @click="showPrdModal = true">
                   <i class="bi bi-plus-circle"></i> 상품 추가
                 </button>
               </div>
@@ -165,7 +165,7 @@ export default {
     selectPrd: null,
     vdrCd: '',
     prdNo: '',
-    prdQty: 1,
+    prdQty: '',
     dueDt: '',
     ordList: [],
     vdrList: [],
