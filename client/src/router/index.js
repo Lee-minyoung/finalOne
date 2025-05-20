@@ -39,7 +39,7 @@ const productionRoutes = [
   {
     path: '/LineMang',
     name: '라인관리',
-    component: () => import('@/views/production/line/lineManagement.vue')
+    component: () => import('@/views/production/line/LineManagement.vue')
   },
   {
     path: '/LineMangDtl',
@@ -67,17 +67,17 @@ const qualityRoutes = [
   {
     path: '/IncInsStd',
     name: 'IncInsStd',
-    component: () => import('@/views/qualitys/incInsStd.vue')
+    component: () => import('@/views/qualitys/IncInsStd.vue')
   },
   {
     path: '/IncInsRslt',
     name: 'IncInsRslt',
-    component: () => import('@/views/qualitys/incInsRslt.vue')
+    component: () => import('@/views/qualitys/IncInsRslt.vue')
   },
   {
     path: '/IncInsGetRslt',
     name: 'IncInsGetRslt',
-    component: () => import('@/views/qualitys/incInsGetRslt.vue')
+    component: () => import('@/views/qualitys/IncInsGetRslt.vue')
   }
 ]
 
@@ -85,7 +85,7 @@ const inventoryRoutes = [
   {
     path: '/inventoryCheck',
     name: 'InventoryCheck',
-    component: () => import('@/views/inventory/inventoryComponents/inventoryCheck.vue')
+    component: () => import('@/views/inventory/inventoryComponents/InventoryCheck.vue')
   },
   {
     path: '/orderForm',
