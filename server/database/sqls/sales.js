@@ -91,7 +91,7 @@ JOIN vdr v ON o.vdr_no = v.vdr_no
 LEFT JOIN spm s ON s.ord_no = o.ord_no
 WHERE s.ord_no IS NULL
 and DATE(o.rgt_dt) BETWEEN ? and ?
-ORDER BY o.ord_no;
+ORDER BY o.rgt_dt DESC, o.ord_no DESC, od.prd_no;
 `; 
 //특정 날짜 주문 
 const selectOrdDateOne=
@@ -126,7 +126,9 @@ SELECT
    sum(d.prd_qty)
 FROM ord o
 JOIN ord_dtl d ON o.ord_no = d.ord_no
-GROUP BY d.prd_no`;
+GROUP BY d.prd_no
+ORDER BY o.ord_no DESC
+`;
 //출하최대값찾기
 const selectMaxSpmNo=`
  select max(spm_no) as maxSpmNo
