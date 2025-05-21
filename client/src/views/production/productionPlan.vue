@@ -264,7 +264,6 @@ export default {
           confirmButtonText: '확인'
         })
         this.planRows = [
-          { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: 's1' }
         ]
         this.getProdPlanList()
       } catch (err) {
