@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex gap-4">
-        <h2 class="mb-4">출고조회</h2>
+        <h2 class="mb-4">출하조회</h2>
       </div>
     </div>
   </div>
@@ -215,7 +215,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .input {
   border: 1px solid lightgray;
   padding: 30px;

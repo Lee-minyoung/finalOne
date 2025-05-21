@@ -27,7 +27,7 @@ const findMatNo = async () => { // 자재번호
 // 자재 등록
 const addNewMat = async (matInfo) => { // 자재정보
   // 자재정보를 배열로 변환하기 위한 컬럼명
-  let insertColumns = ['mat_no', 'mat_nm', 'mat_tp', 'mn_vdr', 'min_ord_qty', 'min_stk_qty', 'unit', 'ld_tm'];
+  let insertColumns = ['mat_no', 'mat_nm', 'mat_tp', 'mn_vdr', 'min_ord_qty', 'min_stk_qty', 'unit', 'ld_tm', 'prc'];
   let data = convertObjToAry(matInfo, insertColumns); // 자재정보를 배열로 변환
   let resInfo = await mariadb.query("insertMat", data); // 자재정보를 배열로 변환하여 SQL문에 전달
 

@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label fw-bold">거래처코드</label>
+                  <label class="form-label fw-bold">거래처번호</label>
                   <input type="text" class="form-control" :value="selectVdr?.vdr_no || ''" readonly />
                 </div>
               </div>
@@ -50,7 +50,7 @@
                 <thead class="table-light">
                   <tr>
                     <th class="bg-light">No</th>
-                    <th class="bg-light">제품 ID</th>
+                    <th class="bg-light">제품번호</th>
                     <th class="bg-light">제품명</th>
                     <th class="bg-light">수량</th>
                     <th class="bg-light">관리</th>
@@ -103,13 +103,13 @@
     <!-- 주문 리스트 테이블 -->
     <!--전체조회-->
     <table v-if="!dateShow" class="table table-bordered text-center mt-4">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>주문번호</th>
           <th>제품명</th>
-          <th>거래처코드</th>
+          <th>거래처번호</th>
           <th>요청수량</th>
-          <th>LOT재고량</th>
+          <th>재고량</th>
         </tr>
       </thead>
       <tbody>
@@ -130,7 +130,7 @@
           <th>제품명</th>
           <th>거래처명</th>
           <th>요청수량</th>
-          <th>LOT재고량</th>
+          <th>재고량</th>
         </tr>
       </thead>
       <tbody>
@@ -153,28 +153,28 @@ import prdSelectModal from '@/views/production/ProductSelectModal.vue';
 export default {
   components: { vdrSelectModal, prdSelectModal },
   data() {
-   const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const todayStr = `${yyyy}-${mm}-${dd}`;
-  return {
-    showVdrModal: false,
-    showPrdModal: false,
-    selectVdr: null,
-    selectPrd: null,
-    vdrCd: '',
-    prdNo: '',
-    prdQty: '',
-    dueDt: '',
-    ordList: [],
-    vdrList: [],
-    prdList: [],
-    selectPrdList: [],
-    ordListByDate: [],
-    startDate: todayStr,   // ← 오늘로 기본값
-    endDate: todayStr,     // ← 오늘로 기본값
-    dateShow: false,
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    return {
+      showVdrModal: false,
+      showPrdModal: false,
+      selectVdr: null,
+      selectPrd: null,
+      vdrCd: '',
+      prdNo: '',
+      prdQty: '',
+      dueDt: '',
+      ordList: [],
+      vdrList: [],
+      prdList: [],
+      selectPrdList: [],
+      ordListByDate: [],
+      startDate: todayStr,   // ← 오늘로 기본값
+      endDate: todayStr,     // ← 오늘로 기본값
+      dateShow: false,
     };
   },
   async created() {
@@ -189,6 +189,7 @@ export default {
     async getOrdList() {
       try {
         const res = await axios.get('/api/ord');
+        console.log('ordList:', res.data);
         this.ordList = res.data;
       } catch (err) {
         console.error('주문 불러오기 실패', err);

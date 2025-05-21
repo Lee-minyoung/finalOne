@@ -19,7 +19,7 @@
           <table class="table table-sm table-bordered text-center">
             <thead class="table-light">
               <tr>
-                <th>제품ID</th>
+                <th>제품번호</th>
                 <th>제품명</th>
               </tr>
             </thead>

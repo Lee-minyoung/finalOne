@@ -1,66 +1,69 @@
 <template>
-  <div class="col-md-10 p-4">
-    <h4 class="mb-4">출하지시</h4>
-
-    <!-- 출하지시 입력 폼 -->
-    <div class="row mb-3 g-3">
-      <div class="col-md-3">
-        <label class="form-label">출하일자</label>
-        <input v-model="spmDate" type="date" class="form-control" />
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">담당자</label>
-        <input type="text" v-model="manager" class="form-control" />
-      </div>
-    </div>
-
-    <!-- 수주 목록 테이블 -->
-    <table class="table table-bordered text-center mt-4">
-      <thead class="table-light">
-        <tr>
-          <th>주문ID</th>
-          <th>거래처ID</th>
-          <th>거래처명</th>
-          <th>제품ID</th>
-          <th>제품명</th>
-          <th>요청수량</th>
-          <th>lot재고량</th>
-          <th>납기일자</th>
-          <th>상태</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in ords"
-          :key="item.ord_no"
-          @click="toggleOrder(item)"
-          :class="{ 'table-primary': isSelected(item) }"
-          style="cursor: pointer"
-        >
-          <td>{{ item.ord_no }}</td>
-          <td>{{ item.vdr_no }}</td>
-          <td>{{ item.cpy_nm }}</td>
-          <td>{{ item.prd_no }}</td>
-          <td>{{ item.prd_nm }}</td>
-          <td>{{ item['요청수량'] }}</td>
-          <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
-          <td>{{ item['납기예정'] }}</td>
-          <td>
-            <span
-              class="badge"
-              :class="item['요청수량'] < item['lot수량'] ? 'text-bg-primary' : 'text-bg-danger'"
-            >
-              {{ item['요청수량'] < item['lot수량'] ? '출하가능' : '출하대기' }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- 출하지시 버튼 -->
-    <div class="d-flex justify-content-end mt-3">
+  <div class="container mt-4">
+    <!-- 상단 타이틀 + 주요 버튼 -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h2 class="mb-0">출하지시</h2>
       <button class="btn btn-primary" @click="saveSpm">출하지시</button>
+    </div>
+    <!-- 출하일자/담당자 입력 폼 -->
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <input v-model="spmDate" type="date" class="form-control w-auto" placeholder="출하일자" />
+      <input v-model="manager" type="text" class="form-control w-auto" placeholder="담당자" />
+    </div>
+    <!-- 수주 목록 테이블 -->
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <colgroup>
+          <col style="width: 80px" />
+          <col style="width: 120px" />
+          <col style="width: 120px" />
+          <col style="width: 100px" />
+          <col style="width: 160px" />
+          <col style="width: 100px" />
+          <col style="width: 100px" />
+          <col style="width: 120px" />
+          <col style="width: 100px" />
+        </colgroup>
+        <thead class="table-light">
+          <tr>
+            <th>주문번호</th>
+            <th>거래처번호</th>
+            <th>거래처명</th>
+            <th>제품번호</th>
+            <th>제품명</th>
+            <th>요청수량</th>
+            <th>재고량</th>
+            <th>납기일자</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in ords"
+            :key="item.ord_no + '-' + item.prd_no"
+            @click="toggleOrder(item)"
+            :class="{ 'table-primary': isSelected(item) }"
+            style="cursor: pointer"
+          >
+            <td>{{ item.ord_no }}</td>
+            <td>{{ item.vdr_no }}</td>
+            <td>{{ item.cpy_nm }}</td>
+            <td>{{ item.prd_no }}</td>
+            <td>{{ item.prd_nm }}</td>
+            <td>{{ item['요청수량'] }}</td>
+            <td>{{ item['lot수량'] <= 0 ? 0 : item['lot수량'] }}</td>
+            <td>{{ item['납기예정'] }}</td>
+            <td>
+              <span
+                class="badge"
+                :class="item['요청수량'] < item['lot수량'] ? 'text-bg-primary' : 'text-bg-danger'"
+              >
+                {{ item['요청수량'] < item['lot수량'] ? '출하가능' : '출하대기' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

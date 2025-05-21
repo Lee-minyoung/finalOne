@@ -185,7 +185,7 @@ export default {
   // 1. 성적서(마스터) 저장
   let obj = {
     rslt_no: this.selectedRsltNo,
-    mgr: this.selectedInsDev,
+    mgr: this.empStore.loginInfo.emp_no,
     ins_dt: this.selectedInsDate,
     mgr_count: this.newItem.mgr_count,
     succ_count: this.newItem.succ_count,
@@ -352,7 +352,7 @@ if (addRes.isSuccessed) {
 }
 
 </script>
-<style>
+<style scoped>
 .input {
   border: 1px solid lightgray;
   padding: 30px;

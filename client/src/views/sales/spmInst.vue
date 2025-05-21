@@ -25,11 +25,11 @@
 </div> -->
       <!--거래처변경  -->
       <div v-if="selectVdr.vdr_no > 0" class="col-md-3">
-        <label class="form-label">거래처코드</label>
+        <label class="form-label">거래처번호</label>
         <input v-model="selectVdr.vdr_no" type="number" class="form-control" readonly>
       </div>
       <div v-else class="col-md-3">
-        <label class="form-label">거래처코드</label>
+        <label class="form-label">거래처번호</label>
         <input v-model="selectVdr" type="number" class="form-control" readonly>
       </div>
       <div class="col-md-3">
@@ -50,13 +50,13 @@
       <thead class="table-light">
         <tr>
           <th><input type="checkbox" /></th>
-          <th>주문ID</th>
-          <th>거래처ID</th>
+          <th>주문번호</th>
+          <th>거래처번호</th>
           <th>거래처명</th>
-          <th>제품ID</th>
+          <th>제품번호</th>
           <th>제품명</th>
           <th>요청수량</th>
-          <th>lot재고량</th>
+          <th>재고량</th>
           <th>납기일자</th>
           <th>상태</th>
         </tr>

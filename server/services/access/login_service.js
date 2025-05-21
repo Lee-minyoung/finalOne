@@ -10,41 +10,57 @@ const loginService = {
    
    
     async loginByEmpNo(loginInfo) { 
-        // 1. 사원번호와 비밀번호를 입력받아 로그인 처리
-        console.log("Received loginInfo:", loginInfo); // 로그인 정보 출력
-        let list = await mariadb.query("findEmpInfoByEmpNo", loginInfo.emp_no);  // 데이터베이스에서 사원번호로 직원 정보 조회
-        console.log("Query result:", list); // 쿼리 결과 출력
-
-        let empInfo = null;
-
-        // 2. 사원 정보가 없으면 로그인 실패
-        if (list.length == 1) { // 사원 정보가 존재하는 경우
-            let info = list[0]; // 첫 번째 결과를 가져옴
-
-            // 3. 입력한 비밀번호 확인 
-            const hashedPassword = createHashedPassword(loginInfo.pwd); // 입력한 비밀번호 해시화
-            // ** 비밀번호 해시는 사용자의 비밀번호를 안전하게 저장하기 위해 암호화된 형태로 변환하는 과정을 의미 **
-            console.log("Input hashed password:", hashedPassword);  // 해시화된 비밀번호 출력
-            console.log("Stored password:", info.pwd); // DB에 저장된 비밀번호 출력
-
-            if (info.pwd === hashedPassword || info.pwd === loginInfo.pwd) { // 비밀번호가 일치하는 경우
-                empInfo = info; // 직원 정보 저장
-
-                if (info.pwd === loginInfo.pwd) { // 비밀번호가 일치하지 않는 경우
-                    await this.updatePwd(info.emp_no, loginInfo.pwd); // 비밀번호 업데이트
-                }
+        try {
+            // 1. 입력값 검증
+            if (!loginInfo.emp_no || !loginInfo.pwd) {
+                return {
+                    result: false,
+                    message: '사원번호와 비밀번호를 모두 입력해주세요.'
+                };
             }
-        }
 
-        
-        return { // 로그인 성공 여부와 직원 정보를 포함한 객체 반환
-            result: empInfo != null, // 로그인 성공 여부
-            emp_no: empInfo?.emp_no, // 사원번호
-            nm: empInfo?.nm,         // 이름
-            pst_no: empInfo?.pst_no, // 직급번호
-            pst_nm: empInfo?.pst_nm, // 직급명
-            dept_no: empInfo?.dept_no// 부서번호
-        };
+            console.log("로그인 시도:", {
+                emp_no: loginInfo.emp_no,
+                timestamp: new Date().toISOString()
+            });
+
+            // 2. 사원 정보 조회 (파라미터를 배열로 전달)
+            let list = await mariadb.query("findEmpInfoByEmpNo", [loginInfo.emp_no]);
+            console.log("DB 조회 결과:", list);
+            
+            if (!list || list.length === 0) {
+                return {
+                    result: false,
+                    message: '존재하지 않는 사원번호입니다.'
+                };
+            }
+
+            let empInfo = list[0];
+
+            // 3. 입력 비밀번호 해시 후 DB값과 비교
+            const hashedPassword = createHashedPassword(loginInfo.pwd);
+            if (empInfo.pwd === hashedPassword || empInfo.pwd === loginInfo.pwd) {
+                console.log("로그인 성공:", empInfo.emp_no);
+                return {
+                    result: true,
+                    emp_no: empInfo.emp_no,
+                    nm: empInfo.nm,
+                    pst_no: empInfo.pst_no,
+                    pst_nm: empInfo.pst_nm,
+                    dept_no: empInfo.dept_no
+                };
+            }
+
+            console.log("비밀번호 불일치");
+            return {
+                result: false,
+                message: '비밀번호가 일치하지 않습니다.'
+            };
+
+        } catch (err) {
+            console.error('로그인 처리 오류:', err);
+            throw err;
+        }
     },
 
 
@@ -81,31 +97,23 @@ const loginService = {
     },
 
     // 비밀번호 찾기
-    async findPassword(empNo, email) {
+    async findPassword(email) {
         try {
-            // 1. 사원 정보 조회
-            const empInfo = await mariadb.query("findEmpInfoByEmpNo", empNo);
+            // 1. 이메일로 사원 정보 조회
+            const empInfo = await mariadb.query("findEmpInfoByEmail", email);
             
             if (!empInfo || empInfo.length === 0) {
                 return {
                     result: false,
-                    message: '존재하지 않는 사원번호입니다.'
+                    message: '등록된 이메일 주소를 찾을 수 없습니다.'
                 };
             }
 
-            // 2. 이메일 일치 여부 확인
-            if (empInfo[0].email !== email) {
-                return {
-                    result: false,
-                    message: '이메일이 일치하지 않습니다.'
-                };
-            }
-
-            // 3. 임시 비밀번호 생성
+            // 2. 임시 비밀번호 생성
             const tempPassword = crypto.randomBytes(4).toString('hex');
             
-            // 4. 비밀번호 업데이트
-            const updateResult = await mariadb.query("updatePwd", [tempPassword, empNo]);
+            // 3. 비밀번호 업데이트
+            const updateResult = await mariadb.query("updatePwd", [tempPassword, empInfo[0].emp_no]);
             
             if (updateResult.affectedRows === 0) {
                 return {
@@ -114,7 +122,7 @@ const loginService = {
                 };
             }
 
-            // 5. 이메일 전송
+            // 4. 이메일 전송
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -129,7 +137,7 @@ const loginService = {
                 subject: '[인사관리시스템] 임시 비밀번호 발급',
                 html: `
                     <h2>임시 비밀번호가 발급되었습니다.</h2>
-                    <p>사원번호: ${empNo}</p>
+                    <p>사원번호: ${empInfo[0].emp_no}</p>
                     <p>임시 비밀번호: ${tempPassword}</p>
                     <p>로그인 후 반드시 비밀번호를 변경해주세요.</p>
                 `
@@ -139,6 +147,7 @@ const loginService = {
 
             return {
                 result: true,
+                empNo: empInfo[0].emp_no,
                 message: '임시 비밀번호가 이메일로 발송되었습니다.'
             };
 
@@ -152,50 +161,36 @@ const loginService = {
     },
 
     // 비밀번호 재설정
-    async resetPassword(empNo, tempPassword, newPassword) {
+    async resetPassword(empNo, newPassword) {
         try {
-            // 1. 현재 저장된 임시 비밀번호 확인
+            // 1. 사원 정보 조회
             const empInfo = await mariadb.query("findEmpInfoByEmpNo", empNo);
-            
             if (!empInfo || empInfo.length === 0) {
                 return {
                     result: false,
                     message: '존재하지 않는 사원번호입니다.'
                 };
             }
-
-            // 2. 임시 비밀번호 일치 여부 확인
-            if (empInfo[0].pwd !== tempPassword) {
-                return {
-                    result: false,
-                    message: '임시 비밀번호가 일치하지 않습니다.'
-                };
-            }
-
-            // 3. 새 비밀번호 유효성 검사
+            // 2. 새 비밀번호 유효성 검사
             if (newPassword.length < 8) {
                 return {
                     result: false,
                     message: '비밀번호는 8자 이상이어야 합니다.'
                 };
             }
-
-            // 4. 새 비밀번호로 업데이트
+            // 3. 새 비밀번호로 업데이트
             const hashedPassword = createHashedPassword(newPassword);
             const updateResult = await mariadb.query("updatePwd", [hashedPassword, empNo]);
-
             if (updateResult.affectedRows === 0) {
                 return {
                     result: false,
                     message: '비밀번호 변경에 실패했습니다.'
                 };
             }
-
             return {
                 result: true,
                 message: '비밀번호가 성공적으로 변경되었습니다.'
             };
-
         } catch (err) {
             console.error('비밀번호 재설정 오류:', err);
             return {

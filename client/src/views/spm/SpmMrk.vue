@@ -216,7 +216,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .table-active {
   background-color: #e3f2fd !important;
   /* 밝은 하늘색 */

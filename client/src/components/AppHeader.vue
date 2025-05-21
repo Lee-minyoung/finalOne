@@ -28,9 +28,9 @@
       <!-- 우측: 다크모드 + 설정 + 로그아웃/로그인 -->
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
         <!-- 설정 버튼 -->
-        <button class="btn btn-outline-secondary btn-sm">
+        <!-- <button class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-gear me-2"></i> 설정
-        </button>
+        </button> -->
         <!-- 로그인/로그아웃 버튼: 로그인 상태에 따라 다르게 표시 -->
         <button v-if="employeeName" class="btn btn-secondary btn-sm" @click="handleLogout">
           <i class="bi bi-box-arrow-right me-1"></i> 로그아웃

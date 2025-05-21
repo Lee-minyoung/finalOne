@@ -9,9 +9,23 @@ const findEmpInfoByEmpNo =
         , e.dept_no
         , e.pst_no
         , p.pst_nm
+FROM emp e 
+LEFT OUTER JOIN pst p ON e.pst_no = p.pst_no
+WHERE e.emp_no = ?`;
+
+// 이메일로 사원 정보 조회
+const findEmpInfoByEmail =
+    `SELECT e.emp_no
+        , e.pwd
+        , e.nm
+        , e.ctt
+        , e.email
+        , e.dept_no
+        , e.pst_no
+        , p.pst_nm
 FROM emp e LEFT OUTER JOIN pst p
 ON e.pst_no = p.pst_no
-WHERE emp_no = ?`;
+WHERE email = ?`;
 
 // 비밀번호 업데이트
 const updatePwd =
@@ -21,5 +35,6 @@ WHERE emp_no = ?`;
 
 module.exports = {
     findEmpInfoByEmpNo,
-    updatePwd
+    updatePwd,
+    findEmpInfoByEmail
 };
