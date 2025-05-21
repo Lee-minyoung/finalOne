@@ -240,7 +240,7 @@ export default {
           <strong>지시수량:</strong> ${item.lo_ord_qty}개<br>
           <strong>불량수량:</strong> ${item.dft_qty}개<br>
           <strong>생산수량:</strong> ${item.pdn_qty}개<br>
-          <strong>지시자:</strong> ${item.mgr}<br>
+          <strong>지시자:</strong> ${item.crt_by}<br>
           <strong>완료일자:</strong> ${this.dateFormat(item.end_tm, 'yyyy-MM-dd   hh시 mm분')}<br>
 
         </div>

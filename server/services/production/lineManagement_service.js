@@ -64,7 +64,7 @@ const modifyLineOper = async (p_ln_opr_no, p_ln_opr_dtl_no, p_seq, p_dft_qty, p_
 
 const modifyLFinalOper = async (p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no) => {
   try {
-    console.log('보내는 데이터:', p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no); 
+    console.log('보내는 데이터❌❌❌❌❌❌❌:', p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no); 
     const result = await mariadb.query('updateFinalOper', [p_ln_opr_no, p_ln_no, p_pdn_ord_dtl_no]);
     return result;
   } catch (err) {

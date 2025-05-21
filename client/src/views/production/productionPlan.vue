@@ -11,10 +11,28 @@
             <option value="생산완료">생산완료</option>
           </select>
         </div>
-        <button class="btn btn-warning text-white" @click="resetAll">초기화</button>
-        <button class="btn btn-success text-white" @click="openProductModal">제품등록</button>
-        <button class="btn btn-success text-white" @click="addPlan">계획등록</button>
-        <button class="btn btn-primary" @click="openInstructionModal">계획지시</button>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-warning text-white" @click="resetAll">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>초기화</button>
+
+          <!-- ✅ 조건 1: 기존 계획 선택만 있을 경우 → 지시등록만 표시 -->
+          <template v-if="isStep3">
+            <button class="btn btn-primary " @click="openInstructionModal">
+              <i class="bi bi-play-fill me-1"></i>계획지시</button>
+          </template>
+
+          <!-- ✅ 조건 2: 제품만 있고 수량 미입력 상태 → 제품등록 -->
+          <template v-else-if="isStep1">
+            <button class="btn btn-info text-white" @click="openProductModal">
+              <i class="bi bi-box-seam me-1"></i>제품등록</button>
+          </template>
+
+          <!-- ✅ 조건 3: 제품 + 수량까지 입력 → 계획등록 -->
+          <template v-else-if="isStep2">
+            <button class="btn btn-success text-white" @click="addPlan">
+              <i class="bi bi-pencil-square me-1"></i>계획등록</button>
+          </template>
+        </div>
       </div>
     </div>
 
@@ -59,7 +77,7 @@
               </div>
             </td>
             <td><input type="text" class="form-control text-end" :value="formatNumber(row.qty)"
-                @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0"/></td>
+                @input="onFormattedQtyInput($event, row)" placeholder="수량" :min="0" /></td>
             <td></td>
             <td><input v-model="row.st_dt" type="date" class="form-control" /></td>
             <td><input v-model="row.end_dt" type="date" class="form-control" /></td>
@@ -67,15 +85,16 @@
             <td></td>
             <td><input v-model="row.rmk" class="form-control" placeholder="비고 입력" /></td>
             <td>
-              <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)" v-if="planRows.length > 0">-</button>
+              <button class="btn btn-outline-danger btn-sm me-1" @click="removePlanRow(index)"
+                v-if="planRows.length > 0">-</button>
             </td>
           </tr>
 
           <!-- 기존 계획 목록 -->
           <tr v-for="row in sortedProdPlanList" :key="row.pdn_pln_no"
-              @click="!isFullyInstructed(row) && togglePlanSelection(row)"
-              :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
-              :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
+            @click="!isFullyInstructed(row) && togglePlanSelection(row)"
+            :class="[isSelected(row) ? 'table-primary' : '', isFullyInstructed(row) ? 'text-muted' : '']"
+            :style="isFullyInstructed(row) ? 'pointer-events: none; opacity: 0.6;' : 'cursor: pointer;'">
             <td>{{ row.pdn_pln_no }}</td>
             <td>{{ row.prd_nm }}</td>
             <td>{{ formatNumber(row.qty) }}</td>
@@ -86,7 +105,7 @@
             <td>
               <div class="progress" style="height: 22px;">
                 <div class="progress-bar" :class="getProgressBarClass(row.qty, row.ord_qty, row.sts)"
-                    :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
+                  :style="{ width: getProgress(row.qty, row.ord_qty) + '%' }" role="progressbar">
                   {{ getStatus(row.qty, row.ord_qty, row.sts) }}
                 </div>
               </div>
@@ -100,7 +119,7 @@
 
     <!-- 모달 컴포넌트 -->
     <ProductSelectModal v-if="showProductModal" :prodList="prodList" :selected="planRows"
-        @select-product="handleSelectedProducts" @close="showProductModal = false" />
+      @select-product="handleSelectedProducts" @close="showProductModal = false" />
 
     <InstructionModal v-if="showInstructionModal" @submit="submitInstructions" @close="showInstructionModal = false" />
   </div>
@@ -158,6 +177,15 @@ export default {
         const bDone = Number(b.ord_qty || 0) >= Number(b.qty || 0)
         return aDone - bDone
       })
+    },
+    isStep1() {
+      return this.planRows.length === 0 || this.planRows.every(row => !row.prd_no)
+    },
+    isStep2() {
+      return this.planRows.some(row => row.prd_no && row.qty > 0)
+    },
+    isStep3() {
+      return this.instructionStore.selectedPlans.length > 0 && this.planRows.length === 0
     }
   },
   mounted() {
@@ -370,20 +398,20 @@ export default {
     //   }
     // }
     getTodayDate() {
-    const today = new Date()
-    const yyyy = today.getFullYear()
-    const mm = String(today.getMonth() + 1).padStart(2, '0') // 월은 0부터 시작
-    const dd = String(today.getDate()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}` // date input 형식: yyyy-mm-dd
-  },
-  getDefaultDates() {
-  const today = new Date()
-  const startDate = today.toISOString().split('T')[0] // 오늘
-  const endDate = new Date(today)
-  endDate.setDate(today.getDate() + 7)                // +7일
-  const endDateFormatted = endDate.toISOString().split('T')[0]
-  return { startDate, endDate: endDateFormatted }
-},
+      const today = new Date()
+      const yyyy = today.getFullYear()
+      const mm = String(today.getMonth() + 1).padStart(2, '0') // 월은 0부터 시작
+      const dd = String(today.getDate()).padStart(2, '0')
+      return `${yyyy}-${mm}-${dd}` // date input 형식: yyyy-mm-dd
+    },
+    getDefaultDates() {
+      const today = new Date()
+      const startDate = today.toISOString().split('T')[0] // 오늘
+      const endDate = new Date(today)
+      endDate.setDate(today.getDate() + 7)                // +7일
+      const endDateFormatted = endDate.toISOString().split('T')[0]
+      return { startDate, endDate: endDateFormatted }
+    },
   }
 }
 </script>
