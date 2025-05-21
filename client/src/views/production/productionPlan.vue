@@ -234,7 +234,6 @@ export default {
     resetAll() {
       if (!confirm('정말 초기화 하시겠습니까? 입력값이 모두 사라집니다.')) return
       this.planRows = [
-        { prd_no: '', prd_nm: '', qty: '', st_dt: '', end_dt: '', rmk: '', sts: '계획완료' }
       ]
       this.instructionStore.selectedPlans = []
       this.instructionStore.generateInstructionRows()
