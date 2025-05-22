@@ -24,7 +24,7 @@
           <th>검사기준</th>
           <th>규격</th>
           <th>사용장비</th>
-          <th>작성자</th>
+          <!-- <th>작성자</th> -->
           <th>수정일자</th>
           <th>비고</th>
           <th>수정</th>
@@ -40,9 +40,9 @@
           <td><input v-model="newItem.ins_mthd" class="form-control" placeholder="검사기준" /></td>
           <td><input v-model="newItem.ins_spc" class="form-control" placeholder="규격" /></td>
           <td><input v-model="newItem.ins_eqp" class="form-control" placeholder="사용장비" /></td>
-          <td><input :value="employeeName" class="form-control" placeholder="작성자" readonly
+          <!-- <td><input :value="employeeName" class="form-control" placeholder="작성자" readonly
               style="background-color: #eee;" />
-          </td>
+          </td> -->
           <td><input v-model="newItem.mdf_dt" class="form-control" placeholder="수정일자" readonly
               style="background-color: #eee;" /></td>
           <td><input v-model="newItem.rmk" class="form-control" placeholder="비고" /></td>

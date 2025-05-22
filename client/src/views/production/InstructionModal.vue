@@ -40,7 +40,7 @@
                     class="form-control"
                     v-model.number="row.instruction_qty"
                     min="0"
-                    :max="row.qty - row.ord_qty"
+                    :max="row.qty - row.ord_qty - row.instruction_qty"
                     @input="handleInput(index)"
                   />
                 </td>
