@@ -31,6 +31,15 @@ FROM bom_mat bm
 JOIN bom b ON bm.bom_no = b.bom_no
 WHERE b.prd_no = ?;`
 
+const insertProdOrd =
+`INSERT INTO pdn_ord (pdn_ord_no, pdn_pln_no, pdn_ord_dt, crt_by)
+SELECT CONCAT('ODR-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, CURDATE(), ?
+FROM pdn_ord;`
+
+const insertProdOrdDtl =
+`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio, ord_sts)
+SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?, 'r1'
+FROM pdn_ord_dtl;`
 
 const insertProdMat =
 `INSERT INTO mat_rls_req (mat_req_no, pdn_ord_no, mat_no, qty, sndr, sts, prc_rslt, mat_ins_sts)
@@ -47,15 +56,7 @@ LPAD(..., 3, '0')	          숫자 2 → '002'처럼 3자리로 0채움
 CONCAT('MAT-', ...)	        앞에 'MAT-' 붙여서 최종 결과 'MAT-002'
 */
 
-const insertProdOrd =
-`INSERT INTO pdn_ord (pdn_ord_no, pdn_pln_no, pdn_ord_dt, crt_by)
-SELECT CONCAT('ODR-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, CURDATE(), ?
-FROM pdn_ord;`
 
-const insertProdOrdDtl =
-`INSERT INTO pdn_ord_dtl (pdn_ord_dtl_no, pdn_ord_no, ln_no, ord_qty, prd_no, prio, ord_sts)
-SELECT CONCAT('ODT-', LPAD(IFNULL(MAX(CAST(SUBSTRING(pdn_ord_dtl_no, 5) AS UNSIGNED)), 0) + 1, 3, '0')), ?, ?, ?, ?, ?, 'r1'
-FROM pdn_ord_dtl;`
 
 // CONCAT('ODT-', LPAD(IFNULL(MAX, 0) + 1, 3, '0'))
 // SELECT -- 조회 / 

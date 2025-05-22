@@ -24,10 +24,10 @@ LEFT JOIN pdn_ord_dtl od ON o.pdn_ord_no = od.pdn_ord_no
 LEFT JOIN ln_opr lo ON od.pdn_ord_dtl_no = lo.pdn_ord_dtl_no
 LEFT JOIN prd p ON od.prd_no = p.prd_no
 LEFT JOIN (
-  SELECT pdn_ord_no, MAX(mat_ins_sts) AS mat_ins_sts
-  FROM mat_rls_req
-  GROUP BY pdn_ord_no
-) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
+     SELECT pdn_ord_no, MAX(mat_ins_sts) AS mat_ins_sts
+       FROM mat_rls_req
+      GROUP BY pdn_ord_no
+          ) mrr ON od.pdn_ord_no = mrr.pdn_ord_no
 ORDER BY o.pdn_ord_dt`;
 
 
@@ -73,9 +73,9 @@ const selectLineList =
       , lo.ln_opr_no
    FROM ln_opr lo
    LEFT JOIN pdn_ord_dtl pod ON lo.pdn_ord_dtl_no = pod.pdn_ord_dtl_no
-   RIGHT JOIN ln l ON pod.ln_no = l.ln_no
+  RIGHT JOIN ln l ON pod.ln_no = l.ln_no
    LEFT JOIN prd p ON pod.prd_no = p.prd_no
-   ORDER BY l.ln_sts DESC, l.ln_no;`
+  ORDER BY l.ln_sts DESC, l.ln_no;`
 
 const selectLineDetail =  
 `SELECT ln.ln_opr_dtl_no

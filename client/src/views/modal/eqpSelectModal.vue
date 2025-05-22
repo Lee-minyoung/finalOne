@@ -57,7 +57,7 @@ export default {
     return {
       search: '',
       selectedEqp: null,
-      selectedFilter : "",
+      selectedFilter : "false",
     }
   },
   computed: {
